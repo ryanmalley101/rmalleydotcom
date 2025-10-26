@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useMemo, useRef, useState, useCallback, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import styles from '@/styles/CreateMonsterStatblock.module.css';
 import {
