@@ -10,10 +10,18 @@
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.5.5",
+    "@dice-roller/rpg-dice-roller": "^5.5.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.4",
     "aws-amplify": "^6.6.6",
+    "html2canvas": "^1.4.1",
     "next": "14.2.10",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-icons": "^5.5.0",
+    "rpg-dice-roller": "^5.0.0",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.5.1",
