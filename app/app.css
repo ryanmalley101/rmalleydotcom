@@ -1,6 +1,6 @@
-body {
+/* body {
     margin: 0;
-    background: linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255));
+    background: var(--color-background-default);
     display: flex;
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     height: 100vh;
@@ -62,4 +62,4 @@ body {
   a {
     font-weight: 800;
     text-decoration: none;
-  }
+  } */
