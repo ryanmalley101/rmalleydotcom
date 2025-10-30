@@ -355,7 +355,7 @@ export const data = defineData({
     // iamAuthorizationMode: {
     //   authenticated: [
     //     'identityPool', // or 'userPool'
-    //   ],
+    //   ], 
     //   unauthenticated: [
     //     'identityPool', // or 'userPool'
     //   ]
