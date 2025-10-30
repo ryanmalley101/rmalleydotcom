@@ -13,7 +13,6 @@ Amplify.configure(outputs);
 const client = generateClient<Schema>();
   
 export default function App() {
-  const { user, signOut } = useAuthenticator();
 
   // const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
@@ -37,6 +36,7 @@ export default function App() {
   // function deleteTodo(id: string) {
   //   client.models.Todo.delete({ id })
   // }
+  const { user, signOut } = useAuthenticator();
 
   return (
     <main>

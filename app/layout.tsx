@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./app.css";
-import "./config";
+// import "./config";
 
 import AuthenticatorWrapper from "./AuthenticatorWrapper";
 import "@aws-amplify/ui-react/styles.css";
