@@ -1,0 +1,87 @@
+.gradient {
+    background: linear-gradient(10deg, #A73335, white);
+    height: 5px;
+    margin: 7px 0px;
+}
+
+.name {
+    font-size: 225%;
+    font-family: Georgia, serif;
+    font-variant: small-caps;
+    font-weight: bold;
+    color: #A73335;
+}
+
+.description {
+    font-style: italic;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.red {
+    color: #A73335;
+}
+
+.monsterSheetContainer {
+    margin: 10px 5px 5px 10px;
+}
+
+.attributes {
+    width: 100%;
+    border: 0px;
+    border-collapse: collapse;
+    color: #A73335;
+}
+
+.attributes tbody th {
+    width: 50px;
+    text-align: center;
+}
+
+.attributes tbody tr {
+    width: 50px;
+    text-align: center;
+}
+
+.actions {
+    font-size: 175%;
+    font-variant: small-caps;
+    margin: 17px 0px 0px 0px;
+}
+
+.hr {
+    background: #A73335;
+    height: 2px;
+}
+
+.abilities {
+    margin: 5px 0px;
+}
+
+.abilityname {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.attack {
+    margin: 5px 0px;
+}
+
+.attackname {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.labelButton {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    color: black;
+}
+
+.labelButton:hover {
+    color: blue
+}
