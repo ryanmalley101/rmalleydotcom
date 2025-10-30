@@ -327,7 +327,7 @@ const schema = a.schema({
     mythic_desc: a.string(),
     mythic_actions: a.ref('MonsterAbility').array(),
   })
-  .authorization(allow => [allow.owner()])
+  .authorization(allow => [allow.authenticated()])
 
   // --- Custom Function-based Mutations ---
 

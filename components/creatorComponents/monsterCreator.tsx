@@ -1,49 +1,52 @@
 "use client"
 
-import React, { useEffect, useMemo, useRef, useState, useCallback, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import styles from '@/styles/CreateMonsterStatblock.module.css';
 import {
     Button,
     ButtonGroup,
     FormControl,
+    Grid,
+    IconButton,
     InputAdornment,
     InputLabel,
     ListSubheader,
     MenuItem,
     Select,
     TextField,
+    Toolbar,
     Typography
 } from "@mui/material";
-import type { SelectChangeEvent } from '@mui/material/Select';
-import { Grid } from "@mui/material";
 import Box from '@mui/material/Box';
-import { setInterval } from 'timers/promises';
+import type { SelectChangeEvent } from '@mui/material/Select';
+import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 // Use an any-typed alias to avoid MUI Grid typing overload issues while we migrate props
-import MonsterSheet, { cleanMonster } from "@/components/creatorComponents/monsterSheet";
 import { getMonsterProf, scoreToMod } from "@/5eReference/converters";
-import ActionRow from "@/components/creatorComponents/actionrow";
 import AbilityRow from "@/components/creatorComponents/abilityrow";
-import { AiOutlineSearch } from "react-icons/ai";
+import ActionRow from "@/components/creatorComponents/actionrow";
+import MonsterSheet, { cleanMonster } from "@/components/creatorComponents/monsterSheet";
 import html2canvas from "html2canvas";
+import { AiOutlineSearch } from "react-icons/ai";
 import { BsFillTrashFill } from "react-icons/bs";
-import { GiStrongMan, GiRunningNinja, GiBrain, GiAbdominalArmor, GiHeartPlus, GiBearHead, } from "react-icons/gi";
-import { MdHealthAndSafety } from "react-icons/md";
-import { FaMasksTheater } from "react-icons/fa6";
-import { GiOwl } from "react-icons/gi";
-import { LuSpeech } from "react-icons/lu";
+import { FaMasksTheater, FaPersonWalking } from "react-icons/fa6";
+import { GiAbdominalArmor, GiBearHead, GiBrain, GiDigHole, GiFlyingTrout, GiHeartPlus, GiMountainClimbing, GiOwl, GiRunningNinja, GiSprint, GiStrongMan, } from "react-icons/gi";
 // import AbilityScoreInput from './AbilityScoreInput';
-import AbilityScoreInput from './abilityscoreinput';
-import Image from 'next/image'
-import { ComponentPropsToStylePropsMapKeys } from '@aws-amplify/ui-react';
-import _ from 'lodash'
-import { generateClient } from 'aws-amplify/data';
 import { type Schema } from '@/amplify/data/resource';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import { generateClient } from 'aws-amplify/data';
+import Image from 'next/image';
+import { IconContext } from 'react-icons';
+import AbilityScoreInput from './abilityscoreinput';
+import AppBar from '@mui/material/AppBar';
+import { MdOutlineMenu } from "react-icons/md";
+import { PiShovel } from "react-icons/pi";
+import { GrSwim } from "react-icons/gr";
+
+
 const client = generateClient<Schema>();
 type MyMonsterStatblock = Schema['MonsterStatblock']['type'];
 type MyMonsterAbility = Schema['MonsterAbility']['type'];
 type MyMonsterAttack = Schema['MonsterAttack']['type'];
-import { IconContext } from 'react-icons';
-import { useTheme } from '@mui/material/styles';
 
 
 // Assumed interface for the minimal list item returned by the list query
@@ -71,6 +74,9 @@ interface HeaderRowProps {
 // --- The TypeScript Component ---
 
 const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile }) => {
+
+    const theme = useTheme()
+
     // State is typed using the Amplify Gen 2 type
     const [monsterStatblock, setMonsterStatblock] = useState<MyMonsterStatblock>(monster)
 
@@ -250,61 +256,78 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
         }
     }
 
-    return <div className={styles.stickyHeader}>
-        <Button variant={"contained"} style={{ marginRight: "10px" }} onClick={newMonster}>New</Button>
-        <Button variant={"contained"} onClick={() => saveMonster(monsterStatblock)}>Save</Button>
-        <FormControl style={{ left: "30%", minWidth: "200px" }}>
-            <InputLabel id="search-select-label" style={{ color: "white" }}>Monster Name</InputLabel>
-            <Select
-                MenuProps={{ autoFocus: false }}
-                labelId="search-select-label"
-                id="search-select"
-                // The value of Select must match the type of selectedOption
-                value={selectedOption}
-                label="Monsters"
-                // onChange event is correctly inferred or typed (HTMLInputElement for Select component)
-                onChange={handleSelectionChange}
-                onClose={() => setSearchText("")}
-                renderValue={() => selectedOption}
-                style={{ backgroundColor: "#1976d2", color: "white" }}
-            >
-                <ListSubheader>
-                    <TextField
-                        size="small"
-                        autoFocus
-                        placeholder="Type to search..."
-                        fullWidth
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <AiOutlineSearch />
-                                </InputAdornment>
-                            )
-                        }}
-                        // onChange event is typed
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
-                        // onKeyDown event is typed
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                            if (e.key !== "Escape") {
-                                e.stopPropagation();
-                            }
-                        }}
-                    />
-                </ListSubheader>
-                {displayedOptions.map((option, i) => (
-                    // The value of MenuItem is a string
-                    <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id, option.ownerId)}>
-                        {option.name}
-                    </MenuItem>
-                ))}
-            </Select>
-        </FormControl>
-        <Button variant={"contained"} style={{ float: "right" }} onClick={() => exportJSON(monster.name)}>Export
-            JSON</Button>
-        <Button variant={"contained"} style={{ marginRight: "10px", float: "right" }} onClick={downloadFile}>Download
-            PNG</Button>
+    return (
+        < Box sx={{ flexGrow: 1 }} >
+            <AppBar>
+                <Toolbar>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                    >
+                        <MdOutlineMenu />
+                    </IconButton>
+                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={newMonster} color="secondary">New</Button>
+                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={() => saveMonster(monsterStatblock)} color="secondary">Save</Button>
+                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={() => exportJSON(monster.name)} color="secondary">Export
+                        JSON</Button>
+                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={downloadFile} color="secondary">Download
+                        PNG</Button>
+                    <FormControl style={{ left: "10%", minWidth: "200px" }}>
+                        <InputLabel id="search-select-label" style={{ color: "black" }}>Monster Name</InputLabel>
+                        <Select
+                            MenuProps={{ autoFocus: false }}
+                            labelId="search-select-label"
+                            id="search-select"
+                            // The value of Select must match the type of selectedOption
+                            value={selectedOption}
+                            label="Monsters"
+                            // onChange event is correctly inferred or typed (HTMLInputElement for Select component)
+                            onChange={handleSelectionChange}
+                            onClose={() => setSearchText("")}
+                            renderValue={() => selectedOption}
+                            style={{ backgroundColor: theme.palette.secondary.main, color: "#000000" }}
+                            sx={{ color: "black" }}
+                        >
+                            <ListSubheader>
+                                <TextField
+                                    size="small"
+                                    autoFocus
+                                    placeholder="Type to search..."
+                                    fullWidth
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <AiOutlineSearch />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                    // onChange event is typed
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
+                                    // onKeyDown event is typed
+                                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                        if (e.key !== "Escape") {
+                                            e.stopPropagation();
+                                        }
+                                    }}
+                                />
+                            </ListSubheader>
+                            {displayedOptions.map((option, i) => (
+                                // The value of MenuItem is a string
+                                <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id, option.ownerId)}>
+                                    {option.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-    </div>
+                </Toolbar>
+
+            </AppBar>
+        </Box >
+    )
 }
 
 const newMonsterStats = {
@@ -697,7 +720,7 @@ const CreateMonsterStatblock = () => {
     const addAction = () => {
         console.log("Adding new action")
 
-        const action_num = monsterStatblock.actions ? monsterStatblock.actions.length.toString : "0"
+        const action_num = monsterStatblock.actions ? monsterStatblock.actions.length.toString() : "0"
 
         setActions((oldActions) => {
             return [...oldActions, {
@@ -709,7 +732,7 @@ const CreateMonsterStatblock = () => {
                 short_range: 0,
                 long_range: 0,
                 targets: "One Target.",
-                damage: []
+                damage: [{ damage_dice: "1d6", damage_type: "slashing" }],
             }]
         })
     }
@@ -946,7 +969,7 @@ const CreateMonsterStatblock = () => {
     return (
         <div style={{ minWidth: "1300px", maxWidth: "1300px", margin: "0 auto", paddingBottom: "50px" }}>
             <HeaderRow monster={monsterStatblock} setMonster={setMonsterStatblock} downloadFile={downloadFile} />
-            <div style={{ margin: "400px" }}>
+            <div style={{ margin: "200px" }}>
                 {/* <MonsterSheet statblock={monsterStatblock} printRef={printRef} style={{margin: "100px"}}/> */}
                 <MonsterSheet statblock={monsterStatblock} printRef={printRef} />
             </div>
@@ -1247,71 +1270,98 @@ const CreateMonsterStatblock = () => {
                             alignItems: "center"
                         }}>
                             <Grid size={12 / 5}>
-                                <TextField name="walk" label="Walk" variant="outlined"
-                                    value={monsterStatblock.speed.walk ? monsterStatblock.speed.walk : 0}
-                                    onChange={handleSpeedChange}
-                                    type={"number"} />
+                                <Stack direction="row" spacing={1}>
+                                    <GiSprint size={50} />
+                                    {/* <FaPersonWalking size={40} /> */}
+                                    <TextField name="walk" label="Walk" variant="outlined"
+                                        value={monsterStatblock.speed.walk ? monsterStatblock.speed.walk : 0}
+                                        onChange={handleSpeedChange}
+                                        type={"number"} />
+                                </Stack>
                             </Grid>
 
                             <Grid size={12 / 5}>
-                                <TextField name="climb" label="Climb" variant="outlined"
-                                    value={monsterStatblock.speed.climb ? monsterStatblock.speed.climb : 0}
-                                    onChange={handleSpeedChange}
-                                    type={"number"} />
+                                <Stack direction="row" spacing={1}>
+                                    <GiMountainClimbing size={50} />
+                                    <TextField name="climb" label="Climb" variant="outlined"
+                                        value={monsterStatblock.speed.climb ? monsterStatblock.speed.climb : 0}
+                                        onChange={handleSpeedChange}
+                                        type={"number"} />
+                                </Stack>
                             </Grid>
 
                             <Grid size={12 / 5}>
-                                <TextField name="swim" label="Swim" variant="outlined"
-                                    value={monsterStatblock.speed.swim ? monsterStatblock.speed.swim : 0}
-                                    onChange={handleSpeedChange} type={"number"} />
+
+                                <Stack direction="row" spacing={1}>
+                                    <GrSwim size={50} />
+                                    <TextField name="swim" label="Swim" variant="outlined"
+                                        value={monsterStatblock.speed.swim ? monsterStatblock.speed.swim : 0}
+                                        onChange={handleSpeedChange} type={"number"} />
+                                </Stack>
                             </Grid>
 
                             <Grid size={12 / 5}>
-                                <TextField name="fly" label="Fly" variant="outlined"
-                                    value={monsterStatblock.speed.fly} onChange={handleSpeedChange}
-                                    type={"number"} />
+                                <Stack direction="row" spacing={1}>
+
+                                    <GiFlyingTrout size={50} />
+                                    <TextField name="fly" label="Fly" variant="outlined"
+                                        value={monsterStatblock.speed.fly} onChange={handleSpeedChange}
+                                        type={"number"} />
+                                </Stack>
                             </Grid>
 
                             <Grid size={12 / 5}>
-                                <TextField name="burrow" label="Burrow" variant="outlined"
-                                    value={monsterStatblock.speed.burrow ? monsterStatblock.speed.burrow : 0}
-                                    onChange={handleSpeedChange}
-                                    type={"number"} />
+                                <Stack direction="row" spacing={1}>
+
+                                    <GiDigHole size={60}/>
+                                    <TextField name="burrow" label="Burrow" variant="outlined"
+                                        value={monsterStatblock.speed.burrow ? monsterStatblock.speed.burrow : 0}
+                                        onChange={handleSpeedChange}
+                                        type={"number"} />
+                                </Stack>
                             </Grid>
 
                         </Grid>
                         <Grid container spacing={2} marginY={rowSpacing}>
-                            <Grid>
-                                <FormControl>
-                                    <InputLabel id="skill-label">Skills</InputLabel>
-                                    <Select
-                                        id="type"
-                                        labelId={"skill-label"}
-                                        value={selectedSkill}
-                                        label="Type"
-                                        onChange={(e) => setSelectedSkill(e.target.value)}
-                                        style={{ width: 157 }}
-                                    >
-                                        <MenuItem value="acrobatics">Acrobatics</MenuItem>
-                                        <MenuItem value="animal_handling">Animal Handling</MenuItem>
-                                        <MenuItem value="arcana">Arcana</MenuItem>
-                                        <MenuItem value="athletics">Athletics</MenuItem>
-                                        <MenuItem value="deception">Deception</MenuItem>
-                                        <MenuItem value="history">History</MenuItem>
-                                        <MenuItem value="insight">Insight</MenuItem>
-                                        <MenuItem value="intimidation">Intimidation</MenuItem>
-                                        <MenuItem value="investigation">Investigation</MenuItem>
-                                        <MenuItem value="medicine">Medicine</MenuItem>
-                                        <MenuItem value="nature">Nature</MenuItem>
-                                        <MenuItem value="perception">Perception</MenuItem>
-                                        <MenuItem value="performance">Performance</MenuItem>
-                                        <MenuItem value="persuasion">Persuasion</MenuItem>
-                                        <MenuItem value="religion">Religion</MenuItem>
-                                        <MenuItem value="sleight_of_hand">Sleight of Hand</MenuItem>
-                                        <MenuItem value="stealth">Stealth</MenuItem>
-                                        <MenuItem value="survival">Survival</MenuItem>
-                                    </Select>
-                                </FormControl>
+                            <Stack spacing={1}>
+                                <Stack direction="row" spacing={1}>
+                                    <FormControl>
+                                        <InputLabel id="skill-label">Skills</InputLabel>
+                                        <Select
+                                            id="type"
+                                            labelId={"skill-label"}
+                                            value={selectedSkill}
+                                            label="Type"
+                                            onChange={(e) => setSelectedSkill(e.target.value)}
+                                            style={{ width: 157 }}
+                                        >
+                                            <MenuItem value="acrobatics">Acrobatics</MenuItem>
+                                            <MenuItem value="animal_handling">Animal Handling</MenuItem>
+                                            <MenuItem value="arcana">Arcana</MenuItem>
+                                            <MenuItem value="athletics">Athletics</MenuItem>
+                                            <MenuItem value="deception">Deception</MenuItem>
+                                            <MenuItem value="history">History</MenuItem>
+                                            <MenuItem value="insight">Insight</MenuItem>
+                                            <MenuItem value="intimidation">Intimidation</MenuItem>
+                                            <MenuItem value="investigation">Investigation</MenuItem>
+                                            <MenuItem value="medicine">Medicine</MenuItem>
+                                            <MenuItem value="nature">Nature</MenuItem>
+                                            <MenuItem value="perception">Perception</MenuItem>
+                                            <MenuItem value="performance">Performance</MenuItem>
+                                            <MenuItem value="persuasion">Persuasion</MenuItem>
+                                            <MenuItem value="religion">Religion</MenuItem>
+                                            <MenuItem value="sleight_of_hand">Sleight of Hand</MenuItem>
+                                            <MenuItem value="stealth">Stealth</MenuItem>
+                                            <MenuItem value="survival">Survival</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                    <ButtonGroup orientation={"horizontal"}>
+                                        <Button type={"button"} color="primary" variant="outlined"
+                                            onClick={() => addSkillProficiency("proficient")}>Proficient</Button>
+                                        <Button type={"button"} color="primary" variant="outlined" onClick={() => addSkillProficiency("expertise")}>Expertise</Button>
+                                    </ButtonGroup>
+                                </Stack>
+
                                 {Object.entries(monsterStatblock.skill_proficiencies ? monsterStatblock.skill_proficiencies : {}).map(([key, val]) => {
                                     if (val) {
                                         const skillString = `${key} (${val})`
@@ -1322,195 +1372,202 @@ const CreateMonsterStatblock = () => {
                                         </div>
                                     }
                                 })}
+                            </Stack>
+                            <Grid>
+                                <Stack spacing={1}>
+                                    <Stack direction="row" spacing={1}>
+                                        <FormControl>
+                                            <InputLabel id="save-label">Saving Throws</InputLabel>
+                                            <Select
+                                                id="type"
+                                                labelId={"save-label"}
+                                                value={selectedSave}
+                                                label="Type"
+                                                onChange={(e) => setSelectedSave(e.target.value)}
+                                                style={{ width: 157 }}
+                                            >
+                                                <MenuItem value="strength">Strength</MenuItem>
+                                                <MenuItem value="dexterity">Dexterity</MenuItem>
+                                                <MenuItem value="constitution">Constitution</MenuItem>
+                                                <MenuItem value="intelligence">Intelligence</MenuItem>
+                                                <MenuItem value="wisdom">Wisdom</MenuItem>
+                                                <MenuItem value="charisma">Charisma</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <ButtonGroup>
+                                            <Button type={"button"} onClick={addSaveProficiency}
+                                                variant={"outlined"}>Proficient</Button>
+                                        </ButtonGroup>
+                                    </Stack>
+                                    {(monsterStatblock.save_proficiencies ? monsterStatblock.save_proficiencies : []).map((save, i) => {
+                                        return <div key={save + i}><Button name={save}
+                                            onClick={removeSaveProficiency}
+                                            variant={"outlined"}>{save}&nbsp;
+                                            <BsFillTrashFill /></Button>
+                                        </div>
+                                    })}
+                                </Stack>
                             </Grid>
                             <Grid>
-                                <ButtonGroup orientation={"horizontal"}>
-                                    <Button type={"button"} color="primary" variant="outlined"
-                                        onClick={() => addSkillProficiency("proficient")}>Proficient</Button>
-                                    <Button type={"button"} color="primary" variant="outlined" onClick={() => addSkillProficiency("expertise")}>Expertise</Button>
-                                </ButtonGroup>
-                            </Grid>
-                            <Grid>
-                                <FormControl>
-                                    <InputLabel id="save-label">Saving Throws</InputLabel>
-                                    <Select
-                                        id="type"
-                                        labelId={"save-label"}
-                                        value={selectedSave}
-                                        label="Type"
-                                        onChange={(e) => setSelectedSave(e.target.value)}
-                                        style={{ width: 157 }}
-                                    >
-                                        <MenuItem value="strength">Strength</MenuItem>
-                                        <MenuItem value="dexterity">Dexterity</MenuItem>
-                                        <MenuItem value="constitution">Constitution</MenuItem>
-                                        <MenuItem value="intelligence">Intelligence</MenuItem>
-                                        <MenuItem value="wisdom">Wisdom</MenuItem>
-                                        <MenuItem value="charisma">Charisma</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                {(monsterStatblock.save_proficiencies ? monsterStatblock.save_proficiencies : []).map((save, i) => {
-                                    return <div key={save + i}><Button name={save}
-                                        onClick={removeSaveProficiency}
-                                        variant={"outlined"}>{save}&nbsp;
-                                        <BsFillTrashFill /></Button>
-                                    </div>
-                                })}
-                            </Grid>
-                            <Grid>
-                                <ButtonGroup>
-                                    <Button type={"button"} onClick={addSaveProficiency}
-                                        variant={"outlined"}>Proficient</Button>
-                                </ButtonGroup>
-                            </Grid>
-                            <Grid>
-                                <FormControl>
-                                    <InputLabel id="condition-label">Conditions</InputLabel>
-                                    <Select
-                                        id="condition_immunities"
-                                        value={selectedCondition}
-                                        label="Conditions"
-                                        labelId={"condition-label"}
-                                        onChange={(e) => setSelectedCondition(e.target.value)}
-                                        style={{ width: 157 }}
-                                    >
-                                        <MenuItem value="bleed">Bleed</MenuItem>
-                                        <MenuItem value="blinded">Blinded</MenuItem>
-                                        <MenuItem value="charmed">Charmed</MenuItem>
-                                        <MenuItem value="deafened">Deafened</MenuItem>
-                                        <MenuItem value="exhaustion">Exhaustion</MenuItem>
-                                        <MenuItem value="frightened">Frightened</MenuItem>
-                                        <MenuItem value="frostbitten">Frostbitten</MenuItem>
-                                        <MenuItem value="grappled">Grappled</MenuItem>
-                                        <MenuItem value="incapacitated">Incapacitated</MenuItem>
-                                        <MenuItem value="invisible">Invisible</MenuItem>
-                                        <MenuItem value="paralyzed">Paralyzed</MenuItem>
-                                        <MenuItem value="petrified">Petrified</MenuItem>
-                                        <MenuItem value="poisoned">Poisoned</MenuItem>
-                                        <MenuItem value="prone">Prone</MenuItem>
-                                        <MenuItem value="restrained">Restrained</MenuItem>
-                                        <MenuItem value="rotting">Rotting</MenuItem>
-                                        <MenuItem value="stunned">Stunned</MenuItem>
-                                        <MenuItem value="unconscious">Unconscious</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                {(monsterStatblock.condition_immunity_list ? monsterStatblock.condition_immunity_list : []).map((condition, i) => {
-                                    return <div key={condition + i}><Button name={condition}
-                                        onClick={removeConditionImmunity}
-                                        variant={"outlined"}>
-                                        {condition}&nbsp;
-                                        <BsFillTrashFill />
-                                    </Button></div>
-                                })}
-                            </Grid>
-                            <Grid>
-                                <ButtonGroup disableElevation>
-                                    <Button type={"button"} onClick={addConditionImmunity}>Immune</Button>
-                                </ButtonGroup>
+                                <Stack spacing={1}>
+                                    <Stack direction={"row"} spacing={1}>
+                                        <FormControl>
+                                            <InputLabel id="condition-label">Conditions</InputLabel>
+                                            <Select
+                                                id="condition_immunities"
+                                                value={selectedCondition}
+                                                label="Conditions"
+                                                labelId={"condition-label"}
+                                                onChange={(e) => setSelectedCondition(e.target.value)}
+                                                style={{ width: 157 }}
+                                            >
+                                                <MenuItem value="bleed">Bleed</MenuItem>
+                                                <MenuItem value="blinded">Blinded</MenuItem>
+                                                <MenuItem value="charmed">Charmed</MenuItem>
+                                                <MenuItem value="deafened">Deafened</MenuItem>
+                                                <MenuItem value="exhaustion">Exhaustion</MenuItem>
+                                                <MenuItem value="frightened">Frightened</MenuItem>
+                                                <MenuItem value="frostbitten">Frostbitten</MenuItem>
+                                                <MenuItem value="grappled">Grappled</MenuItem>
+                                                <MenuItem value="incapacitated">Incapacitated</MenuItem>
+                                                <MenuItem value="invisible">Invisible</MenuItem>
+                                                <MenuItem value="paralyzed">Paralyzed</MenuItem>
+                                                <MenuItem value="petrified">Petrified</MenuItem>
+                                                <MenuItem value="poisoned">Poisoned</MenuItem>
+                                                <MenuItem value="prone">Prone</MenuItem>
+                                                <MenuItem value="restrained">Restrained</MenuItem>
+                                                <MenuItem value="rotting">Rotting</MenuItem>
+                                                <MenuItem value="stunned">Stunned</MenuItem>
+                                                <MenuItem value="unconscious">Unconscious</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <ButtonGroup disableElevation>
+                                            <Button type={"button"} onClick={addConditionImmunity}>Immune</Button>
+                                        </ButtonGroup>
+                                    </Stack>
+                                    {(monsterStatblock.condition_immunity_list ? monsterStatblock.condition_immunity_list : []).map((condition, i) => {
+                                        return <div key={condition + i}><Button name={condition}
+                                            onClick={removeConditionImmunity}
+                                            variant={"outlined"}>
+                                            {condition}&nbsp;
+                                            <BsFillTrashFill />
+                                        </Button></div>
+                                    })}
+                                </Stack>
                             </Grid>
                         </Grid>
                         <Grid container spacing={2} marginY={rowSpacing}>
                             {/* <Grid container spacing={2} space={0} marginY={rowSpacing}> */}
                             <Grid>
-                                <FormControl>
-                                    <InputLabel id="damage-label">Damage Types</InputLabel>
-                                    <Select
-                                        id="type"
-                                        value={selectedDamage}
-                                        label="Damage Types"
-                                        onChange={(e) => setSelectedDamage(e.target.value)}
-                                        style={{ width: 157 }}
+                                <Stack spacing={1}>
+                                    <Stack direction={"row"} spacing={1}>
+                                        <FormControl>
+                                            <InputLabel id="damage-label">Damage Types</InputLabel>
+                                            <Select
+                                                id="type"
+                                                value={selectedDamage}
+                                                label="Damage Types"
+                                                onChange={(e) => setSelectedDamage(e.target.value)}
+                                                style={{ width: 157 }}
 
-                                    >
-                                        <MenuItem value="acid">Acid</MenuItem>
-                                        <MenuItem value="bludgeoning">Bludgeoning</MenuItem>
-                                        <MenuItem value="cold">Cold</MenuItem>
-                                        <MenuItem value="fire">Fire</MenuItem>
-                                        <MenuItem value="force">Force</MenuItem>
-                                        <MenuItem value="lightning">Lightning</MenuItem>
-                                        <MenuItem value="necrotic">Necrotic</MenuItem>
-                                        <MenuItem value="piercing">Piercing</MenuItem>
-                                        <MenuItem value="poison">Poison</MenuItem>
-                                        <MenuItem value="psychic">Psychic</MenuItem>
-                                        <MenuItem value="radiant">Radiant</MenuItem>
-                                        <MenuItem value="slashing">Slashing</MenuItem>
-                                        <MenuItem value="thunder">Thunder</MenuItem>
-                                        <MenuItem value="bludgeoning, piercing, and slashing from nonmagical attacks">
-                                            Nonmagical BPS</MenuItem>
-                                        <MenuItem
-                                            value="bludgeoning, piercing, and slashing from nonmagical attacks that aren't Silvered.">
-                                            Nonsilver BPS
-                                        </MenuItem>
-                                        <MenuItem
-                                            value="bludgeoning, piercing, and slashing from nonmagical attacks not made with Adamantine">
-                                            Nonadamantine BPS
-                                        </MenuItem>
-                                    </Select>
-                                </FormControl>
-                                {(monsterStatblock.damage_vulnerability_list ? monsterStatblock.damage_vulnerability_list : []).map((damage, i) => {
-                                    return <div key={damage + i}><Button name={damage} onClick={removeDamage}
-                                        variant={"outlined"}>
-                                        {damage} (Vulnerable)&nbsp;
-                                        <BsFillTrashFill />
-                                    </Button></div>
-                                })}
-                                {(monsterStatblock.damage_resistance_list ? monsterStatblock.damage_resistance_list : []).map((damage, i) => {
-                                    return <div key={damage + i}><Button name={damage} onClick={removeDamage}
-                                        variant={"outlined"}>
-                                        {damage} (Resistant)&nbsp;
-                                        <BsFillTrashFill />
-                                    </Button></div>
-                                })}
-                                {(monsterStatblock.damage_immunity_list ? monsterStatblock.damage_immunity_list : []).map((damage, i) => {
-                                    return <div key={damage + i}><Button name={damage} onClick={removeDamage}
-                                        variant={"outlined"}>
-                                        {damage} (Immune)&nbsp;
-                                        <BsFillTrashFill />
-                                    </Button></div>
-                                })}
-                            </Grid>
-                            <Grid>
-                                <ButtonGroup orientation={"horizontal"}>
-                                    <Button type={"button"} onClick={() => addDamageVulnerability()}>Vulnerable</Button>
-                                    <Button type={"button"} onClick={() => addDamageResistance()}>Resistant</Button>
-                                    <Button type={"button"} onClick={() => addDamageImmunity()}>Immune</Button>
-                                </ButtonGroup>
+                                            >
+                                                <MenuItem value="acid">Acid</MenuItem>
+                                                <MenuItem value="bludgeoning">Bludgeoning</MenuItem>
+                                                <MenuItem value="cold">Cold</MenuItem>
+                                                <MenuItem value="fire">Fire</MenuItem>
+                                                <MenuItem value="force">Force</MenuItem>
+                                                <MenuItem value="lightning">Lightning</MenuItem>
+                                                <MenuItem value="necrotic">Necrotic</MenuItem>
+                                                <MenuItem value="piercing">Piercing</MenuItem>
+                                                <MenuItem value="poison">Poison</MenuItem>
+                                                <MenuItem value="psychic">Psychic</MenuItem>
+                                                <MenuItem value="radiant">Radiant</MenuItem>
+                                                <MenuItem value="slashing">Slashing</MenuItem>
+                                                <MenuItem value="thunder">Thunder</MenuItem>
+                                                <MenuItem value="bludgeoning, piercing, and slashing from nonmagical attacks">
+                                                    Nonmagical BPS</MenuItem>
+                                                <MenuItem
+                                                    value="bludgeoning, piercing, and slashing from nonmagical attacks that aren't Silvered.">
+                                                    Nonsilver BPS
+                                                </MenuItem>
+                                                <MenuItem
+                                                    value="bludgeoning, piercing, and slashing from nonmagical attacks not made with Adamantine">
+                                                    Nonadamantine BPS
+                                                </MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <ButtonGroup orientation={"horizontal"}>
+                                            <Button type={"button"} onClick={() => addDamageVulnerability()}>Vulnerable</Button>
+                                            <Button type={"button"} onClick={() => addDamageResistance()}>Resistant</Button>
+                                            <Button type={"button"} onClick={() => addDamageImmunity()}>Immune</Button>
+                                        </ButtonGroup>
+                                    </Stack>
+                                    {(monsterStatblock.damage_vulnerability_list ? monsterStatblock.damage_vulnerability_list : []).map((damage, i) => {
+                                        return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                            variant={"outlined"}>
+                                            {damage} (Vulnerable)&nbsp;
+                                            <BsFillTrashFill />
+                                        </Button></div>
+                                    })}
+                                    {(monsterStatblock.damage_resistance_list ? monsterStatblock.damage_resistance_list : []).map((damage, i) => {
+                                        return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                            variant={"outlined"}>
+                                            {damage} (Resistant)&nbsp;
+                                            <BsFillTrashFill />
+                                        </Button></div>
+                                    })}
+                                    {(monsterStatblock.damage_immunity_list ? monsterStatblock.damage_immunity_list : []).map((damage, i) => {
+                                        return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                            variant={"outlined"}>
+                                            {damage} (Immune)&nbsp;
+                                            <BsFillTrashFill />
+                                        </Button></div>
+                                    })}
+                                </Stack>
                             </Grid>
                         </Grid>
 
                     </FormControl>
 
                     <Grid container spacing={2} marginY={rowSpacing}>
-                        <Item>
+                        <Grid size={4}>
                             <TextField fullWidth name="languages" label="Languages" variant="outlined"
                                 value={monsterStatblock.languages} onChange={handleInputChange} />
-                        </Item>
-                        <Item>
+                        </Grid>
+
+                        <Grid size={2}>
                             <TextField name="blindsight" label="Blindsight"
                                 variant="outlined"
                                 value={monsterStatblock.blindsight} onChange={handleInputChange}
                                 type={"number"} />
-                        </Item>
-                        <Item><TextField name="darkvision" label="Darkvision"
-                            variant="outlined"
-                            value={monsterStatblock.darkvision} onChange={handleInputChange}
-                            type={"number"} /></Item>
-                        <Item><TextField name="tremorsense" label="Tremorsense"
-                            variant="outlined"
-                            value={monsterStatblock.tremorsense} onChange={handleInputChange}
-                            type={"number"} /></Item>
-                        <Item><TextField name="truesight" label="Truesight"
-                            variant="outlined"
-                            value={monsterStatblock.truesight} onChange={handleInputChange}
-                            type={"number"} /></Item>
+                        </Grid>
+                        <Grid size={2}>
+                            <TextField name="darkvision" label="Darkvision"
+                                variant="outlined"
+                                value={monsterStatblock.darkvision} onChange={handleInputChange}
+                                type={"number"} />
+                        </Grid>
+                        <Grid size={2}>
+                            <TextField name="tremorsense" label="Tremorsense"
+                                variant="outlined"
+                                value={monsterStatblock.tremorsense} onChange={handleInputChange}
+                                type={"number"} />
+                        </Grid>
+                        <Grid size={2}>
+                            <TextField name="truesight" label="Truesight"
+                                variant="outlined"
+                                value={monsterStatblock.truesight} onChange={handleInputChange}
+                                type={"number"} />
+                        </Grid>
                     </Grid>
-                    <div style={{ display: "flex" }}>
-                        <Typography align={"center"} height={"100%"} padding={"5px"}>
-                            Abilities:
-                        </Typography>
-                        <Button type={"button"} onClick={addSpecialAbility}>New Ability</Button>
-                    </div>
-                    <Grid>
+                    <Stack>
+                        <Stack direction={"row"}>
+                            <Typography align={"center"} height={"100%"} padding={"5px"}>
+                                Abilities:
+                            </Typography>
+                            <Button type={"button"} onClick={addSpecialAbility}>New Ability</Button>
+                        </Stack>
+
                         {specialAbilities.map((ability, index: number) => {
                             return <AbilityRow ability={ability} key={ability.name + index} index={index}
                                 handleAbilityUpdate={handleSpecialAbilityUpdate}
@@ -1518,31 +1575,27 @@ const CreateMonsterStatblock = () => {
                                 moveCreatureItemUp={() => moveCreatureItemUp("special_abilities", index, setSpecialAbilities)}
                                 moveCreatureItemDown={() => moveCreatureItemDown("special_abilities", index, setSpecialAbilities)} />
                         })}
-                    </Grid>
-                    {/* Actions */}
-                    <div style={{ display: "flex" }}>
-                        <Typography align={"center"} height={"100%"} padding={"5px"}>
-                            Actions:
-                        </Typography>
-                        <Button type={"button"} onClick={addAction}>New Action</Button>
-                    </div>
-                    {actions.map((action, index: number) => {
-                        return <ActionRow action={action} key={action.name + index} index={index}
-                            monsterData={monsterStatblock}
-                            handleActionUpdate={handleActionUpdate}
-                            handleActionRemove={() => removeAction(index)}
-                            moveCreatureItemUp={() => moveCreatureItemUp("actions", index, setActions)}
-                            moveCreatureItemDown={() => moveCreatureItemDown("actions", index, setActions)} />
-                    })}
+                        <Stack direction={"row"}>
+                            <Typography align={"center"} height={"100%"} padding={"5px"}>
+                                Actions:
+                            </Typography>
+                            <Button type={"button"} onClick={addAction}>New Action</Button>
+                        </Stack>
+                        {actions.map((action, index: number) => {
+                            return <ActionRow action={action} key={action.name + index} index={index}
+                                monsterData={monsterStatblock}
+                                handleActionUpdate={handleActionUpdate}
+                                handleActionRemove={() => removeAction(index)}
+                                moveCreatureItemUp={() => moveCreatureItemUp("actions", index, setActions)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("actions", index, setActions)} />
+                        })}
+                        <Stack direction={"row"}>
+                            <Typography align={"center"} height={"100%"} padding={"5px"}>
+                                Bonus Actions:
+                            </Typography>
+                            <Button type={"button"} onClick={addBonusAction}>New Bonus Action</Button>
+                        </Stack>
 
-                    {/* Bonus Actions */}
-                    <div style={{ display: "flex" }}>
-                        <Typography align={"center"} height={"100%"} padding={"5px"}>
-                            Bonus Actions:
-                        </Typography>
-                        <Button type={"button"} onClick={addBonusAction}>New Bonus Action</Button>
-                    </div>
-                    <div>
                         {bonusActions.map((bonus_action, index: number) => {
                             return <AbilityRow ability={bonus_action} key={bonus_action.name + index} index={index}
                                 handleAbilityUpdate={handleBonusActionUpdate}
@@ -1550,76 +1603,61 @@ const CreateMonsterStatblock = () => {
                                 moveCreatureItemUp={() => moveCreatureItemUp("bonus_actions", index, setBonusActions)}
                                 moveCreatureItemDown={() => moveCreatureItemDown("bonus_actions", index, setBonusActions)} />
                         })}
-                    </div>
-                    {/* Reactions */}
-                    <div style={{ display: "flex" }}>
-                        <Typography align={"center"} height={"100%"} padding={"5px"}>
-                            Reactions:
-                        </Typography>
-                        <Button type={"button"} onClick={addReaction}>New Reaction</Button>
-                    </div>
+                        <Stack direction={"row"}>
+                            <Typography align={"center"} height={"100%"} padding={"5px"}>
+                                Reactions:
+                            </Typography>
+                            <Button type={"button"} onClick={addReaction}>New Reaction</Button>
+                        </Stack>
+                        {reactions.map((reaction, index: number) => {
+                            return <AbilityRow ability={reaction} key={reaction.name + index} index={index}
+                                handleAbilityUpdate={handleReactionUpdate}
+                                handleAbilityRemove={() => removeReaction(index)}
+                                moveCreatureItemUp={() => moveCreatureItemUp("reactions", index, setReactions)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("reactions", index, setReactions)} />
+                        })}
+                        <TextField name="legendary_desc" label="Legendary Description"
+                            variant="outlined"
+                            value={monsterStatblock.legendary_desc} onChange={handleInputChange} multiline
+                            fullWidth />
+                        <Stack direction={"row"}>
 
-                    {reactions.map((reaction, index: number) => {
-                        return <AbilityRow ability={reaction} key={reaction.name + index} index={index}
-                            handleAbilityUpdate={handleReactionUpdate}
-                            handleAbilityRemove={() => removeReaction(index)}
-                            moveCreatureItemUp={() => moveCreatureItemUp("reactions", index, setReactions)}
-                            moveCreatureItemDown={() => moveCreatureItemDown("reactions", index, setReactions)} />
-                    })}
+                            <Typography align={"center"} height={"100%"} padding={"5px"}>
+                                Legendary Actions:
+                            </Typography>
+                            <Button type={"button"} onClick={addLegendaryAction}>New Legendary Action</Button>
+                        </Stack>
 
-                    <Grid container spacing={2} marginY={rowSpacing}>
-                        <Item>
-                            <TextField name="legendary_desc" label="Legendary Description"
-                                variant="outlined"
-                                value={monsterStatblock.legendary_desc} onChange={handleInputChange} multiline
-                                fullWidth />
-                        </Item>
-                    </Grid>
-                    <div style={{ display: "flex" }}>
-                        <Typography align={"center"} height={"100%"} padding={"5px"}>
-                            Legendary Actions:
-                        </Typography>
-                        <Button type={"button"} onClick={addLegendaryAction}>New Legendary Action</Button>
-                    </div>
+                        {legendaryActions.map((legendary_action, index: number) => {
+                            return <AbilityRow ability={legendary_action} key={legendary_action.name + index} index={index}
+                                handleAbilityUpdate={handleLegendaryActionUpdate}
+                                handleAbilityRemove={() => removeLegendaryAction(index)}
+                                moveCreatureItemUp={() => moveCreatureItemUp("legendary_actions", index, setLegendaryActions)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("legendary_actions", index, setLegendaryActions)} />
+                        })}
+                        <TextField name="mythic_desc" label="Mythic Description"
+                            variant="outlined"
+                            value={monsterStatblock.mythic_desc} onChange={handleInputChange} multiline
+                            fullWidth />
+                        <Stack direction={"row"}>
+                            <Typography align={"center"} height={"100%"} padding={"5px"}>
+                                Mythic Actions:
+                            </Typography>
+                            <Button type={"button"} onClick={addMythicAction}>New Mythic Action</Button>
+                        </Stack>
+                        {mythicActions.map((mythic_action, index: number) => {
+                            return <AbilityRow ability={mythic_action} key={mythic_action.name + index} index={index}
+                                handleAbilityUpdate={handleMythicActionUpdate}
+                                handleAbilityRemove={() => removeMythicAction(index)}
+                                moveCreatureItemUp={() => moveCreatureItemUp("mythic_actions", index, setMythicActions)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("mythic_actions", index, setMythicActions)} />
+                        })}
 
-                    {legendaryActions.map((legendary_action, index: number) => {
-                        return <AbilityRow ability={legendary_action} key={legendary_action.name + index} index={index}
-                            handleAbilityUpdate={handleLegendaryActionUpdate}
-                            handleAbilityRemove={() => removeLegendaryAction(index)}
-                            moveCreatureItemUp={() => moveCreatureItemUp("legendary_actions", index, setLegendaryActions)}
-                            moveCreatureItemDown={() => moveCreatureItemDown("legendary_actions", index, setLegendaryActions)} />
-                    })}
+                        <TextField name="desc" label="Creature Description"
+                            variant="outlined"
+                            value={monsterStatblock.desc} onChange={handleInputChange} multiline fullWidth />
 
-                    <Grid container spacing={2} marginY={rowSpacing}>
-                        <Item>
-                            <TextField name="mythic_desc" label="Mythic Description"
-                                variant="outlined"
-                                value={monsterStatblock.mythic_desc} onChange={handleInputChange} multiline
-                                fullWidth />
-                        </Item>
-                    </Grid>
-                    <div style={{ display: "flex" }}>
-                        <Typography align={"center"} height={"100%"} padding={"5px"}>
-                            Mythic Actions:
-                        </Typography>
-                        <Button type={"button"} onClick={addMythicAction}>New Mythic Action</Button>
-                    </div>
-
-                    {mythicActions.map((mythic_action, index: number) => {
-                        return <AbilityRow ability={mythic_action} key={mythic_action.name + index} index={index}
-                            handleAbilityUpdate={handleMythicActionUpdate}
-                            handleAbilityRemove={() => removeMythicAction(index)}
-                            moveCreatureItemUp={() => moveCreatureItemUp("mythic_actions", index, setMythicActions)}
-                            moveCreatureItemDown={() => moveCreatureItemDown("mythic_actions", index, setMythicActions)} />
-                    })}
-
-                    <Grid container spacing={2} marginY={rowSpacing}>
-                        <Item>
-                            <TextField name="desc" label="Creature Description"
-                                variant="outlined"
-                                value={monsterStatblock.desc} onChange={handleInputChange} multiline fullWidth />
-                        </Item>
-                    </Grid>
+                    </Stack>
                 </form>
 
             </div >
