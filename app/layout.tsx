@@ -6,7 +6,7 @@ import "./app.css";
 import AuthenticatorWrapper from "./AuthenticatorWrapper";
 import "@aws-amplify/ui-react/styles.css";
 
-import ThemeRegistry from "@/components/themeRegistry/themeRegistry";
+import ThemeRegistry from "../components/themeRegistry/themeRegistry";
 
 const inter = Inter({ subsets: ["latin"] });
 
