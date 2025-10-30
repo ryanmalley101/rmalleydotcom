@@ -21,9 +21,9 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 // Use an any-typed alias to avoid MUI Grid typing overload issues while we migrate props
 import { getMonsterProf, scoreToMod } from "@/5eReference/converters";
-import AbilityRow from "@components/creatorComponents/abilityrow";
-import ActionRow from "@components/creatorComponents/actionrow";
-import MonsterSheet, { cleanMonster } from "@components/creatorComponents/monsterSheet";
+import AbilityRow from "@/app/components/creatorComponents/abilityrow";
+import ActionRow from "@/app/components/creatorComponents/actionrow";
+import MonsterSheet, { cleanMonster } from "@/app/components/creatorComponents/monsterSheet";
 import html2canvas from "html2canvas";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BsFillTrashFill } from "react-icons/bs";
