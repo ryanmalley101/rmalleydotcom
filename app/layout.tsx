@@ -6,7 +6,7 @@ import "./app.css";
 
 import AuthenticatorWrapper from "./AuthenticatorWrapper";
 // NOTE: You can remove the duplicate style import if it's already in amplifyConfig.ts
-// import "@aws-amplify/ui-react/styles.css"; 
+import "@aws-amplify/ui-react/styles.css"; 
 
 import ThemeRegistry from "./components/themeRegistry/themeRegistry"
 
