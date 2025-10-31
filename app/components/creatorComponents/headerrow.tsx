@@ -192,6 +192,8 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
 
             const items = (result || []) as MonsterListItem[];
 
+            console.log(items)
+
             setMonsterList(items.sort((a, b) => a.name.localeCompare(b.name)))
         }
 
