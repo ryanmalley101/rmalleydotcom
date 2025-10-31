@@ -6,6 +6,7 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify"; // <-- Import Amplify here
 import outputs from "@/amplify_outputs.json"; // <-- Import outputs here
 import React, { useEffect } from 'react'; // <-- Import useEffect
+import "@aws-amplify/ui-react/styles.css"; 
 
 // Optional: You can remove the styles import from layout/config now
 // import "@aws-amplify/ui-react/styles.css"; 
@@ -20,7 +21,8 @@ export default function AuthenticatorWrapper({
 }) {
     useEffect(() => {
         // Only run configuration once in the browser
-        if (!isAmplifyConfigured) {
+        // if (!isAmplifyConfigured) {
+        if (true) {
             try {
                 // Configure Amplify with the client-side outputs
                 Amplify.configure(outputs);

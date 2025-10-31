@@ -6,6 +6,7 @@ import useConsoleError from '@/app/components/statusComponents/useConsoleError';
 // import outputs from "@/amplify_outputs.json";
 // import "@aws-amplify/ui-react/styles.css";
 
+
 // Amplify.configure(outputs);
 const MonsterCreator = () => {
     // const errorList = useConsoleError();
