@@ -22,12 +22,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body> 
-        {/* The configuration is now guaranteed to run before AuthenticatorWrapper */}
-        {/* 🛑 DEBUG MARKER START */}
-        <div id="root-layout-marker" style={{ border: '2px solid red', padding: '5px' }}>
-          GLOBAL LAYOUT IS ACTIVE
-        </div>
-        {/* 🛑 DEBUG MARKER END */}
         <AuthenticatorWrapper>
           <ThemeRegistry>
             {children}

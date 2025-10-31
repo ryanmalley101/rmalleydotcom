@@ -268,7 +268,7 @@ const schema = a.schema({
   MonsterAttack,
   MonsterStatblock: a.model({
     id: a.id().required(),
-    ownerId: a.string().required(),
+    publisher: a.string().required(),
     name: a.string().required(),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
