@@ -187,7 +187,7 @@ const CreateMonsterStatblock = () => {
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target as HTMLInputElement & { name: string; value: any };
-        setMonsterStatblock({ ...monsterStatblock, ...calculateDependentStats(monsterStatblock), [name]: value });
+        setMonsterStatblock({ ...monsterStatblock, ...calculateDependentStats({...monsterStatblock, [name]: value}), [name]: value });
     };
 
     const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {

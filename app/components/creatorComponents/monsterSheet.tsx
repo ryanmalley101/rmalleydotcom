@@ -274,7 +274,7 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, r
     for (const [skill, mod] of Object.entries(monsterData.skills)) {
       if (mod && mod !== mods[skillToAbilityMap[skill as SkillName]]) {
         const upperCaseValue = skill.toString().charAt(0).toUpperCase() + skill.toString().slice(1)
-        skillStr = skillStr.concat(upperCaseValue, " ", plusMinus(mod), ', ')
+        skillStr = skillStr.concat(upperCaseValue, " ", plusMinus(mod), ', ').replace('_', ' ')
       }
     }
     skillStr = skillStr.substring(0, skillStr.length - 2)
