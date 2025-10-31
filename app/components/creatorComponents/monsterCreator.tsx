@@ -56,7 +56,7 @@ type MyMonsterAttack = Schema['MonsterAttack']['type'];
 // Assumed interface for the minimal list item returned by the list query
 interface MonsterListItem {
     id: string;
-    ownerId: string;
+    publisher: string;
     name: string;
     slug?: string; // Included based on the initial state definition
 }
@@ -110,7 +110,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
             // Generate a new input object for monster creation, omitting fields that are auto-generated or not allowed on create
             const input = {
                 ...newMonsterStats,
-                ownerId: 'spellbound',
+                publisher: 'spellbound',
                 name: newMonsterName,
             };
 
@@ -131,7 +131,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
     const [selectedOption, setSelectedOption] = useState<string>('');
     // State for the monster list
     const [monsterList, setMonsterList] = useState<MonsterListItem[]>([
-        { id: 'none', ownerId: 'none', name: 'No Monsters Found', slug: 'No Monsters Found' }
+        { id: 'none', publisher: 'none', name: 'No Monsters Found', slug: 'No Monsters Found' }
     ])
     // State for search text
     const [searchText, setSearchText] = useState<string>("");
@@ -147,7 +147,8 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
             // Using the raw query string from the original JS. The response is typed as 'any'.
             const { data: result, errors } = await client.models.MonsterStatblock.list(
                 {
-                    selectionSet: ['id', 'ownerId', 'name'],
+                    selectionSet: ['id', 'publisher', 'name'],
+                    limit: 1000
                 }
             );
 
@@ -189,7 +190,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
         let savedMonster: MyMonsterStatblock | null = null
         console.log("TRYING TO SAVE MONSTER", input)
 
-        if (input.ownerId === 'wotc-srd') {
+        if (input.publisher === 'wotc-srd') {
             console.error("Can't overwrite wizards of the coast creature")
             return
         }
@@ -242,7 +243,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
     }
 
     // Function parameters typed
-    const getMonster = async (id: string, ownerId: string) => {
+    const getMonster = async (id: string) => {
         console.log(id)
         if (window.confirm("Fetching a new monster will overwrite the existing statblock")) {
             if (id) {
@@ -320,7 +321,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
                             </ListSubheader>
                             {displayedOptions.map((option, i) => (
                                 // The value of MenuItem is a string
-                                <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id, option.ownerId)}>
+                                <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id)}>
                                     {option.name}
                                 </MenuItem>
                             ))}
@@ -336,11 +337,11 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
 
 const newMonsterStats = {
     id: '0',
-    name: 'Knight',
+    name: 'New Monster',
     desc: '',
     size: 'medium',
     type: 'humanoid',
-    ownerId: 'wotc-srd',
+    publisher: 'spellbound',
     group: "",
     subtype: '',
     alignment: 'lawful good',
@@ -696,7 +697,7 @@ const CreateMonsterStatblock = () => {
     const addSpecialAbility = () => {
         console.log("Adding new special ability")
 
-        const ability_num = monsterStatblock.special_abilities ? monsterStatblock.special_abilities.length.toString : "0"
+        const ability_num = monsterStatblock.special_abilities ? monsterStatblock.special_abilities.length.toString() : "0"
 
         setSpecialAbilities((oldAbilities) => {
             return [...oldAbilities, { name: `New Ability ${ability_num}`, desc: "New Description" }]
@@ -919,11 +920,13 @@ const CreateMonsterStatblock = () => {
         setMonsterStatblock({ ...monsterStatblock, hit_points: calcHitPoints() })
     }, [monsterStatblock.hit_dice_num, monsterStatblock.constitution])
 
-    const isInitialized = useRef(false);
+    const initializedMonsterId = useRef(monsterStatblock.id);
 
     useEffect(() => {
         // Only run this on initial load or when monsterStatblock is replaced entirely
-        if (monsterStatblock && !isInitialized.current) {
+        if (monsterStatblock && monsterStatblock.id !== initializedMonsterId.current) {
+            console.log("Initializing creature state from monsterStatblock prop", monsterStatblock)
+
             changeSize(monsterStatblock.size)
             setSaveList((monsterStatblock.save_proficiencies ?? []).filter((v): v is string => v != null))
             setSkillList(monsterStatblock.skill_proficiencies ?? {})
@@ -938,7 +941,7 @@ const CreateMonsterStatblock = () => {
             setMythicActions((monsterStatblock.mythic_actions ?? []) as MyMonsterAbility[])
             setConditionImmunityList((monsterStatblock.condition_immunity_list ?? []) as string[])
 
-            isInitialized.current = true;
+            initializedMonsterId.current = monsterStatblock.id;
         }
     }, [monsterStatblock]);
 
@@ -968,6 +971,9 @@ const CreateMonsterStatblock = () => {
     }
 
     const theme = useTheme()
+
+    console.log("Rendering CreateMonsterStatblock")
+    console.log(specialAbilities)
 
 
     return (
@@ -1571,8 +1577,9 @@ const CreateMonsterStatblock = () => {
                             </Typography>
                             <Button type={"button"} onClick={addSpecialAbility}>New Ability</Button>
                         </Stack>
-
                         {specialAbilities.map((ability, index: number) => {
+                            console.log(`Ability`)
+                            console.log(ability)
                             return <AbilityRow ability={ability} key={ability.name + index} index={index}
                                 handleAbilityUpdate={handleSpecialAbilityUpdate}
                                 handleAbilityRemove={() => removeSpecialAbility(index)}

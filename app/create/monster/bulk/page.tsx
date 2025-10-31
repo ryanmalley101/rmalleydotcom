@@ -50,7 +50,7 @@ interface SkillProfs {
 // The exact structure expected by client.models.MonsterStatblock.create()
 interface MonsterStatblockInput {
   id: string;
-  ownerId: string;
+  publisher: string;
   createdAt: string;
   updatedAt: string;
   name: string;
@@ -208,7 +208,7 @@ const mapMonster = (raw: RawMonsterData): MonsterStatblockInput => {
 
   return {
     id: crypto.randomUUID(),
-    ownerId: 'user-uploader-123', // Placeholder: Replace with actual user ID from Auth context
+    publisher: raw.publisher,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
 
