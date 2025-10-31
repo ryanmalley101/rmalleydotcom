@@ -2,7 +2,14 @@
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+// app/layout.tsx
+
+// ...
 import "./app.css";
+// This is your global styles file. Ensure it imports the Amplify styles or:
+import "@aws-amplify/ui-react/styles.css"; // MUST BE ACTIVE
+
+// ...
 
 import AuthenticatorWrapper from "./AuthenticatorWrapper";
 // NOTE: You can remove the duplicate style import if it's already in amplifyConfig.ts

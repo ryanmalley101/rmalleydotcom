@@ -6,28 +6,23 @@ import {
     ButtonGroup,
     FormControl,
     Grid,
-    IconButton,
-    InputAdornment,
     InputLabel,
-    ListSubheader,
     MenuItem,
     Select,
     TextField,
-    Toolbar,
     Typography
 } from "@mui/material";
 import Box from '@mui/material/Box';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 // Use an any-typed alias to avoid MUI Grid typing overload issues while we migrate props
 import { getMonsterProf, scoreToMod } from "@/5eReference/converters";
 import AbilityRow from "@/app/components/creatorComponents/abilityrow";
 import ActionRow from "@/app/components/creatorComponents/actionrow";
-import MonsterSheet, { cleanMonster } from "@/app/components/creatorComponents/monsterSheet";
+import MonsterSheet from "@/app/components/creatorComponents/monsterSheet";
 import html2canvas from "html2canvas";
-import { AiOutlineSearch } from "react-icons/ai";
 import { BsFillTrashFill } from "react-icons/bs";
-import { FaMasksTheater, FaPersonWalking } from "react-icons/fa6";
+import { FaMasksTheater } from "react-icons/fa6";
 import { GiAbdominalArmor, GiBearHead, GiBrain, GiDigHole, GiFlyingTrout, GiHeartPlus, GiMountainClimbing, GiOwl, GiRunningNinja, GiSprint, GiStrongMan, } from "react-icons/gi";
 // import AbilityScoreInput from './AbilityScoreInput';
 import { type Schema } from '@/amplify/data/resource';
@@ -37,10 +32,8 @@ import { generateClient } from 'aws-amplify/data';
 import Image from 'next/image';
 import { IconContext } from 'react-icons';
 import AbilityScoreInput from './abilityscoreinput';
-import AppBar from '@mui/material/AppBar';
-import { MdOutlineMenu } from "react-icons/md";
-import { PiShovel } from "react-icons/pi";
 import { GrSwim } from "react-icons/gr";
+import HeaderRow from './headerrow';
 // import { Amplify } from "aws-amplify";
 // import outputs from "@/amplify_outputs.json";
 // import "@aws-amplify/ui-react/styles.css";
@@ -76,264 +69,6 @@ interface HeaderRowProps {
 }
 
 // --- The TypeScript Component ---
-
-const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile }) => {
-
-    const theme = useTheme()
-
-    // State is typed using the Amplify Gen 2 type
-    const [monsterStatblock, setMonsterStatblock] = useState<MyMonsterStatblock>(monster)
-
-    useEffect(() => setMonsterStatblock(monster), [monster])
-    // `Date.now()` returns a number (timestamp)
-    const [saveThrottleTime, setSaveThrottleTime] = useState<number>(Date.now())
-
-    // Function typing: takes two strings, returns a boolean
-    const containsText = (text: string, searchText: string): boolean =>
-        text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || searchText === '';
-
-    const newMonster = async () => {
-        // window.prompt returns string | null
-        const newMonsterName = window.prompt("Enter Creature Name: NOTE - Creating a new monster will reset the current statblock")
-        if (!newMonsterName) {
-            console.error("No monster name provided")
-            return
-        }
-
-        // The list is typed as MonsterListItem[]
-        if (monsterList.filter((m) => m.name === newMonsterName).length > 0) {
-            console.error("Creature's name is already in the database")
-        }
-
-        try {
-            // Merge new stats with required fields; type as a Partial of the generated model
-            // Generate a new input object for monster creation, omitting fields that are auto-generated or not allowed on create
-            const input = {
-                ...newMonsterStats,
-                publisher: 'spellbound',
-                name: newMonsterName,
-            };
-
-
-            const { errors, data: response } = await client.models.MonsterStatblock.create({
-                ...input
-            })
-
-            console.log("New Monster Response", response)
-            // Assuming `cleanMonster` returns a valid MyMonsterStatblock
-            setMonster(cleanMonster(response))
-        } catch (e) {
-            console.error("Error creating creature:", e);
-        }
-    }
-
-    // State for dropdown selection value (monster name)
-    const [selectedOption, setSelectedOption] = useState<string>('');
-    // State for the monster list
-    const [monsterList, setMonsterList] = useState<MonsterListItem[]>([
-        { id: 'none', publisher: 'none', name: 'No Monsters Found', slug: 'No Monsters Found' }
-    ])
-    // State for search text
-    const [searchText, setSearchText] = useState<string>("");
-
-    // Memoized list is typed as MonsterListItem[]
-    const displayedOptions = useMemo(
-        () => monsterList.filter((option) => containsText(option.name, searchText)),
-        [searchText, monsterList]
-    )
-
-    useEffect(() => {
-        const getMonsterList = async () => {
-            // Using the raw query string from the original JS. The response is typed as 'any'.
-            const { data: result, errors } = await client.models.MonsterStatblock.list(
-                {
-                    selectionSet: ['id', 'publisher', 'name'],
-                    limit: 1000
-                }
-            );
-
-            // The inner items need to be typed as MonsterListItem[] for safe sorting
-            const items = (result || []) as MonsterListItem[];
-
-            console.log(items.sort((a, b) => a.name.localeCompare(b.name)));
-
-            setMonsterList(items.sort((a, b) => a.name.localeCompare(b.name)))
-        }
-
-        getMonsterList()
-    }, []);
-
-    // NOTE: The dependency array for this useEffect is missing `saveMonster` 
-    // which is used inside. However, since `saveMonster` is defined right before 
-    // the effect and doesn't depend on props/state, this is often acceptable in JS/TS 
-    // to avoid an infinite loop if `saveMonster` were defined inside the component 
-    // or wrapped in `useCallback` (which isn't strictly needed here). I'll keep the original 
-    // dependencies and trust the function closure works as intended.
-    useEffect(() => {
-        console.log("MONSTER GOT CHANGED", monsterStatblock)
-        const currentTime = Date.now()
-
-        if (currentTime - saveThrottleTime > 5000) {
-            setSaveThrottleTime(currentTime)
-            saveMonster(monsterStatblock)
-        }
-    }, [monsterStatblock, saveThrottleTime]); // Added saveThrottleTime as it's used inside
-
-    // Function parameter typed as MyMonsterStatblock
-    const saveMonster = async (monsterToSave: MyMonsterStatblock) => {
-        // Convert to UpdateMonsterInput type which has the correct shape for the mutation
-        const input: MyMonsterStatblock = { ...monsterToSave };
-
-        // Type assertion to allow deleting a property that might not be on the static type
-        delete (input as any).__typename
-
-        let savedMonster: MyMonsterStatblock | null = null
-        console.log("TRYING TO SAVE MONSTER", input)
-
-        if (input.publisher === 'wotc-srd') {
-            console.error("Can't overwrite wizards of the coast creature")
-            return
-        }
-
-        // Checking for `id` which is required for an update mutation
-        if (!input.id) {
-            console.error("Attempting to update creature with no id")
-            return
-        }
-
-        console.log("Updating a monster", input)
-        try {
-            // Use Gen 2 client to update the monster
-            const { data: updatedCreature, errors } = await client.models.MonsterStatblock.update(input);
-        } catch (e) {
-            console.error("Error update creature:", e);
-        }
-        if (savedMonster) {
-            console.log("Saved monster", savedMonster)
-        }
-    }
-
-    // Function parameter typed as string | undefined
-    const exportJSON = (name: string | undefined) => {
-        const fileName = name ? name : "spellboundmonster";
-
-        // NOTE: The original JS uses `monster.monster`. This implies your `monster` prop
-        // has a nested structure. If `monster` is of type `MyMonsterStatblock`, this line
-        // should likely be `const json = JSON.stringify(monster, null, 2);`.
-        // Sticking to original JS for direct conversion, but casting to `any`.
-        const json = JSON.stringify((monster as any).monster, null, 2);
-
-        const blob = new Blob([json], { type: "application/json" });
-        const href = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = href;
-        link.download = fileName + ".json";
-        document.body.appendChild(link);
-        link.click();
-
-        document.body.removeChild(link);
-        URL.revokeObjectURL(href);
-    }
-
-    // Event object for MUI Select is typed
-    const handleSelectionChange = async (e: SelectChangeEvent<string>) => {
-        // e.target.value may be string
-        setSelectedOption(e.target.value as string)
-    }
-
-    // Function parameters typed
-    const getMonster = async (id: string) => {
-        console.log(id)
-        if (window.confirm("Fetching a new monster will overwrite the existing statblock")) {
-            if (id) {
-                try {
-                    const { data: existingMonster, errors } = await client.models.MonsterStatblock.get({
-                        id: id,
-                    });
-
-                    // Assuming cleanMonster returns MyMonsterStatblock
-                    setMonster(cleanMonster(existingMonster))
-                } catch (e) {
-                    console.error(e)
-                }
-            }
-        }
-    }
-
-    return (
-        < Box sx={{ flexGrow: 1 }} >
-            <AppBar>
-                <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                    >
-                        <MdOutlineMenu />
-                    </IconButton>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={newMonster} color="secondary">New</Button>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={() => saveMonster(monsterStatblock)} color="secondary">Save</Button>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={() => exportJSON(monster.name)} color="secondary">Export
-                        JSON</Button>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={downloadFile} color="secondary">Download
-                        PNG</Button>
-                    <FormControl style={{ left: "10%", minWidth: "200px" }}>
-                        <InputLabel id="search-select-label" style={{ color: "black" }}>Monster Name</InputLabel>
-                        <Select
-                            MenuProps={{ autoFocus: false }}
-                            labelId="search-select-label"
-                            id="search-select"
-                            // The value of Select must match the type of selectedOption
-                            value={selectedOption}
-                            label="Monsters"
-                            // onChange event is correctly inferred or typed (HTMLInputElement for Select component)
-                            onChange={handleSelectionChange}
-                            onClose={() => setSearchText("")}
-                            renderValue={() => selectedOption}
-                            style={{ backgroundColor: theme.palette.secondary.main, color: "#000000" }}
-                            sx={{ color: "black" }}
-                        >
-                            <ListSubheader>
-                                <TextField
-                                    size="small"
-                                    autoFocus
-                                    placeholder="Type to search..."
-                                    fullWidth
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <AiOutlineSearch />
-                                            </InputAdornment>
-                                        )
-                                    }}
-                                    // onChange event is typed
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
-                                    // onKeyDown event is typed
-                                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                        if (e.key !== "Escape") {
-                                            e.stopPropagation();
-                                        }
-                                    }}
-                                />
-                            </ListSubheader>
-                            {displayedOptions.map((option, i) => (
-                                // The value of MenuItem is a string
-                                <MenuItem key={`${option.id}-${i}`} value={option.name} onClick={() => getMonster(option.id)}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-
-                </Toolbar>
-
-            </AppBar>
-        </Box >
-    )
-}
 
 const newMonsterStats = {
     id: '0',
