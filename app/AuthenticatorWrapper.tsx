@@ -1,40 +1,32 @@
-// AuthenticatorWrapper.tsx
+// app/AuthenticatorWrapper.tsx 
 
 "use client"
 
 import { Authenticator } from "@aws-amplify/ui-react";
-import { Amplify } from "aws-amplify"; // <-- Import Amplify here
-import outputs from "@/amplify_outputs.json"; // <-- Import outputs here
-import React, { useEffect } from 'react'; // <-- Import useEffect
-import "@aws-amplify/ui-react/styles.css"; 
+import { Amplify } from "aws-amplify";
+import outputs from "@/amplify_outputs.json"; // Adjust path as needed
 
-// Optional: You can remove the styles import from layout/config now
-// import "@aws-amplify/ui-react/styles.css"; 
+// ⚠️ CRITICAL: Run configuration synchronously at the module level.
+// This ensures Amplify is configured before the Authenticator component renders.
+// The typeof window check is a safe guard, though usually unnecessary for a "use client" component.
+if (typeof window !== 'undefined' && !window.amplifyConfigured) {
+    try {
+        Amplify.configure(outputs);
+        // 🚀 This line is now valid TypeScript due to the global declaration.
+        window.amplifyConfigured = true; 
+        console.log("Amplify configured client-side successfully.");
+    } catch (error) {
+        console.error("Amplify client configuration failed:", error);
+    }
+}
 
-// A variable to track if configuration has run client-side
-let isAmplifyConfigured = false;
+// NOTE: Remove all previous Amplify.configure calls from layout.tsx and any useEffect hooks.
 
 export default function AuthenticatorWrapper({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    useEffect(() => {
-        // Only run configuration once in the browser
-        // if (!isAmplifyConfigured) {
-        if (true) {
-            try {
-                // Configure Amplify with the client-side outputs
-                Amplify.configure(outputs);
-                isAmplifyConfigured = true;
-                console.log("Amplify configured client-side successfully.");
-            } catch (error) {
-                console.error("Amplify configuration failed:", error);
-            }
-        }
-    }, []);
-
-    // The Authenticator component will wait for the client-side configuration 
-    // to be complete before attempting to use the Auth category.
+    // The Authenticator is now guaranteed to have the configuration ready.
     return <Authenticator>{children}</Authenticator>;
 }
