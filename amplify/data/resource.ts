@@ -318,14 +318,14 @@ const schema = a.schema({
     languages: a.string(),
     challenge_rating: a.string(),
     cr: a.float().required(),
-    special_abilities: a.ref('MonsterAbility').array(),
-    actions: a.ref('MonsterAttack').array(),
-    bonus_actions: a.ref('MonsterAbility').array(),
-    reactions: a.ref('MonsterAbility').array(),
+    special_abilities: a.ref('MonsterAbility').required().array(),
+    actions: a.ref('MonsterAttack').required().array(),
+    bonus_actions: a.ref('MonsterAbility').required().array(),
+    reactions: a.ref('MonsterAbility').required().array(),
     legendary_desc: a.string(),
-    legendary_actions: a.ref('MonsterAbility').array(),
+    legendary_actions: a.ref('MonsterAbility').required().array(),
     mythic_desc: a.string(),
-    mythic_actions: a.ref('MonsterAbility').array(),
+    mythic_actions: a.ref('MonsterAbility').required().array(),
   })
   .authorization(allow => [allow.authenticated()])
 

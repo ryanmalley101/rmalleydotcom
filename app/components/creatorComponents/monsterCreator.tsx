@@ -4,7 +4,9 @@ import styles from '@/styles/CreateMonsterStatblock.module.css';
 import {
     Button,
     ButtonGroup,
+    Checkbox,
     FormControl,
+    FormControlLabel,
     Grid,
     InputLabel,
     MenuItem,
@@ -16,7 +18,7 @@ import Box from '@mui/material/Box';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import React, { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 // Use an any-typed alias to avoid MUI Grid typing overload issues while we migrate props
-import { getMonsterProf, scoreToMod } from "@/5eReference/converters";
+import { calculateDependentStats, getMonsterProf, scoreToMod } from "@/5eReference/converters";
 import AbilityRow from "@/app/components/creatorComponents/abilityrow";
 import ActionRow from "@/app/components/creatorComponents/actionrow";
 import MonsterSheet from "@/app/components/creatorComponents/monsterSheet";
@@ -152,6 +154,10 @@ import { styled } from '@mui/material/styles';
 
 const Item = styled('div')(({}))
 
+// Define a type for the keys that map to arrays in the statblock for moving items
+type MonsterArrayKey = 'special_abilities' | 'actions' | 'bonus_actions' | 'reactions' | 'legendary_actions' | 'mythic_actions';
+
+
 const CreateMonsterStatblock = () => {
 
     const [monsterStatblock, setMonsterStatblock] = useState<MyMonsterStatblock>({
@@ -159,28 +165,37 @@ const CreateMonsterStatblock = () => {
         speed: newMonsterStats.speed || { walk: 0, swim: 0, fly: 0, burrow: 0, climb: 0, hover: false }
     });
 
+    // --- KEPT HELPER STATE ---
     const [selectedSave, setSelectedSave] = useState<string>("strength")
-    const [saveList, setSaveList] = useState<string[]>([])
     const [selectedSkill, setSelectedSkill] = useState<string>("acrobatics")
-    // skillList maps skill name to a proficiency flag: boolean, 'expertise', or null
-    const [skillList, setSkillList] = useState<Record<string, string | null>>({})
     const [selectedDamage, setSelectedDamage] = useState<string>("acid")
-    const [damageVulnerabilityList, setDamageVulnerabilityList] = useState<string[]>([""])
-    const [damageResistanceList, setDamageResistanceList] = useState<string[]>([""])
-    const [damageImmunityList, setDamageImmunityList] = useState<string[]>([""])
     const [selectedCondition, setSelectedCondition] = useState<string>("blinded")
-    const [conditionImmunityList, setConditionImmunityList] = useState<string[]>([])
-    const [specialAbilities, setSpecialAbilities] = useState<Array<MyMonsterAbility>>([])
-    const [actions, setActions] = useState<Array<MyMonsterAttack>>([])
-    const [bonusActions, setBonusActions] = useState<Array<MyMonsterAbility>>([])
-    const [reactions, setReactions] = useState<Array<MyMonsterAbility>>([])
-    const [legendaryActions, setLegendaryActions] = useState<Array<MyMonsterAbility>>([])
-    const [mythicActions, setMythicActions] = useState<Array<MyMonsterAbility>>([])
     const [hitDieSize, setHitDieSize] = useState<string>("d8")
+
+    // --- REMOVED ALL REDUNDANT STATE ---
+    // [saveList, setSaveList]
+    // [skillList, setSkillList]
+    // [conditionImmunityList, setConditionImmunityList]
+    // [specialAbilities, setSpecialAbilities]
+    // [actions, setActions]
+    // [bonusActions, setBonusActions]
+    // [reactions, setReactions]
+    // [legendaryActions, setLegendaryActions]
+    // [mythicActions, setMythicActions]
+    // ... (damage lists were removed in the previous step) ...
+
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target as HTMLInputElement & { name: string; value: any };
-        setMonsterStatblock({ ...monsterStatblock, [name]: value });
+        setMonsterStatblock({ ...monsterStatblock, ...calculateDependentStats(monsterStatblock), [name]: value });
+    };
+
+    const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = event.target;
+        setMonsterStatblock(prev => ({
+            ...prev,
+            [name]: checked
+        }));
     };
 
     const rowSpacing = 1
@@ -191,279 +206,211 @@ const CreateMonsterStatblock = () => {
             ...monsterStatblock,
             speed: {
                 ...monsterStatblock.speed,
-                [name]: parseInt(value, 10),
+                [name]: parseInt(value, 0),
             },
         })
     }
 
+    // --- REFACTORED Handlers (Saves, Skills, Conditions) ---
+
     const addSaveProficiency = () => {
-        console.log(`Adding save ${selectedSave}`)
-        const oldSaves = [...saveList]
-        if (!oldSaves.includes(selectedSave)) {
-            oldSaves.push(selectedSave)
-        }
-        setSaveList(oldSaves)
+        setMonsterStatblock(prevMonster => {
+            const currentSaves = prevMonster.save_proficiencies ?? [];
+            const newSaves = currentSaves.includes(selectedSave) ? currentSaves : [...currentSaves, selectedSave];
+            
+            // Recalculate derived stats
+            const tempMonster = { ...prevMonster, save_proficiencies: newSaves };
+            const calculatedFields = calculateDependentStats(tempMonster);
+            
+            return { ...tempMonster, ...calculatedFields };
+        });
     }
 
-    const removeSaveProficiency = () => {
-        setSaveList((saves) => {
-            return saves.filter((save) => save !== selectedSave)
-        })
-    }
-
-    const addDamageResistance = () => {
-        const oldDamage = [...damageResistanceList]
-        if (!oldDamage.includes(selectedDamage)) {
-            oldDamage.push(selectedDamage)
-        }
-        setDamageResistanceList(oldDamage)
-        setDamageVulnerabilityList(damageVulnerabilityList.filter((damage) => damage !== selectedDamage))
-        setDamageImmunityList(damageImmunityList.filter((damage) => damage !== selectedDamage))
-    }
-
-    const addDamageVulnerability = () => {
-        const oldDamage = [...damageVulnerabilityList]
-        if (!oldDamage.includes(selectedDamage)) {
-            oldDamage.push(selectedDamage)
-        }
-        setDamageVulnerabilityList(oldDamage)
-        setDamageResistanceList(damageResistanceList.filter((damage) => damage !== selectedDamage))
-        setDamageImmunityList(damageImmunityList.filter((damage) => damage !== selectedDamage))
-    }
-
-    const addDamageImmunity = () => {
-        const oldDamage = [...damageImmunityList]
-        if (!oldDamage.includes(selectedDamage)) {
-            oldDamage.push(selectedDamage)
-        }
-        setDamageImmunityList(oldDamage)
-        setDamageVulnerabilityList(damageVulnerabilityList.filter((damage) => damage !== selectedDamage))
-        setDamageResistanceList(damageResistanceList.filter((damage) => damage !== selectedDamage))
-    }
-
-    const removeDamage = () => {
-        setDamageVulnerabilityList((damageList) => {
-            return damageList.filter((damage) => damage !== selectedDamage)
-        })
-        setDamageResistanceList((damageList) => {
-            return damageList.filter((damage) => damage !== selectedDamage)
-        })
-        setDamageImmunityList((damageList) => {
-            return damageList.filter((damage) => damage !== selectedDamage)
-        })
+    const removeSaveProficiency = (saveToRemove: string) => {
+        setMonsterStatblock(prevMonster => {
+            const newSaves = (prevMonster.save_proficiencies ?? []).filter((save) => save !== saveToRemove)
+            
+            // Recalculate derived stats
+            const tempMonster = { ...prevMonster, save_proficiencies: newSaves };
+            const calculatedFields = calculateDependentStats(tempMonster);
+            
+            return { ...tempMonster, ...calculatedFields };
+        });
     }
 
     const addSkillProficiency = async (proficiency: string | null) => {
-        setSkillList({ ...skillList, [selectedSkill]: proficiency })
+         setMonsterStatblock(prevMonster => {
+            const newSkills = { ...(prevMonster.skill_proficiencies ?? {}), [selectedSkill]: proficiency };
+
+            // Recalculate derived stats
+            const tempMonster = { ...prevMonster, skill_proficiencies: newSkills };
+            const calculatedFields = calculateDependentStats(tempMonster);
+
+            return { ...tempMonster, ...calculatedFields };
+         });
     }
+
+    const removeSkillProficiency = (skillToRemove: string) => {
+        setMonsterStatblock(prevMonster => {
+            const newSkills = { ...(prevMonster.skill_proficiencies ?? {}), [skillToRemove]: null };
+            
+            // Recalculate derived stats
+            const tempMonster = { ...prevMonster, skill_proficiencies: newSkills };
+            const calculatedFields = calculateDependentStats(tempMonster);
+
+            return { ...tempMonster, ...calculatedFields };
+         });
+    }
+    
+    const addConditionImmunity = () => {
+        setMonsterStatblock(prev => {
+            const currentConditions = prev.condition_immunity_list ?? [];
+            if (currentConditions.includes(selectedCondition)) {
+                return prev;
+            }
+            const newConditions = [...currentConditions, selectedCondition];
+            return {
+                ...prev,
+                condition_immunity_list: newConditions,
+                condition_immunities: newConditions.join(", ")
+            };
+        });
+    }
+
+    const removeConditionImmunity = (conditionToRemove: string) => {
+        setMonsterStatblock(prev => {
+            const newConditions = (prev.condition_immunity_list ?? []).filter((condition) => condition !== conditionToRemove);
+            return {
+                ...prev,
+                condition_immunity_list: newConditions,
+                condition_immunities: newConditions.join(", ")
+            };
+        });
+    }
+
+    // --- REFACTORED Damage Handlers (from previous step, for completeness) ---
+
+    const handleDamageModification = (modType: 'vulnerability' | 'resistance' | 'immunity') => {
+        setMonsterStatblock(prevMonster => {
+            if (!selectedDamage) return prevMonster; 
+
+            let vulnerabilities = (prevMonster.damage_vulnerability_list || []).filter(d => d !== selectedDamage && d);
+            let resistances = (prevMonster.damage_resistance_list || []).filter(d => d !== selectedDamage && d);
+            let immunities = (prevMonster.damage_immunity_list || []).filter(d => d !== selectedDamage && d);
+
+            if (modType === 'vulnerability') {
+                vulnerabilities.push(selectedDamage);
+            } else if (modType === 'resistance') {
+                resistances.push(selectedDamage);
+            } else if (modType === 'immunity') {
+                immunities.push(selectedDamage);
+            }
+
+            return {
+                ...prevMonster,
+                damage_vulnerability_list: vulnerabilities,
+                damage_vulnerabilities: vulnerabilities.join(", "),
+                damage_resistance_list: resistances,
+                damage_resistances: resistances.join(", "),
+                damage_immunity_list: immunities,
+                damage_immunities: immunities.join(", "),
+            };
+        });
+    };
+
+    const removeDamageModification = (damageToRemove: string) => {
+        setMonsterStatblock(prevMonster => {
+            const newVulnerabilities = (prevMonster.damage_vulnerability_list || []).filter(d => d !== damageToRemove);
+            const newResistances = (prevMonster.damage_resistance_list || []).filter(d => d !== damageToRemove);
+            const newImmunities = (prevMonster.damage_immunity_list || []).filter(d => d !== damageToRemove);
+            
+            return {
+                ...prevMonster,
+                damage_vulnerability_list: newVulnerabilities,
+                damage_vulnerabilities: newVulnerabilities.join(", "),
+                damage_resistance_list: newResistances,
+                damage_resistances: newResistances.join(", "),
+                damage_immunity_list: newImmunities,
+                damage_immunities: newImmunities.join(", "),
+            };
+        });
+    };
+    
 
     const getPassivePerception = () => {
-        if (!monsterStatblock.skill_proficiencies || !monsterStatblock.skill_proficiencies["perception"]) {
-            return 10 + Number(scoreToMod(monsterStatblock.wisdom))
-        }
-        if (monsterStatblock.skill_proficiencies["perception"] == "proficient") {
-            return monsterStatblock.wisdom + getMonsterProf(monsterStatblock.cr)
-        }
-        return monsterStatblock.wisdom + (getMonsterProf(monsterStatblock.cr) * 2)
+        // This logic is now handled by calculateDependentStats, but we keep the function
+        // in case it's used elsewhere. The `useEffect` replacement will overwrite this.
+        // A better refactor would be to remove this and just use `monsterStatblock.perception`.
+        // For now, we trust `calculateDependentStats` to set `monsterStatblock.perception`.
+        return monsterStatblock.perception ?? 10 + Number(scoreToMod(monsterStatblock.wisdom));
     }
 
-    const moveCreatureItemUp = (item_type: string, index: number, setter: Dispatch<SetStateAction<any>>) => {
-        console.log(item_type + index + setter)
-        if (index === 0) return
 
-        setter((item_list: string[]) => {
-            const item = item_list[index - 1]
-            item_list[index - 1] = item_list[index]
-            item_list[index] = item
-            console.log(item_list)
-            return [...item_list]
-        })
+    // --- REFACTORED `moveCreatureItemUp/Down` ---
+    
+    const moveCreatureItemUp = (item_key: MonsterArrayKey, index: number) => {
+        setMonsterStatblock(prev => {
+            const list = (prev[item_key] as any[] | undefined) ?? [];
+            if (index === 0) return prev; // Cannot move up
+            
+            const newList = [...list];
+            const item = newList[index - 1];
+            newList[index - 1] = newList[index];
+            newList[index] = item;
+            
+            return { ...prev, [item_key]: newList };
+        });
     }
 
-    const moveCreatureItemDown = (item_type: string, index: number, setter: Dispatch<SetStateAction<any>>) => {
-        console.log(item_type + index + setter)
-
-        setter((item_list: string[]) => {
-            if (index === item_list.length - 1) return item_list
-            const item = item_list[index]
-            item_list[index] = item_list[index + 1]
-            item_list[index + 1] = item
-            console.log(item_list)
-            return [...item_list]
-        })
-
+    const moveCreatureItemDown = (item_key: MonsterArrayKey, index: number) => {
+         setMonsterStatblock(prev => {
+            const list = (prev[item_key] as any[] | undefined) ?? [];
+            if (index === list.length - 1) return prev; // Cannot move down
+            
+            const newList = [...list];
+            const item = newList[index];
+            newList[index] = newList[index + 1];
+            newList[index + 1] = item;
+            
+            return { ...prev, [item_key]: newList };
+        });
     }
 
-    useEffect(() => {
-        console.log("Creature is updating based on setState hook")
-        console.log(monsterStatblock)
-        console.log([saveList, skillList, damageVulnerabilityList, damageResistanceList, damageImmunityList,
-            conditionImmunityList, specialAbilities, actions, bonusActions, reactions, legendaryActions, mythicActions])
+
+    // --- DELETED THE GIANT `useEffect` HOOK ---
+    // [ The useEffect that synced saveList, skillList, etc., has been removed ]
 
 
-        const toUpperCase = (word: string) => {
-            return word.charAt(0).toUpperCase()
-                + word.slice(1)
-        }
-
-        const prof = getMonsterProf(monsterStatblock.cr)
-
-        const strMod = Number(scoreToMod(monsterStatblock.strength))
-        const dexMod = Number(scoreToMod(monsterStatblock.dexterity))
-        const conMod = Number(scoreToMod(monsterStatblock.constitution))
-        const intMod = Number(scoreToMod(monsterStatblock.intelligence))
-        const wisMod = Number(scoreToMod(monsterStatblock.wisdom))
-        const chaMod = Number(scoreToMod(monsterStatblock.charisma))
-
-        const strSave = saveList.includes("strength") ? strMod + prof : strMod
-        const dexSave = saveList.includes("dexterity") ? dexMod + prof : dexMod
-        const conSave = saveList.includes("constitution") ? conMod + prof : conMod
-        const intSave = saveList.includes("intelligence") ? intMod + prof : intMod
-        const wisSave = saveList.includes("wisdom") ? wisMod + prof : wisMod
-        const chaSave = saveList.includes("charisma") ? chaMod + prof : chaMod
-
-        const reduceSkills = () => {
-            const skillObject: Record<string, number> = {}
-            Object.entries(skillList).forEach(([key, val]) => {
-                if (val) {
-                    let mod = 0
-
-                    if (val === "proficient") {
-                        mod = prof
-                    } else if (val === "expertise") {
-                        mod = prof * 2
-                    } else {
-                        console.error(`Invalid skill value for ${key}: ${val}`)
-                    }
-
-                    if (key === "athletics") {
-                        skillObject[key] = (strMod + mod)
-                    }
-                    if (key === "acrobatics" || key === "sleight_of_hand" || key === "stealth")
-                        skillObject[key] = (dexMod + mod)
-                    if (key === "arcana" || key === "history" || key === "investigation" || key === "nature" || key === "religion") {
-                        skillObject[key] = (intMod + mod)
-                    }
-                    if (key === "animal_handling" || key === "insight" || key === "medicine" || key === "perception" || key === "survival") {
-                        skillObject[key] = (wisMod + mod)
-                    }
-                    if (key === "deception" || key === "intimidation" || key === "performance" || key === "persuasion") {
-                        skillObject[key] = (chaMod + mod)
-                    }
-                }
-            })
-            return skillObject
-        }
-
-        const getSenses = () => {
-            let sensesString = ""
-            if (monsterStatblock.blindsight !== 0) {
-                sensesString += `blindsight ${monsterStatblock.blindsight} ft.,`
-            }
-            if (monsterStatblock.darkvision !== 0) {
-                sensesString += `darkvision ${monsterStatblock.darkvision} ft.,`
-            }
-            if (monsterStatblock.tremorsense !== 0) {
-                sensesString += `tremorsense ${monsterStatblock.tremorsense} ft.,`
-            }
-            if (monsterStatblock.truesight !== 0) {
-                sensesString += `truesight ${monsterStatblock.truesight}`
-            }
-            sensesString += `passive Perception ${getPassivePerception()}`
-            return sensesString
-        }
-
-        setMonsterStatblock(
-            {
-                ...monsterStatblock,
-                skills: reduceSkills(),
-                perception: getPassivePerception(),
-                strength_save: strSave,
-                dexterity_save: dexSave,
-                constitution_save: conSave,
-                intelligence_save: intSave,
-                wisdom_save: wisSave,
-                charisma_save: chaSave,
-                condition_immunities: conditionImmunityList.length > 0 ? conditionImmunityList.join(", ") : "",
-                condition_immunity_list: conditionImmunityList,
-                damage_vulnerabilities: damageVulnerabilityList.length > 0 ? damageVulnerabilityList.join(", ") : "",
-                damage_vulnerability_list: damageVulnerabilityList,
-                damage_resistances: damageResistanceList.length > 0 ? damageResistanceList.join(", ") : "",
-                damage_resistance_list: damageResistanceList,
-                damage_immunities: damageImmunityList.length > 0 ? damageImmunityList.join(", ") : "",
-                damage_immunity_list: damageImmunityList,
-                skill_proficiencies: skillList,
-                save_proficiencies: saveList,
-                special_abilities: specialAbilities,
-                senses: getSenses(),
-                actions: actions,
-                bonus_actions: bonusActions,
-                reactions: reactions,
-                legendary_actions: legendaryActions,
-                mythic_actions: mythicActions
-            }
-        )
-    }, [saveList, skillList, damageVulnerabilityList, damageResistanceList, damageImmunityList,
-        conditionImmunityList, specialAbilities, actions, bonusActions, reactions, legendaryActions, mythicActions]);
-
-    // useEffect(() => {
-    //     setMonsterStatblock({...monsterStatblock, })
-    // }, [monsterStatblock.wisdom, monsterStatblock.skill_proficiencies]);
-
-    const removeSkillProficiency = () => {
-        setSkillList({ ...skillList, [selectedSkill]: null })
-    }
-
-    const addConditionImmunity = () => {
-        const oldConditions = [...conditionImmunityList]
-        if (!oldConditions.includes(selectedCondition)) {
-            console.log(`adding condition immunity ${selectedCondition}`)
-            oldConditions.push(selectedCondition)
-            setConditionImmunityList(oldConditions)
-        }
-    }
-
-    const removeConditionImmunity = () => {
-        setConditionImmunityList((conditionList) => {
-            return conditionList.filter((condition) => condition !== selectedCondition)
-        })
-    }
+    // --- REFACTORED Handlers (Abilities, Actions, etc.) ---
 
     const addSpecialAbility = () => {
-        console.log("Adding new special ability")
-
-        const ability_num = monsterStatblock.special_abilities ? monsterStatblock.special_abilities.length.toString() : "0"
-
-        setSpecialAbilities((oldAbilities) => {
-            return [...oldAbilities, { name: `New Ability ${ability_num}`, desc: "New Description" }]
-        })
+        setMonsterStatblock(prev => {
+            const currentAbilities = prev.special_abilities ?? [];
+            const ability_num = currentAbilities.length.toString();
+            const newAbility = { name: `New Ability ${ability_num}`, desc: "New Description" };
+            return { ...prev, special_abilities: [...currentAbilities, newAbility] };
+        });
     }
 
     const removeSpecialAbility = (index: number) => {
-        console.log(`Removing special ability ${index}`)
-        setSpecialAbilities((oldSpecialAbilities) => {
-            return oldSpecialAbilities.filter((action, i) => i !== index)
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            special_abilities: (prev.special_abilities ?? []).filter((_, i) => i !== index)
+        }));
     }
 
     const handleSpecialAbilityUpdate = (ability: MyMonsterAbility, index: number) => {
-        setSpecialAbilities((oldAbilities) => {
-            return oldAbilities.map((oldAbility, oldIndex: number) => {
-                if (oldIndex === index) {
-                    return ability
-                }
-                return oldAbility
-            })
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            special_abilities: (prev.special_abilities ?? []).map((old, i) => i === index ? ability : old)
+        }));
     }
 
     const addAction = () => {
-        console.log("Adding new action")
-
-        const action_num = monsterStatblock.actions ? monsterStatblock.actions.length.toString() : "0"
-
-        setActions((oldActions) => {
-            return [...oldActions, {
+        setMonsterStatblock(prev => {
+            const currentActions = prev.actions ?? [];
+            const action_num = currentActions.length.toString();
+            const newAction = {
                 name: `New Action ${action_num}`,
                 desc: "Action",
                 type: "Melee Weapon Attack",
@@ -473,138 +420,115 @@ const CreateMonsterStatblock = () => {
                 long_range: 0,
                 targets: "One Target.",
                 damage: [{ damage_dice: "1d6", damage_type: "slashing" }],
-            }]
-        })
+            };
+            return { ...prev, actions: [...currentActions, newAction] };
+        });
     }
 
     const removeAction = (index: number) => {
-        console.log(`Removing action ${index}`)
-        setActions((oldActions) => {
-            return oldActions.filter((action, i) => i !== index)
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            actions: (prev.actions ?? []).filter((_, i) => i !== index)
+        }));
     }
 
     const handleActionUpdate = (action: MyMonsterAttack, index: number) => {
-        setActions((oldActions) => {
-            return oldActions.map((oldAction, oldIndex: number) => {
-                if (oldIndex === index) {
-                    return action
-                }
-                return oldAction
-            })
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            actions: (prev.actions ?? []).map((old, i) => i === index ? action : old)
+        }));
     }
 
     const addBonusAction = () => {
-        console.log("Adding new bonus action")
-
-        const bonus_action_num = monsterStatblock.bonus_actions ? monsterStatblock.bonus_actions.length.toString : "0"
-
-        setBonusActions((oldBonusActions) => {
-            return [...oldBonusActions, { name: `New Bonus Action ${bonus_action_num}`, desc: "New Description" }]
-        })
+        setMonsterStatblock(prev => {
+            const current = prev.bonus_actions ?? [];
+            const num = current.length.toString();
+            const newAbility = { name: `New Bonus Action ${num}`, desc: "New Description" };
+            return { ...prev, bonus_actions: [...current, newAbility] };
+        });
     }
 
     const removeBonusAction = (index: number) => {
-        console.log(`Removing bonus action ${index}`)
-        setBonusActions((oldBonusActions) => {
-            return oldBonusActions.filter((action, i) => i !== index)
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            bonus_actions: (prev.bonus_actions ?? []).filter((_, i) => i !== index)
+        }));
     }
 
     const handleBonusActionUpdate = (bonusAction: MyMonsterAbility, index: number) => {
-        setBonusActions((oldBonusActions) => {
-            return oldBonusActions.map((oldBonusAction, oldIndex: number) => {
-                if (oldIndex === index) {
-                    return bonusAction
-                }
-                return oldBonusAction
-            })
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            bonus_actions: (prev.bonus_actions ?? []).map((old, i) => i === index ? bonusAction : old)
+        }));
     }
 
     const addReaction = () => {
-        console.log("Adding new reaction")
-
-        const reaction_num = monsterStatblock.reactions ? monsterStatblock.reactions.length.toString : "0"
-
-        setReactions((oldReactions) => {
-            return [...oldReactions, { name: `New Reaction ${reaction_num}`, desc: "New Description" }]
-        })
+        setMonsterStatblock(prev => {
+            const current = prev.reactions ?? [];
+            const num = current.length.toString();
+            const newAbility = { name: `New Reaction ${num}`, desc: "New Description" };
+            return { ...prev, reactions: [...current, newAbility] };
+        });
     }
 
     const removeReaction = (index: number) => {
-        console.log(`Removing reaction ${index}`)
-        setReactions((oldReactions) => {
-            return oldReactions.filter((action, i) => i !== index)
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            reactions: (prev.reactions ?? []).filter((_, i) => i !== index)
+        }));
     }
 
     const handleReactionUpdate = (reaction: MyMonsterAbility, index: number) => {
-        setReactions((oldReactions) => {
-            return oldReactions.map((oldReaction, oldIndex: number) => {
-                if (oldIndex === index) {
-                    return reaction
-                }
-                return oldReaction
-            })
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            reactions: (prev.reactions ?? []).map((old, i) => i === index ? reaction : old)
+        }));
     }
 
     const addLegendaryAction = () => {
-        console.log("Adding new reaction")
-
-        const legendary_action_num = monsterStatblock.legendary_actions ? monsterStatblock.legendary_actions.length.toString : "0"
-
-        setLegendaryActions((oldLegendaryActions) => {
-            return [...oldLegendaryActions, { name: `New Legendary Action ${legendary_action_num}`, desc: "New Description" }]
-        })
+        setMonsterStatblock(prev => {
+            const current = prev.legendary_actions ?? [];
+            const num = current.length.toString();
+            const newAbility = { name: `New Legendary Action ${num}`, desc: "New Description" };
+            return { ...prev, legendary_actions: [...current, newAbility] };
+        });
     }
 
     const removeLegendaryAction = (index: number) => {
-        console.log(`Removing legendary action ${index}`)
-        setLegendaryActions((oldLegendaryActions) => {
-            return oldLegendaryActions.filter((action, i) => i !== index)
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            legendary_actions: (prev.legendary_actions ?? []).filter((_, i) => i !== index)
+        }));
     }
 
     const handleLegendaryActionUpdate = (legendaryAction: MyMonsterAbility, index: number) => {
-        setLegendaryActions((oldLegendaryActions) => {
-            return oldLegendaryActions.map((oldLegendaryAction, oldIndex: number) => {
-                if (oldIndex === index) {
-                    return legendaryAction
-                }
-                return oldLegendaryAction
-            })
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            legendary_actions: (prev.legendary_actions ?? []).map((old, i) => i === index ? legendaryAction : old)
+        }));
     }
 
     const addMythicAction = () => {
-        console.log("Adding new mythic action")
-
-        const mythic_action_num = monsterStatblock.mythic_actions ? monsterStatblock.mythic_actions.length.toString : "0"
-
-        setMythicActions((oldMythicActions) => {
-            return [...oldMythicActions, { name: `New Mythic Action ${mythic_action_num}`, desc: "New Description" }]
-        })
+         setMonsterStatblock(prev => {
+            const current = prev.mythic_actions ?? [];
+            const num = current.length.toString();
+            const newAbility = { name: `New Mythic Action ${num}`, desc: "New Description" };
+            return { ...prev, mythic_actions: [...current, newAbility] };
+        });
     }
 
     const removeMythicAction = (index: number) => {
-        console.log(`Removing mythic action ${index}`)
-        setMythicActions((oldMythicActions) => {
-            return oldMythicActions.filter((action, i) => i !== index)
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            mythic_actions: (prev.mythic_actions ?? []).filter((_, i) => i !== index)
+        }));
     }
 
     const handleMythicActionUpdate = (mythicAction: MyMonsterAbility, index: number) => {
-        setMythicActions((oldMythicActions) => {
-            return oldMythicActions.map((oldMythicActions, oldIndex: number) => {
-                if (oldIndex === index) {
-                    return mythicAction
-                }
-                return oldMythicActions
-            })
-        })
+        setMonsterStatblock(prev => ({
+            ...prev,
+            mythic_actions: (prev.mythic_actions ?? []).map((old, i) => i === index ? mythicAction : old)
+        }));
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -639,21 +563,22 @@ const CreateMonsterStatblock = () => {
 
     const handleHitDiceChange = (dieNum: number) => {
         // console.log("HITDICE CHANGE", dieNum, parseInt(scoreToMod(monsterStatblock.constitution)))
-        setMonsterStatblock({
-            ...monsterStatblock,
+        setMonsterStatblock(prev => ({
+            ...prev,
             hit_dice_num: dieNum,
-            hit_dice: `${dieNum}${hitDieSize}+${dieNum * scoreToMod(monsterStatblock.constitution)}`
-        })
+            hit_dice: `${dieNum}${hitDieSize}+${dieNum * scoreToMod(prev.constitution)}`
+        }));
     }
 
     useEffect(() => {
         const calcHitPoints = () => {
             const dieSize = Number(hitDieSize.split("d")[1])
+            if (isNaN(dieSize)) return monsterStatblock.hit_points; // Safety check
             return (Math.ceil(monsterStatblock.hit_dice_num * (dieSize / 2 + .5) + monsterStatblock.hit_dice_num * scoreToMod(monsterStatblock.constitution)))
         }
 
-        setMonsterStatblock({ ...monsterStatblock, hit_points: calcHitPoints() })
-    }, [monsterStatblock.hit_dice_num, monsterStatblock.constitution])
+        setMonsterStatblock(prev => ({ ...prev, hit_points: calcHitPoints() }))
+    }, [monsterStatblock.hit_dice_num, monsterStatblock.constitution, hitDieSize]); // Added hitDieSize dependency
 
     const initializedMonsterId = useRef(monsterStatblock.id);
 
@@ -662,20 +587,11 @@ const CreateMonsterStatblock = () => {
         if (monsterStatblock && monsterStatblock.id !== initializedMonsterId.current) {
             console.log("Initializing creature state from monsterStatblock prop", monsterStatblock)
 
+            // --- CLEANED ---
+            // This hook should just handle things that *aren't* part of the statblock
             changeSize(monsterStatblock.size)
-            setSaveList((monsterStatblock.save_proficiencies ?? []).filter((v): v is string => v != null))
-            setSkillList(monsterStatblock.skill_proficiencies ?? {})
-            setDamageVulnerabilityList((monsterStatblock.damage_vulnerability_list ?? []) as string[])
-            setDamageResistanceList((monsterStatblock.damage_resistance_list ?? []) as string[])
-            setDamageImmunityList((monsterStatblock.damage_immunity_list ?? []) as string[])
-            setSpecialAbilities((monsterStatblock.special_abilities ?? []) as MyMonsterAbility[])
-            setActions((monsterStatblock.actions ?? []) as MyMonsterAttack[])
-            setBonusActions((monsterStatblock.bonus_actions ?? []) as MyMonsterAbility[])
-            setReactions((monsterStatblock.reactions ?? []) as MyMonsterAbility[])
-            setLegendaryActions((monsterStatblock.legendary_actions ?? []) as MyMonsterAbility[])
-            setMythicActions((monsterStatblock.mythic_actions ?? []) as MyMonsterAbility[])
-            setConditionImmunityList((monsterStatblock.condition_immunity_list ?? []) as string[])
-
+            // All the setSaveList, setSkillList, etc. are removed.
+            
             initializedMonsterId.current = monsterStatblock.id;
         }
     }, [monsterStatblock]);
@@ -708,7 +624,6 @@ const CreateMonsterStatblock = () => {
     const theme = useTheme()
 
     console.log("Rendering CreateMonsterStatblock")
-    console.log(specialAbilities)
 
 
     return (
@@ -724,7 +639,7 @@ const CreateMonsterStatblock = () => {
                         <Grid container spacing={2} marginY={"10px"}>
                             <Grid size={3}>
                                 <TextField name="name" label="Name"
-                                    value={monsterStatblock.name}
+                                    value={monsterStatblock.name ?? ''}
                                     onChange={handleInputChange} />
                             </Grid>
                             <Grid size={1.5}>
@@ -776,12 +691,12 @@ const CreateMonsterStatblock = () => {
                             </Grid>
                             <Grid size={2}>
                                 <TextField name="subtype" label="Subtype"
-                                    value={monsterStatblock.subtype}
+                                    value={monsterStatblock.subtype ?? ''}
                                     onChange={handleInputChange} />
                             </Grid>
                             <Grid size={1.9}>
                                 <TextField name="alignment" label="Alignment"
-                                    value={monsterStatblock.alignment}
+                                    value={monsterStatblock.alignment ?? ''}
                                     onChange={handleInputChange} />
                             </Grid>
                             <Grid size={2}>
@@ -881,7 +796,7 @@ const CreateMonsterStatblock = () => {
                                             name="hit_points"
                                             label="Hit Points"
                                             variant="outlined"
-                                            value={monsterStatblock.hit_points}
+                                            value={monsterStatblock.hit_points ?? ''}
                                             onChange={handleInputChange}
                                             type="number"
                                             slotProps={{
@@ -907,7 +822,7 @@ const CreateMonsterStatblock = () => {
                                                 label="Hit Dice"
                                                 variant="outlined"
                                                 type="number"
-                                                value={monsterStatblock.hit_dice_num}
+                                                value={monsterStatblock.hit_dice_num ?? ''}
                                                 onChange={(e) => handleHitDiceChange(Number(e.target.value))}
                                                 slotProps={{
                                                     input: {
@@ -997,14 +912,14 @@ const CreateMonsterStatblock = () => {
                                     <Grid size={1}>
                                         <TextField name="armor_class" label="AC"
                                             variant="outlined"
-                                            value={monsterStatblock.armor_class} type={"number"}
+                                            value={monsterStatblock.armor_class ?? ''} type={"number"}
                                             onChange={handleInputChange} />
 
 
                                     </Grid>
                                     <Grid size={2.5}>
                                         <TextField name="armor_desc" label="Armor Desc" variant="outlined"
-                                            value={monsterStatblock.armor_desc} onChange={handleInputChange} />
+                                            value={monsterStatblock.armor_desc ?? ''} onChange={handleInputChange} />
 
                                     </Grid>
                                 </Grid>
@@ -1019,7 +934,7 @@ const CreateMonsterStatblock = () => {
                                     <GiSprint size={50} />
                                     {/* <FaPersonWalking size={40} /> */}
                                     <TextField name="walk" label="Walk" variant="outlined"
-                                        value={monsterStatblock.speed.walk ? monsterStatblock.speed.walk : 0}
+                                        value={monsterStatblock.speed.walk ?? ''}
                                         onChange={handleSpeedChange}
                                         type={"number"} />
                                 </Stack>
@@ -1029,7 +944,7 @@ const CreateMonsterStatblock = () => {
                                 <Stack direction="row" spacing={1}>
                                     <GiMountainClimbing size={50} />
                                     <TextField name="climb" label="Climb" variant="outlined"
-                                        value={monsterStatblock.speed.climb ? monsterStatblock.speed.climb : 0}
+                                        value={monsterStatblock.speed.climb ?? ''}
                                         onChange={handleSpeedChange}
                                         type={"number"} />
                                 </Stack>
@@ -1040,7 +955,7 @@ const CreateMonsterStatblock = () => {
                                 <Stack direction="row" spacing={1}>
                                     <GrSwim size={50} />
                                     <TextField name="swim" label="Swim" variant="outlined"
-                                        value={monsterStatblock.speed.swim ? monsterStatblock.speed.swim : 0}
+                                        value={monsterStatblock.speed.swim ?? ''}
                                         onChange={handleSpeedChange} type={"number"} />
                                 </Stack>
                             </Grid>
@@ -1050,7 +965,7 @@ const CreateMonsterStatblock = () => {
 
                                     <GiFlyingTrout size={50} />
                                     <TextField name="fly" label="Fly" variant="outlined"
-                                        value={monsterStatblock.speed.fly} onChange={handleSpeedChange}
+                                        value={monsterStatblock.speed.fly ?? ''} onChange={handleSpeedChange}
                                         type={"number"} />
                                 </Stack>
                             </Grid>
@@ -1058,9 +973,9 @@ const CreateMonsterStatblock = () => {
                             <Grid size={12 / 5}>
                                 <Stack direction="row" spacing={1}>
 
-                                    <GiDigHole size={60}/>
+                                    <GiDigHole size={60} />
                                     <TextField name="burrow" label="Burrow" variant="outlined"
-                                        value={monsterStatblock.speed.burrow ? monsterStatblock.speed.burrow : 0}
+                                        value={monsterStatblock.speed.burrow ?? ''}
                                         onChange={handleSpeedChange}
                                         type={"number"} />
                                 </Stack>
@@ -1107,15 +1022,17 @@ const CreateMonsterStatblock = () => {
                                     </ButtonGroup>
                                 </Stack>
 
+                                {/* --- UPDATED JSX --- */}
                                 {Object.entries(monsterStatblock.skill_proficiencies ? monsterStatblock.skill_proficiencies : {}).map(([key, val]) => {
                                     if (val) {
                                         const skillString = `${key} (${val})`
                                         return <div key={key + val}><Button name={key}
-                                            onClick={removeSkillProficiency}
+                                            onClick={() => removeSkillProficiency(key)}
                                             variant={"outlined"}>{skillString}&nbsp;
                                             <BsFillTrashFill /></Button>
                                         </div>
                                     }
+                                    return null; // Added explicit return null
                                 })}
                             </Stack>
                             <Grid>
@@ -1144,9 +1061,10 @@ const CreateMonsterStatblock = () => {
                                                 variant={"outlined"}>Proficient</Button>
                                         </ButtonGroup>
                                     </Stack>
-                                    {(monsterStatblock.save_proficiencies ? monsterStatblock.save_proficiencies : []).map((save, i) => {
+                                    {/* --- UPDATED JSX --- */}
+                                    {(monsterStatblock.save_proficiencies ?? []).map((save, i) => {
                                         return <div key={save + i}><Button name={save}
-                                            onClick={removeSaveProficiency}
+                                            onClick={() => removeSaveProficiency(save)}
                                             variant={"outlined"}>{save}&nbsp;
                                             <BsFillTrashFill /></Button>
                                         </div>
@@ -1190,9 +1108,10 @@ const CreateMonsterStatblock = () => {
                                             <Button type={"button"} onClick={addConditionImmunity}>Immune</Button>
                                         </ButtonGroup>
                                     </Stack>
-                                    {(monsterStatblock.condition_immunity_list ? monsterStatblock.condition_immunity_list : []).map((condition, i) => {
+                                    {/* --- UPDATED JSX --- */}
+                                    {(monsterStatblock.condition_immunity_list ?? []).map((condition, i) => {
                                         return <div key={condition + i}><Button name={condition}
-                                            onClick={removeConditionImmunity}
+                                            onClick={() => removeConditionImmunity(condition)}
                                             variant={"outlined"}>
                                             {condition}&nbsp;
                                             <BsFillTrashFill />
@@ -1242,27 +1161,28 @@ const CreateMonsterStatblock = () => {
                                             </Select>
                                         </FormControl>
                                         <ButtonGroup orientation={"horizontal"}>
-                                            <Button type={"button"} onClick={() => addDamageVulnerability()}>Vulnerable</Button>
-                                            <Button type={"button"} onClick={() => addDamageResistance()}>Resistant</Button>
-                                            <Button type={"button"} onClick={() => addDamageImmunity()}>Immune</Button>
+                                            <Button type={"button"} onClick={() => handleDamageModification('vulnerability')}>Vulnerable</Button>
+                                            <Button type={"button"} onClick={() => handleDamageModification('resistance')}>Resistant</Button>
+                                            <Button type={"button"} onClick={() => handleDamageModification('immunity')}>Immune</Button>
                                         </ButtonGroup>
                                     </Stack>
-                                    {(monsterStatblock.damage_vulnerability_list ? monsterStatblock.damage_vulnerability_list : []).map((damage, i) => {
-                                        return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                    {/* --- UPDATED JSX (from previous step) --- */}
+                                    {(monsterStatblock.damage_vulnerability_list ?? []).filter(Boolean).map((damage, i) => {
+                                        return <div key={damage + i}><Button name={damage} onClick={() => removeDamageModification(damage)}
                                             variant={"outlined"}>
                                             {damage} (Vulnerable)&nbsp;
                                             <BsFillTrashFill />
                                         </Button></div>
                                     })}
-                                    {(monsterStatblock.damage_resistance_list ? monsterStatblock.damage_resistance_list : []).map((damage, i) => {
-                                        return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                    {(monsterStatblock.damage_resistance_list ?? []).filter(Boolean).map((damage, i) => {
+                                        return <div key={damage + i}><Button name={damage} onClick={() => removeDamageModification(damage)}
                                             variant={"outlined"}>
                                             {damage} (Resistant)&nbsp;
                                             <BsFillTrashFill />
                                         </Button></div>
                                     })}
-                                    {(monsterStatblock.damage_immunity_list ? monsterStatblock.damage_immunity_list : []).map((damage, i) => {
-                                        return <div key={damage + i}><Button name={damage} onClick={removeDamage}
+                                    {(monsterStatblock.damage_immunity_list ?? []).filter(Boolean).map((damage, i) => {
+                                        return <div key={damage + i}><Button name={damage} onClick={() => removeDamageModification(damage)}
                                             variant={"outlined"}>
                                             {damage} (Immune)&nbsp;
                                             <BsFillTrashFill />
@@ -1277,131 +1197,143 @@ const CreateMonsterStatblock = () => {
                     <Grid container spacing={2} marginY={rowSpacing}>
                         <Grid size={4}>
                             <TextField fullWidth name="languages" label="Languages" variant="outlined"
-                                value={monsterStatblock.languages} onChange={handleInputChange} />
+                                value={monsterStatblock.languages ?? ''} onChange={handleInputChange} />
                         </Grid>
 
                         <Grid size={2}>
-                            <TextField name="blindsight" label="Blindsight"
+                            <TextField name="blindsight" label="Blindsight (ft.)"
                                 variant="outlined"
-                                value={monsterStatblock.blindsight} onChange={handleInputChange}
+                                value={monsterStatblock.blindsight ?? ''} onChange={handleInputChange}
+                                type={"number"} />
+                            <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            name="blindBeyond"
+                                            checked={monsterStatblock.blindBeyond ?? false}
+                                            onChange={handleCheckboxChange}
+                                        />
+                                    }
+                                    label="Blind Beyond?"
+                                />
+                        </Grid>
+                        <Grid size={2}>
+                            <TextField name="darkvision" label="Darkvision (ft.)"
+                                variant="outlined"
+                                value={monsterStatblock.darkvision ?? ''} onChange={handleInputChange}
                                 type={"number"} />
                         </Grid>
                         <Grid size={2}>
-                            <TextField name="darkvision" label="Darkvision"
+                            <TextField name="tremorsense" label="Tremorsense  (ft.)"
                                 variant="outlined"
-                                value={monsterStatblock.darkvision} onChange={handleInputChange}
+                                value={monsterStatblock.tremorsense ?? ''} onChange={handleInputChange}
                                 type={"number"} />
                         </Grid>
                         <Grid size={2}>
-                            <TextField name="tremorsense" label="Tremorsense"
+                            <TextField name="truesight" label="Truesight (ft.)"
                                 variant="outlined"
-                                value={monsterStatblock.tremorsense} onChange={handleInputChange}
-                                type={"number"} />
-                        </Grid>
-                        <Grid size={2}>
-                            <TextField name="truesight" label="Truesight"
-                                variant="outlined"
-                                value={monsterStatblock.truesight} onChange={handleInputChange}
+                                value={monsterStatblock.truesight ?? ''} onChange={handleInputChange}
                                 type={"number"} />
                         </Grid>
                     </Grid>
-                    <Stack>
+                    <Stack spacing={1}>
                         <Stack direction={"row"}>
                             <Typography align={"center"} height={"100%"} padding={"5px"}>
                                 Abilities:
                             </Typography>
-                            <Button type={"button"} onClick={addSpecialAbility}>New Ability</Button>
+                            <Button type={"button"} onClick={addSpecialAbility} variant="contained">New Ability</Button>
                         </Stack>
-                        {specialAbilities.map((ability, index: number) => {
-                            console.log(`Ability`)
-                            console.log(ability)
+                        {/* --- UPDATED JSX --- */}
+                        {(monsterStatblock.special_abilities ?? []).map((ability, index: number) => {
                             return <AbilityRow ability={ability} key={ability.name + index} index={index}
                                 handleAbilityUpdate={handleSpecialAbilityUpdate}
                                 handleAbilityRemove={() => removeSpecialAbility(index)}
-                                moveCreatureItemUp={() => moveCreatureItemUp("special_abilities", index, setSpecialAbilities)}
-                                moveCreatureItemDown={() => moveCreatureItemDown("special_abilities", index, setSpecialAbilities)} />
+                                moveCreatureItemUp={() => moveCreatureItemUp("special_abilities", index)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("special_abilities", index)} />
                         })}
                         <Stack direction={"row"}>
                             <Typography align={"center"} height={"100%"} padding={"5px"}>
                                 Actions:
                             </Typography>
-                            <Button type={"button"} onClick={addAction}>New Action</Button>
+                            <Button type={"button"} onClick={addAction} variant="contained">New Action</Button>
                         </Stack>
-                        {actions.map((action, index: number) => {
+                        {/* --- UPDATED JSX --- */}
+                        {(monsterStatblock.actions ?? []).map((action, index: number) => {
                             return <ActionRow action={action} key={action.name + index} index={index}
                                 monsterData={monsterStatblock}
                                 handleActionUpdate={handleActionUpdate}
                                 handleActionRemove={() => removeAction(index)}
-                                moveCreatureItemUp={() => moveCreatureItemUp("actions", index, setActions)}
-                                moveCreatureItemDown={() => moveCreatureItemDown("actions", index, setActions)} />
+                                moveCreatureItemUp={() => moveCreatureItemUp("actions", index)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("actions", index)} />
                         })}
                         <Stack direction={"row"}>
                             <Typography align={"center"} height={"100%"} padding={"5px"}>
                                 Bonus Actions:
                             </Typography>
-                            <Button type={"button"} onClick={addBonusAction}>New Bonus Action</Button>
+                            <Button type={"button"} onClick={addBonusAction} variant="contained">New Bonus Action</Button>
                         </Stack>
-
-                        {bonusActions.map((bonus_action, index: number) => {
+                        {/* --- UPDATED JSX --- */}
+                        {(monsterStatblock.bonus_actions ?? []).map((bonus_action, index: number) => {
                             return <AbilityRow ability={bonus_action} key={bonus_action.name + index} index={index}
                                 handleAbilityUpdate={handleBonusActionUpdate}
                                 handleAbilityRemove={() => removeBonusAction(index)}
-                                moveCreatureItemUp={() => moveCreatureItemUp("bonus_actions", index, setBonusActions)}
-                                moveCreatureItemDown={() => moveCreatureItemDown("bonus_actions", index, setBonusActions)} />
+                                moveCreatureItemUp={() => moveCreatureItemUp("bonus_actions", index)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("bonus_actions", index)} />
                         })}
                         <Stack direction={"row"}>
                             <Typography align={"center"} height={"100%"} padding={"5px"}>
                                 Reactions:
                             </Typography>
-                            <Button type={"button"} onClick={addReaction}>New Reaction</Button>
+                            <Button type={"button"} onClick={addReaction} variant="contained">New Reaction</Button>
                         </Stack>
-                        {reactions.map((reaction, index: number) => {
+                        {/* --- UPDATED JSX --- */}
+                        {(monsterStatblock.reactions ?? []).map((reaction, index: number) => {
                             return <AbilityRow ability={reaction} key={reaction.name + index} index={index}
                                 handleAbilityUpdate={handleReactionUpdate}
                                 handleAbilityRemove={() => removeReaction(index)}
-                                moveCreatureItemUp={() => moveCreatureItemUp("reactions", index, setReactions)}
-                                moveCreatureItemDown={() => moveCreatureItemDown("reactions", index, setReactions)} />
+                                moveCreatureItemUp={() => moveCreatureItemUp("reactions", index)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("reactions", index)} />
                         })}
                         <TextField name="legendary_desc" label="Legendary Description"
                             variant="outlined"
-                            value={monsterStatblock.legendary_desc} onChange={handleInputChange} multiline
+                            value={monsterStatblock.legendary_desc ?? ''} onChange={handleInputChange} multiline
                             fullWidth />
                         <Stack direction={"row"}>
 
                             <Typography align={"center"} height={"100%"} padding={"5px"}>
                                 Legendary Actions:
                             </Typography>
-                            <Button type={"button"} onClick={addLegendaryAction}>New Legendary Action</Button>
+                            <Button type={"button"} onClick={addLegendaryAction} variant="contained">New Legendary Action</Button>
                         </Stack>
-
-                        {legendaryActions.map((legendary_action, index: number) => {
+                        {/* --- UPDATED JSX --- */}
+                        {(monsterStatblock.legendary_actions ?? []).map((legendary_action, index: number) => {
                             return <AbilityRow ability={legendary_action} key={legendary_action.name + index} index={index}
                                 handleAbilityUpdate={handleLegendaryActionUpdate}
                                 handleAbilityRemove={() => removeLegendaryAction(index)}
-                                moveCreatureItemUp={() => moveCreatureItemUp("legendary_actions", index, setLegendaryActions)}
-                                moveCreatureItemDown={() => moveCreatureItemDown("legendary_actions", index, setLegendaryActions)} />
+                                moveCreatureItemUp={() => moveCreatureItemUp("legendary_actions", index)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("legendary_actions", index)} />
                         })}
                         <TextField name="mythic_desc" label="Mythic Description"
                             variant="outlined"
-                            value={monsterStatblock.mythic_desc} onChange={handleInputChange} multiline
+                            value={monsterStatblock.mythic_desc ?? ''} onChange={handleInputChange} multiline
                             fullWidth />
                         <Stack direction={"row"}>
                             <Typography align={"center"} height={"100%"} padding={"5px"}>
                                 Mythic Actions:
                             </Typography>
-                            <Button type={"button"} onClick={addMythicAction}>New Mythic Action</Button>
+                            <Button type={"button"} onClick={addMythicAction} variant="contained">New Mythic Action</Button>
                         </Stack>
-                        {mythicActions.map((mythic_action, index: number) => {
+                        {/* --- UPDATED JSX --- */}
+                        {(monsterStatblock.mythic_actions ?? []).map((mythic_action, index: number) => {
                             return <AbilityRow ability={mythic_action} key={mythic_action.name + index} index={index}
                                 handleAbilityUpdate={handleMythicActionUpdate}
                                 handleAbilityRemove={() => removeMythicAction(index)}
-                                moveCreatureItemUp={() => moveCreatureItemUp("mythic_actions", index, setMythicActions)}
-                                moveCreatureItemDown={() => moveCreatureItemDown("mythic_actions", index, setMythicActions)} />
+                                moveCreatureItemUp={() => moveCreatureItemUp("mythic_actions", index)}
+                                moveCreatureItemDown={() => moveCreatureItemDown("mythic_actions", index)} />
                         })}
 
                         <TextField name="desc" label="Creature Description"
                             variant="outlined"
-                            value={monsterStatblock.desc} onChange={handleInputChange} multiline fullWidth />
+                            value={monsterStatblock.desc ?? ''} onChange={handleInputChange} multiline fullWidth />
 
                     </Stack>
                 </form>

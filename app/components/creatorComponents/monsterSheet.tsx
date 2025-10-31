@@ -1,11 +1,13 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import styles from "@/styles/MonsterSheet.module.css"
-import {crToXP, getToHit, plusMinus, scoreToMod} from "@/5eReference/converters";
+import {crToXP, getToHit, plusMinus, scoreToMod, skillToAbilityMap} from "@/5eReference/converters";
 import { DiceRoller } from "@dice-roller/rpg-dice-roller";
 // import {rollAttack} from "@/messageUtilities/mailroom";
 import { generateClient } from 'aws-amplify/data';
 import { type Schema } from '@/amplify/data/resource';
 import { createDefaultKnightStatblock } from "@/5eReference/monsterStatblockGenerator";
+import { getMods } from "@/5eReference/converters"
+import type { SkillName } from "@/5eReference/converters";
 const client = generateClient<Schema>();
 type MyMonsterStatblock = Schema['MonsterStatblock']['type'];
 type MyMonsterAbility = Schema['MonsterAbility']['type'];
@@ -228,32 +230,34 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, r
   const getSaves = () => {
     let saveStr = ""
 
-    const strSave = monsterData.strength_save
-    const dexSave = monsterData.dexterity_save
-    const conSave = monsterData.constitution_save
-    const intSave = monsterData.intelligence_save
-    const wisSave = monsterData.wisdom_save
-    const chaSave = monsterData.charisma_save
+    const mods = getMods(monsterData)
+
+    const strSave = monsterData.strength_save ?? mods["strength"]
+    const dexSave = monsterData.dexterity_save ?? mods["dexterity"]
+    const conSave = monsterData.constitution_save ?? mods["wisdom"]
+    const intSave = monsterData.intelligence_save ?? mods["wisdom"]
+    const wisSave = monsterData.wisdom_save ?? mods["intelligence"]
+    const chaSave = monsterData.charisma_save ??  mods["charisma"]
 
     if (!strSave && !dexSave && !conSave && !intSave && !wisSave && !chaSave) {
       return null
     }
-    if (strSave) {
+    if (strSave !== mods["strength"]) {
       saveStr += `STR ${plusMinus(strSave)}, `
     }
-    if (dexSave) {
+    if (dexSave !== mods["dexterity"]) {
       saveStr += `DEX ${plusMinus(dexSave)}, `
     }
-    if (conSave) {
+    if (conSave !== mods["constitution"]) {
       saveStr += `CON ${plusMinus(conSave)}, `
     }
-    if (intSave) {
+    if (intSave !== mods["intelligence"]) {
       saveStr += `INT ${plusMinus(intSave)}, `
     }
-    if (wisSave) {
+    if (wisSave !== mods["wisdom"]) {
       saveStr += `WIS ${plusMinus(wisSave)}, `
     }
-    if (chaSave) {
+    if (chaSave !== mods["charisma"]) {
       saveStr += `CHA ${plusMinus(chaSave)}, `
     }
     saveStr = saveStr.substring(0, saveStr.length - 2)
@@ -261,12 +265,14 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, r
   }
 
   const getSkills = () => {
+    const mods = getMods(monsterData)
+
     if (!monsterData.skills) {
       return null
     }
     let skillStr = ""
     for (const [skill, mod] of Object.entries(monsterData.skills)) {
-      if (mod) {
+      if (mod && mod !== mods[skillToAbilityMap[skill as SkillName]]) {
         const upperCaseValue = skill.toString().charAt(0).toUpperCase() + skill.toString().slice(1)
         skillStr = skillStr.concat(upperCaseValue, " ", plusMinus(mod), ', ')
       }
@@ -482,7 +488,7 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, r
       <div className={styles.monsterSheetContainer} ref={printRef}>
         <div className={styles.name}>{monsterData.name}</div>
         <div
-          className={styles.description}>{monsterData.size} {monsterData.type} {monsterData.subtype ? monsterData.subtype : null}, {monsterData.alignment}</div>
+          className={styles.description}>{monsterData.size} {monsterData.type}{monsterData.subtype ? ` ${monsterData.subtype}` : null}, {monsterData.alignment}</div>
 
         <div className={styles.gradient}></div>
 
