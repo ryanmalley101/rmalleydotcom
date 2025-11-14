@@ -139,6 +139,7 @@ const newMonsterStats = {
 }
 
 import { styled } from '@mui/material/styles';
+import MarkdownExport from './monsterMarkdown';
 
 // const Item = styled(Paper)(({ theme }) => ({
 //     backgroundColor: '#fff',
@@ -1339,6 +1340,9 @@ const CreateMonsterStatblock = () => {
                 </form>
 
             </div >
+            <Grid container spacing={2} marginY={rowSpacing}>
+                    <MarkdownExport monster={monsterStatblock} />
+            </Grid>
             <Grid container spacing={2} marginY={rowSpacing}>
                 <Item>
                     <Image
