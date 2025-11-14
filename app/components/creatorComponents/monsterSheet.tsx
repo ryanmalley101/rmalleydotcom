@@ -348,8 +348,7 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, r
     const items = abilityList.filter((a): a is MyMonsterAbility => a != null)
     return items.map((ability) => (
       <div key={monsterData.name + ability.name} className={styles.abilities}>
-        <span className={styles.abilityname}>{ability.name}. </span>
-        <span>{ability.desc}</span>
+        <span style={{ whiteSpace: 'pre' }}> <span className={styles.abilityname}>{ability.name}. </span> {ability.desc}</span>
       </div>
     ))
   }
@@ -363,23 +362,25 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, r
     if (!monsterData.actions) {
       return null
     }
-    let actionList = []
+    const actionList = []
+    let i = 0
     for (const action of monsterData.actions) {
+      i++
       // console.log(action)
       if (!action) {
         continue
       }
       else if (action.type === "Ability" || !action.attack_bonus) {
         actionList.push(
-          <div key={monsterData.name + action.name} className={styles.abilities}>
+          <div key={monsterData.name + action.name + i} className={styles.abilities}>
             <span className={styles.abilityname}>{action.name}. </span>
-            <span>{action.desc}</span>
+            <span style={{ whiteSpace: 'pre' }}>{action.desc}</span>
           </div>
         )
       } else {
         const attack = descAttack(monsterData, action)
         actionList.push(
-          <div key={monsterData.name + action.name} className={styles.abilities}>
+          <div key={monsterData.name + action.name + i} className={styles.abilities}>
             <label style={{width: "120px"}}
                    className={styles.labelButton} 
                   //  onClick={() => handleAttackRoll(action)}

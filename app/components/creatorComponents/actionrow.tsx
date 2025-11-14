@@ -227,7 +227,7 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
                     onChange={(e) => setType(e.target.value)}
                 >
                     <MenuItem value={"Melee Weapon Attack"}>Melee Weapon Attack</MenuItem>
-                    <MenuItem value={"Melee Spell Attack"}>Melee Spell Attacky</MenuItem>
+                    <MenuItem value={"Melee Spell Attack"}>Melee Spell Attack</MenuItem>
                     <MenuItem value={"Ranged Weapon Attack"}>Ranged Weapon Attack</MenuItem>
                     <MenuItem value={"Ranged Spell Attack"}>Ranged Spell Attack</MenuItem>
                     <MenuItem value={"Ability"}>Ability</MenuItem>
