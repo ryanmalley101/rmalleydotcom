@@ -200,6 +200,9 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
 
     md += renderAbilities('', m.special_abilities ?? []);
     md += renderAbilities('Actions', m.actions ?? []);
+    md += renderAbilities('Bonus Actions', m.bonus_actions ?? []);
+    md += renderAbilities('Reactions', m.reactions ?? []);
+
     
     // Legendary Actions
     if (m.legendary_actions && m.legendary_actions.length > 0) {
