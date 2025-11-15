@@ -123,11 +123,11 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
         }
     }
 
-    const defenses: string[] = [];
-    if (m.damage_vulnerabilities) defenses.push(`**Damage Vulnerabilities** :: ${m.damage_vulnerabilities}\n`);
-    if (m.damage_resistances) defenses.push(`**Damage Resistances** :: ${m.damage_resistances}\n`);
-    if (m.damage_immunities) defenses.push(`**Damage Immunities** :: ${m.damage_immunities}\n`);
-    if (m.condition_immunities) defenses.push(`**Condition Immunities** :: ${m.condition_immunities}\n`);
+    // const defenses: string[] = [];
+    // if (m.damage_vulnerabilities) defenses.push(`**Damage Vulnerabilities** :: ${m.damage_vulnerabilities}\n`);
+    // if (m.damage_resistances) defenses.push(`**Damage Resistances** :: ${m.damage_resistances}\n`);
+    // if (m.damage_immunities) defenses.push(`**Damage Immunities** :: ${m.damage_immunities}\n`);
+    // if (m.condition_immunities) defenses.push(`**Condition Immunities** :: ${m.condition_immunities}\n`);
 
     const sensesLine = `**Senses** :: ${derived?.senses ?? m.senses ?? ''}`;
     const languagesLine = `**Languages** :: ${m.languages ?? 'None'}`;
@@ -137,7 +137,12 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
 
     if (saves.length) md += `**Saving Throws** :: ${saves.join(', ')}\n`;
     if (skillsArr.length) md += `**Skills** :: ${skillsArr.join(', ')}\n`;
-    if (defenses.length) md += defenses.map(d=>d);
+    if (m.damage_vulnerabilities) md += `**Damage Vulnerabilities** :: ${m.damage_vulnerabilities}\n`;
+    if (m.damage_resistances) md += `**Damage Resistances** :: ${m.damage_resistances}\n`;
+    if (m.damage_immunities) md += `**Damage Immunities** :: ${m.damage_immunities}\n`;
+    if (m.condition_immunities)  md += `**Condition Immunities** :: ${m.condition_immunities}\n`;
+
+    // if (defenses.length) md += defenses.map(d=>d);
 
     md += sensesLine + '\n' + languagesLine + '\n' + crLine + '\n\n';
 
