@@ -168,7 +168,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                     parts.push(`${toHit.replace(/^\+?/,'+') } to hit`);
                 }
                 if (a.reach) parts.push(`reach ${a.reach} ft.`);
-                if (a.targets) parts.push(a.targets);
+                if (a.targets) parts.push(a.targets.replace('.', ''));
                 
                 if (parts.length > 0) {
                     s += ': ' + parts.join(', ') + '.';
