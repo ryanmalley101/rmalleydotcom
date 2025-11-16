@@ -166,7 +166,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                     const dmg = (a.damage as any[]).map(d=> {
                         const calc = calculateDamage(d.damage_dice ?? '', mods);
                         return `${calc}${d.damage_type ? ' '+d.damage_type.toLowerCase()+' damage' : ''}`;
-                    }).join(' and ');
+                    }).join(' plus ');
                     s += ` *Hit:* ${dmg}.`;
                 }
                 s += ' ';
