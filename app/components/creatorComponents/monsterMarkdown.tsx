@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { TextField, Button, Stack } from '@mui/material';
+import { DiceRoller } from '@dice-roller/rpg-dice-roller';
 import type { Schema } from '@/amplify/data/resource';
 import { calculateDependentStats, scoreToMod, crToXP, getToHit, getMonsterProf } from '@/5eReference/converters';
 import { plusMinus } from '@/5eReference/converters';
@@ -19,41 +20,25 @@ const calculateDamage = (damageStr: string, mods: {[key: string]: number}): stri
     if (!damageStr) return '';
     
     // Replace ability placeholders with actual modifiers
-    let processed = damageStr
-    processed = processed.replace(/\[STR\]/g, () => `${mods.strength}`);
-    processed = processed.replace(/\[DEX\]/g, () => `${mods.dexterity}`);
-    processed = processed.replace(/\[CON\]/g, () => `${mods.constitution}`);
-    processed = processed.replace(/\[INT\]/g, () => `${mods.intelligence}`);
-    processed = processed.replace(/\[WIS\]/g, () => `${mods.wisdom}`);
-    processed = processed.replace(/\[CHA\]/g, () => `${mods.charisma}`);
+    let processed = damageStr;
+    processed = processed.replace(/\[STR\]/g, () => `${mods.strength >= 0 ? '+' : ''}${mods.strength}`);
+    processed = processed.replace(/\[DEX\]/g, () => `${mods.dexterity >= 0 ? '+' : ''}${mods.dexterity}`);
+    processed = processed.replace(/\[CON\]/g, () => `${mods.constitution >= 0 ? '+' : ''}${mods.constitution}`);
+    processed = processed.replace(/\[INT\]/g, () => `${mods.intelligence >= 0 ? '+' : ''}${mods.intelligence}`);
+    processed = processed.replace(/\[WIS\]/g, () => `${mods.wisdom >= 0 ? '+' : ''}${mods.wisdom}`);
+    processed = processed.replace(/\[CHA\]/g, () => `${mods.charisma >= 0 ? '+' : ''}${mods.charisma}`);
     
-    // Try to calculate average
+    // Try to calculate average using rpg-dice-roller
     try {
-        // Extract dice rolls like "3d8" from "3d8+5"
-        const diceMatch = processed.match(/(\d+d\d+(?:[+-]\d+)?)/gi);
-        if (diceMatch) {
-            let total = 0;
-            const diceStr = diceMatch.join(' ');
-            
-            // Simple calculation: for NdM dice, average is N * (M+1)/2
-            for (const dice of diceMatch) {
-                const match = dice.match(/(\d+)d(\d+)([+-]\d+)?/i);
-                if (match) {
-                    const count = parseInt(match[1]);
-                    const sides = parseInt(match[2]);
-                    const mod = match[3] ? parseInt(match[3]) : 0;
-                    const avg = Math.round(count * (sides + 1) / 2 + mod);
-                    total += avg;
-                }
-            }
-            
-            return `${total} (${processed})`;
-        }
+        const roller = new DiceRoller();
+        const rolls = roller.roll(processed);
+        const result = Array.isArray(rolls) ? rolls[0] : rolls;
+        const average = (result as any).total;
+        return `${average} (${processed})`;
     } catch (e) {
         // If calculation fails, just return processed string
+        return processed;
     }
-    
-    return processed;
 };
 
 const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
@@ -181,7 +166,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                     const dmg = (a.damage as any[]).map(d=> {
                         const calc = calculateDamage(d.damage_dice ?? '', mods);
                         return `${calc}${d.damage_type ? ' '+d.damage_type.toLowerCase()+' damage' : ''}`;
-                    }).join(', ');
+                    }).join(' and ');
                     s += ` *Hit:* ${dmg}.`;
                 }
                 s += ' ';
