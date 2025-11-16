@@ -6,6 +6,8 @@ import { DiceRoller } from '@dice-roller/rpg-dice-roller';
 import type { Schema } from '@/amplify/data/resource';
 import { calculateDependentStats, scoreToMod, crToXP, getToHit, getMonsterProf } from '@/5eReference/converters';
 import { plusMinus } from '@/5eReference/converters';
+import { DiceRoll } from '@dice-roller/rpg-dice-roller';
+
 
 type MyMonsterStatblock = Schema['MonsterStatblock']['type'];
 
@@ -30,10 +32,8 @@ const calculateDamage = (damageStr: string, mods: { [key: string]: number }): st
 
     // Try to calculate average using rpg-dice-roller
     try {
-        const roller = new DiceRoller();
-        const rolls = roller.roll(processed);
-        const result = Array.isArray(rolls) ? rolls[0] : rolls;
-        const average = (result as any).total;
+        const rolls = new DiceRoll(processed);
+        const average = rolls.averageTotal;
         return `${average} (${processed})`;
     } catch (e) {
         // If calculation fails, just return processed string
