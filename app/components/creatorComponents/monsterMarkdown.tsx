@@ -21,12 +21,12 @@ const calculateDamage = (damageStr: string, mods: {[key: string]: number}): stri
     
     // Replace ability placeholders with actual modifiers
     let processed = damageStr;
-    processed = processed.replace(/\[STR\]/g, () => `${mods.strength >= 0 ? '+' : ''}${mods.strength}`);
-    processed = processed.replace(/\[DEX\]/g, () => `${mods.dexterity >= 0 ? '+' : ''}${mods.dexterity}`);
-    processed = processed.replace(/\[CON\]/g, () => `${mods.constitution >= 0 ? '+' : ''}${mods.constitution}`);
-    processed = processed.replace(/\[INT\]/g, () => `${mods.intelligence >= 0 ? '+' : ''}${mods.intelligence}`);
-    processed = processed.replace(/\[WIS\]/g, () => `${mods.wisdom >= 0 ? '+' : ''}${mods.wisdom}`);
-    processed = processed.replace(/\[CHA\]/g, () => `${mods.charisma >= 0 ? '+' : ''}${mods.charisma}`);
+    processed = processed.replace(/\[STR\]/g, () => `${mods.strength}`);
+    processed = processed.replace(/\[DEX\]/g, () => `${mods.dexterity}`);
+    processed = processed.replace(/\[CON\]/g, () => `${mods.constitution}`);
+    processed = processed.replace(/\[INT\]/g, () => `${mods.intelligence}`);
+    processed = processed.replace(/\[WIS\]/g, () => `${mods.wisdom}`);
+    processed = processed.replace(/\[CHA\]/g, () => `${mods.charisma}`);
     
     // Try to calculate average using rpg-dice-roller
     try {
