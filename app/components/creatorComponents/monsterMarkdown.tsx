@@ -13,12 +13,12 @@ interface Props {
     monster: MyMonsterStatblock;
 }
 
-const fmtMod = (score:number) => (score >= 0 ? `+${score}` : `${score}`);
+const fmtMod = (score: number) => (score >= 0 ? `+${score}` : `${score}`);
 
 // Helper to parse and calculate damage with placeholders
-const calculateDamage = (damageStr: string, mods: {[key: string]: number}): string => {
+const calculateDamage = (damageStr: string, mods: { [key: string]: number }): string => {
     if (!damageStr) return '';
-    
+
     // Replace ability placeholders with actual modifiers
     let processed = damageStr;
     processed = processed.replace(/\[STR\]/g, () => `${mods.strength}`);
@@ -27,7 +27,7 @@ const calculateDamage = (damageStr: string, mods: {[key: string]: number}): stri
     processed = processed.replace(/\[INT\]/g, () => `${mods.intelligence}`);
     processed = processed.replace(/\[WIS\]/g, () => `${mods.wisdom}`);
     processed = processed.replace(/\[CHA\]/g, () => `${mods.charisma}`);
-    
+
     // Try to calculate average using rpg-dice-roller
     try {
         const roller = new DiceRoller();
@@ -44,9 +44,9 @@ const calculateDamage = (damageStr: string, mods: {[key: string]: number}): stri
 const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
     const derived = calculateDependentStats(m) as any;
 
-    const header = `## ${m.name || 'Unnamed Monster'}\n*${m.size || ''} ${m.type || ''}${m.subtype ? ' ('+m.subtype+')' : ''}, ${m.alignment || ''}*\n___\n`;
+    const header = `## ${m.name || 'Unnamed Monster'}\n*${m.size || ''} ${m.type || ''}${m.subtype ? ' (' + m.subtype + ')' : ''}, ${m.alignment || ''}*\n___\n`;
 
-    const armorLine = `**Armor Class** :: ${m.armor_class ?? ''}${m.armor_desc ? ' ('+m.armor_desc+')' : ''}`;
+    const armorLine = `**Armor Class** :: ${m.armor_class ?? ''}${m.armor_desc ? ' (' + m.armor_desc + ')' : ''}`;
     const hpLine = `**Hit Points** :: ${m.hit_points ?? ''} (${m.hit_dice ?? ''})`;
 
     const speeds: string[] = [];
@@ -73,7 +73,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
 
     // Only show saves where the monster is proficient (in save_proficiencies array)
     const saves: string[] = [];
-    const saveProfMap: {[key: string]: string} = {
+    const saveProfMap: { [key: string]: string } = {
         strength: 'strength_save',
         dexterity: 'dexterity_save',
         constitution: 'constitution_save',
@@ -87,7 +87,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
             if (saveKey && derived[saveKey]) {
                 const num = Number(derived[saveKey]);
                 const label = ability.charAt(0).toUpperCase() + ability.slice(1);
-                saves.push(`${label} ${num >= 0 ? '+'+num : num}`);
+                saves.push(`${label} ${num >= 0 ? '+' + num : num}`);
             }
         }
     }
@@ -101,8 +101,8 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                 const skillMod = derived.skills[skillName];
                 if (skillMod !== undefined) {
                     const num = Number(skillMod);
-                    const displayName = skillName.replace(/_/g,' ');
-                    skillsArr.push(`${displayName.charAt(0).toUpperCase() + displayName.slice(1)} ${num >= 0 ? '+'+num : num}`);
+                    const displayName = skillName.replace(/_/g, ' ');
+                    skillsArr.push(`${displayName.charAt(0).toUpperCase() + displayName.slice(1)} ${num >= 0 ? '+' + num : num}`);
                 }
             }
         }
@@ -125,7 +125,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
     if (m.damage_vulnerabilities) md += `**Damage Vulnerabilities** :: ${m.damage_vulnerabilities}\n`;
     if (m.damage_resistances) md += `**Damage Resistances** :: ${m.damage_resistances}\n`;
     if (m.damage_immunities) md += `**Damage Immunities** :: ${m.damage_immunities}\n`;
-    if (m.condition_immunities)  md += `**Condition Immunities** :: ${m.condition_immunities}\n`;
+    if (m.condition_immunities) md += `**Condition Immunities** :: ${m.condition_immunities}\n`;
 
     // if (defenses.length) md += defenses.map(d=>d);
 
@@ -133,12 +133,12 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
 
     if (m.desc) md += m.desc + '\n\n';
 
-    const renderAbilities = (title: string| undefined, arr: any[] | undefined) => {
+    const renderAbilities = (title: string | undefined, arr: any[] | undefined) => {
         if (!arr || arr.length === 0) return '';
         let s = title ? `### ${title}\n` : '';
         for (const a of arr) {
             s += `***${a.name}.***`;
-            
+
             // If type is "ability", just render name and description
             if (a.type === 'Ability' || a.type === 'ability') {
                 s += ` ${a.desc || ''}\n:\n\n`;
@@ -147,30 +147,30 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
             else if (a.type || a.attack_bonus || a.reach || a.targets || a.damage) {
                 s += ` *${a.type || ''}*`;
                 const parts: string[] = [];
-                
+
                 if (a.attack_bonus) {
                     const toHit = getToHit(m, a as any) || (a.attack_bonus ? (a.attack_bonus.toString()) : '');
-                    parts.push(`${toHit.replace(/^\+?/,'+') } to hit`);
+                    parts.push(`${toHit.replace(/^\+?/, '+')} to hit`);
                 }
                 if (a.reach) parts.push(`reach ${a.reach} ft.`);
                 if (a.targets) parts.push(a.targets.replace('.', ''));
-                
+
                 if (parts.length > 0) {
                     s += ': ' + parts.join(', ') + '.';
                 } else {
                     s += ':';
                 }
-                
+
                 // Add damage on new line
                 if (a.damage && Array.isArray(a.damage)) {
-                    const dmg = (a.damage as any[]).map(d=> {
+                    const dmg = (a.damage as any[]).map(d => {
                         const calc = calculateDamage(d.damage_dice ?? '', mods);
-                        return `${calc}${d.damage_type ? ' '+d.damage_type.toLowerCase()+' damage' : ''}`;
+                        return `${calc}${d.damage_type ? ' ' + d.damage_type.toLowerCase() + ' damage' : ''}`;
                     }).join(' plus ');
                     s += ` *Hit:* ${dmg}.`;
                 }
                 s += ' ';
-                
+
                 // Add description with two newlines and colon
                 s += a.desc ?? (" " + a.desc || '')
                 s += '\n:\n\n'
@@ -189,7 +189,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
     md += renderAbilities('Bonus Actions', m.bonus_actions ?? []);
     md += renderAbilities('Reactions', m.reactions ?? []);
 
-    
+
     // Legendary Actions
     if (m.legendary_actions && m.legendary_actions.length > 0) {
         md += `### Legendary Actions\n`;
@@ -199,7 +199,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
         }
         md += '\n';
     }
-    
+
     // Mythic Actions
     if (m.mythic_actions && m.mythic_actions.length > 0) {
         md += `### Mythic Actions\n`;
@@ -235,7 +235,11 @@ const MarkdownExport: React.FC<Props> = ({ monster }) => {
                 multiline
                 minRows={12}
                 fullWidth
-                InputProps={{ readOnly: true }}
+                slotProps={{
+                    input: {
+                        readOnly: true,
+                    },
+                }}
             />
             <Button type="button" variant="contained" onClick={copyMarkdown}>Copy Markdown</Button>
         </Stack>
