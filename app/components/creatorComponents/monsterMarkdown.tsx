@@ -33,7 +33,7 @@ const calculateDamage = (damageStr: string, mods: { [key: string]: number }): st
     // Try to calculate average using rpg-dice-roller
     try {
         const rolls = new DiceRoll(processed);
-        const average = rolls.averageTotal;
+        const average = Math.ceil(rolls.averageTotal);
         return `${average} (${processed})`;
     } catch (e) {
         // If calculation fails, just return processed string
