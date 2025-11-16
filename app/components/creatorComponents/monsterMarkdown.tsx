@@ -152,7 +152,35 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                     const toHit = getToHit(m, a as any) || (a.attack_bonus ? (a.attack_bonus.toString()) : '');
                     parts.push(`${toHit.replace(/^\+?/, '+')} to hit`);
                 }
-                if (a.reach) parts.push(`reach ${a.reach} ft.`);
+
+                switch (a.type) {
+                    case "Melee Weapon Attack":
+                        parts.push(`reach ${a.reach} ft.`)
+                        break
+                    case "Melee Spell Attack":
+                        parts.push(`reach ${a.reach} ft.`)
+                        break
+
+                    case "Ranged Weapon Attack":
+                        parts.push(`ranged ${a.short_range}/${a.long_range} ft.`)
+                        break
+
+                    case "Ranged Spell Attack":
+                        parts.push(`ranged ${a.short_range} ft.`)
+                        break
+
+                    case "Melee or Ranged Weapon Attack":
+                        parts.push(`reach ${a.reach} ft. or ranged ${a.short_range}/${a.long_range} ft.`)
+                        break
+
+                    default:
+                        console.error(`Invalid type for action ${a}`)
+                        // return ""
+                }
+
+
+
+                // if (a.reach) parts.push(`reach ${a.reach} ft.`);
                 if (a.targets) parts.push(a.targets.replace('.', ''));
 
                 if (parts.length > 0) {
