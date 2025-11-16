@@ -172,7 +172,8 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                 s += ' ';
                 
                 // Add description with two newlines and colon
-                s += (" " + a.desc || '') + '\n:\n\n';
+                s += a.desc ?? (" " + a.desc || '')
+                s += '\n:\n\n'
             }
             // No type or attack info, just description
             else {
