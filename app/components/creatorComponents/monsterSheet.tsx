@@ -120,7 +120,7 @@ interface MonsterSheetProps {
 
 
 const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, rollable, playerId, gameId}) => {
-  const defaultStatblock = createDefaultKnightStatblock("default-publisher");
+  const defaultStatblock = createDefaultKnightStatblock("knight", "default-publisher");
   const [monsterData, setMonsterData] = useState<MyMonsterStatblock>(defaultStatblock);
 
   useEffect(() => {
