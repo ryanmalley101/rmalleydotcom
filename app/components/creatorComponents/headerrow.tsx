@@ -24,6 +24,8 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineMenu } from "react-icons/md";
 import { type Schema } from '@/amplify/data/resource';
 import { cleanMonster } from "@/app/components/creatorComponents/monsterSheet";
+import { calculateDependentStats, getMonsterProf, scoreToMod } from "@/5eReference/converters";
+
 
 // --- Types & Constants from Original File ---
 
@@ -278,9 +280,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
                     const { data: existingMonster, errors } = await client.models.MonsterStatblock.get({
                         id: id,
                     });
-
-                    // Assuming cleanMonster returns MyMonsterStatblock
-                    setMonster(cleanMonster(existingMonster))
+                    setMonster(cleanMonster({...existingMonster, ...calculateDependentStats(existingMonster as MyMonsterStatblock)}))
                 } catch (e) {
                     console.error(e)
                 }
