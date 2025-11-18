@@ -160,7 +160,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
                 ...input
             })
 
-            console.log("New Monster Response", response)
+            console.log("New Monster Response", response, errors)
             // Assuming `cleanMonster` returns a valid MyMonsterStatblock
             setMonster(cleanMonster(response))
         } catch (e) {
