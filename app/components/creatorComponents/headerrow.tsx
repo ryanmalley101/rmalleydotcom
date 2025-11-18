@@ -25,6 +25,7 @@ import { MdOutlineMenu } from "react-icons/md";
 import { type Schema } from '@/amplify/data/resource';
 import { cleanMonster } from "@/app/components/creatorComponents/monsterSheet";
 import { calculateDependentStats, getMonsterProf, scoreToMod } from "@/5eReference/converters";
+import { createDefaultKnightStatblock } from "@/5eReference/monsterStatblockGenerator";
 
 
 // --- Types & Constants from Original File ---
@@ -150,11 +151,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
         }
 
         try {
-            const input = {
-                ...newMonsterStats,
-                publisher: 'spellbound',
-                name: newMonsterName,
-            };
+            const input = createDefaultKnightStatblock(newMonsterName, "spellbound");
 
             const { errors, data: response } = await client.models.MonsterStatblock.create({
                 ...input

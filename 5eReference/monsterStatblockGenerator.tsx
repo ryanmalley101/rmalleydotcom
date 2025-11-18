@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { type Schema } from '@/amplify/data/resource';
 type MyMonsterStatblock = Schema['MonsterStatblock']['type'];
 
-export function createDefaultKnightStatblock(publisher: string): Schema['MonsterStatblock']['type']{
+export function createDefaultKnightStatblock(name: string, publisher: string): Schema['MonsterStatblock']['type']{
     
     const now = new Date().toISOString();
 
@@ -13,7 +13,7 @@ export function createDefaultKnightStatblock(publisher: string): Schema['Monster
         // --- Required Fields (from schema) ---
         id: uuidv4(),
         publisher: publisher,
-        name: 'Knight',
+        name: name,
         createdAt: now,
         updatedAt: now,
         
