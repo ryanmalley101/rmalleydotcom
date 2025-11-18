@@ -85,11 +85,7 @@ export function createDefaultKnightStatblock(name: string, publisher: string): S
         
         // --- Actions ---
         actions: [
-            {
-                name: 'Multiattack',
-                desc: 'The knight makes two melee attacks.',
-                damage: [], // Multiattack itself has no damage dice
-            },
+
             {
                 name: 'Greatsword',
                 type: 'Melee Weapon Attack',
@@ -103,25 +99,7 @@ export function createDefaultKnightStatblock(name: string, publisher: string): S
                     },
                 ],
             },
-            {
-                name: 'Heavy Crossbow',
-                type: 'Ranged Weapon Attack',
-                attack_bonus: '+2',
-                short_range: 100,
-                long_range: 400,
-                desc: 'Ranged Weapon Attack: +2 to hit, range 100/400 ft., one target. Hit: 5 (1d10) piercing damage.',
-                damage: [
-                    {
-                        damage_dice: '1d10',
-                        damage_type: 'piercing',
-                    },
-                ],
-            },
-            {
-                name: 'Leadership (Recharges after a Short or Long Rest)',
-                desc: 'For 1 minute, the knight can utter a special command or warning whenever a nonhostile creature that it can see within 30 feet of it makes an attack roll or a saving throw. The creature can add a d4 to its roll provided it can hear and understand the knight. A creature can benefit from only one Leadership die at a time. This effect ends if the knight is incapacitated.',
-                damage: [],
-            },
+            
         ],
         
         // --- Bonus Actions & Reactions ---
@@ -129,7 +107,7 @@ export function createDefaultKnightStatblock(name: string, publisher: string): S
         reactions: [
             {
                 name: 'Parry',
-                desc: 'The knight adds 2 to its AC against one melee attack that would hit it. To do so, the knight must see the attacker and be wielding a melee weapon.',
+                desc: 'The knight adds 2 to its AC against one melee attack that would hit it.',
             },
         ],
         
