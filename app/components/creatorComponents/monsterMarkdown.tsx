@@ -197,7 +197,7 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                     }).join(' plus ');
                     s += ` *Hit:* ${dmg}`;
                 }
-                s += ' ';
+                // s += ' ';
 
                 // Add description with two newlines and colon
                 s += a.desc ? (" " + a.desc || '') : '.'

@@ -91,7 +91,7 @@ export function createDefaultKnightStatblock(name: string, publisher: string): S
                 type: 'Melee Weapon Attack',
                 attack_bonus: '+5',
                 reach: 5, // 5 ft.
-                desc: 'Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.',
+                desc: '',
                 damage: [
                     {
                         damage_dice: '2d6+3',
@@ -104,12 +104,7 @@ export function createDefaultKnightStatblock(name: string, publisher: string): S
         
         // --- Bonus Actions & Reactions ---
         bonus_actions: [],
-        reactions: [
-            {
-                name: 'Parry',
-                desc: 'The knight adds 2 to its AC against one melee attack that would hit it.',
-            },
-        ],
+        reactions: [],
         
         // --- Legendary/Mythic Actions (Empty for Knight) ---
         legendary_desc: null,
