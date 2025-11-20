@@ -634,7 +634,7 @@ const CreateMonsterStatblock = () => {
                 {/* <MonsterSheet statblock={monsterStatblock} printRef={printRef} style={{margin: "100px"}}/> */}
                 <MonsterSheet statblock={monsterStatblock} printRef={printRef} />
             </div>
-            <Stack>
+            <div className={styles.container}>
                 <form onSubmit={handleSubmit}>
                     <FormControl className={styles.form} fullWidth>
                         <Grid container spacing={2} marginY={"10px"}>
@@ -1337,13 +1337,12 @@ const CreateMonsterStatblock = () => {
                             value={monsterStatblock.desc ?? ''} onChange={handleInputChange} multiline fullWidth />
 
                     </Stack>
-
                 </form>
+
+            </div >
                 {/* <Grid container spacing={2} marginY={rowSpacing}> */}
                     <MarkdownExport monster={monsterStatblock} />
                 {/* </Grid> */}
-            </Stack >
-
             <Grid container spacing={2} marginY={rowSpacing}>
                 <Item>
                     <Image
