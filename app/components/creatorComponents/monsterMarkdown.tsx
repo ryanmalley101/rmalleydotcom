@@ -195,12 +195,12 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
                         const calc = calculateDamage(d.damage_dice ?? '', mods);
                         return `${calc}${d.damage_type ? ' ' + d.damage_type.toLowerCase() + ' damage' : ''}`;
                     }).join(' plus ');
-                    s += ` *Hit:* ${dmg}.`;
+                    s += ` *Hit:* ${dmg}`;
                 }
                 s += ' ';
 
                 // Add description with two newlines and colon
-                s += a.desc ?? (" " + a.desc || '')
+                s += a.desc ? (" " + a.desc || '') : '.'
                 s += '\n:\n\n'
             }
             // No type or attack info, just description
