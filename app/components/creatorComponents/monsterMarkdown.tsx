@@ -262,7 +262,7 @@ const MarkdownExport: React.FC<Props> = ({ monster }) => {
                 value={markdownOutput}
                 multiline
                 minRows={12}
-                fullWidth
+                // fullWidth
                 slotProps={{
                     input: {
                         readOnly: true,
