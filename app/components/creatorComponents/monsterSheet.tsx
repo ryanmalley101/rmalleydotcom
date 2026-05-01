@@ -12,7 +12,7 @@ const client = generateClient<Schema>();
 type MyMonsterStatblock = Schema['MonsterStatblock']['type'];
 type MyMonsterAbility = Schema['MonsterAbility']['type'];
 type MyMonsterAttack = Schema['MonsterAttack']['type'];
-type MyDamage = Schema['DamageDice']['type'];
+;
 
 export const replaceDamageTags = (tagString:string, monsterData:MyMonsterStatblock) => {
   return tagString
@@ -87,7 +87,6 @@ export const descAttack = (monsterData:MyMonsterStatblock, attack:MyMonsterAttac
     const damageString = damage.reduce<string>((accumulator, currentValue) => {
       if (!currentValue) return accumulator;
       const damage_dice = replaceDamageTags(currentValue.damage_dice, monsterData)
-      console.log(damage_dice)
       if (damage_dice) {
         const diceRoll = roller.roll(damage_dice)
         const average = Array.isArray(diceRoll) ? diceRoll[0].averageTotal : diceRoll.averageTotal
@@ -119,25 +118,16 @@ interface MonsterSheetProps {
 }
 
 
-const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, rollable, playerId, gameId}) => {
+const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, rollable}) => {
   const defaultStatblock = createDefaultKnightStatblock("knight", "default-publisher");
   const [monsterData, setMonsterData] = useState<MyMonsterStatblock>(defaultStatblock);
 
   useEffect(() => {
     async function fetchData() {
-      console.log(slug)
+      if (!slug) return;
 
-      if (!slug) {
-        console.error("No slug provided for MonsterSheet fetchData")
-        return
-      }
-
-      const { data, errors } = await client.models.MonsterStatblock.get({
-        id: slug
-      });
-
-      console.log(data)
-      if (data){
+      const { data } = await client.models.MonsterStatblock.get({ id: slug });
+      if (data) {
         setMonsterData(cleanMonster(data))
       }
       //
@@ -482,7 +472,6 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({slug, statblock, printRef, r
   }
 
   if (!monsterData) {
-    console.log('No monster data returned')
     return null
   } else {
     return (

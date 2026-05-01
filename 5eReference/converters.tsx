@@ -92,8 +92,6 @@ const getToHit = (monsterData:MyMonsterStatblock, attack:MyMonsterAttack) : stri
         return null
     }
 
-    console.log(attack)
-
     if (Number(attack.attack_bonus)) {
         return plusMinus(Number(attack.attack_bonus))
     }
@@ -110,7 +108,6 @@ const getToHit = (monsterData:MyMonsterStatblock, attack:MyMonsterAttack) : stri
 
     const bracket_pattern = /\[(.*?)\]/
     const match = attack.attack_bonus.toString().match(bracket_pattern)
-    console.log(match)
     if (match) {
         const values = match[1].split(/\s+/)
         return plusMinus(
@@ -160,13 +157,15 @@ const getMods = (monster: MyMonsterStatblock): AbilityScores => ({
 });
 
 const getPassivePerception = (monsterStatblock: MyMonsterStatblock) => {
+    const wisdomMod = scoreToMod(monsterStatblock.wisdom);
+    const prof = getMonsterProf(monsterStatblock.cr);
     if (!monsterStatblock.skill_proficiencies || !monsterStatblock.skill_proficiencies["perception"]) {
-        return 10 + Number(scoreToMod(monsterStatblock.wisdom))
+        return 10 + wisdomMod;
     }
-    if (monsterStatblock.skill_proficiencies["perception"] == "proficient") {
-        return monsterStatblock.wisdom + getMonsterProf(monsterStatblock.cr)
+    if (monsterStatblock.skill_proficiencies["perception"] === "proficient") {
+        return 10 + wisdomMod + prof;
     }
-    return monsterStatblock.wisdom + (getMonsterProf(monsterStatblock.cr) * 2)
+    return 10 + wisdomMod + (prof * 2);
 }
 
 // --- Helper Functions Extracted from useEffect Logic (Refactored) ---
@@ -347,6 +346,13 @@ export const calculateDependentStats = (monster: MyMonsterStatblock): Partial<My
     };
 };
 
+
+export const crToString = (cr: number): string => {
+    if (cr === 0.125) return '1/8';
+    if (cr === 0.25) return '1/4';
+    if (cr === 0.5) return '1/2';
+    return String(cr);
+};
 
 export {crToXP, scoreToMod, getMonsterProf, getToHit, plusMinus, getMods, skillToAbilityMap}
 export type {SkillName}

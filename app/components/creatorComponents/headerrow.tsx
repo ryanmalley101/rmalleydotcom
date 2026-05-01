@@ -1,9 +1,13 @@
-// src/app/components/creatorComponents/HeaderRow.tsx (Recommended Path)
-
 "use client"
 
 import {
+    Alert,
     Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FormControl,
     IconButton,
     InputAdornment,
@@ -11,345 +15,305 @@ import {
     ListSubheader,
     MenuItem,
     Select,
+    Snackbar,
     TextField,
-    Toolbar
+    Toolbar,
+    Typography,
 } from "@mui/material";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { useTheme } from '@mui/material/styles';
 import { generateClient } from 'aws-amplify/data';
-import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineMenu } from "react-icons/md";
 import { type Schema } from '@/amplify/data/resource';
 import { cleanMonster } from "@/app/components/creatorComponents/monsterSheet";
-import { calculateDependentStats, getMonsterProf, scoreToMod } from "@/5eReference/converters";
+import { calculateDependentStats } from "@/5eReference/converters";
 import { createDefaultKnightStatblock } from "@/5eReference/monsterStatblockGenerator";
-
-
-// --- Types & Constants from Original File ---
 
 const client = generateClient<Schema>();
 type MyMonsterStatblock = Schema['MonsterStatblock']['type'];
 
-// Assumed interface for the minimal list item returned by the list query
 interface MonsterListItem {
     id: string;
     publisher: string;
     name: string;
-    slug?: string;
 }
 
-// Assumed type for the new monster default stats (Pulled from the bottom of the original file)
-const newMonsterStats = {
-    id: '0',
-    name: 'New Monster',
-    desc: '',
-    size: 'medium',
-    type: 'humanoid',
-    publisher: 'spellbound',
-    group: "",
-    subtype: '',
-    alignment: 'lawful good',
-    armor_class: 10,
-    armor_desc: '',
-    hit_points: 8,
-    hit_dice: '1d8',
-    hit_dice_num: 1,
-    speed: {
-        walk: 30,
-        swim: 0,
-        fly: 0,
-        burrow: 0,
-        climb: 0,
-        hover: false,
-    },
-    strength: 10,
-    dexterity: 10,
-    constitution: 10,
-    intelligence: 10,
-    wisdom: 10,
-    charisma: 10,
-    strength_save: 0,
-    dexterity_save: 0,
-    constitution_save: 0,
-    intelligence_save: 0,
-    wisdom_save: 0,
-    charisma_save: 0,
-    save_proficiencies: [],
-    perception: 0,
-    skills: {},
-    skill_proficiencies: {},
-    damage_vulnerabilities: '',
-    damage_vulnerability_list: [],
-    damage_resistances: '',
-    damage_resistance_list: [],
-    damage_immunities: '',
-    damage_immunity_list: [],
-    condition_immunities: '',
-    condition_immunity_list: [],
-    blindsight: 0,
-    blindBeyond: false,
-    darkvision: 0,
-    tremorsense: 0,
-    truesight: 0,
-    senses: '',
-    languages: '',
-    challenge_rating: "0",
-    cr: 0.0,
-    actions: [],
-    bonus_actions: [],
-    reactions: [],
-    legendary_desc: '',
-    legendary_actions: [],
-    special_abilities: [],
-    mythic_desc: '',
-    mythic_actions: [],
-};
-
-
-// --- Component Props Interface ---
 interface HeaderRowProps {
     monster: MyMonsterStatblock;
     setMonster: React.Dispatch<React.SetStateAction<MyMonsterStatblock>>;
     downloadFile: () => void;
 }
 
-// --- The HeaderRow Component ---
-
 const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile }) => {
+    const theme = useTheme();
 
-    const theme = useTheme()
-
-    // 💡 Fix: State redundancy is removed, relying only on the 'monster' prop.
-    // The internal state is *not* needed if the parent handles all monster field updates.
-    // NOTE: If you need to save the monster based on changes to the *monster prop*, 
-    // you should use the prop itself in the useEffect dependency array.
-
-    // State for the prop data (used for saving/throttling)
-    const monsterToSave = monster; 
-    
-    // `Date.now()` returns a number (timestamp)
-    const [saveThrottleTime, setSaveThrottleTime] = useState<number>(Date.now())
-
-    // Function typing: takes two strings, returns a boolean
-    const containsText = (text: string, searchText: string): boolean =>
-        text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || searchText === '';
-
-    const newMonster = async () => {
-        // window.prompt returns string | null
-        const newMonsterName = window.prompt("Enter Creature Name: NOTE - Creating a new monster will reset the current statblock")
-        if (!newMonsterName) {
-            console.error("No monster name provided")
-            return
-        }
-
-        // Check against the current list state
-        if (monsterList.filter((m) => m.name === newMonsterName).length > 0) {
-            console.error("Creature's name is already in the database")
-        }
-
-        try {
-            const input = createDefaultKnightStatblock(newMonsterName, "spellbound");
-
-            const { errors, data: response } = await client.models.MonsterStatblock.create({
-                ...input
-            })
-
-            console.log("New Monster Response", response, errors)
-            // Assuming `cleanMonster` returns a valid MyMonsterStatblock
-            setMonster(cleanMonster(response))
-        } catch (e) {
-            console.error("Error creating creature:", e);
-        }
-    }
-
-    // State for dropdown selection value (monster name)
+    // Monster list
+    const [monsterList, setMonsterList] = useState<MonsterListItem[]>([]);
     const [selectedOption, setSelectedOption] = useState<string>('');
-    // State for the monster list
-    const [monsterList, setMonsterList] = useState<MonsterListItem[]>([
-        { id: 'none', publisher: 'none', name: 'No Monsters Found', slug: 'No Monsters Found' }
-    ])
-    // State for search text
-    const [searchText, setSearchText] = useState<string>("");
+    const [searchText, setSearchText] = useState<string>('');
 
-    // Memoized list is typed as MonsterListItem[]
+    // New monster dialog
+    const [newMonsterDialogOpen, setNewMonsterDialogOpen] = useState(false);
+    const [newMonsterName, setNewMonsterName] = useState('');
+
+    // Load monster confirmation dialog
+    const [loadConfirmOpen, setLoadConfirmOpen] = useState(false);
+    const [pendingLoadId, setPendingLoadId] = useState<string | null>(null);
+    const [pendingLoadName, setPendingLoadName] = useState<string | null>(null);
+
+    // Save feedback
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+    const [saveError, setSaveError] = useState<string>('');
+    const [isDirty, setIsDirty] = useState(false);
+
+    const isFirstRender = useRef(true);
+    // Prevents the auto-save from firing when a monster is freshly loaded or created
+    const skipNextSaveRef = useRef(false);
+
+    const containsText = (text: string, query: string): boolean =>
+        text.toLowerCase().includes(query.toLowerCase()) || query === '';
+
     const displayedOptions = useMemo(
-        () => monsterList.filter((option) => containsText(option.name, searchText)),
+        () => monsterList.filter(opt => containsText(opt.name, searchText)),
         [searchText, monsterList]
-    )
+    );
 
+    // observeQuery keeps the list live without a hard limit
     useEffect(() => {
-        const getMonsterList = async () => {
-            const { data: result, errors } = await client.models.MonsterStatblock.list(
-                {
-                    selectionSet: ['id', 'publisher', 'name'],
-                    limit: 1000
-                }
-            );
-
-            const items = (result || []) as MonsterListItem[];
-
-            console.log(items)
-
-            setMonsterList(items.sort((a, b) => a.name.localeCompare(b.name)))
-        }
-
-        getMonsterList()
+        const sub = (client.models.MonsterStatblock as any).observeQuery({
+            selectionSet: ['id', 'publisher', 'name'],
+        }).subscribe({
+            next: ({ items }: { items: MonsterListItem[] }) =>
+                setMonsterList([...items].sort((a, b) => a.name.localeCompare(b.name))),
+            error: (err: unknown) => console.error('Monster list subscription error:', err),
+        });
+        return () => sub.unsubscribe();
     }, []);
 
-    // Function parameter typed as MyMonsterStatblock
-    const saveMonster = async (monsterToSave: MyMonsterStatblock) => {
-        const { __typename, ...input } = monsterToSave as any; // Clean object for update input
+    // Debounced auto-save: 3 seconds after the last change
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        if (skipNextSaveRef.current) {
+            skipNextSaveRef.current = false;
+            setIsDirty(false);
+            return;
+        }
+        setIsDirty(true);
+        const timer = setTimeout(() => saveMonster(monster), 3000);
+        return () => clearTimeout(timer);
+    }, [monster]);
 
-        let savedMonster: MyMonsterStatblock | null = null
-        console.log("TRYING TO SAVE MONSTER", input)
+    const saveMonster = async (monsterToSave: MyMonsterStatblock) => {
+        const { __typename, ...input } = monsterToSave as any;
 
         if (input.publisher === 'wotc-srd') {
-            console.error("Can't overwrite wizards of the coast creature")
-            return
+            setSaveError("Can't overwrite official SRD monsters.");
+            setSaveStatus('error');
+            return;
         }
 
         if (!input.id) {
-            console.error("Attempting to update creature with no id")
-            return
+            setSaveError("Monster has no ID — create it first with the New button.");
+            setSaveStatus('error');
+            return;
         }
 
-        console.log("Updating a monster", input)
         try {
-            const { data: updatedCreature, errors } = await client.models.MonsterStatblock.update(input);
-        } catch (e) {
-            console.error("Error update creature:", e);
+            await client.models.MonsterStatblock.update(input);
+            setIsDirty(false);
+            setSaveStatus('saved');
+        } catch (e: any) {
+            setSaveError(e?.message ?? 'Save failed. Check your connection and try again.');
+            setSaveStatus('error');
         }
-        if (savedMonster) {
-            console.log("Saved monster", savedMonster)
+    };
+
+    const handleCreateNewMonster = async () => {
+        const name = newMonsterName.trim();
+        if (!name) return;
+
+        if (monsterList.some(m => m.name === name)) {
+            setSaveError('A monster with that name already exists.');
+            setSaveStatus('error');
+            setNewMonsterDialogOpen(false);
+            setNewMonsterName('');
+            return;
         }
-    }
 
-    // Throttled Save Logic - Now using the 'monster' prop directly
-    useEffect(() => {
-        console.log("MONSTER PROP GOT CHANGED", monster)
-        const currentTime = Date.now()
-
-        if (currentTime - saveThrottleTime > 5000) {
-            setSaveThrottleTime(currentTime)
-            saveMonster(monster) // Use the prop 'monster'
+        try {
+            const input = createDefaultKnightStatblock(name, 'homebrew');
+            const { data: response, errors } = await client.models.MonsterStatblock.create({ ...input });
+            if (errors?.length) throw new Error(errors[0].message);
+            skipNextSaveRef.current = true;
+            setMonster(cleanMonster(response));
+            setSelectedOption(name);
+        } catch (e: any) {
+            setSaveError(e?.message ?? 'Failed to create monster.');
+            setSaveStatus('error');
+        } finally {
+            setNewMonsterDialogOpen(false);
+            setNewMonsterName('');
         }
-    }, [monster, saveThrottleTime]); 
-    // Dependency now is 'monster' prop (assuming it updates whenever fields change)
+    };
 
-    // Function parameter typed as string | undefined
+    const handleSelectionChange = (e: SelectChangeEvent<string>) => {
+        const name = e.target.value;
+        setSelectedOption(name);
+        const selected = displayedOptions.find(opt => opt.name === name);
+        if (selected) {
+            setPendingLoadId(selected.id);
+            setPendingLoadName(selected.name);
+            setLoadConfirmOpen(true);
+        }
+    };
+
+    const confirmLoadMonster = async () => {
+        setLoadConfirmOpen(false);
+        if (!pendingLoadId) return;
+        try {
+            const { data: existing, errors } = await client.models.MonsterStatblock.get({ id: pendingLoadId });
+            if (errors?.length) throw new Error(errors[0].message);
+            skipNextSaveRef.current = true;
+            setMonster(cleanMonster({ ...existing, ...calculateDependentStats(existing as MyMonsterStatblock) }));
+        } catch (e: any) {
+            setSaveError(e?.message ?? 'Failed to load monster.');
+            setSaveStatus('error');
+        } finally {
+            setPendingLoadId(null);
+            setPendingLoadName(null);
+        }
+    };
+
     const exportJSON = (name: string | undefined) => {
-        const fileName = name ? name : "spellboundmonster";
-        
-        // Use the prop directly for stringify
-        const json = JSON.stringify(monster, null, 2); 
-
-        const blob = new Blob([json], { type: "application/json" });
+        const fileName = name ?? 'monster';
+        const json = JSON.stringify(monster, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
         const href = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = href;
-        link.download = fileName + ".json";
+        link.download = fileName + '.json';
         document.body.appendChild(link);
         link.click();
-
         document.body.removeChild(link);
         URL.revokeObjectURL(href);
-    }
-
-    // Event object for MUI Select is typed
-    const handleSelectionChange = async (e: SelectChangeEvent<string>) => {
-        setSelectedOption(e.target.value as string)
-        const selectedMonster = displayedOptions.find(opt => opt.name === e.target.value);
-        if (selectedMonster) {
-            getMonster(selectedMonster.id);
-        }
-    }
-
-    // Function parameters typed
-    const getMonster = async (id: string) => {
-        console.log(id)
-        if (window.confirm("Fetching a new monster will overwrite the existing statblock")) {
-            if (id) {
-                try {
-                    const { data: existingMonster, errors } = await client.models.MonsterStatblock.get({
-                        id: id,
-                    });
-                    setMonster(cleanMonster({...existingMonster, ...calculateDependentStats(existingMonster as MyMonsterStatblock)}))
-                } catch (e) {
-                    console.error(e)
-                }
-            }
-        }
-    }
+    };
 
     return (
-        <Box sx={{ flexGrow: 1 }} >
-            <AppBar>
-                <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                    >
-                        <MdOutlineMenu />
-                    </IconButton>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={newMonster} color="secondary">New</Button>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={() => saveMonster(monsterToSave)} color="secondary">Save</Button>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={() => exportJSON(monster.name)} color="secondary">Export JSON</Button>
-                    <Button variant={"contained"} style={{ margin: "5px" }} onClick={downloadFile} color="secondary">Download PNG</Button>
-                    <FormControl style={{ left: "10%", minWidth: "200px" }}>
-                        <InputLabel id="search-select-label" style={{ color: "black" }}>Monster Name</InputLabel>
-                        <Select
-                            MenuProps={{ autoFocus: false }}
-                            labelId="search-select-label"
-                            id="search-select"
-                            value={selectedOption}
-                            label="Monsters"
-                            onChange={handleSelectionChange}
-                            onClose={() => setSearchText("")}
-                            renderValue={() => selectedOption}
-                            style={{ backgroundColor: theme.palette.secondary.main, color: "#000000" }}
-                            sx={{ color: "black" }}
-                        >
-                            <ListSubheader>
-                                <TextField
-                                    size="small"
-                                    autoFocus
-                                    placeholder="Type to search..."
-                                    fullWidth
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <AiOutlineSearch />
-                                            </InputAdornment>
-                                        )
-                                    }}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
-                                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                        if (e.key !== "Escape") {
-                                            e.stopPropagation();
-                                        }
-                                    }}
-                                />
-                            </ListSubheader>
-                            {displayedOptions.map((option, i) => (
-                                <MenuItem key={`${option.id}-${i}`} value={option.name}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+        <>
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar>
+                    <Toolbar>
+                        <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+                            <MdOutlineMenu />
+                        </IconButton>
+                        <Button variant="contained" sx={{ mr: 1 }} onClick={() => setNewMonsterDialogOpen(true)} color="secondary">New</Button>
+                        <Button variant="contained" sx={{ mr: 1 }} onClick={() => saveMonster(monster)} color="secondary">Save</Button>
+                        <Button variant="contained" sx={{ mr: 1 }} onClick={() => exportJSON(monster.name)} color="secondary">Export JSON</Button>
+                        <Button variant="contained" sx={{ mr: 1 }} onClick={downloadFile} color="secondary">Download PNG</Button>
+                        {isDirty && (
+                            <Typography variant="caption" sx={{ mr: 2, color: 'warning.light', fontStyle: 'italic' }}>
+                                Unsaved changes
+                            </Typography>
+                        )}
+                        <FormControl sx={{ ml: 'auto', minWidth: '200px' }}>
+                            <InputLabel id="search-select-label" style={{ color: 'black' }}>Monster Name</InputLabel>
+                            <Select
+                                MenuProps={{ autoFocus: false }}
+                                labelId="search-select-label"
+                                id="search-select"
+                                value={selectedOption}
+                                label="Monsters"
+                                onChange={handleSelectionChange}
+                                onClose={() => setSearchText('')}
+                                renderValue={() => selectedOption}
+                                style={{ backgroundColor: theme.palette.secondary.main, color: '#000000' }}
+                            >
+                                <ListSubheader>
+                                    <TextField
+                                        size="small"
+                                        autoFocus
+                                        placeholder="Type to search..."
+                                        fullWidth
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <AiOutlineSearch />
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
+                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                            if (e.key !== 'Escape') e.stopPropagation();
+                                        }}
+                                    />
+                                </ListSubheader>
+                                {displayedOptions.map((option, i) => (
+                                    <MenuItem key={`${option.id}-${i}`} value={option.name}>
+                                        {option.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Toolbar>
+                </AppBar>
+            </Box>
 
-                </Toolbar>
+            {/* New Monster Dialog */}
+            <Dialog open={newMonsterDialogOpen} onClose={() => { setNewMonsterDialogOpen(false); setNewMonsterName(''); }}>
+                <DialogTitle>New Monster</DialogTitle>
+                <DialogContent>
+                    <DialogContentText sx={{ mb: 2 }}>
+                        Creating a new monster will reset the current statblock.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        label="Monster Name"
+                        fullWidth
+                        value={newMonsterName}
+                        onChange={(e) => setNewMonsterName(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleCreateNewMonster(); }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { setNewMonsterDialogOpen(false); setNewMonsterName(''); }}>Cancel</Button>
+                    <Button onClick={handleCreateNewMonster} variant="contained" disabled={!newMonsterName.trim()}>Create</Button>
+                </DialogActions>
+            </Dialog>
 
-            </AppBar>
-        </Box >
-    )
-}
+            {/* Load Monster Confirmation Dialog */}
+            <Dialog open={loadConfirmOpen} onClose={() => setLoadConfirmOpen(false)}>
+                <DialogTitle>Load Monster</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Load <strong>{pendingLoadName}</strong>? Any unsaved changes to the current monster will be lost.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setLoadConfirmOpen(false)}>Cancel</Button>
+                    <Button onClick={confirmLoadMonster} variant="contained" color="warning">Load</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Save success */}
+            <Snackbar open={saveStatus === 'saved'} autoHideDuration={2000} onClose={() => setSaveStatus('idle')}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                <Alert severity="success" onClose={() => setSaveStatus('idle')}>Saved</Alert>
+            </Snackbar>
+
+            {/* Save error */}
+            <Snackbar open={saveStatus === 'error'} autoHideDuration={5000} onClose={() => setSaveStatus('idle')}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                <Alert severity="error" onClose={() => setSaveStatus('idle')}>{saveError}</Alert>
+            </Snackbar>
+        </>
+    );
+};
 
 export default HeaderRow;

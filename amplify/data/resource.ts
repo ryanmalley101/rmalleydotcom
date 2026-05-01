@@ -1,163 +1,8 @@
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
-// import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
-// --- Re-usable Custom Types (from s and non-model Types) ---
-
-const Song = a.customType({
-  title: a.string(),
-  url: a.string(),
-});
-
-const SongQueue = a.customType({
-  playlistName: a.string(),
-  songs: a.ref('Song').array(),
-});
-
-const Game = a.customType({
-  name: a.string(),
-  userGamesId: a.id(),
-});
-
-const User = a.customType({
-  id: a.id(),
-  email: a.string(),
-  username: a.string(),
-});
-
-const CreateGameResponse = a.customType({
-  id: a.id().required(),
-});
-
-const CreateNewGame = a.customType({
-  gameName: a.string().required(),
-  ownerId: a.id().required(),
-  username: a.string().required(),
-});
-
-const DamageDie = a.customType({
-  damageType: a.string().required(),
-  damageString: a.string().required(),
-});
-
-const Message = a.customType({
-  gameMessageListId: a.id(),
-  owner: a.id(),
-  messageType: a.string(),
-  advantage: a.string(),
-  damageDice: a.json().array(),
-  damageDiceResults: a.json().array(),
-  rolls: a.json().array(),
-  abilityName: a.string(),
-  saveAbility: a.string(),
-  saveScore: a.integer(),
-  messageText: a.string(),
-  placeholder: a.string(),
-  diceString: a.string(),
-});
-
-const ParseMessageResponse = a.customType({
-  id: a.id().required(),
-});
-
-const ParseMessage = a.customType({
-  owner: a.id().required(),
-  gameMessageListId: a.id().required(),
-  messageType: a.string(),
-  messageText: a.string(),
-  abilityName: a.string(),
-  d20mod: a.integer(),
-  gameId: a.id(),
-  saveAbility: a.string(),
-  saveScore: a.integer(),
-  advantage: a.string(),
-  damageDice: a.ref('DamageDie').array(),
-});
-
-const Player = a.customType({
-  name: a.string(),
-  userPlayersId: a.id(),
-  gamePlayersId: a.id(),
-});
-
-const Map = a.customType({
-  gameMapsId: a.id(),
-  sizeX: a.integer(),
-  sizeY: a.integer(),
-  name: a.string(),
-});
-
-const Token = a.customType({
-  mapTokensId: a.id(),
-  imageURL: a.string(),
-  points: a.float().array(),
-  radius: a.float(),
-  layer: a.string(),
-  text: a.string(),
-  fill: a.string(),
-  stroke: a.string(),
-  fontSize: a.float(),
-  width: a.float(),
-  height: a.float(),
-  rotation: a.float(),
-  x: a.float(),
-  y: a.float(),
-  token: a.string(),
-});
-
-const Ping = a.customType({
-  gamePingsId: a.id(),
-  x: a.float(),
-  y: a.float(),
-  scale: a.float(),
-  ttl: a.integer(),
-});
-
-const Ruler = a.customType({
-  id: a.id(),
-  points: a.float().array(),
-  mapRulersId: a.id(),
-  playerRulersId: a.id(),
-});
 
 const DamageDice = a.customType({
   damage_dice: a.string().required(),
   damage_type: a.string().required(),
-});
-
-const Attack = a.customType({
-  name: a.string().required(),
-  notes: a.string().required(),
-  attack_bonus: a.string().required(),
-  damage: a.ref('DamageDice').array().required(),
-});
-
-
-const Spell = a.customType({
-  is_prepared: a.boolean(),
-  is_concentration: a.boolean(),
-  is_ritual: a.boolean(),
-  is_attack: a.boolean(),
-  name: a.string().required(),
-  level: a.integer().required(),
-  source: a.string().required(),
-  save_ability: a.string(),
-  attack_save: a.integer().required(),
-  damage: a.ref('DamageDice').array(),
-  cast_time: a.string().required(),
-  range_shape: a.string().required(),
-  duration: a.string().required(),
-  components: a.string().required(),
-  notes: a.string().required(),
-});
-
-
-const Item = a.customType({
-  equipped: a.boolean().required(),
-  name: a.string().required(),
-  count: a.integer().required(),
-  weight: a.float().required(),
-  value: a.string().required(),
-  notes: a.string().required(),
 });
 
 const MovementSpeed = a.customType({
@@ -169,16 +14,6 @@ const MovementSpeed = a.customType({
   hover: a.boolean(),
   notes: a.string(),
 });
-
-// const MovementSpeed = a.customType({
-//   walk: a.integer(),
-//   swim: a.integer(),
-//   fly: a.integer(),
-//   climb: a.integer(),
-//   burrow: a.integer(),
-//   hover: a.boolean(),
-//   notes: a.string(),
-// });
 
 const SkillMods = a.customType({
   acrobatics: a.integer(),
@@ -227,7 +62,6 @@ const MonsterAbility = a.customType({
   desc: a.string().required(),
 });
 
-
 const MonsterAttack = a.customType({
   name: a.string().required(),
   desc: a.string(),
@@ -241,26 +75,8 @@ const MonsterAttack = a.customType({
   targets: a.string(),
 });
 
-
-
-// --- Schema Definition ---
-
 const schema = a.schema({
-  // --- Custom Types Definition ---
-  Song,
-  SongQueue,
-  CreateGameResponse,
-  DamageDie,
-  ParseMessageResponse,
-  Player,
-  Map,
-  Token,
-  Ping,
-  Ruler,
   DamageDice,
-  Attack,
-  Spell,
-  Item,
   MovementSpeed,
   SkillMods,
   SkillProfs,
@@ -328,40 +144,13 @@ const schema = a.schema({
     mythic_actions: a.ref('MonsterAbility').required().array(),
   })
   .authorization(allow => [allow.authenticated()])
-
-  // --- Custom Function-based Mutations ---
-
-  // parseMessage: a.mutation()
-  //   .arguments({ : a.ref('ParseMessage').required() })
-  //   .returns(a.ref('ParseMessageResponse').required())
-  //   .handler(a.handler.function('parseMessage')),
-
-  // createNewGame: a.mutation()
-  //   .arguments({ : a.ref('CreateNewGame').required() })
-  //   .returns(a.ref('CreateGameResponse').required())
-  //   .handler(a.handler.function('createNewGame')),
 });
-
-// --- Export the Schema ---
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'userPool', // Or 'iam' based on your default
-    // API Key is not used in your schema, but you could add it here
-    // apiKeyAuthorizationMode: {
-    //   expiresInDays: 30,
-    // },
-    // iamAuthorizationMode: {
-    //   authenticated: [
-    //     'identityPool', // or 'userPool'
-    //   ], 
-    //   unauthenticated: [
-    //     'identityPool', // or 'userPool'
-    //   ]
-    // },
+    defaultAuthorizationMode: 'userPool',
   },
 });
 
-// This type is used to type client-side calls
 export type Schema = ClientSchema<typeof schema>;
