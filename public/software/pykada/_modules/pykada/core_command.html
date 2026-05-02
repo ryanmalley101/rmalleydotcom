@@ -302,7 +302,8 @@
         <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">use_processed_timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve audit log events based on various filters.</span>
@@ -313,6 +314,7 @@
 <span class="sd">                         Defaults to the current time if not provided.</span>
 <span class="sd">        :param page_token: The pagination token used to fetch the next page of results.</span>
 <span class="sd">        :param page_size: The number of items returned in a single response (0 to 200). Defaults to 100.</span>
+<span class="sd">        :param use_processed_timestamp: If True, filter by processed timestamp instead of event timestamp.</span>
 <span class="sd">        :return: JSON response containing audit log events matching the provided filters.</span>
 <span class="sd">        :raises ValueError: If page_size is not between 0 and 200.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -329,7 +331,8 @@
             <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span>
             <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span>
             <span class="s2">&quot;page_token&quot;</span><span class="p">:</span> <span class="n">page_token</span><span class="p">,</span>
-            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">,</span>
+            <span class="s2">&quot;use_processed_timestamp&quot;</span><span class="p">:</span> <span class="n">use_processed_timestamp</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="c1"># Remove keys with None values.</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
@@ -610,7 +613,9 @@
 <div class="viewcode-block" id="get_audit_logs">
 <a class="viewcode-back" href="../../api/core_command.html#pykada.core_command.get_audit_logs">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_audit_logs</span><span class="p">(</span><span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_audit_logs</span><span class="p">(</span><span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+                   <span class="n">use_processed_timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve audit log events based on various filters.</span>
 
@@ -620,6 +625,7 @@
 <span class="sd">                     Defaults to the current time if not provided.</span>
 <span class="sd">    :param page_token: The pagination token used to fetch the next page of results.</span>
 <span class="sd">    :param page_size: The number of items returned in a single response (0 to 200). Defaults to 100.</span>
+<span class="sd">    :param use_processed_timestamp: If True, filter by processed timestamp instead of event timestamp.</span>
 <span class="sd">    :return: JSON response containing audit log events matching the provided filters.</span>
 <span class="sd">    :raises ValueError: If page_size is not between 0 and 200.</span>
 
@@ -627,7 +633,7 @@
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the CoreCommandClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an CoreCommandClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_audit_logs</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">page_token</span><span class="p">,</span> <span class="n">page_size</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_audit_logs</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">page_token</span><span class="p">,</span> <span class="n">page_size</span><span class="p">,</span> <span class="n">use_processed_timestamp</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_user">

@@ -293,22 +293,30 @@
 
 <div class="viewcode-block" id="check_user_external_id">
 <a class="viewcode-back" href="../../api/helpers.html#pykada.helpers.check_user_external_id">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if only one of user_id or external_id are provided.</span>
-<span class="sd">    Throw an error if neither or both are provided.</span>
-<span class="sd">    The AC API requires exactly one of these identifiers.</span>
+<span class="sd">    Check that exactly one user identifier is provided.</span>
+<span class="sd">    Raises ValueError if none or more than one are provided.</span>
 
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :return: A dictionary containing the provided identifier.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">user_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">user_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Exactly one of user_id or external_id must be provided, not both or neither.&quot;</span><span class="p">)</span>
+    <span class="n">provided</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">provided</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Exactly one of user_id, external_id, email, or employee_id must be provided.&quot;</span>
+        <span class="p">)</span>
 
-    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span> <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id</span><span class="p">}</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span> <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id</span><span class="p">,</span>
+              <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span> <span class="s2">&quot;employee_id&quot;</span><span class="p">:</span> <span class="n">employee_id</span><span class="p">}</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">params</span></div>
 

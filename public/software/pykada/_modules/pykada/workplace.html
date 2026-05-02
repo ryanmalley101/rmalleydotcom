@@ -247,13 +247,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typeguard</span><span class="w"> </span><span class="kn">import</span> <span class="n">typechecked</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.api_tokens</span><span class="w"> </span><span class="kn">import</span> <span class="n">VerkadaTokenManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.endpoints</span><span class="w"> </span><span class="kn">import</span> <span class="n">GUEST_DENY_LIST_ENDPOINT</span><span class="p">,</span> <span class="n">GUEST_SITES_ENDPOINT</span><span class="p">,</span> \
-    <span class="n">GUEST_VISITS_ENDPOINT</span>
+    <span class="n">GUEST_VISITS_ENDPOINT</span><span class="p">,</span> <span class="n">GUEST_V2_EVENTS_ENDPOINT</span><span class="p">,</span> <span class="n">GUEST_V2_HOSTS_ENDPOINT</span><span class="p">,</span> \
+    <span class="n">GUEST_V2_APPROVED_LISTS_ENDPOINT</span><span class="p">,</span> <span class="n">GUEST_V2_APPROVED_LISTS_ADD_ENDPOINT</span><span class="p">,</span> \
+    <span class="n">GUEST_V2_APPROVED_LISTS_REMOVE_ENDPOINT</span><span class="p">,</span> <span class="n">GUEST_V2_GUEST_TYPES_ENDPOINT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.verkada_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseClient</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pykada.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">require_non_empty_str</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pykada.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">require_non_empty_str</span><span class="p">,</span> <span class="n">remove_null_fields</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.verkada_requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">VerkadaRequestManager</span>
 
 <div class="viewcode-block" id="WorkplaceClient">
@@ -419,6 +421,254 @@
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GUEST_VISITS_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.get_guest_events">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.get_guest_events">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_guest_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve guest events for a site.</span>
+
+<span class="sd">        :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">        :param start_time: Start time in ISO 8601 format (e.g. ``&#39;2025-01-17T21:06:20Z&#39;``).</span>
+<span class="sd">        :param end_time: End time in ISO 8601 format.</span>
+<span class="sd">        :param limit: Maximum number of items to return (default 100, max 200).</span>
+<span class="sd">        :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">        :return: JSON response containing guest events.</span>
+<span class="sd">        :raises ValueError: If site_id, start_time, or end_time is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="s2">&quot;site_id&quot;</span><span class="p">)</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;start_time&quot;</span><span class="p">)</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">end_time</span><span class="p">,</span> <span class="s2">&quot;end_time&quot;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span>
+            <span class="s2">&quot;site_id&quot;</span><span class="p">:</span> <span class="n">site_id</span><span class="p">,</span>
+            <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span>
+            <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span>
+            <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="n">limit</span><span class="p">,</span>
+            <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GUEST_V2_EVENTS_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.create_guest_event">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.create_guest_event">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_guest_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">guest_type_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                           <span class="n">event_times</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+                           <span class="n">event_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">event_address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">event_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">invitees</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">rsvp_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">walk_in_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a guest event.</span>
+
+<span class="sd">        :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">        :param guest_type_id: The unique identifier of the guest type.</span>
+<span class="sd">        :param host_id: The unique identifier of the host.</span>
+<span class="sd">        :param event_times: List of start/end time objects for the event.</span>
+<span class="sd">        :param event_name: Optional name for the event.</span>
+<span class="sd">        :param event_address: Optional location of the event.</span>
+<span class="sd">        :param event_description: Optional description of the event.</span>
+<span class="sd">        :param invitees: Optional list of invitee objects.</span>
+<span class="sd">        :param rsvp_enabled: Whether to generate an RSVP link.</span>
+<span class="sd">        :param walk_in_enabled: Whether walk-ins are allowed.</span>
+<span class="sd">        :return: JSON response containing the created event.</span>
+<span class="sd">        :raises ValueError: If site_id, guest_type_id, or host_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="s2">&quot;site_id&quot;</span><span class="p">)</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">guest_type_id</span><span class="p">,</span> <span class="s2">&quot;guest_type_id&quot;</span><span class="p">)</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">host_id</span><span class="p">,</span> <span class="s2">&quot;host_id&quot;</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span>
+            <span class="s2">&quot;site_id&quot;</span><span class="p">:</span> <span class="n">site_id</span><span class="p">,</span>
+            <span class="s2">&quot;guest_type_id&quot;</span><span class="p">:</span> <span class="n">guest_type_id</span><span class="p">,</span>
+            <span class="s2">&quot;host_id&quot;</span><span class="p">:</span> <span class="n">host_id</span><span class="p">,</span>
+            <span class="s2">&quot;event_times&quot;</span><span class="p">:</span> <span class="n">event_times</span><span class="p">,</span>
+            <span class="s2">&quot;event_name&quot;</span><span class="p">:</span> <span class="n">event_name</span><span class="p">,</span>
+            <span class="s2">&quot;event_address&quot;</span><span class="p">:</span> <span class="n">event_address</span><span class="p">,</span>
+            <span class="s2">&quot;event_description&quot;</span><span class="p">:</span> <span class="n">event_description</span><span class="p">,</span>
+            <span class="s2">&quot;invitees&quot;</span><span class="p">:</span> <span class="n">invitees</span><span class="p">,</span>
+            <span class="s2">&quot;rsvp_enabled&quot;</span><span class="p">:</span> <span class="n">rsvp_enabled</span><span class="p">,</span>
+            <span class="s2">&quot;walk_in_enabled&quot;</span><span class="p">:</span> <span class="n">walk_in_enabled</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">GUEST_V2_EVENTS_ENDPOINT</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.delete_guest_event">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.delete_guest_event">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_guest_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guest_event_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a guest event.</span>
+
+<span class="sd">        :param guest_event_id: The unique identifier of the guest event.</span>
+<span class="sd">        :return: JSON response confirming deletion.</span>
+<span class="sd">        :raises ValueError: If guest_event_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">guest_event_id</span><span class="p">,</span> <span class="s2">&quot;guest_event_id&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GUEST_V2_EVENTS_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">guest_event_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.get_guest_event">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.get_guest_event">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_guest_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guest_event_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a single guest event by ID.</span>
+
+<span class="sd">        :param guest_event_id: The unique identifier of the guest event.</span>
+<span class="sd">        :return: JSON response containing the guest event.</span>
+<span class="sd">        :raises ValueError: If guest_event_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">guest_event_id</span><span class="p">,</span> <span class="s2">&quot;guest_event_id&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GUEST_V2_EVENTS_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">guest_event_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.get_guest_hosts">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.get_guest_hosts">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_guest_hosts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve hosts for a Guest site.</span>
+
+<span class="sd">        :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">        :param email: Optional email to filter to a single host.</span>
+<span class="sd">        :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">        :param limit: Maximum number of hosts to return (default 100, max 200).</span>
+<span class="sd">        :return: JSON response containing hosts.</span>
+<span class="sd">        :raises ValueError: If site_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="s2">&quot;site_id&quot;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span>
+            <span class="s2">&quot;site_id&quot;</span><span class="p">:</span> <span class="n">site_id</span><span class="p">,</span>
+            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+            <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">,</span>
+            <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="n">limit</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GUEST_V2_HOSTS_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.get_approved_lists">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.get_approved_lists">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_approved_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve approved lists for the organization or a specific site.</span>
+
+<span class="sd">        :param site_id: Optional site ID to filter results.</span>
+<span class="sd">        :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">        :param limit: Maximum number of lists to return (default 100, max 1000).</span>
+<span class="sd">        :return: JSON response containing approved lists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;site_id&quot;</span><span class="p">:</span> <span class="n">site_id</span><span class="p">,</span> <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="n">limit</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GUEST_V2_APPROVED_LISTS_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.add_people_to_approved_lists">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.add_people_to_approved_lists">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_people_to_approved_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">people</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add people to approved lists.</span>
+
+<span class="sd">        :param people: List of people objects to add to approved lists.</span>
+<span class="sd">        :return: JSON response after adding people.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">GUEST_V2_APPROVED_LISTS_ADD_ENDPOINT</span><span class="p">,</span>
+                                          <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;people&quot;</span><span class="p">:</span> <span class="n">people</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.remove_people_from_approved_lists">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.remove_people_from_approved_lists">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_people_from_approved_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">people</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove people from approved lists.</span>
+
+<span class="sd">        :param people: List of people objects to remove from approved lists.</span>
+<span class="sd">        :return: JSON response after removing people.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">GUEST_V2_APPROVED_LISTS_REMOVE_ENDPOINT</span><span class="p">,</span>
+                                          <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;people&quot;</span><span class="p">:</span> <span class="n">people</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.get_approved_list_members">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.get_approved_list_members">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_approved_list_members</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">approved_list_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                  <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve members of a specific approved list.</span>
+
+<span class="sd">        :param approved_list_id: The unique identifier of the approved list.</span>
+<span class="sd">        :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">        :param limit: Maximum number of members to return (default 100, max 1000).</span>
+<span class="sd">        :return: JSON response containing list members.</span>
+<span class="sd">        :raises ValueError: If approved_list_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">approved_list_id</span><span class="p">,</span> <span class="s2">&quot;approved_list_id&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GUEST_V2_APPROVED_LISTS_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">approved_list_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="n">limit</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.reset_approved_list">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.reset_approved_list">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_approved_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">approved_list_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset an approved list, removing all members.</span>
+
+<span class="sd">        :param approved_list_id: The unique identifier of the approved list.</span>
+<span class="sd">        :return: JSON response after resetting the list.</span>
+<span class="sd">        :raises ValueError: If approved_list_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">approved_list_id</span><span class="p">,</span> <span class="s2">&quot;approved_list_id&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GUEST_V2_APPROVED_LISTS_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">approved_list_id</span><span class="si">}</span><span class="s2">/reset&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WorkplaceClient.get_guest_types">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.WorkplaceClient.get_guest_types">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_guest_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve guest types for a site.</span>
+
+<span class="sd">        :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">        :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">        :param limit: Maximum number of guest types to return (default 100, max 200).</span>
+<span class="sd">        :return: JSON response containing guest types.</span>
+<span class="sd">        :raises ValueError: If site_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="s2">&quot;site_id&quot;</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;site_id&quot;</span><span class="p">:</span> <span class="n">site_id</span><span class="p">,</span> <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="n">limit</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GUEST_V2_GUEST_TYPES_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 </div>
 
 
@@ -559,6 +809,229 @@
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_guest_visits</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">page_token</span><span class="p">,</span> <span class="n">page_size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_guest_events">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.get_guest_events">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_guest_events</span><span class="p">(</span><span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve guest events for a site.</span>
+
+<span class="sd">    :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">    :param start_time: Start time in ISO 8601 format (e.g. ``&#39;2025-01-17T21:06:20Z&#39;``).</span>
+<span class="sd">    :param end_time: End time in ISO 8601 format.</span>
+<span class="sd">    :param limit: Maximum number of items to return (default 100, max 200).</span>
+<span class="sd">    :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">    :return: JSON response containing guest events.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_guest_events</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">cursor</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_guest_event">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.create_guest_event">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_guest_event</span><span class="p">(</span><span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">guest_type_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                       <span class="n">event_times</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+                       <span class="n">event_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">event_address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">event_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">invitees</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">rsvp_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">walk_in_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a guest event.</span>
+
+<span class="sd">    :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">    :param guest_type_id: The unique identifier of the guest type.</span>
+<span class="sd">    :param host_id: The unique identifier of the host.</span>
+<span class="sd">    :param event_times: List of start/end time objects for the event.</span>
+<span class="sd">    :param event_name: Optional name for the event.</span>
+<span class="sd">    :param event_address: Optional location of the event.</span>
+<span class="sd">    :param event_description: Optional description of the event.</span>
+<span class="sd">    :param invitees: Optional list of invitee objects.</span>
+<span class="sd">    :param rsvp_enabled: Whether to generate an RSVP link.</span>
+<span class="sd">    :param walk_in_enabled: Whether walk-ins are allowed.</span>
+<span class="sd">    :return: JSON response containing the created event.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">create_guest_event</span><span class="p">(</span>
+        <span class="n">site_id</span><span class="p">,</span> <span class="n">guest_type_id</span><span class="p">,</span> <span class="n">host_id</span><span class="p">,</span> <span class="n">event_times</span><span class="p">,</span>
+        <span class="n">event_name</span><span class="p">,</span> <span class="n">event_address</span><span class="p">,</span> <span class="n">event_description</span><span class="p">,</span>
+        <span class="n">invitees</span><span class="p">,</span> <span class="n">rsvp_enabled</span><span class="p">,</span> <span class="n">walk_in_enabled</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_guest_event">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.delete_guest_event">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_guest_event</span><span class="p">(</span><span class="n">guest_event_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete a guest event.</span>
+
+<span class="sd">    :param guest_event_id: The unique identifier of the guest event.</span>
+<span class="sd">    :return: JSON response confirming deletion.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">delete_guest_event</span><span class="p">(</span><span class="n">guest_event_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_guest_event">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.get_guest_event">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_guest_event</span><span class="p">(</span><span class="n">guest_event_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a single guest event by ID.</span>
+
+<span class="sd">    :param guest_event_id: The unique identifier of the guest event.</span>
+<span class="sd">    :return: JSON response containing the guest event.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_guest_event</span><span class="p">(</span><span class="n">guest_event_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_guest_hosts">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.get_guest_hosts">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_guest_hosts</span><span class="p">(</span><span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve hosts for a Guest site.</span>
+
+<span class="sd">    :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">    :param email: Optional email to filter to a single host.</span>
+<span class="sd">    :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">    :param limit: Maximum number of hosts to return (default 100, max 200).</span>
+<span class="sd">    :return: JSON response containing hosts.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_guest_hosts</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_approved_lists">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.get_approved_lists">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_approved_lists</span><span class="p">(</span><span class="n">site_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve approved lists for the organization or a specific site.</span>
+
+<span class="sd">    :param site_id: Optional site ID to filter results.</span>
+<span class="sd">    :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">    :param limit: Maximum number of lists to return (default 100, max 1000).</span>
+<span class="sd">    :return: JSON response containing approved lists.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_approved_lists</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_people_to_approved_lists">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.add_people_to_approved_lists">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_people_to_approved_lists</span><span class="p">(</span><span class="n">people</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add people to approved lists.</span>
+
+<span class="sd">    :param people: List of people objects to add to approved lists.</span>
+<span class="sd">    :return: JSON response after adding people.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">add_people_to_approved_lists</span><span class="p">(</span><span class="n">people</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_people_from_approved_lists">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.remove_people_from_approved_lists">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_people_from_approved_lists</span><span class="p">(</span><span class="n">people</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove people from approved lists.</span>
+
+<span class="sd">    :param people: List of people objects to remove from approved lists.</span>
+<span class="sd">    :return: JSON response after removing people.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">remove_people_from_approved_lists</span><span class="p">(</span><span class="n">people</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_approved_list_members">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.get_approved_list_members">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_approved_list_members</span><span class="p">(</span><span class="n">approved_list_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve members of a specific approved list.</span>
+
+<span class="sd">    :param approved_list_id: The unique identifier of the approved list.</span>
+<span class="sd">    :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">    :param limit: Maximum number of members to return (default 100, max 1000).</span>
+<span class="sd">    :return: JSON response containing list members.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_approved_list_members</span><span class="p">(</span><span class="n">approved_list_id</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="reset_approved_list">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.reset_approved_list">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reset_approved_list</span><span class="p">(</span><span class="n">approved_list_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reset an approved list, removing all members.</span>
+
+<span class="sd">    :param approved_list_id: The unique identifier of the approved list.</span>
+<span class="sd">    :return: JSON response after resetting the list.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">reset_approved_list</span><span class="p">(</span><span class="n">approved_list_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_guest_types">
+<a class="viewcode-back" href="../../api/workplace.html#pykada.workplace.get_guest_types">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_guest_types</span><span class="p">(</span><span class="n">site_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve guest types for a site.</span>
+
+<span class="sd">    :param site_id: The unique identifier of the Guest site.</span>
+<span class="sd">    :param cursor: Pagination cursor for the next page.</span>
+<span class="sd">    :param limit: Maximum number of guest types to return (default 100, max 200).</span>
+<span class="sd">    :return: JSON response containing guest types.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the WorkplaceClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a WorkplaceClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_guest_types</span><span class="p">(</span><span class="n">site_id</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
