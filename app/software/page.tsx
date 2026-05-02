@@ -29,9 +29,26 @@ export default function SoftwarePage() {
 
         <Divider sx={{ mb: 4 }} />
 
-        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-          Projects coming soon.
-        </Typography>
+        <Box
+          component={Link}
+          href="/software/pykada"
+          sx={{
+            display: "block",
+            p: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 2,
+            textDecoration: "none",
+            "&:hover": { borderColor: "primary.main", backgroundColor: "action.hover" },
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", mb: 0.5 }}>
+            pykada
+          </Typography>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            Python SDK for the Verkada physical security API — cameras, access control, sensors, and more.
+          </Typography>
+        </Box>
       </Container>
     </Box>
   );
