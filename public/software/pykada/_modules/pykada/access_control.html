@@ -267,7 +267,9 @@
     <span class="n">ACCESS_END_DATE_ENDPOINT</span><span class="p">,</span> <span class="n">ACCESS_ENTRY_CODE_ENDPOINT</span><span class="p">,</span> \
     <span class="n">ACCESS_PASS_INVITE_ENDPOINT</span><span class="p">,</span> <span class="n">ACCESS_PROFILE_PHOTO_ENDPOINT</span><span class="p">,</span> \
     <span class="n">ACCESS_REMOTE_UNLOCK_ACTIVATE_ENDPOINT</span><span class="p">,</span> \
-    <span class="n">ACCESS_REMOTE_UNLOCK_DEACTIVATE_ENDPOINT</span><span class="p">,</span> <span class="n">ACCESS_START_DATE_ENDPOINT</span>
+    <span class="n">ACCESS_REMOTE_UNLOCK_DEACTIVATE_ENDPOINT</span><span class="p">,</span> <span class="n">ACCESS_START_DATE_ENDPOINT</span><span class="p">,</span> \
+    <span class="n">ACCESS_SCENARIOS_ENDPOINT</span><span class="p">,</span> \
+    <span class="n">FACE_UNLOCK_USERS_V2_ENDPOINT</span><span class="p">,</span> <span class="n">FACE_UNLOCK_EXTERNAL_USERS_V2_ENDPOINT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_user_external_id</span><span class="p">,</span> <span class="n">remove_null_fields</span><span class="p">,</span> \
     <span class="n">require_non_empty_str</span><span class="p">,</span> <span class="n">is_valid_date</span><span class="p">,</span> <span class="n">is_valid_time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">WEEKDAY_ENUM</span><span class="p">,</span> <span class="n">FREQUENCY_ENUM</span><span class="p">,</span> <span class="n">DOOR_STATUS_ENUM</span><span class="p">,</span> \
@@ -598,16 +600,16 @@
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.get_all_door_exception_calendars">[docs]</a>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_all_door_exception_calendars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                         <span class="n">last_updated_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>\
+                                         <span class="n">last_updated_after</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>\
             <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve all available door exception calendars.</span>
 
-<span class="sd">        :param last_updated_at: Optional timestamp (Unix seconds) to filter calendars updated after this time.</span>
+<span class="sd">        :param last_updated_after: Optional timestamp (Unix seconds) to filter calendars updated after this time.</span>
 <span class="sd">        :return: JSON response containing all available door exception calendars.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;last_updated_at&quot;</span><span class="p">:</span> <span class="n">last_updated_at</span><span class="p">}</span> \
-            <span class="k">if</span> <span class="n">last_updated_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;last_updated_after&quot;</span><span class="p">:</span> <span class="n">last_updated_after</span><span class="p">}</span> \
+            <span class="k">if</span> <span class="n">last_updated_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ACCESS_DOOR_EXCEPTIONS_ENDPOINT</span><span class="p">,</span>
                                         <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
@@ -1042,9 +1044,11 @@
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.add_user_to_access_group">[docs]</a>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_user_to_access_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                 <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                                 <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a user to an access group. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">        Add a user to an access group. Exactly one user identifier must be provided.</span>
 
 <span class="sd">        :param group_id: The unique identifier for the access group.</span>
 <span class="sd">        :type group_id: str</span>
@@ -1052,21 +1056,18 @@
 <span class="sd">        :type external_id: str, optional</span>
 <span class="sd">        :param user_id: The internal user identifier.</span>
 <span class="sd">        :type user_id: str, optional</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :type email: str, optional</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">        :type employee_id: str, optional</span>
 <span class="sd">        :return: JSON response after adding the user to the access group.</span>
 <span class="sd">        :rtype: dict</span>
-<span class="sd">        :raises ValueError: If group_id is empty, or if not exactly one of user_id or external_id is provided.</span>
+<span class="sd">        :raises ValueError: If group_id is empty, or if not exactly one user identifier is provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">group_id</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;group_id must be a non-empty string&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">user_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="n">user_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Exactly one of user_id or external_id must be provided, not both or neither.&quot;</span><span class="p">)</span>
-
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="n">group_id</span><span class="p">}</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">}</span>
-        <span class="c1"># Remove keys with None values from payload.</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ACCESS_GROUP_USER_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
                            <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
 
@@ -1078,28 +1079,25 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_user_from_access_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                       <span class="n">group_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                       <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                      <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                                      <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Remove a user from an access group. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">        Remove a user from an access group. Exactly one user identifier must be provided.</span>
 
 <span class="sd">        :param group_id: The unique identifier for the access group.</span>
 <span class="sd">        :param external_id: The external identifier for the user.</span>
 <span class="sd">        :param user_id: The internal user identifier.</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
 <span class="sd">        :return: JSON response after removing the user from the access group.</span>
-<span class="sd">        :raises ValueError: If group_id is empty, or if not exactly one of user_id or external_id is provided.</span>
+<span class="sd">        :raises ValueError: If group_id is empty, or if not exactly one user identifier is provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">group_id</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;group_id must be a non-empty string&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">user_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="n">user_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Exactly one of user_id or external_id must be provided, not both or neither.&quot;</span><span class="p">)</span>
-
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="n">group_id</span><span class="p">,</span> <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id</span><span class="p">,</span>
-                  <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">}</span>
-        <span class="c1"># Remove keys with None values.</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ACCESS_GROUP_USER_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+        <span class="n">user_params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="n">group_id</span><span class="p">,</span> <span class="o">**</span><span class="n">user_params</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">ACCESS_GROUP_USER_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
 
 
@@ -1367,14 +1365,17 @@
 <div class="viewcode-block" id="AccessControlClient.get_all_access_users">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.get_all_access_users">[docs]</a>
     <span class="nd">@typechecked</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_access_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_access_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_visitors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve all access user information.</span>
 
+<span class="sd">        :param include_visitors: If True, include visitor records in the response.</span>
+<span class="sd">        :type include_visitors: Optional[bool]</span>
 <span class="sd">        :return: JSON response containing access user information.</span>
 <span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ACCESS_ALL_USERS_ENDPOINT</span><span class="p">)</span></div>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;include_visitors&quot;</span><span class="p">:</span> <span class="n">include_visitors</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ACCESS_ALL_USERS_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
 
 
@@ -1382,18 +1383,22 @@
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.get_access_user">[docs]</a>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_access_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                        <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                        <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve access user by either user_id or external_id.</span>
-<span class="sd">        Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">        Retrieve access user by user_id, external_id, email, or employee_id.</span>
+<span class="sd">        Exactly one identifier must be provided.</span>
 
 <span class="sd">        :param user_id: The internal user identifier.</span>
 <span class="sd">        :param external_id: The external user identifier.</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
 <span class="sd">        :return: JSON response containing access user details.</span>
 <span class="sd">        :rtype: dict</span>
-<span class="sd">        :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">        :raises ValueError: If not exactly one identifier is provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ACCESS_USER_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
 
@@ -1403,17 +1408,21 @@
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">activate_ble_for_access_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                      <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                     <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                                     <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Activate BLE for an access user. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">        Activate BLE for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">        :param user_id: The internal user identifier.</span>
 <span class="sd">        :param external_id: The external user identifier.</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
 <span class="sd">        :return: JSON response after activating BLE for the access user.</span>
 <span class="sd">        :rtype: dict</span>
-<span class="sd">        :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">        :raises ValueError: If not exactly one identifier is provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ACCESS_BLE_ACTIVATE_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
 
@@ -1422,17 +1431,21 @@
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.deactivate_ble_for_access_user">[docs]</a>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">deactivate_ble_for_access_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                       <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                                       <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                       <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                       <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deactivate BLE for an access user. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">        Deactivate BLE for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">        :param user_id: The internal user identifier.</span>
 <span class="sd">        :param external_id: The external user identifier.</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
 <span class="sd">        :return: JSON response after deactivating BLE for the access user.</span>
 <span class="sd">        :rtype: dict</span>
-<span class="sd">        :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">        :raises ValueError: If not exactly one identifier is provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ACCESS_BLE_DEACTIVATE_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
 
@@ -1443,9 +1456,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">set_end_date_for_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                               <span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                               <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                              <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                              <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the end date for an access user. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">        Set the end date for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">        :param end_date: The end date in string format.</span>
 <span class="sd">        :type end_date: str</span>
@@ -1453,15 +1468,18 @@
 <span class="sd">        :type user_id: Optional[str]</span>
 <span class="sd">        :param external_id: The external user identifier.</span>
 <span class="sd">        :type external_id: Optional[str]</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :type email: Optional[str]</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">        :type employee_id: Optional[str]</span>
 <span class="sd">        :return: JSON response after setting the end date for the access user.</span>
 <span class="sd">        :rtype: dict</span>
-<span class="sd">        :raises ValueError: If end_date is an empty string or if not exactly one of user_id or external_id is provided.</span>
+<span class="sd">        :raises ValueError: If end_date is empty or not exactly one identifier is provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">end_date</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;end_date must be a non-empty string&quot;</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="p">}</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ACCESS_END_DATE_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
 
 
@@ -1470,19 +1488,25 @@
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.remove_entry_code_for_user">[docs]</a>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_entry_code_for_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                   <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                                   <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Remove the entry code for an access user.</span>
+<span class="sd">        Remove the entry code for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">        :param user_id: The internal user identifier.</span>
 <span class="sd">        :type user_id: Optional[str]</span>
 <span class="sd">        :param external_id: The external user identifier.</span>
 <span class="sd">        :type external_id: Optional[str]</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :type email: Optional[str]</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">        :type employee_id: Optional[str]</span>
 <span class="sd">        :return: JSON response after removing the entry code for the access user.</span>
 <span class="sd">        :rtype: dict</span>
-<span class="sd">        :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">        :raises ValueError: If not exactly one identifier is provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">ACCESS_ENTRY_CODE_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
 
@@ -1494,9 +1518,11 @@
                                 <span class="n">entry_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                 <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the entry code for an access user.</span>
+<span class="sd">        Set the entry code for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">        :param entry_code: The entry code to set.</span>
 <span class="sd">        :type entry_code: str</span>
@@ -1504,12 +1530,16 @@
 <span class="sd">        :type user_id: Optional[str]</span>
 <span class="sd">        :param external_id: The external user identifier.</span>
 <span class="sd">        :type external_id: Optional[str]</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :type email: Optional[str]</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">        :type employee_id: Optional[str]</span>
 <span class="sd">        :param override: Whether to override an existing entry code.</span>
 <span class="sd">        :type override: Optional[bool]</span>
 <span class="sd">        :return: JSON response after setting the entry code.</span>
 <span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="n">params</span><span class="p">[</span><span class="s2">&quot;override&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">override</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;entry_code&quot;</span><span class="p">:</span> <span class="n">entry_code</span><span class="p">}</span>
@@ -1521,18 +1551,24 @@
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.send_pass_app_invite_for_user">[docs]</a>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_pass_app_invite_for_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                      <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                                      <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Send a Pass App invite for an access user.</span>
+<span class="sd">        Send a Pass App invite for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">        :param user_id: The internal user identifier.</span>
 <span class="sd">        :type user_id: Optional[str]</span>
 <span class="sd">        :param external_id: The external user identifier.</span>
 <span class="sd">        :type external_id: Optional[str]</span>
+<span class="sd">        :param email: The user&#39;s email address.</span>
+<span class="sd">        :type email: Optional[str]</span>
+<span class="sd">        :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">        :type employee_id: Optional[str]</span>
 <span class="sd">        :return: JSON response after sending the invite.</span>
 <span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">check_user_external_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">ACCESS_PASS_INVITE_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
 
@@ -1684,6 +1720,74 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;start_date must be a non-empty string&quot;</span><span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;start_date&quot;</span><span class="p">:</span> <span class="n">start_date</span><span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ACCESS_START_DATE_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AccessControlClient.get_access_scenarios">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.get_access_scenarios">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_access_scenarios</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                             <span class="n">scenario_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">site_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve all access scenarios for the organization.</span>
+
+<span class="sd">        :param scenario_ids: Optional list of scenario IDs to filter results.</span>
+<span class="sd">        :type scenario_ids: Optional[List[str]]</span>
+<span class="sd">        :param site_ids: Optional list of site IDs to filter scenarios.</span>
+<span class="sd">        :type site_ids: Optional[List[str]]</span>
+<span class="sd">        :param types: Optional list of scenario types to filter results.</span>
+<span class="sd">        :type types: Optional[List[str]]</span>
+<span class="sd">        :return: JSON response containing access scenarios.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span>
+            <span class="s2">&quot;scenario_ids&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scenario_ids</span><span class="p">)</span> <span class="k">if</span> <span class="n">scenario_ids</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;site_ids&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">site_ids</span><span class="p">)</span> <span class="k">if</span> <span class="n">site_ids</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;types&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="n">types</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ACCESS_SCENARIOS_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AccessControlClient.activate_access_scenario">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.activate_access_scenario">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">activate_access_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Activate an access scenario.</span>
+
+<span class="sd">        :param scenario_id: The unique identifier for the access scenario.</span>
+<span class="sd">        :type scenario_id: str</span>
+<span class="sd">        :return: JSON response after activating the scenario.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        :raises ValueError: If scenario_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scenario_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;scenario_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ACCESS_SCENARIOS_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">scenario_id</span><span class="si">}</span><span class="s2">/activate&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AccessControlClient.release_access_scenario">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.release_access_scenario">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release_access_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Release an active access scenario.</span>
+
+<span class="sd">        :param scenario_id: The unique identifier for the access scenario.</span>
+<span class="sd">        :type scenario_id: str</span>
+<span class="sd">        :return: JSON response after releasing the scenario.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        :raises ValueError: If scenario_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scenario_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;scenario_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ACCESS_SCENARIOS_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">scenario_id</span><span class="si">}</span><span class="s2">/release&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
 </div>
 
 
@@ -1724,23 +1828,28 @@
 <div class="viewcode-block" id="activate_ble_for_access_user">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.activate_ble_for_access_user">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">activate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Activate BLE for an access user. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">    Activate BLE for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :return: JSON response after activating BLE for the access user.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">    :raises ValueError: If not exactly one identifier is provided.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">activate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">activate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="activate_license_plate">
@@ -1904,9 +2013,12 @@
 <div class="viewcode-block" id="add_user_to_access_group">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.add_user_to_access_group">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_user_to_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_user_to_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Add a user to an access group. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">    Add a user to an access group. Exactly one user identifier must be provided.</span>
 
 <span class="sd">    :param group_id: The unique identifier for the access group.</span>
 <span class="sd">    :type group_id: str</span>
@@ -1914,15 +2026,19 @@
 <span class="sd">    :type external_id: str, optional</span>
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: str, optional</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: str, optional</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: str, optional</span>
 <span class="sd">    :return: JSON response after adding the user to the access group.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises ValueError: If group_id is empty, or if not exactly one of user_id or external_id is provided.</span>
+<span class="sd">    :raises ValueError: If group_id is empty, or if not exactly one user identifier is provided.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">add_user_to_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">add_user_to_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_access_group">
@@ -2027,23 +2143,28 @@
 <div class="viewcode-block" id="deactivate_ble_for_access_user">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.deactivate_ble_for_access_user">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">deactivate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deactivate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Deactivate BLE for an access user. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">    Deactivate BLE for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :return: JSON response after deactivating BLE for the access user.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">    :raises ValueError: If not exactly one identifier is provided.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">deactivate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">deactivate_ble_for_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="deactivate_license_plate">
@@ -2347,24 +2468,29 @@
 <div class="viewcode-block" id="get_access_user">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.get_access_user">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Retrieve access user by either user_id or external_id.</span>
-<span class="sd">    Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">    Retrieve access user by user_id, external_id, email, or employee_id.</span>
+<span class="sd">    Exactly one identifier must be provided.</span>
 
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :return: JSON response containing access user details.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">    :raises ValueError: If not exactly one identifier is provided.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_access_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_all_access_levels">
@@ -2386,10 +2512,12 @@
 <div class="viewcode-block" id="get_all_access_users">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.get_all_access_users">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_all_access_users</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_access_users</span><span class="p">(</span><span class="n">include_visitors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve all access user information.</span>
 
+<span class="sd">    :param include_visitors: If True, include visitor records in the response.</span>
+<span class="sd">    :type include_visitors: Optional[bool]</span>
 <span class="sd">    :return: JSON response containing access user information.</span>
 <span class="sd">    :rtype: dict</span>
 
@@ -2397,24 +2525,24 @@
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_all_access_users</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_all_access_users</span><span class="p">(</span><span class="n">include_visitors</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_all_door_exception_calendars">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.get_all_door_exception_calendars">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_all_door_exception_calendars</span><span class="p">(</span><span class="n">last_updated_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_door_exception_calendars</span><span class="p">(</span><span class="n">last_updated_after</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve all available door exception calendars.</span>
 
-<span class="sd">    :param last_updated_at: Optional timestamp (Unix seconds) to filter calendars updated after this time.</span>
+<span class="sd">    :param last_updated_after: Optional timestamp (Unix seconds) to filter calendars updated after this time.</span>
 <span class="sd">    :return: JSON response containing all available door exception calendars.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_all_door_exception_calendars</span><span class="p">(</span><span class="n">last_updated_at</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_all_door_exception_calendars</span><span class="p">(</span><span class="n">last_updated_after</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_door_exception_calendar">
@@ -2500,31 +2628,39 @@
 <div class="viewcode-block" id="remove_entry_code_for_user">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.remove_entry_code_for_user">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">remove_entry_code_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_entry_code_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Remove the entry code for an access user.</span>
+<span class="sd">    Remove the entry code for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :return: JSON response after removing the entry code for the access user.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises ValueError: If not exactly one of user_id or external_id is provided.</span>
+<span class="sd">    :raises ValueError: If not exactly one identifier is provided.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">remove_entry_code_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">remove_entry_code_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="remove_user_from_access_group">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.remove_user_from_access_group">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">remove_user_from_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_user_from_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Remove a user from an access group. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">    Remove a user from an access group. Exactly one user identifier must be provided.</span>
 
 <span class="sd">    :param group_id: The unique identifier for the access group.</span>
 <span class="sd">    :type group_id: str</span>
@@ -2532,28 +2668,37 @@
 <span class="sd">    :type external_id: str, optional</span>
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: str, optional</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: str, optional</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: str, optional</span>
 <span class="sd">    :return: JSON response after removing the user from the access group.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises ValueError: If group_id is empty, or if not exactly one of user_id or external_id is provided.</span>
+<span class="sd">    :raises ValueError: If group_id is empty, or if not exactly one user identifier is provided.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">remove_user_from_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">remove_user_from_access_group</span><span class="p">(</span><span class="n">group_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="send_pass_app_invite_for_user">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.send_pass_app_invite_for_user">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">send_pass_app_invite_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">send_pass_app_invite_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Send a Pass App invite for an access user.</span>
+<span class="sd">    Send a Pass App invite for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">    :param user_id: The internal user identifier.</span>
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :return: JSON response after sending the invite.</span>
 <span class="sd">    :rtype: dict</span>
 
@@ -2561,15 +2706,16 @@
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">send_pass_app_invite_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">send_pass_app_invite_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_end_date_for_user">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.set_end_date_for_user">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">set_end_date_for_user</span><span class="p">(</span><span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_end_date_for_user</span><span class="p">(</span><span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set the end date for an access user. Exactly one of user_id or external_id must be provided.</span>
+<span class="sd">    Set the end date for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">    :param end_date: The end date in string format.</span>
 <span class="sd">    :type end_date: str</span>
@@ -2577,23 +2723,29 @@
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :return: JSON response after setting the end date for the access user.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises ValueError: If end_date is an empty string or if not exactly one of user_id or external_id is provided.</span>
+<span class="sd">    :raises ValueError: If end_date is empty or not exactly one identifier is provided.</span>
 
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">set_end_date_for_user</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">set_end_date_for_user</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_entry_code_for_user">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.set_entry_code_for_user">[docs]</a>
 <span class="nd">@typechecked</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">set_entry_code_for_user</span><span class="p">(</span><span class="n">entry_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_entry_code_for_user</span><span class="p">(</span><span class="n">entry_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set the entry code for an access user.</span>
+<span class="sd">    Set the entry code for an access user. Exactly one identifier must be provided.</span>
 
 <span class="sd">    :param entry_code: The entry code to set.</span>
 <span class="sd">    :type entry_code: str</span>
@@ -2601,6 +2753,10 @@
 <span class="sd">    :type user_id: Optional[str]</span>
 <span class="sd">    :param external_id: The external user identifier.</span>
 <span class="sd">    :type external_id: Optional[str]</span>
+<span class="sd">    :param email: The user&#39;s email address.</span>
+<span class="sd">    :type email: Optional[str]</span>
+<span class="sd">    :param employee_id: The user&#39;s employee ID.</span>
+<span class="sd">    :type employee_id: Optional[str]</span>
 <span class="sd">    :param override: Whether to override an existing entry code.</span>
 <span class="sd">    :type override: Optional[bool]</span>
 <span class="sd">    :return: JSON response after setting the entry code.</span>
@@ -2610,7 +2766,7 @@
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">set_entry_code_for_user</span><span class="p">(</span><span class="n">entry_code</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">override</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">set_entry_code_for_user</span><span class="p">(</span><span class="n">entry_code</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">employee_id</span><span class="p">,</span> <span class="n">override</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_start_date_for_user">
@@ -2806,6 +2962,72 @@
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">upload_profile_photo</span><span class="p">(</span><span class="n">photo_path</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">external_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_access_scenarios">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.get_access_scenarios">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_access_scenarios</span><span class="p">(</span><span class="n">scenario_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">site_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve all access scenarios for the organization.</span>
+
+<span class="sd">    :param scenario_ids: Optional list of scenario IDs to filter results.</span>
+<span class="sd">    :type scenario_ids: Optional[List[str]]</span>
+<span class="sd">    :param site_ids: Optional list of site IDs to filter scenarios.</span>
+<span class="sd">    :type site_ids: Optional[List[str]]</span>
+<span class="sd">    :param types: Optional list of scenario types to filter results.</span>
+<span class="sd">    :type types: Optional[List[str]]</span>
+<span class="sd">    :return: JSON response containing access scenarios.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_access_scenarios</span><span class="p">(</span><span class="n">scenario_ids</span><span class="p">,</span> <span class="n">site_ids</span><span class="p">,</span> <span class="n">types</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="activate_access_scenario">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.activate_access_scenario">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activate_access_scenario</span><span class="p">(</span><span class="n">scenario_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Activate an access scenario.</span>
+
+<span class="sd">    :param scenario_id: The unique identifier for the access scenario.</span>
+<span class="sd">    :type scenario_id: str</span>
+<span class="sd">    :return: JSON response after activating the scenario.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    :raises ValueError: If scenario_id is empty.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">activate_access_scenario</span><span class="p">(</span><span class="n">scenario_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="release_access_scenario">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.release_access_scenario">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">release_access_scenario</span><span class="p">(</span><span class="n">scenario_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Release an active access scenario.</span>
+
+<span class="sd">    :param scenario_id: The unique identifier for the access scenario.</span>
+<span class="sd">    :type scenario_id: str</span>
+<span class="sd">    :return: JSON response after releasing the scenario.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    :raises ValueError: If scenario_id is empty.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">release_access_scenario</span><span class="p">(</span><span class="n">scenario_id</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="validate_recurrence_rule">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.validate_recurrence_rule">[docs]</a>
