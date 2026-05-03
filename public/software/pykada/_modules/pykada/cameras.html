@@ -275,6 +275,11 @@
     <span class="n">DASHBOARD_OCCUPANCY_TRENDS_ENDPOINT</span><span class="p">,</span>
     <span class="n">ANALYTICS_ENDPOINT</span><span class="p">,</span>
     <span class="n">CAMERAS_ENDPOINT</span><span class="p">,</span>
+    <span class="n">STREAMING_TOKEN_ENDPOINT</span><span class="p">,</span>
+    <span class="n">DASHBOARD_WIDGET_TRENDS_ENDPOINT</span><span class="p">,</span>
+    <span class="n">VIEWING_STATION_ENDPOINT</span><span class="p">,</span>
+    <span class="n">OCCUPANCY_TRENDS_ENABLED_CAMERAS_ENDPOINT</span><span class="p">,</span>
+    <span class="n">CAMERA_AUDIO_ENDPOINT</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove_null_fields</span><span class="p">,</span> <span class="n">verify_csv_columns</span><span class="p">,</span> <span class="n">require_non_empty_str</span><span class="p">,</span> <span class="n">copy_docstring_from</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pykada.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">VALID_OCCUPANCY_TRENDS_INTERVALS_ENUM</span><span class="p">,</span> \
@@ -992,7 +997,64 @@
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">THUMBNAIL_LINK_ENDPOINT</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
 
-    
+
+<div class="viewcode-block" id="CamerasClient.get_streaming_token">
+<a class="viewcode-back" href="../../api/cameras.html#pykada.cameras.CamerasClient.get_streaming_token">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_streaming_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">exclude_accessible_resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a short-lived JWT for streaming live or historical camera footage.</span>
+
+<span class="sd">        :param exclude_accessible_resources: If True, omits ``accessibleCameras`` and</span>
+<span class="sd">            ``accessibleSites`` from the response to reduce payload size.</span>
+<span class="sd">        :return: JSON response containing the streaming token.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;exclude_accessible_resources&quot;</span><span class="p">:</span> <span class="n">exclude_accessible_resources</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">STREAMING_TOKEN_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CamerasClient.get_dashboard_widget_trends">
+<a class="viewcode-back" href="../../api/cameras.html#pykada.cameras.CamerasClient.get_dashboard_widget_trends">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_dashboard_widget_trends</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                    <span class="n">dashboard_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                    <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">interval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">site_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">widget_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">widget_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve trend data for widgets on an operational dashboard.</span>
+
+<span class="sd">        :param dashboard_id: The unique identifier of the dashboard.</span>
+<span class="sd">        :param start_time: Start of the time range in ISO 8601 format. Defaults to the</span>
+<span class="sd">            beginning of the last full bucket.</span>
+<span class="sd">        :param end_time: End of the time range in ISO 8601 format. Defaults to the end</span>
+<span class="sd">            of the last full bucket.</span>
+<span class="sd">        :param interval: Time interval for each data bucket. One of ``&#39;PT15M&#39;``,</span>
+<span class="sd">            ``&#39;PT1H&#39;``, ``&#39;PT1D&#39;``. Defaults to ``&#39;PT1H&#39;``.</span>
+<span class="sd">        :param site_ids: Optional list of site IDs to filter on.</span>
+<span class="sd">        :param widget_ids: Optional list of widget IDs to filter on.</span>
+<span class="sd">        :param widget_types: Optional list of widget types to filter on.</span>
+<span class="sd">        :return: JSON response containing dashboard widget trend data.</span>
+<span class="sd">        :raises ValueError: If dashboard_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dashboard_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dashboard_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DASHBOARD_WIDGET_TRENDS_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">dashboard_id</span><span class="si">}</span><span class="s2">/widget_trends/query&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span>
+            <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span>
+            <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span>
+            <span class="s2">&quot;interval&quot;</span><span class="p">:</span> <span class="n">interval</span><span class="p">,</span>
+            <span class="s2">&quot;site_ids&quot;</span><span class="p">:</span> <span class="n">site_ids</span><span class="p">,</span>
+            <span class="s2">&quot;widget_ids&quot;</span><span class="p">:</span> <span class="n">widget_ids</span><span class="p">,</span>
+            <span class="s2">&quot;widget_types&quot;</span><span class="p">:</span> <span class="n">widget_types</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="CamerasClient.get_all_pois">
 <a class="viewcode-back" href="../../api/cameras.html#pykada.cameras.CamerasClient.get_all_pois">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_all_pois</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1174,7 +1236,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_default_client</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">CamerasClient</span><span class="p">:</span>
     <span class="k">global</span> <span class="n">_default_cameras_client</span>
     <span class="k">if</span> <span class="n">_default_cameras_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_default_cameras_client</span> <span class="o">=</span> <span class="n">_get_default_client</span><span class="p">()</span>
+        <span class="n">_default_cameras_client</span> <span class="o">=</span> <span class="n">CamerasClient</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">_default_cameras_client</span>
 
 
@@ -1655,6 +1717,56 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">update_poi</span><span class="p">(</span><span class="n">person_id</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="get_streaming_token">
+<a class="viewcode-back" href="../../api/cameras.html#pykada.cameras.get_streaming_token">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_streaming_token</span><span class="p">(</span><span class="n">exclude_accessible_resources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a short-lived JWT for streaming live or historical camera footage.</span>
+
+<span class="sd">    :param exclude_accessible_resources: If True, omits ``accessibleCameras`` and</span>
+<span class="sd">        ``accessibleSites`` from the response to reduce payload size.</span>
+<span class="sd">    :return: JSON response containing the streaming token.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the CamerasClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a CamerasClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_streaming_token</span><span class="p">(</span><span class="n">exclude_accessible_resources</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_dashboard_widget_trends">
+<a class="viewcode-back" href="../../api/cameras.html#pykada.cameras.get_dashboard_widget_trends">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dashboard_widget_trends</span><span class="p">(</span><span class="n">dashboard_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">interval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">site_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">widget_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">widget_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve trend data for widgets on an operational dashboard.</span>
+
+<span class="sd">    :param dashboard_id: The unique identifier of the dashboard.</span>
+<span class="sd">    :param start_time: Start of the time range in ISO 8601 format.</span>
+<span class="sd">    :param end_time: End of the time range in ISO 8601 format.</span>
+<span class="sd">    :param interval: Time interval for each bucket: ``&#39;PT15M&#39;``, ``&#39;PT1H&#39;``, or ``&#39;PT1D&#39;``.</span>
+<span class="sd">    :param site_ids: Optional list of site IDs to filter on.</span>
+<span class="sd">    :param widget_ids: Optional list of widget IDs to filter on.</span>
+<span class="sd">    :param widget_types: Optional list of widget types to filter on.</span>
+<span class="sd">    :return: JSON response containing dashboard widget trend data.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the CamerasClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a CamerasClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">get_dashboard_widget_trends</span><span class="p">(</span>
+        <span class="n">dashboard_id</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">site_ids</span><span class="p">,</span> <span class="n">widget_ids</span><span class="p">,</span> <span class="n">widget_types</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_viewing_stations">
