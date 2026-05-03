@@ -312,21 +312,15 @@
                           <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                           <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a paginated list of camera alerts for the organization.</span>
 
-<span class="sd">        :param start_time: Start time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type start_time: int or None</span>
-<span class="sd">        :param end_time: End time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type end_time: int or None</span>
-<span class="sd">        :param include_image_url:</span>
-<span class="sd">        :type include_image_url:</span>
-<span class="sd">        :param notification_type:</span>
-<span class="sd">        :type notification_type:</span>
-<span class="sd">        :param page_token:</span>
-<span class="sd">        :type page_token:</span>
-<span class="sd">        :param page_size:</span>
-<span class="sd">        :type page_size:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param start_time: Start of the time window (Unix timestamp in seconds).</span>
+<span class="sd">        :param end_time: End of the time window (Unix timestamp in seconds).</span>
+<span class="sd">        :param include_image_url: When ``True``, each alert includes a pre-signed image URL.</span>
+<span class="sd">        :param notification_type: Optional list of alert types to filter by (e.g. ``[&quot;motion&quot;, &quot;crowd&quot;]``).</span>
+<span class="sd">        :param page_token: Pagination token returned by a previous call.</span>
+<span class="sd">        :param page_size: Number of alerts per page.</span>
+<span class="sd">        :return: A dictionary containing a page of alert objects.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span>
@@ -410,13 +404,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_lpois</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a paginated list of License Plates of Interest for the organization.</span>
 
-<span class="sd">        :param page_size: int</span>
-<span class="sd">        :type page_size: in</span>
-<span class="sd">        :param page_token:</span>
-<span class="sd">        :type page_token:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param page_size: Number of records per page.</span>
+<span class="sd">        :param page_token: Pagination token returned by a previous call.</span>
+<span class="sd">        :return: A dictionary containing a page of LPOI records.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">,</span> <span class="s2">&quot;page_token&quot;</span><span class="p">:</span> <span class="n">page_token</span><span class="p">}</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -429,13 +421,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">update_lpoi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">license_plate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the description of an existing License Plate of Interest.</span>
 
-<span class="sd">        :param license_plate:</span>
-<span class="sd">        :type license_plate:</span>
-<span class="sd">        :param description:</span>
-<span class="sd">        :type description:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param license_plate: The license plate number to update.</span>
+<span class="sd">        :param description: The new description for the license plate.</span>
+<span class="sd">        :return: The updated LPOI object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;license_plate&quot;</span><span class="p">:</span> <span class="n">license_plate</span><span class="p">}</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">}</span>
@@ -447,11 +437,10 @@
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_lpoi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">license_plate</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a License Plate of Interest from the organization.</span>
 
-<span class="sd">        :param license_plate:</span>
-<span class="sd">        :type license_plate:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param license_plate: The license plate number to remove.</span>
+<span class="sd">        :return: JSON response confirming deletion.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;license_plate&quot;</span><span class="p">:</span> <span class="n">license_plate</span><span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">LPOI_ENDPOINT</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
@@ -552,21 +541,16 @@
                                 <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a paginated list of license plates seen by a specific camera.</span>
 
-<span class="sd">        :param camera_id:</span>
-<span class="sd">        :type camera_id:</span>
-<span class="sd">        :param license_plate:</span>
-<span class="sd">        :type license_plate:</span>
-<span class="sd">        :param start_time: Start time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type start_time: int or None</span>
-<span class="sd">        :param end_time: End time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type end_time: int or None</span>
-<span class="sd">        :param page_size:</span>
-<span class="sd">        :type page_size:</span>
-<span class="sd">        :param page_token:</span>
-<span class="sd">        :type page_token:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param license_plate: Optional plate string to filter results to a single plate.</span>
+<span class="sd">        :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param page_size: Number of records per page.</span>
+<span class="sd">        :param page_token: Pagination token returned by a previous call.</span>
+<span class="sd">        :return: A dictionary containing a page of license plate detection records.</span>
+<span class="sd">        :raises ValueError: If camera_id is empty.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;camera_id&quot;</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -631,19 +615,14 @@
                                <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all timestamps for a license plate on an LPR-enabled camera, walking all pages automatically.</span>
 
-<span class="sd">        :param camera_id:</span>
-<span class="sd">        :type camera_id:</span>
-<span class="sd">        :param license_plate:</span>
-<span class="sd">        :type license_plate:</span>
-<span class="sd">        :param start_time: Start time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type start_time: int or None</span>
-<span class="sd">        :param end_time: End time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type end_time: int or None</span>
-<span class="sd">        :param end_time:</span>
-<span class="sd">        :type end_time:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param license_plate: The license plate number to look up.</span>
+<span class="sd">        :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :return: A generator that yields individual detection dictionaries.</span>
+<span class="sd">        :rtype: Generator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">VerkadaRequestManager</span><span class="o">.</span><span class="n">iterate_paginated_results</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lpr_timestamps</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
@@ -665,17 +644,13 @@
                               <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all object counts for a specific camera, walking all pages automatically.</span>
 
-<span class="sd">        :param camera_id:</span>
-<span class="sd">        :type camera_id:</span>
-<span class="sd">        :param start_time: Start time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type start_time: int or None</span>
-<span class="sd">        :param end_time: End time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type end_time: int or None</span>
-<span class="sd">        :param end_time:</span>
-<span class="sd">        :type end_time:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :return: A generator that yields individual object count dictionaries.</span>
+<span class="sd">        :rtype: Generator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">VerkadaRequestManager</span><span class="o">.</span><span class="n">iterate_paginated_results</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object_counts</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
@@ -698,19 +673,15 @@
                           <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                           <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a paginated list of object counts for a specific camera.</span>
 
-<span class="sd">        :param camera_id:</span>
-<span class="sd">        :type camera_id:</span>
-<span class="sd">        :param start_time: Start time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type start_time: int or None</span>
-<span class="sd">        :param end_time: End time for the data (Unix timestamp in seconds).</span>
-<span class="sd">        :type end_time: int or None</span>
-<span class="sd">        :param page_size:</span>
-<span class="sd">        :type page_size:</span>
-<span class="sd">        :param page_token:</span>
-<span class="sd">        :type page_token:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param page_size: Number of records per page.</span>
+<span class="sd">        :param page_token: Pagination token returned by a previous call.</span>
+<span class="sd">        :return: A dictionary containing a page of object count records.</span>
+<span class="sd">        :raises ValueError: If camera_id is empty.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;camera_id&quot;</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -905,9 +876,10 @@
 <a class="viewcode-back" href="../../api/cameras.html#pykada.cameras.CamerasClient.get_all_camera_data">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_all_camera_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns details for all cameras in the organization, walking all pages automatically.</span>
 
-<span class="sd">        :return:</span>
-<span class="sd">        :rtype:</span>
+<span class="sd">        :return: A generator that yields individual camera detail dictionaries.</span>
+<span class="sd">        :rtype: Generator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">VerkadaRequestManager</span><span class="o">.</span><span class="n">iterate_paginated_results</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_camera_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
@@ -944,6 +916,10 @@
                          <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a link to video footage for a specified camera at a given timestamp.</span>
+
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param timestamp: Optional Unix timestamp (seconds). When omitted, returns a link to the latest available footage.</span>
+<span class="sd">        :return: A dictionary containing the footage link URL.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">}</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -959,7 +935,12 @@
                                  <span class="n">resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
                                      <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a thumbnail (low or high resolution) from a specified camera at a given time.</span>
+<span class="sd">        Returns a thumbnail image from a specified camera at a given time.</span>
+
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param timestamp: Optional Unix timestamp (seconds). When omitted, returns the latest thumbnail.</span>
+<span class="sd">        :param resolution: Optional resolution specifier (``&quot;high&quot;`` or ``&quot;low&quot;``).</span>
+<span class="sd">        :return: Raw JPEG image bytes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
                   <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="n">resolution</span><span class="p">}</span>
@@ -974,7 +955,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_latest_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                              <span class="n">resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the latest thumbnail from a specified camera in low or high resolution.</span>
+<span class="sd">        Returns the most recent thumbnail image from a specified camera.</span>
+
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param resolution: Optional resolution specifier (``&quot;high&quot;`` or ``&quot;low&quot;``).</span>
+<span class="sd">        :return: Raw JPEG image bytes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="n">resolution</span><span class="p">}</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -989,7 +974,12 @@
                            <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                            <span class="n">expiry</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a link to a thumbnail image from a specified camera at a given timestamp.</span>
+<span class="sd">        Returns a pre-signed link to a thumbnail image from a specified camera.</span>
+
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param timestamp: Optional Unix timestamp (seconds). When omitted, returns a link to the latest thumbnail.</span>
+<span class="sd">        :param expiry: Link expiry in seconds. Defaults to ``3600``.</span>
+<span class="sd">        :return: A dictionary containing the pre-signed thumbnail URL.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
                   <span class="s2">&quot;expiry&quot;</span><span class="p">:</span> <span class="n">expiry</span><span class="p">}</span>
@@ -1059,7 +1049,10 @@
 <a class="viewcode-back" href="../../api/cameras.html#pykada.cameras.CamerasClient.get_all_pois">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_all_pois</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Iterates through paginated results for Persons of Interest.</span>
+<span class="sd">        Returns all Persons of Interest in the organization, walking all pages automatically.</span>
+
+<span class="sd">        :return: A generator that yields individual POI dictionaries.</span>
+<span class="sd">        :rtype: Generator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">VerkadaRequestManager</span><span class="o">.</span><span class="n">iterate_paginated_results</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pois</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
@@ -1074,7 +1067,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_pois</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns details for all Persons of Interest in the organization.</span>
+<span class="sd">        Retrieve a paginated list of Persons of Interest in the organization.</span>
+
+<span class="sd">        :param page_size: Number of records per page.</span>
+<span class="sd">        :param page_token: Pagination token returned by a previous call.</span>
+<span class="sd">        :return: A dictionary containing a page of POI records.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">,</span> <span class="s2">&quot;page_token&quot;</span><span class="p">:</span> <span class="n">page_token</span><span class="p">}</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -1088,7 +1085,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">create_poi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a Person of Interest using a base64-encoded image and label.</span>
+<span class="sd">        Create a Person of Interest from an image file.</span>
+
+<span class="sd">        :param image_url: Local filesystem path to a JPEG or PNG image file.</span>
+<span class="sd">        :param label: A human-readable label for the person (e.g. ``&quot;Suspect A&quot;``).</span>
+<span class="sd">        :return: The created POI object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">encoded_image</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
@@ -1104,7 +1105,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">update_poi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the label of a Person of Interest.</span>
+<span class="sd">        Update the label of an existing Person of Interest.</span>
+
+<span class="sd">        :param person_id: The unique identifier of the Person of Interest.</span>
+<span class="sd">        :param label: The new label to assign.</span>
+<span class="sd">        :return: The updated POI object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="n">person_id</span><span class="p">}</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">}</span>
@@ -1117,7 +1122,10 @@
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_poi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">person_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deletes a Person of Interest from the organization.</span>
+<span class="sd">        Delete a Person of Interest from the organization.</span>
+
+<span class="sd">        :param person_id: The unique identifier of the Person of Interest.</span>
+<span class="sd">        :return: JSON response confirming deletion.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="n">person_id</span><span class="p">}</span>
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">POI_ENDPOINT</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1135,7 +1143,14 @@
                                            <span class="n">interval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
                                                <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns occupancy trend data for a specified dashboard.</span>
+<span class="sd">        Returns occupancy trend data for a specified operational dashboard.</span>
+
+<span class="sd">        :param dashboard_id: The unique identifier of the dashboard.</span>
+<span class="sd">        :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param interval: Time interval for data aggregation (e.g. ``&quot;1_hour&quot;``, ``&quot;1_day&quot;``).</span>
+<span class="sd">        :return: A dictionary containing occupancy trend data for the dashboard.</span>
+<span class="sd">        :raises ValueError: If dashboard_id is empty.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">dashboard_id</span><span class="p">,</span> <span class="s2">&quot;dashboard_id&quot;</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -1171,7 +1186,15 @@
                                       <span class="n">search_zones</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
                                           <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the maximum people and vehicle counts for a specified camera.</span>
+<span class="sd">        Returns the peak people and vehicle counts for a camera over a time range.</span>
+
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">        :param search_zones: Optional list of polygonal zones (each a list of ``[x, y]``</span>
+<span class="sd">            coordinate pairs) to restrict counting to specific areas of the frame.</span>
+<span class="sd">        :return: A dictionary with peak counts for people and vehicles.</span>
+<span class="sd">        :raises ValueError: If camera_id is empty.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;camera_id&quot;</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -1190,7 +1213,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_camera_audio_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                 <span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the audio status of a specified camera.</span>
+<span class="sd">        Returns the audio recording status of a specified camera.</span>
+
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :return: A dictionary indicating whether audio recording is enabled.</span>
+<span class="sd">        :raises ValueError: If camera_id is empty.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;camera_id&quot;</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="n">camera_id</span><span class="p">}</span>
@@ -1204,7 +1231,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">set_camera_audio_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                 <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets the audio status of a specified camera.</span>
+<span class="sd">        Enable or disable audio recording on a specified camera.</span>
+
+<span class="sd">        :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">        :param enabled: ``True`` to enable audio recording; ``False`` to disable it.</span>
+<span class="sd">        :return: A dictionary confirming the updated audio status.</span>
+<span class="sd">        :raises ValueError: If camera_id is empty.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">require_non_empty_str</span><span class="p">(</span><span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;camera_id&quot;</span><span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="n">camera_id</span><span class="p">,</span> <span class="s2">&quot;enabled&quot;</span><span class="p">:</span> <span class="n">enabled</span><span class="p">}</span>
@@ -1274,7 +1306,11 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_poi</span><span class="p">(</span><span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a Person of Interest using a base64-encoded image and label.</span>
+<span class="sd">    Create a Person of Interest from an image file.</span>
+
+<span class="sd">    :param image_url: Local filesystem path to a JPEG or PNG image file.</span>
+<span class="sd">    :param label: A human-readable label for the person (e.g. ``&quot;Suspect A&quot;``).</span>
+<span class="sd">    :return: The created POI object.</span>
 
 <span class="sd">    ---</span>
 
@@ -1317,7 +1353,10 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_poi</span><span class="p">(</span><span class="n">person_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Deletes a Person of Interest from the organization.</span>
+<span class="sd">    Delete a Person of Interest from the organization.</span>
+
+<span class="sd">    :param person_id: The unique identifier of the Person of Interest.</span>
+<span class="sd">    :return: JSON response confirming deletion.</span>
 
 <span class="sd">    ---</span>
 
@@ -1376,7 +1415,10 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_all_pois</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Iterates through paginated results for Persons of Interest.</span>
+<span class="sd">    Returns all Persons of Interest in the organization, walking all pages automatically.</span>
+
+<span class="sd">    :return: A generator that yields individual POI dictionaries.</span>
+<span class="sd">    :rtype: Generator</span>
 
 <span class="sd">    ---</span>
 
@@ -1408,7 +1450,11 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_camera_audio_status</span><span class="p">(</span><span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the audio status of a specified camera.</span>
+<span class="sd">    Returns the audio recording status of a specified camera.</span>
+
+<span class="sd">    :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">    :return: A dictionary indicating whether audio recording is enabled.</span>
+<span class="sd">    :raises ValueError: If camera_id is empty.</span>
 
 <span class="sd">    ---</span>
 
@@ -1457,7 +1503,14 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_dashboard_occupancy_trend_data</span><span class="p">(</span><span class="n">dashboard_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns occupancy trend data for a specified dashboard.</span>
+<span class="sd">    Returns occupancy trend data for a specified operational dashboard.</span>
+
+<span class="sd">    :param dashboard_id: The unique identifier of the dashboard.</span>
+<span class="sd">    :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">    :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">    :param interval: Time interval for data aggregation (e.g. ``&quot;1_hour&quot;``, ``&quot;1_day&quot;``).</span>
+<span class="sd">    :return: A dictionary containing occupancy trend data for the dashboard.</span>
+<span class="sd">    :raises ValueError: If dashboard_id is empty.</span>
 
 <span class="sd">    ---</span>
 
@@ -1473,6 +1526,10 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a link to video footage for a specified camera at a given timestamp.</span>
 
+<span class="sd">    :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">    :param timestamp: Optional Unix timestamp (seconds). When omitted, returns a link to the latest available footage.</span>
+<span class="sd">    :return: A dictionary containing the footage link URL.</span>
+
 <span class="sd">    ---</span>
 
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the CamerasClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use a CamerasClient object directly for better performance.</span>
@@ -1485,7 +1542,12 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_historical_thumbnail</span><span class="p">(</span><span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns a thumbnail (low or high resolution) from a specified camera at a given time.</span>
+<span class="sd">    Returns a thumbnail image from a specified camera at a given time.</span>
+
+<span class="sd">    :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">    :param timestamp: Optional Unix timestamp (seconds). When omitted, returns the latest thumbnail.</span>
+<span class="sd">    :param resolution: Optional resolution specifier (``&quot;high&quot;`` or ``&quot;low&quot;``).</span>
+<span class="sd">    :return: Raw JPEG image bytes.</span>
 
 <span class="sd">    ---</span>
 
@@ -1499,7 +1561,11 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_latest_thumbnail</span><span class="p">(</span><span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the latest thumbnail from a specified camera in low or high resolution.</span>
+<span class="sd">    Returns the most recent thumbnail image from a specified camera.</span>
+
+<span class="sd">    :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">    :param resolution: Optional resolution specifier (``&quot;high&quot;`` or ``&quot;low&quot;``).</span>
+<span class="sd">    :return: Raw JPEG image bytes.</span>
 
 <span class="sd">    ---</span>
 
@@ -1544,7 +1610,15 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_max_people_vehicle_counts</span><span class="p">(</span><span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">search_zones</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the maximum people and vehicle counts for a specified camera.</span>
+<span class="sd">    Returns the peak people and vehicle counts for a camera over a time range.</span>
+
+<span class="sd">    :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">    :param start_time: Start of the time range (Unix timestamp in seconds).</span>
+<span class="sd">    :param end_time: End of the time range (Unix timestamp in seconds).</span>
+<span class="sd">    :param search_zones: Optional list of polygonal zones (each a list of ``[x, y]``</span>
+<span class="sd">        coordinate pairs) to restrict counting to specific areas of the frame.</span>
+<span class="sd">    :return: A dictionary with peak counts for people and vehicles.</span>
+<span class="sd">    :raises ValueError: If camera_id is empty.</span>
 
 <span class="sd">    ---</span>
 
@@ -1567,7 +1641,9 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_occupancy_trend_enabled_cameras</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns cameras_tests enabled for occupancy trends.</span>
+<span class="sd">    Returns cameras in the organization that have occupancy trends enabled.</span>
+
+<span class="sd">    :return: A dictionary containing camera identifiers and their occupancy-trend status.</span>
 
 <span class="sd">    ---</span>
 
@@ -1603,7 +1679,11 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_pois</span><span class="p">(</span><span class="n">page_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">page_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns details for all Persons of Interest in the organization.</span>
+<span class="sd">    Retrieve a paginated list of Persons of Interest in the organization.</span>
+
+<span class="sd">    :param page_size: Number of records per page.</span>
+<span class="sd">    :param page_token: Pagination token returned by a previous call.</span>
+<span class="sd">    :return: A dictionary containing a page of POI records.</span>
 
 <span class="sd">    ---</span>
 
@@ -1626,7 +1706,12 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_thumbnail_link</span><span class="p">(</span><span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expiry</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3600</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns a link to a thumbnail image from a specified camera at a given timestamp.</span>
+<span class="sd">    Returns a pre-signed link to a thumbnail image from a specified camera.</span>
+
+<span class="sd">    :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">    :param timestamp: Optional Unix timestamp (seconds). When omitted, returns a link to the latest thumbnail.</span>
+<span class="sd">    :param expiry: Link expiry in seconds. Defaults to ``3600``.</span>
+<span class="sd">    :return: A dictionary containing the pre-signed thumbnail URL.</span>
 
 <span class="sd">    ---</span>
 
@@ -1640,7 +1725,12 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_camera_audio_status</span><span class="p">(</span><span class="n">camera_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Sets the audio status of a specified camera.</span>
+<span class="sd">    Enable or disable audio recording on a specified camera.</span>
+
+<span class="sd">    :param camera_id: The unique identifier of the camera.</span>
+<span class="sd">    :param enabled: ``True`` to enable audio recording; ``False`` to disable it.</span>
+<span class="sd">    :return: A dictionary confirming the updated audio status.</span>
+<span class="sd">    :raises ValueError: If camera_id is empty.</span>
 
 <span class="sd">    ---</span>
 
@@ -1709,7 +1799,11 @@
 <span class="nd">@typechecked</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_poi</span><span class="p">(</span><span class="n">person_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Updates the label of a Person of Interest.</span>
+<span class="sd">    Update the label of an existing Person of Interest.</span>
+
+<span class="sd">    :param person_id: The unique identifier of the Person of Interest.</span>
+<span class="sd">    :param label: The new label to assign.</span>
+<span class="sd">    :return: The updated POI object.</span>
 
 <span class="sd">    ---</span>
 
