@@ -1723,6 +1723,164 @@
 
 
 
+<div class="viewcode-block" id="AccessControlClient.disable_face_unlock_for_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.disable_face_unlock_for_user">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disable_face_unlock_for_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disable face unlock for an access user.</span>
+
+<span class="sd">        :param user_id: The internal user identifier.</span>
+<span class="sd">        :return: JSON response after disabling face unlock.</span>
+<span class="sd">        :raises ValueError: If user_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;user_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">/face_unlock&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccessControlClient.enable_face_unlock_with_profile_photo_for_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_user">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_profile_photo_for_user</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable face unlock for a user by copying their existing profile photo.</span>
+
+<span class="sd">        :param user_id: The internal user identifier.</span>
+<span class="sd">        :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">        :return: JSON response after enabling face unlock.</span>
+<span class="sd">        :raises ValueError: If user_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;user_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">/face_unlock/copy_user_photo&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;overwrite&quot;</span><span class="p">:</span> <span class="n">overwrite</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccessControlClient.invite_user_to_enroll_face_unlock">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.invite_user_to_enroll_face_unlock">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">invite_user_to_enroll_face_unlock</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">invitation_methods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Invite a user to enroll in face unlock via mobile.</span>
+
+<span class="sd">        :param user_id: The internal user identifier.</span>
+<span class="sd">        :param invitation_methods: Methods to send invitation through (``&#39;email&#39;``, ``&#39;sms&#39;``).</span>
+<span class="sd">            Defaults to both.</span>
+<span class="sd">        :return: JSON response after sending the invitation.</span>
+<span class="sd">        :raises ValueError: If user_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;user_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">/face_unlock/invite&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;invitation_methods&quot;</span><span class="p">:</span> <span class="n">invitation_methods</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccessControlClient.enable_face_unlock_with_uploaded_photo_for_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_user">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_uploaded_photo_for_user</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable face unlock for a user by uploading a photo.</span>
+
+<span class="sd">        :param user_id: The internal user identifier.</span>
+<span class="sd">        :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">        :return: JSON response after enabling face unlock.</span>
+<span class="sd">        :raises ValueError: If user_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;user_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">/face_unlock/upload_photo&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;overwrite&quot;</span><span class="p">:</span> <span class="n">overwrite</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccessControlClient.disable_face_unlock_for_external_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.disable_face_unlock_for_external_user">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disable_face_unlock_for_external_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disable face unlock for an external access user.</span>
+
+<span class="sd">        :param external_id: The external user identifier.</span>
+<span class="sd">        :return: JSON response after disabling face unlock.</span>
+<span class="sd">        :raises ValueError: If external_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">external_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;external_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_EXTERNAL_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">external_id</span><span class="si">}</span><span class="s2">/face_unlock&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccessControlClient.enable_face_unlock_with_profile_photo_for_external_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_external_user">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_profile_photo_for_external_user</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable face unlock for an external user by copying their existing profile photo.</span>
+
+<span class="sd">        :param external_id: The external user identifier.</span>
+<span class="sd">        :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">        :return: JSON response after enabling face unlock.</span>
+<span class="sd">        :raises ValueError: If external_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">external_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;external_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_EXTERNAL_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">external_id</span><span class="si">}</span><span class="s2">/face_unlock/copy_user_photo&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;overwrite&quot;</span><span class="p">:</span> <span class="n">overwrite</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccessControlClient.invite_external_user_to_enroll_face_unlock">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.invite_external_user_to_enroll_face_unlock">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">invite_external_user_to_enroll_face_unlock</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">invitation_methods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Invite an external user to enroll in face unlock via mobile.</span>
+
+<span class="sd">        :param external_id: The external user identifier.</span>
+<span class="sd">        :param invitation_methods: Methods to send invitation through (``&#39;email&#39;``, ``&#39;sms&#39;``).</span>
+<span class="sd">            Defaults to both.</span>
+<span class="sd">        :return: JSON response after sending the invitation.</span>
+<span class="sd">        :raises ValueError: If external_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">external_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;external_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_EXTERNAL_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">external_id</span><span class="si">}</span><span class="s2">/face_unlock/invite&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;invitation_methods&quot;</span><span class="p">:</span> <span class="n">invitation_methods</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccessControlClient.enable_face_unlock_with_uploaded_photo_for_external_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_external_user">[docs]</a>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_uploaded_photo_for_external_user</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable face unlock for an external user by uploading a photo.</span>
+
+<span class="sd">        :param external_id: The external user identifier.</span>
+<span class="sd">        :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">        :return: JSON response after enabling face unlock.</span>
+<span class="sd">        :raises ValueError: If external_id is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">external_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;external_id must be a non-empty string&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FACE_UNLOCK_EXTERNAL_USERS_V2_ENDPOINT</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">external_id</span><span class="si">}</span><span class="s2">/face_unlock/upload_photo&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">remove_null_fields</span><span class="p">({</span><span class="s2">&quot;overwrite&quot;</span><span class="p">:</span> <span class="n">overwrite</span><span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_manager</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="AccessControlClient.get_access_scenarios">
 <a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.AccessControlClient.get_access_scenarios">[docs]</a>
     <span class="nd">@typechecked</span>
@@ -3027,6 +3185,148 @@
 <span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">release_access_scenario</span><span class="p">(</span><span class="n">scenario_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="disable_face_unlock_for_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.disable_face_unlock_for_user">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">disable_face_unlock_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Disable face unlock for an access user.</span>
+
+<span class="sd">    :param user_id: The internal user identifier.</span>
+<span class="sd">    :return: JSON response after disabling face unlock.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">disable_face_unlock_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="enable_face_unlock_with_profile_photo_for_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.enable_face_unlock_with_profile_photo_for_user">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_profile_photo_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enable face unlock for a user by copying their existing profile photo.</span>
+
+<span class="sd">    :param user_id: The internal user identifier.</span>
+<span class="sd">    :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">    :return: JSON response after enabling face unlock.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">enable_face_unlock_with_profile_photo_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="invite_user_to_enroll_face_unlock">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.invite_user_to_enroll_face_unlock">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">invite_user_to_enroll_face_unlock</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">invitation_methods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Invite a user to enroll in face unlock via mobile.</span>
+
+<span class="sd">    :param user_id: The internal user identifier.</span>
+<span class="sd">    :param invitation_methods: Methods to send invitation through (``&#39;email&#39;``, ``&#39;sms&#39;``).</span>
+<span class="sd">    :return: JSON response after sending the invitation.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">invite_user_to_enroll_face_unlock</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">invitation_methods</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="enable_face_unlock_with_uploaded_photo_for_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.enable_face_unlock_with_uploaded_photo_for_user">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_uploaded_photo_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enable face unlock for a user by uploading a photo.</span>
+
+<span class="sd">    :param user_id: The internal user identifier.</span>
+<span class="sd">    :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">    :return: JSON response after enabling face unlock.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">enable_face_unlock_with_uploaded_photo_for_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="disable_face_unlock_for_external_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.disable_face_unlock_for_external_user">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">disable_face_unlock_for_external_user</span><span class="p">(</span><span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Disable face unlock for an external access user.</span>
+
+<span class="sd">    :param external_id: The external user identifier.</span>
+<span class="sd">    :return: JSON response after disabling face unlock.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">disable_face_unlock_for_external_user</span><span class="p">(</span><span class="n">external_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="enable_face_unlock_with_profile_photo_for_external_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.enable_face_unlock_with_profile_photo_for_external_user">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_profile_photo_for_external_user</span><span class="p">(</span><span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enable face unlock for an external user by copying their existing profile photo.</span>
+
+<span class="sd">    :param external_id: The external user identifier.</span>
+<span class="sd">    :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">    :return: JSON response after enabling face unlock.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">enable_face_unlock_with_profile_photo_for_external_user</span><span class="p">(</span><span class="n">external_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="invite_external_user_to_enroll_face_unlock">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.invite_external_user_to_enroll_face_unlock">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">invite_external_user_to_enroll_face_unlock</span><span class="p">(</span><span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">invitation_methods</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Invite an external user to enroll in face unlock via mobile.</span>
+
+<span class="sd">    :param external_id: The external user identifier.</span>
+<span class="sd">    :param invitation_methods: Methods to send invitation through (``&#39;email&#39;``, ``&#39;sms&#39;``).</span>
+<span class="sd">    :return: JSON response after sending the invitation.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">invite_external_user_to_enroll_face_unlock</span><span class="p">(</span><span class="n">external_id</span><span class="p">,</span> <span class="n">invitation_methods</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="enable_face_unlock_with_uploaded_photo_for_external_user">
+<a class="viewcode-back" href="../../api/access_control.html#pykada.access_control.enable_face_unlock_with_uploaded_photo_for_external_user">[docs]</a>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enable_face_unlock_with_uploaded_photo_for_external_user</span><span class="p">(</span><span class="n">external_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enable face unlock for an external user by uploading a photo.</span>
+
+<span class="sd">    :param external_id: The external user identifier.</span>
+<span class="sd">    :param overwrite: Whether to overwrite an existing face credential. Default is false.</span>
+<span class="sd">    :return: JSON response after enabling face unlock.</span>
+
+<span class="sd">    ---</span>
+
+<span class="sd">    **Note:** This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_get_default_client</span><span class="p">()</span><span class="o">.</span><span class="n">enable_face_unlock_with_uploaded_photo_for_external_user</span><span class="p">(</span><span class="n">external_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="validate_recurrence_rule">

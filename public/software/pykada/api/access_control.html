@@ -1488,6 +1488,186 @@ Exactly one identifier must be provided.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.disable_face_unlock_for_user">
+<span class="sig-name descname"><span class="pre">disable_face_unlock_for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.disable_face_unlock_for_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.disable_face_unlock_for_user" title="Link to this definition">¶</a></dt>
+<dd><p>Disable face unlock for an access user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after disabling face unlock.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If user_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_user">
+<span class="sig-name descname"><span class="pre">enable_face_unlock_with_profile_photo_for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.enable_face_unlock_with_profile_photo_for_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_user" title="Link to this definition">¶</a></dt>
+<dd><p>Enable face unlock for a user by copying their existing profile photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after enabling face unlock.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If user_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.invite_user_to_enroll_face_unlock">
+<span class="sig-name descname"><span class="pre">invite_user_to_enroll_face_unlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitation_methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.invite_user_to_enroll_face_unlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.invite_user_to_enroll_face_unlock" title="Link to this definition">¶</a></dt>
+<dd><p>Invite a user to enroll in face unlock via mobile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p></li>
+<li><p><strong>invitation_methods</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – Methods to send invitation through (<code class="docutils literal notranslate"><span class="pre">'email'</span></code>, <code class="docutils literal notranslate"><span class="pre">'sms'</span></code>).
+Defaults to both.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after sending the invitation.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If user_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_user">
+<span class="sig-name descname"><span class="pre">enable_face_unlock_with_uploaded_photo_for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.enable_face_unlock_with_uploaded_photo_for_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_user" title="Link to this definition">¶</a></dt>
+<dd><p>Enable face unlock for a user by uploading a photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after enabling face unlock.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If user_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.disable_face_unlock_for_external_user">
+<span class="sig-name descname"><span class="pre">disable_face_unlock_for_external_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.disable_face_unlock_for_external_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.disable_face_unlock_for_external_user" title="Link to this definition">¶</a></dt>
+<dd><p>Disable face unlock for an external access user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after disabling face unlock.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If external_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_external_user">
+<span class="sig-name descname"><span class="pre">enable_face_unlock_with_profile_photo_for_external_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.enable_face_unlock_with_profile_photo_for_external_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_external_user" title="Link to this definition">¶</a></dt>
+<dd><p>Enable face unlock for an external user by copying their existing profile photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after enabling face unlock.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If external_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.invite_external_user_to_enroll_face_unlock">
+<span class="sig-name descname"><span class="pre">invite_external_user_to_enroll_face_unlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitation_methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.invite_external_user_to_enroll_face_unlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.invite_external_user_to_enroll_face_unlock" title="Link to this definition">¶</a></dt>
+<dd><p>Invite an external user to enroll in face unlock via mobile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p></li>
+<li><p><strong>invitation_methods</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – Methods to send invitation through (<code class="docutils literal notranslate"><span class="pre">'email'</span></code>, <code class="docutils literal notranslate"><span class="pre">'sms'</span></code>).
+Defaults to both.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after sending the invitation.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If external_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_external_user">
+<span class="sig-name descname"><span class="pre">enable_face_unlock_with_uploaded_photo_for_external_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.enable_face_unlock_with_uploaded_photo_for_external_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_external_user" title="Link to this definition">¶</a></dt>
+<dd><p>Enable face unlock for an external user by uploading a photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response after enabling face unlock.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If external_id is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pykada.access_control.AccessControlClient.get_access_scenarios">
 <span class="sig-name descname"><span class="pre">get_access_scenarios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#AccessControlClient.get_access_scenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.access_control.AccessControlClient.get_access_scenarios" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve all access scenarios for the organization.</p>
@@ -2860,6 +3040,152 @@ as well as an optional recurrence_rule object.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">disable_face_unlock_for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#disable_face_unlock_for_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Disable face unlock for an access user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after disabling face unlock.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">enable_face_unlock_with_profile_photo_for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#enable_face_unlock_with_profile_photo_for_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enable face unlock for a user by copying their existing profile photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after enabling face unlock.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">invite_user_to_enroll_face_unlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitation_methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#invite_user_to_enroll_face_unlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Invite a user to enroll in face unlock via mobile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p></li>
+<li><p><strong>invitation_methods</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – Methods to send invitation through (<code class="docutils literal notranslate"><span class="pre">'email'</span></code>, <code class="docutils literal notranslate"><span class="pre">'sms'</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after sending the invitation.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">enable_face_unlock_with_uploaded_photo_for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#enable_face_unlock_with_uploaded_photo_for_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enable face unlock for a user by uploading a photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The internal user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after enabling face unlock.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">disable_face_unlock_for_external_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#disable_face_unlock_for_external_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Disable face unlock for an external access user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after disabling face unlock.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">enable_face_unlock_with_profile_photo_for_external_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#enable_face_unlock_with_profile_photo_for_external_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enable face unlock for an external user by copying their existing profile photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after enabling face unlock.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">invite_external_user_to_enroll_face_unlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitation_methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#invite_external_user_to_enroll_face_unlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Invite an external user to enroll in face unlock via mobile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p></li>
+<li><p><strong>invitation_methods</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – Methods to send invitation through (<code class="docutils literal notranslate"><span class="pre">'email'</span></code>, <code class="docutils literal notranslate"><span class="pre">'sms'</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after sending the invitation.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">enable_face_unlock_with_uploaded_photo_for_external_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#enable_face_unlock_with_uploaded_photo_for_external_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enable face unlock for an external user by uploading a photo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>external_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The external user identifier.</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</span>) – Whether to overwrite an existing face credential. Default is false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response after enabling face unlock.</p>
+</dd>
+</dl>
+<p>—</p>
+<p><strong>Note:</strong> This is a functional wrapper for its equivalent method in the AccessControlClient. It creates a new client instance on every call, making it best for single, convenient operations. For making multiple API calls, instantiate and use an AccessControlClient object directly for better performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">pykada.access_control.</span></span><span class="sig-name descname"><span class="pre">validate_recurrence_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/access_control.html#validate_recurrence_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Validates a recurrence rule object based on the expected schema.</p>
 <dl class="field-list simple">
@@ -3010,6 +3336,14 @@ as well as an optional recurrence_rule object.</p></li>
 <li><a class="reference internal" href="#pykada.access_control.AccessControlClient.activate_remote_unlock_for_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.activate_remote_unlock_for_user()</span></code></a></li>
 <li><a class="reference internal" href="#pykada.access_control.AccessControlClient.deactivate_remote_unlock_for_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.deactivate_remote_unlock_for_user()</span></code></a></li>
 <li><a class="reference internal" href="#pykada.access_control.AccessControlClient.set_start_date_for_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.set_start_date_for_user()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.disable_face_unlock_for_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.disable_face_unlock_for_user()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.enable_face_unlock_with_profile_photo_for_user()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.invite_user_to_enroll_face_unlock"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.invite_user_to_enroll_face_unlock()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.enable_face_unlock_with_uploaded_photo_for_user()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.disable_face_unlock_for_external_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.disable_face_unlock_for_external_user()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_profile_photo_for_external_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.enable_face_unlock_with_profile_photo_for_external_user()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.invite_external_user_to_enroll_face_unlock"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.invite_external_user_to_enroll_face_unlock()</span></code></a></li>
+<li><a class="reference internal" href="#pykada.access_control.AccessControlClient.enable_face_unlock_with_uploaded_photo_for_external_user"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.enable_face_unlock_with_uploaded_photo_for_external_user()</span></code></a></li>
 <li><a class="reference internal" href="#pykada.access_control.AccessControlClient.get_access_scenarios"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.get_access_scenarios()</span></code></a></li>
 <li><a class="reference internal" href="#pykada.access_control.AccessControlClient.activate_access_scenario"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.activate_access_scenario()</span></code></a></li>
 <li><a class="reference internal" href="#pykada.access_control.AccessControlClient.release_access_scenario"><code class="docutils literal notranslate"><span class="pre">AccessControlClient.release_access_scenario()</span></code></a></li>
