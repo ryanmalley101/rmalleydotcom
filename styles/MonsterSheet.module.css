@@ -26,35 +26,91 @@
 
 .monsterSheetContainer {
     margin: 10px 5px 5px 10px;
+    font-size: 0.92rem;
 }
 
-.attributes {
-    width: 100%;
-    border: 0px;
+/* ── Two-column body ─────────────────────────────── */
+
+.twoColumn {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 22px;
+    align-items: start;
+}
+
+/* ── D&D 2024 ability score table ────────────────── */
+
+.abilityHalves {
+    display: flex;
+    gap: 10px;
+    margin: 4px 0;
+}
+
+.abilityTable55 {
+    flex: 1;
     border-collapse: collapse;
+    color: #A73335;
+    font-size: 0.82em;
+}
+
+.abilityTable55 thead th {
+    font-weight: bold;
+    font-variant: small-caps;
+    text-align: center;
+    padding: 1px 5px;
+    border-bottom: 1px solid #A73335;
+}
+
+.abilityTable55 thead th:first-child {
+    text-align: left;
+}
+
+.abilityTable55 tbody td {
+    text-align: center;
+    padding: 1px 5px;
+    color: #222;
+}
+
+.abilityTable55 tbody td:first-child {
+    text-align: left;
+    color: #A73335;
+    font-weight: bold;
+    font-size: 0.85em;
+    white-space: nowrap;
+    padding-right: 6px;
+}
+
+.saveProficient {
+    font-weight: bold;
     color: #A73335;
 }
 
-.attributes tbody th {
-    width: 50px;
-    text-align: center;
-}
+/* ── Section headers (ACTIONS, TRAITS, etc.) ─────── */
 
-.attributes tbody tr {
-    width: 50px;
-    text-align: center;
-}
-
-.actions {
-    font-size: 175%;
+.sectionHeader {
+    font-size: 160%;
     font-variant: small-caps;
-    margin: 17px 0px 0px 0px;
+    font-weight: 600;
+    color: #A73335;
+    margin: 14px 0 2px 0;
+}
+
+/* legacy alias kept for existing helper functions */
+.actions {
+    font-size: 160%;
+    font-variant: small-caps;
+    font-weight: 600;
+    color: #A73335;
+    margin: 14px 0 2px 0;
 }
 
 .hr {
     background: #A73335;
     height: 2px;
+    margin-bottom: 4px;
 }
+
+/* ── Ability / action entries ────────────────────── */
 
 .abilities {
     margin: 5px 0px;
@@ -83,5 +139,24 @@
 }
 
 .labelButton:hover {
-    color: blue
+    color: blue;
+}
+
+/* ── Legacy full-width table (kept for rollable mode) */
+
+.attributes {
+    width: 100%;
+    border: 0px;
+    border-collapse: collapse;
+    color: #A73335;
+}
+
+.attributes tbody th {
+    width: 50px;
+    text-align: center;
+}
+
+.attributes tbody tr {
+    width: 50px;
+    text-align: center;
 }
