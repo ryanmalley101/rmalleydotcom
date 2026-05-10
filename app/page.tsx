@@ -77,7 +77,7 @@ export default function HomePage() {
         {/* Category cards */}
         <Grid container spacing={3} justifyContent="center">
           {categories.map(({ title, description, icon: Icon, href, accent }) => (
-            <Grid item xs={12} sm={4} key={title}>
+            <Grid size={{ xs: 12, sm: 4 }} key={title}>
               <Card
                 elevation={2}
                 sx={{
