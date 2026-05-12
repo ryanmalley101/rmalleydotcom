@@ -1,0 +1,5516 @@
+[
+  {
+    "id": "focus-abides-in-stone",
+    "name": "Abides in Stone",
+    "source": "(Cypher System Rulebook, page 64)",
+    "description": "Your flesh is made of hard mineral, making you a hulking, difficult-to-harm humanoid.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Golem Body (145)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Golem Healing (145)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Golem Grip (145)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Trained Basher (193)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Golem Stomp (145) or Weaponization (197)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Deep Reserves (126)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Specialized Basher (185)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Still As a Statue (186)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Ultra Enhancement (194) or Mind Surge (162)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-absorbs-energy",
+    "name": "Absorbs Energy",
+    "source": "(Cypher System Rulebook, page 64)",
+    "description": "You can harness kinetic energy and transform it into other kinds of energy.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Absorb Kinetic Energy (108)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Release Energy (175)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Energize Object (134)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Absorb Pure Energy (108) or Improved Absorb Kinetic Energy (151)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Overcharge Energy (168)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Energize Creature (134)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Energize Crowd (134) or Overcharge Device (168)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-awakens-dreams",
+    "name": "Awakens Dreams",
+    "source": "(Cypher System Rulebook, page 64)",
+    "description": "You can pull images from dreams and bring them to life in the waking world.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Dreamcraft (132)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Oneirochemy (167)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Dream Thief (132)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Dream Becomes Reality (132) or Enhanced Intellect (135)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Daydream (124)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Nightmare (165)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Chamber of Dreams (119) or Reactive Field (174)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-battles-robots",
+    "name": "Battles Robots",
+    "source": "(Cypher System Rulebook, page 64)",
+    "description": "You excel in battling robots, automatons, and machine entities.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Machine Vulnerabilities (159)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Tech Skills (189)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Defense Against Robots (126)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Machine Hunting (159)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Disable Mechanisms (128) or Surprise Attack (188)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Robot Fighter (178)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Drain Power (131)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Deactivate Mechanisms (125) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-bears-a-halo-of-fire",
+    "name": "Bears a Halo of Fire",
+    "source": "(Cypher System Rulebook, page 64)",
+    "description": "You can sheath your body in flames, which protects you and harms your foes.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Shroud of Flame (183)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Hurl Flame (149)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Wings of Fire (199) or Fiery Hand of Doom (139)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Flameblade (140)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Fire Tendrils (140)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Fire Servant (140) or Inferno Trail (153)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-befriends-the-black-dog",
+    "name": "Befriends the Black Dog",
+    "source": "(We Are All Mad Here, page 174)",
+    "description": "Everywhere you go, yourblack doggoes too. They are your best friend and your greatest weakness. Their shadowed presence fills you with a darkness, but it is inside that darkness that you find the strength to shine.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Beast Companion (112)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Ribbons of Dark Matter (178)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Dark Matter Shroud (124) or Stronger Together (187)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Improved Companion (151)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Dark Matter Structure (124)"
+      },
+      {
+        "tier": 6,
+        "abilities": "As If One Creature (110) or Embraced by Darkness (133)"
+      }
+    ],
+    "gm_intrusion": "Your companion is a black dog of any size or shape. It can be any form—living, dead, crafted (such as a puppet), pure shadow, and so on. Your black dog is a physical manifestation of depression, grief, sadness, or other heavy and dark emotions. But it is also a dog, and thus brings with it the unique companionship, comfort, and bond that only dogs can offer."
+  },
+  {
+    "id": "focus-blazes-paths",
+    "name": "Blazes Paths",
+    "source": "(High Noon at Midnight, page 104)",
+    "description": "You read the land. You know every twisted arroyo, spiny cactus, and change in the weather. And what you don't know, you soon learn by sniffing the wind, tasting the dirt, and squinting across the wilderness landscapes. As you go, you mark the way for others to follow, notching trees or scribing stones with your personal symbol. As you become more and more accomplished, the network of trails you've blazed enhances not only your reputation as a pathfinder, but also your personal spiritual strength, allowing you to see what's happening along them, to flash along the miles you blazed in mere moments, and even return to the first time you ever set foot on a trail.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Pathfinder Skills (HNAM, 104)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Happy Trails (HNAM, 104)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Trail Awareness (HNAM, 104) or Trail Sensor (HNAM, 104)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Blaze Door (HNAM, 104)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Blaze Recovery (HNAM, 104)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Step Across Time (HNAM, 105) or Trail Cypher (HNAM, 105)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-blazes-with-radiance",
+    "name": "Blazes With Radiance",
+    "source": "(Cypher System Rulebook, page 64)",
+    "description": "You can create light, sculpt it, bend it away from you, or gather it to use as a weapon.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enlightened (136)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Illuminating Touch (150)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Dazzling Sunburst (125)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Burning Light (116) or Skill With Defense (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Sunlight (188)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Disappear (128)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Living Light (158) or Defensive Field (127)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-brandishes-an-exotic-shield",
+    "name": "Brandishes an Exotic Shield",
+    "source": "(Cypher System Rulebook, page 64)",
+    "description": "You deploy an amazing shield of pure force that provides protection and some offensive options.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Force Field Shield (143)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Force Bash (142)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Enveloping Shield (136)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Healing Pulse (148) or Throw Force Shield (191)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Energized Shield (134)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Force Wall (143)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Bouncing Shield (115) or Shield Burst (182)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-builds-robots",
+    "name": "Builds Robots",
+    "source": "(Cypher System Rulebook, page 65)",
+    "description": "Your robotic creations do as they are commanded.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Robot Assistant (178)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Robot Builder (178)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Robot Control (178)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Expert Follower (137) or Skill With Defense (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Robot Upgrade (179)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Robot Fleet (179)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Robot Evolution (178) or Robot Upgrade (179)"
+      }
+    ],
+    "gm_intrusion": "The word \"robot\" is used in this focus, though the robot you create might look very different from one created by someone else, depending on the genre. Steampunk robots, organic robots, or even magical golems are all feasible \"robots.\""
+  },
+  {
+    "id": "focus-calculates-the-incalculable",
+    "name": "Calculates the Incalculable",
+    "source": "(Cypher System Rulebook, page 65)",
+    "description": "Awesome mathematical ability allows you to model the world in real time, giving you an edge over everyone.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Predictive Equation (171)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Higher Mathematics (149)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Predictive Model (171)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Subconscious Defense (187) or Enhanced Intellect (135)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Cognizant Offense (119)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Further Mathematics (144)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Knowing the Unknown (156) or Greater Enhanced Intellect (146)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-channels-divine-blessings",
+    "name": "Channels Divine Blessings",
+    "source": "(Cypher System Rulebook, page 65)",
+    "description": "A devout follower of a divine being, you channel some of your deity's power to achieve wonders.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Blessing of the Gods (114)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Enhanced Intellect (135)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Divine Radiance (130) or Fire Bloom (140)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Overawe (168)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Divine Intervention (130)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Divine Symbol (131) or Summon Demon (188)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-codes-magic-apps",
+    "name": "Codes Magic Apps",
+    "source": "(It's Only Magic, page 45)",
+    "description": "You are a maker, a crafter, but you use a unique combination of code and magic instead of wood, steel, or circuit boards. Like anyone who's spent a lot of time working on a computer, you've learned some strange secrets, not all of them entirely legal, and you know a lot about games, people, and how things work. More than just a computer nerd, you're a developer and (although you might not admit it) a hacker. Most of your specialized gear is hardware or software for your computer or smart device, so you can dress however you want. You're probably used to wearing comfortable clothes, sitting for hours at a time, and enjoying many caffeinated beverages (that have permanently discolored some of your clothing).",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Magical Programmer (IOM, 45)"
+      },
+      {
+        "tier": 2,
+        "abilities": "App Tinkerer (IOM, 45)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Confidence Artist (121) or Master Magical Programmer (IOM, 45)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Magical App Hacker (IOM, 45)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Knowing the Unknown (156)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Call in Favor (117) or Usurp Cypher (195)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-curses-the-world",
+    "name": "Curses the World",
+    "source": "(We Are All Mad Here, page 174)",
+    "description": "Fuck the world and its horrors. You have a mean streak living inside you that you can't control—and honestly have no desire to. You'd never hurt your friends and family, of course. But everyone and everything else? Curse them.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Terrifying Presence (190)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Erase Memories (136)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Psychosis (172) or Discerning Mind (129)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Mind Games (162)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Foul Aura (143)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Word of Command (199) or Break Their Mind (116)"
+      }
+    ],
+    "gm_intrusion": "Characters who Curse the World aren't necessarily evil or wicked; they are angry, hurt, and possibly seeking to get even with those who have wronged them or the ones they love (or at least keep themselves and their loved ones from being hurt again)."
+  },
+  {
+    "id": "focus-collects-bounties",
+    "name": "Collects Bounties",
+    "source": "(High Noon at Midnight, page 106)",
+    "description": "You know just where to look to find the latest wanted posters. Each one that goes up on the side of the jail or the wall of the post office is potentially another job and another reward. But money's only half the deal—you also do it for the rush when you finally apprehend someone you've tracked across three territories. Some folks prefer to collect bounties without any undue fuss. But it wouldn't be fun if those you stalk don't put up a fight when you finally find them. And if it's a fight, well, they'd best watch themselves. Most bounties you take on are advertised as dead or alive. You'd prefer them alive so they can face justice, but if it's down to you or them, that's no choice at all.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Seek and Hide (HNAM, 106)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Know Where It Hurts (HNAM, 106)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Ignore the Pain (150)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Let Them Try (HNAM, 106) or Surprise Attack (188)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Total Awareness (192)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Free to Move (HNAM, 106)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Knock Out (156)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Skill With Attacks (147) or Lethal Damage (HNAM, 107)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-commands-mental-powers",
+    "name": "Commands Mental Powers",
+    "source": "(Cypher System Rulebook, page 65)",
+    "description": "You have honed the power of your mind to perform amazing psychic deeds.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Telepathic (189)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Mind Reading (162)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Psychic Burst (172) or Psychic Suggestion (172)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Use Senses of Others (195)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Precognition (171)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Mind Control (162) or Telepathic Network (190)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-conducts-weird-science",
+    "name": "Conducts Weird Science",
+    "source": "(Cypher System Rulebook, page 65)",
+    "description": "Your preternatural insight and ability make you a scientist capable of amazing feats.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Lab Analysis (157)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Knowledge Skills (157)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Modify Device (164)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Better Living Through Chemistry (113) or Incredible Health (153)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Knowledge Skills (157)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Just a Bit Mad (156)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Weird Science Breakthrough (197)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Incredible Feat of Science (153)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Inventor (155) or Defensive Field (127)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-conjures-bullets",
+    "name": "Conjures Bullets",
+    "source": "(It's Only Magic, page 46)",
+    "description": "You blend sorcery and firearms into an amazing mix of magic and technology. Bullets and spells are almost interchangeable to you; your magic has a firearm motif and you cast using your gun. You might be a trick-shot sorcerer, a magical member of the armed forces, or an outlaw with a flair for arcane power. Gun nuts and wizard purists might look down on your blended technique, but you can do things that nobody else can do. You might call yourself a guncaster, spellshooter, or triggermage. You wear clothing that leaves your arms and hands free to use your weapon and cast spells, preferring something more flashy than a gunslinger's long coat and more intimidating than typical magician or witch clothing.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Practiced With Guns (171)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Spell Bullet (IOM, 47)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Gun Jammer (IOM, 47, 75)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Iron Eye (IOM, 47) or Trained Guncasting (IOM, 47)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Hasty Guncasting (IOM, 47)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Bullet Jaunt (IOM, 47)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Deadeye (IOM, 47) or Special Shot (184)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-consorts-with-the-dead",
+    "name": "Consorts With the Dead",
+    "source": "(Cypher System Rulebook, page 65)",
+    "description": "The dead answer your questions, and their reanimated corpses serve you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Speaker for the Dead (184)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Necromancy (165)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Reading the Room (175) or Repair Flesh (176)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Necromancy (147)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Terrifying Gaze (190)"
+      },
+      {
+        "tier": 6,
+        "abilities": "True Necromancy (194) or Word of Death (200)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-controls-beasts",
+    "name": "Controls Beasts",
+    "source": "(Cypher System Rulebook, page 65)",
+    "description": "Your ability to communicate and lead beasts is uncanny.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Beast Companion (112)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Soothe the Savage (184)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Communication (121)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Mount (164) or Stronger Together (187)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Beast Eyes (112)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Improved Companion (151)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Beast Call (112)"
+      },
+      {
+        "tier": 6,
+        "abilities": "As If One Creature (110) or Control the Savage (122)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-controls-gravity",
+    "name": "Controls Gravity",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You can sway the attraction of gravity itself.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Hover (149)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Enhanced Speed Edge (135)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Define Down (127) or Gravity Cleave (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Field of Gravity (139)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Flight (141)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Improved Gravity Cleave (151) or Weight of the World (197)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-copies-superpowers",
+    "name": "Copies Superpowers",
+    "source": "(Claim the Sky, page 46)",
+    "description": "You can copy others' skills, abilities, and superpowers.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Flex Skill (141)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Flex Skill (141)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Copy Power (CTS, 51)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Steal Power (CTS, 56) or Wildcard Powers (CTS, 56)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Improved Copying (CTS, 53)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Power Memory (CTS, 55)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Amazing Copying (CTS, 48) or Multiple Copying (CTS, 54)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-crafts-illusions",
+    "name": "Crafts Illusions",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You fashion images from light that are so perfect they seem real.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Minor Illusion (162)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Illusory Disguise (150)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Cast Illusion (118) or Major Illusion (160)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Illusory Selves (150)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Terrifying Image (190)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Grandiose Illusion (146) or Permanent Illusion (169)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-crafts-unique-objects",
+    "name": "Crafts Unique Objects",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You're an inventor of strange and useful objects.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Crafter (122)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Master Identifier (160)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Artifact Tinkerer (110)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Quick Work (174)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Master Crafter (160) or Built-In Weaponry (116)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Cyphersmith (124)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Innovator (154)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Inventor (155) or Fusion Armor (144)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-dances-with-dark-matter",
+    "name": "Dances with Dark Matter",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You can manipulate shadow and \"dark\" matter.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Ribbons of Dark Matter (178)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Void Wings (196)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Dark Matter Shroud (124) or Dark Matter Strike (124)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Dark Matter Shell (124)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Windwracked Traveler (199)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Dark Matter Structure (124) or Embrace the Night (133)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-defends-the-gate",
+    "name": "Defends the Gate",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "Everyone wants you on their side when it comes to a fight because nothing gets by you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Fortified Position (143)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Rally to Me (174)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Mind for Might (162)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Fortification Builder (143) or Divert Attacks (130)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Might (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Reinforcing Field (175)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Generate Force Field (145) or Stun Attack (187)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-defends-the-weak",
+    "name": "Defends the Weak",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You stand up for the helpless, the weak, and the unprotected.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Courageous (122)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Warding Shield (196)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Devoted Defender (128)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Insight (154)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Dual Wards (132) or True Guardian (194)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Combat Challenge (120)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Willing Sacrifice (199)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Resuscitate (177) or True Defender (194)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-descends-from-nobility",
+    "name": "Descends From Nobility",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "A descendent of wealth and power, you carry a noble title and the abilities granted by a privileged upbringing.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Privileged Nobility (172)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Trained Interlocutor (193)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Advanced Command (108) or Noble's Courage (166)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Expert Follower (137)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Asserting Your Privilege (110)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Able Assistance (108) or Mind of a Leader (162)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-doesnt-do-much",
+    "name": "Doesn't Do Much",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You're a slacker, but you know a little about a lot of things.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Life Lessons (158)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Totally Chill (192)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Skill With Attacks (183) or Improvise (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Life Lessons (158)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Skill With Defense (147)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Greater Enhanced Potential (146)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Drawing on Life's Experiences (131) or Quick Wits (174)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-drives-like-a-maniac",
+    "name": "Drives Like a Maniac",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "Whether balancing on two wheels, jumping another vehicle, or driving head-on toward an oncoming enemy car, you don't think about the risks when you're behind the wheel.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Driver (132)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Driving on the Edge (132)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Car Surfer (118)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Stare Them Down (186)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Expert Driver (137) or Enhanced Speed Edge (135)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Sharp-Eyed (182)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Enhanced Speed (135)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Something in the Road (184)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Trick Driver (194) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": "Someone who Drives Like a Maniac needs access to a vehicle ."
+  },
+  {
+    "id": "focus-embeds-stealthtech",
+    "name": "Embeds Stealthtech",
+    "source": "(Neon Rain, page 30)",
+    "description": "Some of your organic parts have been replaced with artificial components. Like most people in the city, you are a cyborg, but your augmentations are extensive, and your chrome parts are meant for stealth and infiltration. You almost certainly have synthetic materials and technical components visible on your skin. As you advance, you can add to, modify, or discover new functions for your machine parts.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "⚡ Fast Chrome (NR, 30)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Stealth Skills (186)"
+      },
+      {
+        "tier": 2,
+        "abilities": "⚡ Cat's Paw (NR, 30)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Confidence Artist (121) or Limited Camouflage (NR, 30)"
+      },
+      {
+        "tier": 4,
+        "abilities": "⚡ Better Surprise Attack (113)"
+      },
+      {
+        "tier": 5,
+        "abilities": "⚡ Hard to See (148)"
+      },
+      {
+        "tier": 6,
+        "abilities": "⚡ Escape Plan (136) or ⚡ Perfect Speed Burst (169)"
+      }
+    ],
+    "gm_intrusion": "⚡ — denotes a cyberware-derived ability ."
+  },
+  {
+    "id": "focus-emerged-from-the-obelisk",
+    "name": "Emerged From the Obelisk",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "Your body, hard as crystal, gives you a suite of unique abilities, gained after an interaction with a floating crystalline obelisk.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Crystalline Body (123)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Hover (149)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Inhabit Crystal (154) or Immovable (150)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Crystal Lens (123)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Resonant Frequency (177)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Resonant Quake (177) or Return to the Obelisk (177)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-employs-magnetism",
+    "name": "Employs Magnetism",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You command metal and the power of magnetism.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Move Metal (164)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Repel Metal (176)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Destroy Metal (127) or Guide Bolt (147)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Magnetic Field (159)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Command Metal (120)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Diamagnetism (128) or Iron Punch (155)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-entertains",
+    "name": "Entertains",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You perform, mostly for the benefit of others.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Levity (158)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Inspiring Ease (154)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Knowledge Skills (157) or Greater Enhanced Potential (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Calm (118)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Able Assistance (108)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Master Entertainer (Errata) or Vindictive Performance (196)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-exists-in-two-places-at-once",
+    "name": "Exists in Two Places at Once",
+    "source": "(Cypher System Rulebook, page 66)",
+    "description": "You exist in two places at once.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Duplicate (132)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Share Senses (182)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Superior Duplicate (188) or Resilient Duplicate (176)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Damage Transference (124)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Coordinated Effort (122)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Multiplicity (165) or Resilient Duplicate (176)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-exists-partially-out-of-phase",
+    "name": "Exists Partially Out of Phase",
+    "source": "(Cypher System Rulebook, page 68)",
+    "description": "A bit translucent, you're slightly out of phase and can move through solid objects.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Walk Through Walls (196)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Defensive Phasing (127)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Phased Attack (170) or Phase Door (170)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Ghost (145)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Untouchable (195)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Enhanced Phased Attack (135) or Phase Foe (170)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-explores-dark-places",
+    "name": "Explores Dark Places",
+    "source": "(Cypher System Rulebook, page 68)",
+    "description": "You're the archetypal treasure hunter, scavenger, and finder of lost things.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Superb Explorer (188)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Superb Infiltrator (188)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Eyes Adjusted (138)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Nightstrike (166) or Slippery Customer (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Hard-Won Resilience (148)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Dark Explorer (124)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Blinding Attack (115) or Embraced by Darkness (133)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-explores-cyberspace",
+    "name": "Explores Cyberspace",
+    "source": "(Neon Rain, page 31)",
+    "description": "You've always been fascinated by cyberspace, its architecture, and the wealth of data it contains. You may have started out as a hacker, programmer, or data administrator, but viewing the internet on a screen was never enough for you. You're driven by the urge to transcend your body, to enter a complete simulation of that nonsensical nonspace. You're a netrunner, hooked on the thrill of jacking into the matrix, where you interact with physical manifestations of AI, software, and viruses.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "⚡ Datajack (124)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Computer Programming (121)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Hacker (147)"
+      },
+      {
+        "tier": 3,
+        "abilities": "⚡ AI Assistant (NR, 31) or Experienced Netrunner (NR, 31)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "⚡ Floating in the Matrix (NR, 31)"
+      },
+      {
+        "tier": 5,
+        "abilities": "⚡ Information Gathering (153)"
+      },
+      {
+        "tier": 6,
+        "abilities": "⚡ Machine Enhancement (159) or ⚡ Perfect Direction (NR, 31)"
+      }
+    ],
+    "gm_intrusion": "Characters who have chosen Datajack as a type ability should replace it with a different special ability selection from their type."
+  },
+  {
+    "id": "focus-feigns-no-fear",
+    "name": "Feigns No Fear",
+    "source": "(We Are All Mad Here, page 175)",
+    "description": "Everyone thinks you're brave, intrepid—fearless, even. They tell stories about you, the person who's never felt fear, how you went out to seek what you see as an elusive emotion and never found it. But you know the truth. You may present yourself as someone who is fearless and courageous, but deep down, you are terrified of everything. Fear drives you, and in its face, you stand tall and shout the loudest. Because you are also afraid of being seen for who you truly are.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Surging Confidence (188)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Impressive Display (151)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Flamboyant Boast (140) or Outlaw Reputation (168)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Combat Challenge (120)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Band of Desperados (112)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Finishing Blow (140) or Heroic Monster Bane (149)"
+      }
+    ],
+    "gm_intrusion": "A character who Feigns No Fear can be played in a number of ways, from someone who boasts constantly in their attempts to bolster themselves in front of others to someone who faces their fears through action, showing up first on the battle line to holler \"Seven in one blow!\""
+  },
+  {
+    "id": "focus-fights-dirty",
+    "name": "Fights Dirty",
+    "source": "(Cypher System Rulebook, page 68)",
+    "description": "You'll do anything to win a fight: bite, scratch, kick, trick, and worse.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Tracker (193)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Stalker (186)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Sneak (183)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Quarry (173)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Betrayal (113) or Surprise Attack (188)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Mind Games (162)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Capable Warrior (118)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Using the Environment (195)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Twisting the Knife (194) or Murderer (165)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-fights-with-panache",
+    "name": "Fights With Panache",
+    "source": "(Cypher System Rulebook, page 68)",
+    "description": "You're a swashbuckling daredevil who fights with flamboyant style that's entertaining to watch.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Attack Flourish (111)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Quick Block (173)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Acrobatic Attack (108) or Flamboyant Boast (140)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Block for Another (115)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Fast Kill (138)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Using the Environment (195)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Agile Wit (109) or Return to Sender (177)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-flies-faster-than-a-bullet",
+    "name": "Flies Faster than a Bullet",
+    "source": "(Cypher System Rulebook, page 68)",
+    "description": "You can fly, and you're superstrong, hard to hurt, and fast too. Is there anything you can't do?",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Hover (149)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Greater Enhanced Potential (146)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Hidden Reserves (149) or See Through Matter (180)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Blink of an Eye (115)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Up to Speed (195)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Not Dead Yet (166)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Burning Light (116) or Ignore Affliction (150)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-focuses-mind-over-matter",
+    "name": "Focuses Mind Over Matter",
+    "source": "(Cypher System Rulebook, page 68)",
+    "description": "You can telekinetically move objects with your mind without physically touching them.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Divert Attacks (130)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Telekinesis (189)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Cloak of Opportunity (119) or Enhance Strength (134)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Apportation (110)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Psychokinetic Attack (172)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Improved Apportation (151) or Reshape (176)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-fuses-flesh-and-steel",
+    "name": "Fuses Flesh and Steel",
+    "source": "(Cypher System Rulebook, page 69)",
+    "description": "Your body is part machine.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enhanced Body (134)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Interface (155)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Sensing Package (181) or Weaponization (197)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Fusion (144)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Deep Reserves (126)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Mind Surge (162) or Ultra Enhancement (194)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-fuses-mind-and-machine",
+    "name": "Fuses Mind and Machine",
+    "source": "(Cypher System Rulebook, page 69)",
+    "description": "Electronic aids implanted in your brain make you a mental powerhouse.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enhanced Intellect (135)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Knowledge Skills (157)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Network Tap (165)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Action Processor (108) or Machine Telepathy (159)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Knowledge Skills (157)"
+      },
+      {
+        "tier": 5,
+        "abilities": "See the Future (180)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Machine Enhancement (159) or Mind Surge (162)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-gambles-it-all-away",
+    "name": "Gambles It All Away",
+    "source": "(High Noon at Midnight, page 108)",
+    "description": "How long have you been haunting the card tables? Seems like a lifetime. You probably played your first hand of poker before you could even read words. People, though, were much easier to understand. You could always read other folks' tells, whether that's squinting, tapping, stammering, pulling at their earlobe, or any of a thousand other ways you know when to call their bluffs. Which is not to say you haven't walked away from the table in the hole. But you've always been able to make it up later. So far, anyway. Lately, you've been having weird dreams of loss and void. Is Lady Luck fixin' to turn her back on you? You hope not, because there ain't nothing in the world keeping you from gambling it all away.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Gambler (HNAM, 108)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Interaction Skills (155)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Courting Lady Luck (HNAM, 108)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Call Their Bluff (HNAM, 108) or Card Genius (HNAM, 108)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Winning Hand (HNAM, 108)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Consequences of Luck (HNAM, 108)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Fate Breaker (HNAM, 108) or Gambling God (HNAM, 108)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-grows-to-towering-heights",
+    "name": "Grows to Towering Heights",
+    "source": "(Cypher System Rulebook, page 69)",
+    "description": "For brief periods, you can grow larger and, with enough experience, to towering heights.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enlarge (135)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Freakishly Large (143)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Bigger (113)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Advantages of Being Big (109)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Huge (149) or Throw (191)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Grab (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Gargantuan (144)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Colossal (120) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-hacks-the-network",
+    "name": "Hacks the Network",
+    "source": "(Neon Rain, page 32)",
+    "description": "AI and the countless networks integrated into every part of life are as ubiquitous as air and, to most people, about as noticeable. Not you. From the moment you first realized that networks ran on an underlying \"Ur\" tongue, a code of mathematics and logical symbols, you were hooked. It wasn't your goal to learn everything you could abouthackingcomputers so much as there was nothing else for you. As a thrown stone follows its trajectory, you learned to hack the network.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "⚡ Datajack (124)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Computer Programming (121)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Hack the Impossible (147)"
+      },
+      {
+        "tier": 3,
+        "abilities": "⚡ Network Tap (165) or Experienced Coder (NR, 32)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Erased (NR, 32)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Repeat Hack (NR, 32)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Mind Surge (162) or ⚡ Machine Bond (NR, 32)"
+      }
+    ],
+    "gm_intrusion": "Characters who have chosen Datajack as a type ability should replace it with a different special ability selection from their type."
+  },
+  {
+    "id": "focus-has-a-custom-drone",
+    "name": "Has a Custom Drone",
+    "source": "(Neon Rain, page 33)",
+    "description": "You're a genius with drones—building them, controlling them, and repairing them. You've created a unique drone with a limited artificial intelligence; it follows your commands like it's an extension of your thoughts. As you advance, you learn and discover new ways to update your drone and give it additional abilities, and how to control multiple drones at once. You may think of your drone as a tool, pet, or sidekick; it sees you as a best friend or beloved parent.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Drone Buddy (NR, 33)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Robot Builder (NR, 33)"
+      },
+      {
+        "tier": 2,
+        "abilities": "⚡ Robot Control (178) (NR, 33)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Coordinated Actions (NR, 33) or Expert Drone (NR, 33)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Drone Upgrade (NR, 34)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Premium Drone (NR, 34)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Drone Evolution (NR, 34) or Drone Split (NR, 34)"
+      }
+    ],
+    "gm_intrusion": "⚡ — denotes a cyberware-derived ability ."
+  },
+  {
+    "id": "focus-has-a-thousand-faces",
+    "name": "Has a Thousand Faces",
+    "source": "(Claim the Sky, page 46)",
+    "description": "You can change your appearance to look like anyone else.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Face Morph (138)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Interaction Skills (155)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Body Morph (CTS, 49)"
+      },
+      {
+        "tier": 2,
+        "abilities": "War Flesh (CTS, 56)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Disguise Other (CTS, 52) or Resilience (176)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Ageless (CTS, 48)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Think Your Way Out (191)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Memory Becomes Action (161)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Divide Your Mind (130) or Infer Thoughts (153)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-helps-their-friends",
+    "name": "Helps Their Friends",
+    "source": "(Cypher System Rulebook, page 69)",
+    "description": "You love your friends and help them out of any difficulty, no matter what.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Friendly Help (143)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Courageous (122)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Weather the Vicissitudes (197)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Buddy System (116) or Skill With Attacks (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "In Harm's Way (152)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Enhanced Physique (135)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Inspire Action (154)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Deep Consideration (126) or Skill With Defense (183)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-has-eyes-everywhere",
+    "name": "Has Eyes Everywhere",
+    "source": "(Neon Rain, page 35)",
+    "description": "Let's be honest: you live in a surveillance state. Security cameras on every corner, smartphones that track the user's activity,cyberneticsthat track the wearer's movements…It's nearly impossible to avoid being tracked, but you've made the most of it. You hack into these surveillance networks and use your unauthorized access to monitor your environment.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "⚡ Datajack (124)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Stealth Skills (186)"
+      },
+      {
+        "tier": 2,
+        "abilities": "⚡ Camera Sight (NR, 35)"
+      },
+      {
+        "tier": 3,
+        "abilities": "⚡ Awareness (111) or ⚡ Surveillance Overwatch (NR, 35)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "⚡ Find by Phone (NR, 35)"
+      },
+      {
+        "tier": 5,
+        "abilities": "⚡ Enhanced Camera Sight (NR, 35)"
+      },
+      {
+        "tier": 6,
+        "abilities": "⚡ Machine Enhancement (159) or ⚡ 360° Vision (NR, 35)"
+      }
+    ],
+    "gm_intrusion": "Characters who have chosen Datajack as a type ability should replace it with a different special ability selection from their type."
+  },
+  {
+    "id": "focus-hits-the-saloon",
+    "name": "Hits the Saloon",
+    "source": "(High Noon at Midnight, page 110)",
+    "description": "The saloon is an old friend, whether or not you visit the same one twice. Whatever the name on the sign out front, the pungent smells of whiskey, cigars, and sawdust lift your spirits like nothing else. 'Cept for actual spirits, of course. When that first shot hits your throat and sets a warm blaze in your belly, you can't keep a smile from your lips. This here's your home away from home, and inside are your friends, both old and those soon to be made. Though not everyone's happy to see you—troublemakers soon learn that in a scrap, you only hit harder with each shot of whiskey you pour down your throat.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Jovial Presence (HNAM, 110)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Enthusiastic Listener (HNAM, 110)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Blitzer (HNAM, 110)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Liquid Courage (HNAM, 110)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Iron Stomach (HNAM, 110) or Skill with Attacks (HNAM, 110)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Bottle KO (HNAM, 111)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Learned a Few Things Over Drinks (HNAM, 111)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Inspiration in a Glass (HNAM, 111) or Lethal Damage (HNAM, 110)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-howls-at-the-moon",
+    "name": "Howls at the Moon",
+    "source": "(Cypher System Rulebook, page 69)",
+    "description": "For brief periods, you become a fearsome and powerful creature with control issues.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Beast Form (112)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Controlled Change (122)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Bigger Beast Form (113) or Greater Beast Form (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Controlled Change (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Enhanced Beast Form (134)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Lethal Damage (158) or Perfect Control (169)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-hunts",
+    "name": "Hunts",
+    "source": "(Cypher System Rulebook, page 69)",
+    "description": "You are a stalking hunter who excels at bringing down your selected quarry.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Attack Flourish (111)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Tracker (193)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Quarry (173)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Sneak (183)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Horde Fighting (149) or Sprint and Grab (186)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Surprise Attack (188)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Hunter's Drive (149)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Skill With Attacks (147) or Multiple Quarry (164)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-hunts-witches",
+    "name": "Hunts Witches",
+    "source": "(It's Only Magic, page 48)",
+    "description": "You know enough about magic to mistrust anyone who uses it, especially witches—people who study ancient rituals, make pacts with evil creatures, and use their power for personal gain. Warped by their abilities, they are dangerous threats to regular folks, and it's up to people like you to find and eliminate those threats. Sure, some witches claim to be good and even act friendly, but you've seen it go bad all too often, and you won't be fooled again. You always carry weapons for fighting witches, or at least know what common tools will do as a weapon in a pinch. You wear clothing appropriate to the region and era (especially if regular people don't know about magic or witches and you have to hide what you do). You may have a token, icon, or other reminder of your purpose, such as a lucky coin, a holy book, or a pouch of magic-thwarting herbs given to you by your mentor.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Witch Bane (IOM, 49)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Witch Lore (IOM, 49)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Will of Legend (199)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Improved Witch Bane (IOM, 49) or Misdirect (IOM, 49)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Countercharm (IOM, 49)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Greater Skill With Attacks (147)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Hard to Kill (148) or Heroic Witch Bane (IOM, 49)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-ignores-physical-distance",
+    "name": "Ignores Physical Distance",
+    "source": "(Claim the Sky, page 46)",
+    "description": "You can teleport from one place to another by briefly passing through a parallel dimension.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Dimensional Squeeze (CTS, 52)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Opportunist (167)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Defensive Blinking (CTS, 52) or Teleportation Burst (CTS, 56)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Short Teleportation (CTS, 55)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Medium Teleportation (CTS, 53)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Teleportation (190) or Teleportive Wound (CTS, 56)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-infiltrates",
+    "name": "Infiltrates",
+    "source": "(Cypher System Rulebook, page 70)",
+    "description": "Subtlety, guile, and stealth allow you to get in where others can't.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Stealth Skills (186)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Sense Attitudes (181)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Impersonate (151)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Flight Not Fight (141)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Awareness (111) or Skill With Attacks (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Invisibility (155)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Evasion (136)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Brainwashing (116) or Spring Away (186)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-inks-spells-on-skin",
+    "name": "Inks Spells on Skin",
+    "source": "(It's Only Magic, page 50)",
+    "description": "Your enchanted heritage is etched upon you. Studying strange formulas, mystic runes, and magical glyphs to learn spells is one thing. Making spells truly a part of you is another, but that's exactly what you do when you apply magical inks to create intricate spell tattoos across your body. Each tattoo you inscribe on yourself is not merely a design, but the keystone of a spell, giving you the ability to cast it. Because your tattoos are magical, you can continually add to those you've already accumulated without ruining the designs, allowing your mastery over magic to grow. You often wear clothing that bares your arms and perhaps other parts of your body to expose your tattoos, so that others know you for a spellcaster.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Fleet of Foot (141) and Poison Touch (IOM, 50)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Eclipse (IOM, 50) and Mist Form (IOM, 50)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Command (120) , Lightning Flash (IOM, 51) , or Outwit (168) (choose two)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Elemental Protection (133) and Incapacitate (IOM, 51)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Bypass Barrier (116) and Granite Wall (146)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Divide Your Mind (130) , Petrify (IOM, 51) , or Summon Demon (188) (choose two)"
+      }
+    ],
+    "gm_intrusion": "The Inks Spells on Skin focus works similarly to the Masters Spells focus. The GM may consider allowing characters with either of these foci to choose abilities from either focus when they advance to a the next tier."
+  },
+  {
+    "id": "focus-interprets-the-law",
+    "name": "Interprets the Law",
+    "source": "(Cypher System Rulebook, page 70)",
+    "description": "You excel at winning others over to your views.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Opening Statement (167)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Knowledge of the Law (156)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Debate (126)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Able Assistance (108) or Enhanced Intellect Edge (135)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Castigate (118)"
+      },
+      {
+        "tier": 5,
+        "abilities": "No One Knows Better (166)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Enhanced Potential (146) or Legal Intern (157)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-is-a-car-wizard",
+    "name": "Is A Car Wizard",
+    "source": "(It's Only Magic, page 52)",
+    "description": "Your skill behind the wheel is legendary, combining natural talent and specialized magic to perform stunts and tricks that are impossible for regular people. Nothing beats the feel of wind in your hair, except maybe the intense purr of a finely tuned engine augmented by sorcery. You love pushing yourself (and your vehicle) to the limit, even if it's dangerous—better to die a legend than live a long, dull life driving something boring. You enjoy drawing attention to yourself, so you tend to wear sleek clothing, stylish sunglasses, and borderline-gaudy jewelry, but never anything that interferes with your ability to control a car or cast a spell.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Driver (132)"
+      },
+      {
+        "tier": 2,
+        "abilities": "One Hand on the Wheel (IOM, 53)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Car Magic (IOM, 53)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Expert Driver (137) or Perfect Parking Space (IOM, 53)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Enhanced Intellect (133)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Deer in the Headlights (IOM, 53)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Spells Have No Speed Limit (IOM, 53) or Trick Driver (194)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-is-a-walking-tank",
+    "name": "Is A Walking Tank",
+    "source": "(Neon Rain, page 36)",
+    "description": "Some of your organic parts have been replaced with artificial components. Like most people in the city, you are a cyborg, but your augmentations are extensive, and your chrome parts are meant for defense and protecting others. You almost certainly have metal plating and technical components visible on your skin. As you advance, you can add to, modify, or discover new functions for your machine parts.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "⚡ Tank Chrome (NR, 36)"
+      },
+      {
+        "tier": 2,
+        "abilities": "⚡ Defensive HUD (NR, 36)"
+      },
+      {
+        "tier": 3,
+        "abilities": "⚡ Hidden Shield (NR, 36) or ⚡ Enhanced Armor (NR, 36)"
+      },
+      {
+        "tier": 4,
+        "abilities": "⚡ Living Wall (158)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Deep Reserves (126)"
+      },
+      {
+        "tier": 6,
+        "abilities": "⚡ Embedded Drone (NR, 37) or ⚡ Ultra Enhancement (194)"
+      }
+    ],
+    "gm_intrusion": "⚡ — denotes a cyberware-derived ability ."
+  },
+  {
+    "id": "focus-is-idolized-by-millions",
+    "name": "Is Idolized by Millions",
+    "source": "(Cypher System Rulebook, page 70)",
+    "description": "You're a celebrity and most people adore you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Entourage (136)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Celebrity Talent (119)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Perks of Stardom (169)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Incredible Health (153) or Skill With Attacks (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Captivate With Starshine (118)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Expert Follower (137)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Do You Know Who I Am? (131)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Transcend the Script (193) or Improved Companion (151)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-is-licensed-to-carry",
+    "name": "Is Licensed to Carry",
+    "source": "(Cypher System Rulebook, page 70)",
+    "description": "You carry a gun and you know how to use it in a fight.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Gunner (147)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Practiced With Guns (171)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Careful Shot (118)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Trained Gunner (193) or Damage Dealer (124)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Snap Shot (183)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Arc Spray (110)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Special Shot (184) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": "Although Is Licensed to Carry is designed with modern firearms in mind, it could apply to flintlock weapons, futuristic laser blasters, or other ranged weapons."
+  },
+  {
+    "id": "focus-is-wanted-by-the-law",
+    "name": "Is Wanted by the Law",
+    "source": "(Cypher System Rulebook, page 70)",
+    "description": "\"WANTED, DEAD OR ALIVE\" posters (or their equivalent) have appeared featuring your face. It's up to you whether it's a mistake that snowballed out of control or you actually would kill someone just for looking at you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enhanced Speed (135)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Danger Sense (124)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Surprise Attack (188)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Outlaw Reputation (168) or Successive Attack (187)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Fast Kill (138)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Band of Desperados (112)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Not Dead Yet (166) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-keeps-a-magic-ally",
+    "name": "Keeps a Magic Ally",
+    "source": "(Cypher System Rulebook, page 71)",
+    "description": "An allied magic creature bound to an object (such as a minor djinn in a lamp, or a ghost in a pipe) is your friend, protector, and weapon.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Bound Magic Creature (115)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Object Bond (167)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Hidden Closet (149)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Minor Wish (162) or Mount (164)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Improved Object Bond (152)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Moderate Wish (163)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Object Bond Mastery (167) or Trust to Luck (194)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-knows-everything",
+    "name": "Knows Everything",
+    "source": "(Neon Rain, page 37)",
+    "description": "You're a know-it-all. You've always been curious, likely to be found with your nose in a book and several wiki articles pulled up on your computer. In your school days, you were probably a good student and skilled researcher. In the present, your primary hobby is gathering knowledge. You know what questions to ask, and where to look for the answers.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "⚡ Datajack (124)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Knowledge Skills (157)"
+      },
+      {
+        "tier": 2,
+        "abilities": "⚡ Scan (179)"
+      },
+      {
+        "tier": 3,
+        "abilities": "⚡ Network Tap (165) or ⚡ Action Processor (108)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Knowledge Skills (157)"
+      },
+      {
+        "tier": 5,
+        "abilities": "⚡ Information Gathering (153)"
+      },
+      {
+        "tier": 6,
+        "abilities": "⚡ Knowing the Unknown (156) or Mind Surge (162)"
+      }
+    ],
+    "gm_intrusion": "Characters who have chosen Datajack as a type ability should replace it with a different special ability selection from their type."
+  },
+  {
+    "id": "focus-leads",
+    "name": "Leads",
+    "source": "(Cypher System Rulebook, page 71)",
+    "description": "Your natural leadership capability allows you to command others, including a loyal band of followers.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Natural Charisma (165)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Good Advice (145)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Enhanced Potential (135)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Basic Follower (112)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Advanced Command (108) or Expert Follower (137)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Captivate or Inspire (118)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Greater Enhanced Potential (146)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Band of Followers (112) or Mind of a Leader (162)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-learned-from-the-classics",
+    "name": "Learned From the Classics",
+    "source": "(It's Only Magic, page 54)",
+    "description": "Magic comes intuitively to some people, but you've always had to work a bit harder. Luckily, you find that research comes naturally. You know what questions to ask; you know which books, websites, or professionals will have the answers. You spent years studying and practicing, and you taught yourself everything you know. Now you're a skilled magician who's always eager to learn more—evidenced by your lengthy reading list.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enhanced Intellect (135)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Library Life (IOM, 54)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Flex Skill (141)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Enhanced Intellect Edge (135) or Repeated Rituals (IOM, 54)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Knowing the Unknown (156)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Mind of a Leader (162)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Enhanced Intellect (146) or Mental Magic (IOM, 54)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-learns-quickly",
+    "name": "Learns Quickly",
+    "source": "(Cypher System Rulebook, page 71)",
+    "description": "You deal with bad situations as they arise, learning new lessons each time.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enhanced Intellect (135)"
+      },
+      {
+        "tier": 1,
+        "abilities": "There's Your Problem (190)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Quick Study (174)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Hard to Distract (148)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Enhanced Intellect Edge (135) or Flex Skill (141)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Pay It Forward (168)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Enhanced Intellect (135)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Learned a Few Things (157)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Two Things at Once (194) or Skill With Defense (183)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-lived-among-the-fey",
+    "name": "Lived Among the Fey",
+    "source": "(We Are All Mad Here, page 175)",
+    "description": "You spent a lot of time in another world, one that others don't believe actually exists. What you learned there gives you insight and vision that most people don't have. You've seen things. Beautiful things. Unspeakable things. Some of them came back with you and stay with you to this day.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "See the Unseen (180)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Bestiary Knowledge (113)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Dream Becomes Reality (132) or Find the Hidden (140)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Pay It Forward (168)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Nightmare (165)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Explains the Ineffable (137) or Drawing on Life's Experiences (131)"
+      }
+    ],
+    "gm_intrusion": "A character who Lived Among the Fey might have spent time among the fairies (or other creatures in a different far-off land) or they may have dreamed, hallucinated, or imagined the whole thing. Do they know the difference? Does it matter? The name of the focus can be changed to something that more appropriately reflects the character's experience, such as Fell Into Wonderland or Crossed Into Narnia."
+  },
+  {
+    "id": "focus-lives-in-the-wilderness",
+    "name": "Lives in the Wilderness",
+    "source": "(Cypher System Rulebook, page 71)",
+    "description": "You can survive in badlands where others perish.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Wilderness Life (199)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Enhanced Might (135)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Living Off the Land (158)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Wilderness Explorer (199)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Animal Senses and Sensibilities (109) or Wilderness Encouragement (198)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Wilderness Awareness (198)"
+      },
+      {
+        "tier": 5,
+        "abilities": "The Wild Is on Your Side (198)"
+      },
+      {
+        "tier": 6,
+        "abilities": "One With the Wild (167) or Wild Camouflage (198)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-looks-for-trouble",
+    "name": "Looks for Trouble",
+    "source": "(Cypher System Rulebook, page 71)",
+    "description": "You're a scrapper and love a good fight.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Fists of Fury (140)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Wound Tender (200)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Protector (172)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Straightforward (187)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Skill With Attacks (183) or Greater Enhanced Potential (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Knock Out (156)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Mastery With Attacks (161)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Enhanced Might (146) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-loves-the-void",
+    "name": "Loves the Void",
+    "source": "(Cypher System Rulebook, page 71)",
+    "description": "When it's just you, your spacesuit, and the panorama of stars wheeling out forever and always, you are at peace.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Vacuum Skilled (196)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Microgravity Adept (162)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Enhanced Speed Edge (135)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Enhanced Physique (135)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Space Fighting (184) or Fusion Armor (144)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Silent As Space (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Push Off and Throw (173)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Microgravity Avoidance (162)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Weightless Shot (197) or Reactive Field (174)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-made-a-deal-with-death",
+    "name": "Made a Deal With Death",
+    "source": "(We Are All Mad Here, page 175)",
+    "description": "Death eternally walks the labyrinth of the Heartwood, touching those who pass by, but few notice this ever-changing figure. You, however, are intimate with Death in all their many forms. Perhaps you are both drawn to and frightened of them. Perhaps you've spent too much time in their company, and have become infatuated with them. Perhaps you've lost friends and loved ones to their dark embrace. Whatever your feelings about Death, you've made a deal with them, one you hope will bring you the closure that you seek.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Blessing of the Gods (114) (Death)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Destined for Greatness (127)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Miraculous Health (163) or Quick Death (173)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Regeneration (175)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Hard to Kill (148)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Duel to the Death (132) or Final Defiance (139)"
+      }
+    ],
+    "gm_intrusion": "Characters who Made a Deal With Death may have done so in order to stave off death eternally, gaining healing abilities for themselves or others. Alternatively, they may be obsessed with the idea of death, and wish to learn how to wield it with precision and focus."
+  },
+  {
+    "id": "focus-masters-defense",
+    "name": "Masters Defense",
+    "source": "(Cypher System Rulebook, page 72)",
+    "description": "You use protective equipment and practiced techniques to avoid becoming hurt in a fight.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Shield Master (182)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Sturdy (187)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Practiced in Armor (171)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Dodge and Resist (131) or Dodge and Respond (131)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Tower of Will (193)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Experienced in Armor (136)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Nothing but Defend (166)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Defense Master (127) or Wear It Well (197)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-masters-spells",
+    "name": "Masters Spells",
+    "source": "(Cypher System Rulebook, page 72)",
+    "description": "By specializing inspellcastingand keeping a spellbook, you can quickly cast spells of arcing lightning, rolling fire, creeping shadow, and summoning.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Arcane Flare (110)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Ray of Confusion (174)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Fire Bloom (140) or Summon Giant Spider (188)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Soul Interrogation (184)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Granite Wall (146)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Summon Demon (188) or Word of Death (200)"
+      }
+    ],
+    "gm_intrusion": "The Masters Spells focus works similarly to the Inks Spells on Skin focus. The GM may consider allowing characters with either of these foci to choose abilities from either focus when they advance to the next tier."
+  },
+  {
+    "id": "focus-masters-the-swarm",
+    "name": "Masters the Swarm",
+    "source": "(Cypher System Rulebook, page 72)",
+    "description": "Insects. Rats. Bats. Even birds. You master one type of small creature that obeys you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Influence Swarm (153)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Control Swarm (122)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Living Armor (158) or Skill With Attacks (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Call Swarm (118)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Gain Unusual Companion (144)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Deadly Swarm (125) or Skill With Defense (183)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-masters-weaponry",
+    "name": "Masters Weaponry",
+    "source": "(Cypher System Rulebook, page 72)",
+    "description": "You are a master user of a particular type of weapon, be it a sword, whip, dagger, gun, or something else.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Weapon Master (197)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Weapon Crafter (197)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Weapon Defense (197)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Rapid Attack (174) or Disarming Strike (129)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Never Fumble (165)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Extreme Mastery (138)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Murderer (165) or Deadly Strike (125)"
+      }
+    ],
+    "gm_intrusion": "Someone who Masters Weaponry might have additional equipment, including a high-quality weapon."
+  },
+  {
+    "id": "focus-merges-mind-with-machine",
+    "name": "Merges Mind With Machine",
+    "source": "(Rust and Redemption, page 119)",
+    "description": "You were raised in an underground bunker by Milly, an AI instance installed in your brain before you developed cognition of your own. Unlike AI zombies, your personality and motivations haven't been replaced; your sense of self grew alongside the AI, as collaborators rather than foes. This granted you superior intellect and an uncanny knack for computers. Now you've emerged into the larger world, where survivors are predisposed to distrust you, and you may need to keep your background a secret to be accepted. Whether you hate AI or remain loyal to Milly, you face the best odds if you can fit in with another group of survivors. After all, there's a lot you don't know about how things work on the surface and the things people have done to stay alive in the past twenty years.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Interface (155)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Robot Assistant (178)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Weapon Defense (197)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Assisted Sight (RR, 119) or Machine Telepathy (159)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Machine Bond (159)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Network Tap (165)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Master Machine (160) or See the Future (180)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-metes-out-justice",
+    "name": "Metes Out Justice",
+    "source": "(Cypher System Rulebook, page 72)",
+    "description": "You right wrongs, protect the innocent, and punish the guilty.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Make Judgment (160)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Designation (127)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Defend the Innocent (126)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Improved Designation (151)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Defend All the Innocent (126) or Punish the Guilty (173)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Find the Guilty (139)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Designation (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Punish All the Guilty (173)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Damn the Guilty (124) or Inspire the Innocent (154)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-moves-like-a-cat",
+    "name": "Moves Like a Cat",
+    "source": "(Cypher System Rulebook, page 73)",
+    "description": "Lithe, flexible, and graceful, you move quickly and smoothly, and never seem to be where danger is.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Greater Enhanced Speed (146)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Balance (112)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Movement Skills (164)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Safe Fall (179)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Hard to Hit (148)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Enhanced Speed Edge (135) or Greater Enhanced Speed (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Quick Strike (174)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Slippery (183)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Perfect Speed Burst (169) or Greater Enhanced Speed (146)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-moves-like-the-wind",
+    "name": "Moves Like the Wind",
+    "source": "(Cypher System Rulebook, page 73)",
+    "description": "You can move so fast that you become a blur.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Greater Enhanced Speed (146)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Fleet of Foot (141)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Hard to Hit (148)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Speed Burst (185) or Greater Enhanced Speed (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Blink of an Eye (115)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Hard to See (148)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Perfect Speed Burst (169) or Incredible Running Speed (153)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-murders",
+    "name": "Murders",
+    "source": "(Cypher System Rulebook, page 73)",
+    "description": "You're an assassin, whether by trade, by inclination, or because it was that or be killed yourself.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Surprise Attack (188)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Assassin Skills (110)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Quick Death (173)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Infiltrator (153)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Awareness (111) or Poison Crafter (170)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Better Surprise Attack (113)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Damage Dealer (124)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Escape Plan (136) or Murderer (165)"
+      }
+    ],
+    "gm_intrusion": "Someone who Murders might have additional equipment, including three doses of a level 2 blade poison that inflicts 5 points of damage."
+  },
+  {
+    "id": "focus-needs-no-weapon",
+    "name": "Needs No Weapon",
+    "source": "(Cypher System Rulebook, page 73)",
+    "description": "Powerful punches, kicks, elbows, knees, and full body movements are all the weapons you need.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Fists of Fury (140)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Flesh of Stone (141)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Advantage to Disadvantage (109)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Unarmed Fighting Style (194)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Moving Like Water (164) or Greater Enhanced Potential (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Divert Attacks (130)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Stun Attack (187)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Master of Unarmed Fighting Style (160) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-never-says-die",
+    "name": "Never Says Die",
+    "source": "(Cypher System Rulebook, page 73)",
+    "description": "You never quit, can shrug off a beating, and always come back for more.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Improved Recovery (152)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Push on Through (173)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Ignore the Pain (150)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Blood Fever (115) or Hidden Reserves (149)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Increasing Determination (153) or Outlast the Foe (167)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Not Dead Yet (166)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Final Defiance (139) or Ignore Affliction (150)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-operates-undercover",
+    "name": "Operates Undercover",
+    "source": "(Cypher System Rulebook, page 73)",
+    "description": "Under the guise of someone else, you seek to find answers the powerful do not want divulged.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Investigate (155)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Disguise (129)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Agent Provocateur (109) or Run and Fight (179)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Pull a Fast One (173)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Using What's Available (195)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Trust to Luck (194) or Deadly Strike (125)"
+      }
+    ],
+    "gm_intrusion": "Someone who Operates Undercover might have additional equipment that includes a disguise kit ."
+  },
+  {
+    "id": "focus-packs-chromed-heat",
+    "name": "Packs Chromed Heat",
+    "source": "(Neon Rain, page 38)",
+    "description": "Some of your organic parts have been replaced with artificial components. Like most people in the city, you are a cyborg, but your augmentations are extensive, and they assist you with ranged combat. You almost certainly have metal plating and technical components visible on your skin. As you advance, you can add to, modify, or discover new functions for your machine parts.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "⚡ Shooter Chrome (NR, 38)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Gunner (147)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Careful Shot (118)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Damage Dealer (124) or ⚡ Embedded Pistol (NR, 38)"
+      },
+      {
+        "tier": 4,
+        "abilities": "⚡ Snap Shot (183)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Mastery With Attacks (151)"
+      },
+      {
+        "tier": 6,
+        "abilities": "⚡ Advanced Targeting System (NR, 38) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": "⚡ — denotes a cyberware-derived ability ."
+  },
+  {
+    "id": "focus-performs-feats-of-strength",
+    "name": "Performs Feats of Strength",
+    "source": "(Cypher System Rulebook, page 73)",
+    "description": "A muscled prodigy, you can haul incredible weight, hurl your body through the air, and punch through doors.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Athlete (111)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Enhanced Might Edge (135)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Feat of Strength (139)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Iron Fist (155) or Throw (Errata)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Might (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Brute Strike (116)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Enhanced Might (146) or Jump Attack (156)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-pilots-starcraft",
+    "name": "Pilots Starcraft",
+    "source": "(Cypher System Rulebook, page 74)",
+    "description": "You're a crack starship pilot.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Pilot (170)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Flex Lore (141)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Salvage and Comfort (179)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Mentally Tough (162)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Expert Pilot (137)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Ship Footing (182) or Machine Companion (159)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Sensor Array (181)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Enhanced Speed (135)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Like the Back of Your Hand (158)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Incomparable Pilot (152)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Remote Control (176) or Skill With Attacks (183)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-plays-too-many-games",
+    "name": "Plays Too Many Games",
+    "source": "(Cypher System Rulebook, page 74)",
+    "description": "Lessons, reflexes, and strategies you've learned by playing too many games have applications in the real world, where people who don't play enough toil and live their dreary lives.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Game Lessons (144)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Gamer (144)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Zero Dark Eyes (200)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Resist Tricks (176)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Sniper's Aim (184) or Enhanced Speed Edge (135)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Mind Games (162)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Enhanced Intellect (135)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Gamer's Fortitude (144)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Mind Surge (162) or Gaming God (144)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-practices-moon-magic",
+    "name": "Practices Moon Magic",
+    "source": "(It's Only Magic, page 56)",
+    "description": "The moon is a powerful force on the world, in terms of both science and magic. She hangs overhead like a watchful eye, makes creatures act strangely, represents cycles of time, and causes the ebb and flow of the tides. To you, she is a friend, an inspiration, and a constant reminder that someone is watching over you. You wield her magic to create beams of dangerous light, influence others, travel, and sense the underlying truth and reality of things. The day is not your foe (after all, the moon is often visible during the day), but you prefer the night when the moon can be the brightest light in the sky. You might call yourself a moonchild or a moon witch. You probably prefer black, white, or grey clothing, with flowing portions such as long sleeves, a cape, or a long coat. You might have one or more tattoos or tokens representing the moon, either full, crescent, or in multiple phases. Your favorite jewelry and adornments (like buttons) usually have moonstones.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Moonbeam (IOM, 56)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Eyes Adjusted (138)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Inspire Aggression (154)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Moon Adaptation (IOM, 56)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Nightstrike (166) or Spur Effort (186)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Moonlight Barrage (IOM, 57)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Moon Portal (IOM, 57)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Precognition (171) or True Senses (194)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-prepped-for-the-end",
+    "name": "Prepped for the End",
+    "source": "(Rust and Redemption, page 120)",
+    "description": "You prepared for ultimate disaster, unlike most of the sheeple. Which means you stashed away food, water, and other survival gear when things were still okay. You trained yourself for harsh conditions, for basic machine and electronic repair, and maybe even in a musical instrument to pass the time in the bunker when no other entertainments could be had. You'd excel in a small group of other survivors, but you're ready to go it alone if that's what it takes. Above all, you're prepared to make it through whatever the future holds, no matter how daunting the odds. Because you prepped wisely.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Practiced in Light Armor (RR, 121)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Prepared Caches (RR, 121)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Trained for Toughing It (RR, 121)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Tinker (192)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Weather the Vicissitudes (197)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Fruitfully Pass the Time (RR, 121) or Stashed Vehicle (RR, 121)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Know Where to Look (156) (RR, 121)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Ambusher (109)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Discipline of Watchfulness (129) or Escape the Ruins (RR, 121)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-rages",
+    "name": "Rages",
+    "source": "(Cypher System Rulebook, page 74)",
+    "description": "When you go berserk, everyone fears you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Frenzy (143)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Greater Enhanced Might (146)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Movement Skills (164)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Power Strike (171) or Unarmored Fighter (194)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Frenzy (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Attack and Attack Again (111)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Enhanced Potential (146) or Lethal Damage (158)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-raids",
+    "name": "Raids",
+    "source": "(Rust and Redemption, page 122)",
+    "description": "When civilization fell, you did what you had to do to stay alive. Did you kill innocent people? Probably, insofar as anyone who survived the end can really be considered \"innocent.\" You figured they'd have done the same to you. But whether they deserved it or not, you and the other raiders you ran with survived, and your targets did not.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Ignore the Pain (150)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Wilderness Life (199)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Careful Tracker (RR, 122)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Fearsome Reputation (139)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Raider Follower (RR, 122) or Grand Deception (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Frenzy (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Using the Environment (195)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Deep Consideration (126) or Twisting the Knife (194)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-remembers-the-past",
+    "name": "Remembers the Past",
+    "source": "(Rust and Redemption, page 123)",
+    "description": "You are a student of the before-times. Maybe that's because you grew up in the ruins of an old library and read everything as your hobby, you found a friendly AI archivist who taught you about how things once were, you're long-lived and were alive before the apocalypse, or you have a deep recollection of the world before the end for some other reason. This knowledge gives you an appreciation of the before-times as well as a point of view that many other survivors lack that benefits you in and around ruins. You can find things others wouldn't know to look for, plucking fruits of the past that would otherwise go unharvested.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Ruin Lore (179)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Knowledge Skills (157)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Fixer (RR, 123)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Know the Way (RR, 123)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Disable Mechanisms (128) or Resource Seeker (RR, 123)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Improvise (152)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Task Specialization (189)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Skill with Attacks (183) , Skill with Defense (183) , or Use the Network (RR, 124)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-rides-like-the-wind",
+    "name": "Rides Like the Wind",
+    "source": "(High Noon at Midnight, page 112)",
+    "description": "Few things feel more empowering than when you jump into the saddle and ride! Maybe you have a special mount called Thunder, Caballo, Dusty, or a name you don't share with others. Or perhaps any mount will serve, because you're just that skilled in the saddle. Whatever the case, when you and your mount are moving, other folks say they have a hard time figuring where one of you stops and the other begins—you act as a single creature that almost nothing can stop.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Rider (HNAM, 112)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Trick Rider (HNAM, 112)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Supernatural Jump (HNAM, 112)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Expert Rider (HNAM, 112)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Enhanced Speed Edge (135) or Nimble in the Saddle (HNAM, 112)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Gallop Across the Sky (HNAM, 112)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Dangerous When Mounted (HNAM, 113)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Ride Across the Miles (HNAM, 113) or Tornado Rider (HNAM, 113)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-rides-the-lightning",
+    "name": "Rides the Lightning",
+    "source": "(Cypher System Rulebook, page 74)",
+    "description": "You create and discharge electrical power.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Shock (183)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Charge (119)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Bolt Rider (115)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Electric Armor (133) or Drain Charge (131)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Bolts of Power (115)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Electrical Flight (133)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Flash Across the Miles (141) or Wall of Lightning (196)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-runs-away",
+    "name": "Runs Away",
+    "source": "(Cypher System Rulebook, page 74)",
+    "description": "Your first instinct is to run from danger, and you've gotten very good at it.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Go Defensive (145)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Enhanced Speed (135)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Quick to Flee (174)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Incredible Running Speed (153) or Greater Enhanced Speed (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Increasing Determination (153)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Quick Wits (174)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Go to Ground (145)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Burst of Escape (116) or Skill With Defense (183)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-sailed-beneath-the-jolly-roger",
+    "name": "Sailed Beneath the Jolly Roger",
+    "source": "(Cypher System Rulebook, page 74)",
+    "description": "You sailed with a crew of dread pirates, but you've decided to end your days as a pirate and join some other cause. The question is, will your past let you go so easily?",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Ignore the Pain (150)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Sailor (179)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Taking Advantage (188)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Fearsome Reputation (139)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Skill With Attacks (183) or Skill With Defense (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Sea Legs (180)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Movement Skills (164)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Lost in the Chaos (159)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Duel to the Death (132) or Successive Attack (187)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-scavenges",
+    "name": "Scavenges",
+    "source": "(Cypher System Rulebook, page 75)",
+    "description": "When not running and hiding, you sift the ruins of civilization for useful remnants to ensure your survival.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Post-Apocalyptic Survivor (170)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Ruin Lore (179)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Junkmonger (156)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Taking Advantage (188) or Incredible Health (153)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Know Where to Look (156)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Recycled Cyphers (175)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Artifact Scavenger (110) or Reactive Field (174)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-sculpts-hard-light",
+    "name": "Sculpts Hard Light",
+    "source": "(Claim the Sky, page 46)",
+    "description": "You create physical objects out of hard light that you can use for offense and defense.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Automatic Glow (CTS, 49)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Temporary Light (CTS, 56)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Entangling Force (136)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Harder Light (CTS, 53) or Sculpt Light (180)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Improved Sculpt Light (152)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Defensive Field (127) or Flight (141)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-sees-beyond",
+    "name": "Sees Beyond",
+    "source": "(Cypher System Rulebook, page 75)",
+    "description": "You have a psychic sense that allows you to see what others cannot.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "See the Unseen (180)"
+      },
+      {
+        "tier": 2,
+        "abilities": "See Through Matter (180)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Find the Hidden (140) or Sensor (181)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Remote Viewing (176)"
+      },
+      {
+        "tier": 5,
+        "abilities": "See Through Time (181)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Mental Projection (161) or Total Awareness (192)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-separates-mind-from-body",
+    "name": "Separates Mind From Body",
+    "source": "(Cypher System Rulebook, page 75)",
+    "description": "You can project your mind out of your body to see faraway places and learn secrets that would otherwise remain hidden.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Third Eye (191)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Open Mind (167)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Sharp Senses (182)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Roaming Third Eye (178) or Find the Hidden (140)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Sensor (181)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Psychic Passenger (172)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Mental Projection (161) or Improved Sensor (152)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-sheds-their-skin",
+    "name": "Sheds Their Skin",
+    "source": "(We Are All Mad Here, page 174)",
+    "description": "You have a secret self. In the quiet and stillness, you become not someone else, but something else. A being of tooth and nail, of flipper and fin, of mane and moon. But you believe that in order to survive and thrive, you must keep your other form secret, safe from prying eyes and listening ears.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Beast Form (112)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Controlled Change (112)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Greater Beast Form (146) or Hard Choices (148)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Controlled Change (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Total Awareness (192)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Escape Plan (136) or Perfect Control (169)"
+      }
+    ],
+    "gm_intrusion": "Your beast form can be anything you choose, such as a selkie, wolf, horse, swan, and so on. Work with your GM to determine the details of your form. A character who Sheds Their Skin may also want to work with the GM to come up with even more suitable abilities for their particular form. For example, a selkie character might choose Aquatic Combatant as their tier 3 ability instead of one of the abilities listed here, particularly if the GM expects the character to be moving through water regularly."
+  },
+  {
+    "id": "focus-shepherds-the-community",
+    "name": "Shepherds the Community",
+    "source": "(Cypher System Rulebook, page 75)",
+    "description": "You keep the place where you live safe from all danger.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Community Knowledge (121)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Community Activist (121)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Skill With Attacks (183)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Shepherd's Fury (182) or Skill With Defense (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Enhanced Potential (146)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Evasion (136)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Skill With Attacks (147) or Protective Wall (172)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-shepherds-spirits",
+    "name": "Shepherds Spirits",
+    "source": "(Cypher System Rulebook, page 76)",
+    "description": "Wandering souls, nature spirits, and elemental beings aid and support you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Question the Spirits (173)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Spirit Accomplice (185)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Command Spirit (121) or Preternatural Senses (171)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Wraith Cloak (200)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Call Dead Spirit (117)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Call Otherworldly Spirit (117) or Infuse Spirit (153)"
+      }
+    ],
+    "gm_intrusion": "In some settings, the Shepherds Spirits focus applies to only one kind of spirit, such as spirits of the deceased, nature spirits, and so on."
+  },
+  {
+    "id": "focus-shreds-the-walls-of-the-world",
+    "name": "Shreds the Walls of the World",
+    "source": "(Cypher System Rulebook, page 76)",
+    "description": "Speed plus phasing gives you a unique ability to evade danger and simultaneously inflict damage.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Phase Sprint (170)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Disrupting Touch (129)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Scratch Existence (180)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Invisible Phasing (155) or Walk Through Walls (196)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Phase Detonation (169)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Very Long Sprinting (196)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Shred Existence (183) or Untouchable While Moving (195)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-shrinks-to-minute-size",
+    "name": "Shrinks to Minute Size",
+    "source": "(Claim the Sky, page 47)",
+    "description": "You can shrink down to the size of a bug and, with enough experience, even smaller.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Shrink (CTS, 55)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Beneath Notice (CTS, 49)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Smaller (CTS, 56)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Advantages of Being Small (CTS, 48)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Enlarge (135) or Quick Switch (CTS, 55)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Small Flight (CTS, 55)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Shrink Others (CTS, 55)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Bigger (113) or Tiny (CTS, 56)"
+      }
+    ],
+    "gm_intrusion": "A character who Shrinks to Minute Size who chooses to learn abilities like Enlarge will never be quite as big as one who Grows to Towering Heights , but they can enjoy the advantages of being big or small as needed."
+  },
+  {
+    "id": "focus-siphons-power",
+    "name": "Siphons Power",
+    "source": "(Cypher System Rulebook, page 76)",
+    "description": "You suck power out of machines and creatures alike in order to empower yourself.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Drain Machine (131)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Drain Creature (131)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Drain at a Distance (131) or Unraveling Consumption (195)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Store Energy (186)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Share the Power (182)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Explosive Release (138) or Sun Siphon (188)"
+      }
+    ],
+    "gm_intrusion": "Robots and other living machines should be treated as creatures, not machines, for the purposes of siphoning power from them."
+  },
+  {
+    "id": "focus-slays-monsters",
+    "name": "Slays Monsters",
+    "source": "(Cypher System Rulebook, page 76)",
+    "description": "You kill monsters.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Practiced With Swords (171)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Monster Bane (164)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Monster Lore (164)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Will of Legend (199)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Trained Slayer (193)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Improved Monster Bane (152) or Misdirect (163)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Fight On (139)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Greater Skill With Attacks (swords) (147)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Murderer (165) or Heroic Monster Bane (149)"
+      }
+    ],
+    "gm_intrusion": "Although wielding a sword in a setting where people usually do not carry such weapons is fine, you can change the Slays Monsters sword-related abilities to use a different weapon, such as a gun with silver bullets."
+  },
+  {
+    "id": "focus-soars-on-amazing-wings",
+    "name": "Soars on Amazing Wings",
+    "source": "(Claim the Sky, page 47)",
+    "description": "Many superheroes can fly, and some even have wings. You can use your wings for movement, attacks, and defense.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Hover (149)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Flight Exertion (CTS, 53)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Wing Weapons (CTS, 56)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Acrobatic Attack (108) or Flying Companion (CTS, 53)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Hard to Hit (148)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Up to Speed (195)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Hard Target (148) or Defense Master (127)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-solves-mysteries",
+    "name": "Solves Mysteries",
+    "source": "(Cypher System Rulebook, page 77)",
+    "description": "You're a master of deduction, using evidence to find the answer.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Investigator (155)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Sleuth (183)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Out of Harm's Way (167)"
+      },
+      {
+        "tier": 3,
+        "abilities": "You Studied (200) or Skill With Attacks (131)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Draw Conclusion (131)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Defuse Situation (127)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Seize the Initiative (181) or Greater Skill With Defense (147)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-speaks-for-the-land",
+    "name": "Speaks for the Land",
+    "source": "(Cypher System Rulebook, page 77)",
+    "description": "Your spiritual connection to nature and the environment grants you mystical abilities.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Seeds of Fury (181)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Wilderness Lore (199)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Grasping Foliage (146)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Soothe the Savage (184) or Communication (121)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Moon Shape (164)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Insect Eruption (154)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Call the Storm (117) or Earthquake (133)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-spits-fire-and-lead",
+    "name": "Spits Fire and Lead",
+    "source": "(High Noon at Midnight, page 114)",
+    "description": "You once crossed paths with a fiery demon, learned a bit of blazecraft from an alchemist, or maybe just always had a special talent for starting fires. That and your love of letting your six shooters bark combine to make you the feared gunfighter that you are today. You might have developed a reputation already as you move between plains and badlands, using your uncanny skills to avenge, promote justice, or just enrich yourself. Whatever the case, it's how you'll acquit yourself when, inevitably, you draw your burning iron.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Smoldering Gun (HNAM, 114)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Practiced with Guns (171)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Summon Gun (HNAM, 114)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Meticulous Aim (HNAM, 115) or Quickdraw (HNAM, 116)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Blazing Bullets (HNAM, 115)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Forgeborn Bullet (HNAM, 115)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Hot Shot (HNAM, 115) or Never Miss a Shot (HNAM, 115)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-stands-like-a-bastion",
+    "name": "Stands Like a Bastion",
+    "source": "(Cypher System Rulebook, page 77)",
+    "description": "Your armor, along with your size, strength, incredible training, or machine enhancement, makes you difficult to move or hurt.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Practiced in Armor (171)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Experienced Defender (136)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Resist the Elements (176)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Unmovable (195)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Greater Enhanced Might (146) or Practiced With All Weapons (171)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Living Wall (158)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Hardiness (148)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Mastery in Armor (161)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Lethal Damage (158) or Shield Training (182)"
+      }
+    ],
+    "gm_intrusion": "Some characters who Stand Like a Bastion might already be experts in armor. They can choose a different tier 1 ability instead of Practiced in Armor ."
+  },
+  {
+    "id": "focus-steers-the-coven",
+    "name": "Steers the Coven",
+    "source": "(It's Only Magic, page 58)",
+    "description": "Magic is strongest when wielded by a community. The strength of a community is derived from the strength of its leader, and you've taken on the role. Maybe you were chosen, or maybe you volunteered. Maybe you have an official title and responsibilities, or maybe you serve as an informal mentor. Maybe you run acovenwith bylaws and a charter, or maybe you host gatherings where your friends and family can perform rituals together. Regardless, you're responsible for a coalition of magicians who look to you for guidance, protection, and problem-solving.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Community Activist (121)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Community Knowledge (121)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Shepherd's Fury (182)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Inspire Action (154) or True Guardian (194)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Ritual Guidance (IOM, 58)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Protective Instincts (IOM, 58)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Deep Consideration (126) or Drawing on Life's Experiences (131)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-stretches",
+    "name": "Stretches",
+    "source": "(Claim the Sky, page 47)",
+    "description": "Your body is elastic and rubbery, able to stretch to great lengths and compress when struck.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Contortionist (121)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Far Step (138)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Elastic Grip (CTS, 52)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Safe Fall (179)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Bypass Barrier (116) or Misdirect (163)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Resilience (176)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Free to Move (143)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Break the Ranks (116) or Not Dead Yet (166)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-strikes-like-a-rattler",
+    "name": "Strikes Like a Rattler",
+    "source": "(High Noon at Midnight, page 116)",
+    "description": "Your body is a venomous weapon able to cripple and kill. Watchful as a coiled rattlesnake, you're ready to evade an attacker, then strike back with fists, elbows, knees, or feet that sink into flesh with the speed of fangs. Fact is, you've got a supernatural connection to venomous serpents, the rattler in particular. That spiritual fusion empowers you both offensively and defensively, maybe even eventually giving you power over snakes, or allowing you to become a serpent avatar after shedding your skin.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Venemous Strike (HNAM, 116)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Scaled (HNAM, 116)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Snake Charmer (HNAM, 116)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Unarmed Fighting Style (HNAM, 116)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Gain Rattler Companion (HNAM, 116) or Stupefying Rattle (HNAM, 117)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Warmed by the Sun (HNAM, 117)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Venom in their Blood (HNAM, 117)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Shed Skin (HNAM, 117) or Spray Venom (HNAM, 117)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-takes-animal-shape",
+    "name": "Takes Animal Shape",
+    "source": "(Godforsaken, page 24)",
+    "description": "A shapechanger who can take the form of various animals.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Animal Shape (GF, 29) (CTS, 49)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Communication (121)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Soothe the Savage (184)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Bigger Animal Shape (GF, 29) (CTS, 49) or Greater Beast Form (146)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Animal Scrying (GF, 29) (CTS, 49)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Hard to Kill (148)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Blurring Speed (115) or Lend Animal Shape (GF, 32) (CTS, 53)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-talks-to-machines",
+    "name": "Talks to Machines",
+    "source": "(Cypher System Rulebook, page 77)",
+    "description": "You use your organic brain like a computer, interfacing \"wirelessly\" with any electronic device. You can control and influence them in ways that others can't.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Machine Affinity (159)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Distant Interface (130)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Coaxing Power (119)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Charm Machine (119)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Intelligent Interface (155) or Command Machine (120)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Machine Companion (159)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Robot Fighter (178)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Information Gathering (153)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Control Machine (121) or Improved Machine Companion (152)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-throws-with-deadly-accuracy",
+    "name": "Throws With Deadly Accuracy",
+    "source": "(Cypher System Rulebook, page 77)",
+    "description": "Everything that leaves your hand goes exactly where you'd like it to go and at the range and speed to make the perfect impact.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Precision (171)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Careful Aim (118)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Quick Throw (174) or Skill With Defense (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Everything Is a Weapon (136)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Specialized Throwing (185)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Whirlwind of Throws (198)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Lethal Damage (158) or Mastery With Defense (161)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-thunders",
+    "name": "Thunders",
+    "source": "(Cypher System Rulebook, page 77)",
+    "description": "You emit destructive sound and manipulate soundscapes.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Thunder Beam (191)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Sound Conversion Barrier (184)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Nullify Sound (166) or Echolocation (133)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Shattering Shout (182)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Subsonic Rumble (187)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Amplify Sounds (109)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Earthquake (133) or Lethal Vibration (158)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-touches-the-sky",
+    "name": "Touches the Sky",
+    "source": "(Claim the Sky, page 47)",
+    "description": "You can summon storms or break them apart.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Hover (149)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Wind Armor (199)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Bolts of Power (115) or Storm Seed (187)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Windrider (199)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Cold Burst (119)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Control Weather (122) or Wind Chariot (199)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-transmits-energy",
+    "name": "Transmits Energy",
+    "source": "(It's Only Magic, page 59)",
+    "description": "Magic is often compared to electromagnetism: it's an invisible and ubiquitous force that holds everything together. Magic runs through every living creature, the ground, and even the air around us. You can sense—and influence—the flow of power, the way some people can hear currents running through wire. In a crisis, you attack by draining a foe's energy. Otherwise, you focus on helping others by catalyzing and enhancing their magic abilities.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Lend a Hand (IOM, 59)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Drain Creature (131)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Buddy System (116) or Tap Currents (IOM, 59)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Store Energy (186)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Share the Power (182)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Explosive Release (138) or both Continuous Transfer (IOM, 59) and Drain at a Distance (131)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-travels-through-time",
+    "name": "Travels Through Time",
+    "source": "(Cypher System Rulebook, page 77)",
+    "description": "You can see through time, try to reach through it, and eventually even travel through it.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Anticipation (110)"
+      },
+      {
+        "tier": 2,
+        "abilities": "See History (180)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Temporal Acceleration (190) or Time Loop (192)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Temporal Dislocation (190)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Time Doppelganger (191)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Call Through Time (118) or Time Travel (192)"
+      }
+    ],
+    "gm_intrusion": "Although all character choices are subject to GM approval, Travels Through Time is a focus that the GM and player should probably have a long conversation about ahead of time, so the player knows the rules of time travel (if any) that exist in the GM's setting. A character with this focus can drastically alter a setting, if the rules of time travel allow it."
+  },
+  {
+    "id": "focus-turns-decay-to-growth",
+    "name": "Turns Decay to Growth",
+    "source": "(It's Only Magic, page 60)",
+    "description": "You're comfortable with decomposition: the bacteria and fungi that break down organic material are living creatures, and you coax magic from the interplay of life and death. To you, rot isn't cause for revulsion—it's an opportunity to build something new. Maggots, mushrooms, and mold are actors in your process, not unlike familiars. You probably keep a garden, nourished by your meticulously maintained compost pile. Your community might express discomfort with your methods, leading to friction. If you react to criticism by isolating yourself, you won't be lonely for very long—what you have to offer is vital and rare, and it's inevitable that someone will ask you for help.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Wilderness Lore (199)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Spore Cloud (IOM, 60)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Wilderness Explorer (199)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Reading Decomposition (IOM, 60) or both Grasping Foliage (146) and Necromancy (165)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Greater Necromancy (147) (if you have Necromancy (165) )"
+      },
+      {
+        "tier": 4,
+        "abilities": "Rewind Rot (IOM, 60) (if you have Reading Decomposition (IOM, 60) )"
+      },
+      {
+        "tier": 5,
+        "abilities": "Insect Eruption (154)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Restore Life (177) or Word of Death (200)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-uses-wild-magic",
+    "name": "Uses Wild Magic",
+    "source": "(Godforsaken, page 25)",
+    "description": "A spellcaster who learns a variety of spells instead of focusing on just one kind of magic.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Magical Repertoire (GF, 32)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Cypher Casting (GF, 29)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Expanded Repertoire (GF, 31)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Cypher Surge (GF, 29) or Faster Wild Magic (GF, 31)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Expanded Repertoire (GF, 31)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Magical Training (GF, 32)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Maximize Cypher (GF, 32) or Wild Insight (GF, 33)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-walks-the-wasteland",
+    "name": "Walks the Wasteland",
+    "source": "(Rust and Redemption, page 124)",
+    "description": "Most people want to hide from the devastation or just curl up and die rather than face a hostile world. Not you. You're determined to see what's out there, to survive, and, more than that, to thrive. It's that or let the radioactive rats—or whatever it is that hunts the ruins—get you.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Surviving the Wasteland (RR, 125)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Tolerance (RR, 125)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Weapon at Hand (RR, 125)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Devoted Defender (128)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Hardened by the End (RR, 125)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Apocalyptic Stare (RR, 125)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Hard to Hit (148) or Rapid Attack (174)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Improved Recovery (152)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Push on Through (173)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Ignore the Pain (150)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Using What's Available (195) or Wasteland Camouflage (RR, 125)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-walks-the-wild-woods",
+    "name": "Walks the Wild Woods",
+    "source": "(Godforsaken, page 25)",
+    "description": "An adherent of nature magic who draws on the power and strength of trees.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Wilderness Life (199)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Patient Recovery (GF, 32)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Wooden Body (GF, 33)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Tree Companion (GF, 33) or Wilderness Awareness (198)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Tree Travel (GF, 33)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Great Tree (GF, 31)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Dreadwood (GF, 31) or Restorative Bloom (GF, 32)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-was-foretold",
+    "name": "Was Foretold",
+    "source": "(Cypher System Rulebook, page 78)",
+    "description": "You are the \"chosen one,\" and prophecy, prediction, prognostication, or some other method of determination expects great things of you one day.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Interaction Skills (155)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Knowing (156)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Destined for Greatness (127)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Overcome All Obstacles (168) or Hard-Won Resilience (148)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Center of Attention (119)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Show Them the Way (183)"
+      },
+      {
+        "tier": 6,
+        "abilities": "As Foretold in Prophecy (110) or Greater Enhanced Potential (146)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-weaponizes-chrome",
+    "name": "Weaponizes Chrome",
+    "source": "(Neon Rain, page 39)",
+    "description": "Some of your organic parts have been replaced with artificial components. Like most people in the city, you are a cyborg, but your augmentations are extensive, and your chrome parts are specialized for melee combat. You almost certainly have metal plating and technical components visible on your skin. As you advance, you can add to, modify, or discover new functions for your machine parts.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Bash (112)"
+      },
+      {
+        "tier": 1,
+        "abilities": "⚡ Melee Chrome (NR, 39)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Weapon Defense (197)"
+      },
+      {
+        "tier": 3,
+        "abilities": "⚡ Heavy Integrated Weapon (NR, 39) or ⚡ Rapid Attack (174)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Reliable Weaponry (NR, 39)"
+      },
+      {
+        "tier": 5,
+        "abilities": "⚡ Extreme Mastery (138)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Lethal Damage (158) or ⚡ Ultra Enhancement (194)"
+      }
+    ],
+    "gm_intrusion": "⚡ — denotes a cyberware-derived ability ."
+  },
+  {
+    "id": "focus-wears-a-sheen-of-ice",
+    "name": "Wears a Sheen of Ice",
+    "source": "(Cypher System Rulebook, page 78)",
+    "description": "You command the wintery power of cold and ice.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Ice Armor (150)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Frost Touch (144)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Freezing Touch (143) or Ice Creation (150)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Resilient Ice Armor (176)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Cold Burst (119)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Ice Storm (150) or Winter Gauntlets (199)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-wears-power-armor",
+    "name": "Wears Power Armor",
+    "source": "(Cypher System Rulebook, page 78)",
+    "description": "GM Intrusions:The armor won't come off. The armor acts under its own power. The armor suffers a momentary power loss. NPCs are scared by the power armor.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Powered Armor (171)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Enhanced Might (135)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Heads-Up Display (148)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Fusion Armor (144) or Incredible Health (153)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Force Blast (142)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Field-Reinforced Armor (139)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Masterful Armor Modification (Jet-Assisted Flight) (160) or Masterful Armor Modification (Cypher Pod) (160)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-wields-an-enchanted-weapon",
+    "name": "Wields an Enchanted Weapon",
+    "source": "(Godforsaken, page 26)",
+    "description": "One who channels magic through or from a weapon to create a unique fighting style.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Enchanted Weapon (GF, 31) (CTS, 52)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Innate Power (GF, 32) (CTS, 53)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Charge Weapon (GF, 29) (CTS, 51)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Power Crash (GF, 32) (CTS, 54)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Rapid Attack (174) or Throw Enchanted Weapon (GF, 33) (CTS, 56)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Defending Weapon (GF, 31) (CTS, 52)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Enchanted Movement (GF, 31) (CTS, 52)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Deadly Strike (125) or Spin Attack (185)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-wields-invisible-force",
+    "name": "Wields Invisible Force",
+    "source": "(Claim the Sky, page 48)",
+    "description": "You bend light and manipulate beams of force for offense and defense.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Vanish (196)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Entangling Force (136)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Sharp Senses (182)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Force Field Barrier (143) or Multi-Vanish (CTS, 54)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Invisibility (155)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Defensive Field (127)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Concussion (121) or Generate Force Field (145)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-wields-two-weapons-at-once",
+    "name": "Wields Two Weapons at Once",
+    "source": "(Cypher System Rulebook, page 78)",
+    "description": "You bear steel with both hands, ready to take on any foe.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Dual Light Wield (132)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Double Strike (131)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Infiltrator (153)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Dual Medium Wield (132) or Precise Cut (171)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Dual Defense (132)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Dual Distraction (132)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Disarming Attack (129) or Spin Attack (185)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-works-for-a-living",
+    "name": "Works for a Living",
+    "source": "(Cypher System Rulebook, page 78)",
+    "description": "You take great satisfaction in a job well done, whether it's coding, building houses, or mining asteroids.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Handy (148)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Muscles of Iron (165)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Eye for Detail (138) or Improvise (152)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Enhanced Might (135)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Tough It Out (193)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Expert Skill (137)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Enhanced Potential (146) or Hard-Won Resilience (148)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-works-miracles",
+    "name": "Works Miracles",
+    "source": "(Cypher System Rulebook, page 79)",
+    "description": "You can heal others with a touch, alter time to help others, and are generally beloved by everyone.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Healing Touch (149)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Alleviate (109)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Font of Healing (142) or Miraculous Health (163)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Inspire Action (154)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Undo (195)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Greater Healing Touch (147) or Restore Life (177)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-works-the-back-alleys",
+    "name": "Works the Back Alleys",
+    "source": "(Cypher System Rulebook, page 79)",
+    "description": "You make your way unseen, stealing from the wealthy to achieve your ends.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Stealth Skills (186)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Underworld Contacts (195)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Pull a Fast One (173) or Guild Training (147)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Master Thief (160)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Dirty Fighter (128)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Alley Rat (109) or All-Out Con (109)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-works-the-system",
+    "name": "Works the System",
+    "source": "(Cypher System Rulebook, page 79)",
+    "description": "You can exploit flaws in artificial systems, including but not limited to computer code.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Hack the Impossible (147)"
+      },
+      {
+        "tier": 1,
+        "abilities": "Computer Programming (121)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Connected (121)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Confidence Artist (121) or Skill With Attacks (183)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Confuse Enemy (121)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Work the Friendship (200)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Call in Favor (117) or Greater Enhanced Potential (146)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-would-rather-be-reading",
+    "name": "Would Rather Be Reading",
+    "source": "(Cypher System Rulebook, page 79)",
+    "description": "Books are your friends. What's more important than knowledge? Nothing.",
+    "tier_abilities": [
+      {
+        "tier": 1,
+        "abilities": "Knowledge Is Power (156)"
+      },
+      {
+        "tier": 2,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 3,
+        "abilities": "Applying Your Knowledge (110) or Flex Skill (141)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Knowledge Is Power (156)"
+      },
+      {
+        "tier": 4,
+        "abilities": "Knowing the Unknown (156)"
+      },
+      {
+        "tier": 5,
+        "abilities": "Greater Enhanced Intellect (146)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Knowledge Is Power (156)"
+      },
+      {
+        "tier": 6,
+        "abilities": "Tower of Intellect (193) or Read the Signs (174)"
+      }
+    ],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-choosing-abilities-by-relative-power",
+    "name": "Choosing Abilities by Relative Power",
+    "source": "(Cypher System Rulebook, page 80)",
+    "description": "The Ability Selection Guidelines invite you to choose an ability from one of three ranges: low tier, mid tier, and high tier. These ranges correspond with the power \"grades\" given for every ability. These abilities are further sorted into ability categories based on the kinds of things they do—abilities that improve physical attacks are in the attack skill category, abilities that assist allies are in the support category, and so on. Look for the grades and categories in theAbility Categories and Relative Powersection ofChapter 9: Abilities.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-balancing-abilities",
+    "name": "Balancing Abilities",
+    "source": "(Cypher System Rulebook, page 80)",
+    "description": "The guidelines within each category go a long way toward ensuring that the focus you build will be balanced. Sometimes it might be appropriate to grant a low-power ability along with a regular ability at a given tier, depending on the needs of the focus. A \"low-power ability\" is deliberately open for GM interpretation, but generally speaking, should be no more potent than a low-tier ability (that is, an ability that is normally available at tier 1 or 2).",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-concept-and-category",
+    "name": "Concept and Category",
+    "source": "(Cypher System Rulebook, page 81)",
+    "description": "Choosing to create a focus that uses a particular concept—say, creating illusions—doesn't lock you into creating a focus within a particular category—in this case, environment manipulation. A focus can be constructed in a variety of ways using a particular energy, tool, or concept, each ultimately leading to a focus that provides different results. It all depends on your ends. In this case, creating illusions might be used to sway others, which argues for a focus built using the influence category guidelines.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-creating-brand-new-abilities",
+    "name": "Creating Brand-New Abilities",
+    "source": "(Cypher System Rulebook, page 81)",
+    "description": "You can go further than reskinning and create one or more brand-new abilities. When doing this, try to find something as close as possible to the effect you want, then use it as a template. In any case, deciding how much an ability should cost when it comes to a character's Pool is one of the most important aspects of getting an ability right.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-choose-gm-intrusions",
+    "name": "Choose GM Intrusions",
+    "source": "(Cypher System Rulebook, page 81)",
+    "description": "Think about the kinds of things that might surprise, alarm, or go catastrophically wrong for someone with the new focus being created, and assign it as aGM intrusionfor that focus. Of course, this often is done on the fly during the game. But giving the topic some thought while the focus is being constructed and the ideas are fresh in your head is likely to yield some particularly devilish options.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-ally-use",
+    "name": "Ally Use",
+    "source": "(Cypher System Rulebook, page 82)",
+    "description": "Foci that prioritize providing NPCfollowerto the character are ally use foci. The followers give aid to the PC in a variety of ways, but at base they usually provide an asset to the character's actions.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-basic",
+    "name": "Basic",
+    "source": "(Cypher System Rulebook, page 83)",
+    "description": "Foci that rely mostly on providing skill training, assets to tasks, and bumps to stat Pools and Edge in order to improve a character fall within the basic category. An overarching theme is also included, as with most of the other categories, that makes sense of the various basic abilities provided.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-energy-manipulation",
+    "name": "Energy Manipulation",
+    "source": "(Cypher System Rulebook, page 84)",
+    "description": "Energy manipulation foci offer abilities that can call fire, electricity, force, magnetism, or nonstandard forms of energy such as cold, stone, or something stranger like \"void\" or \"shadow.\" These abilities usually give a character a way to achieve something of a balance between attacking enemies and granting themselves or allies additional protection. The focus usually also offers abilities that provide other ways to use specific energy for things like transportation, creating large concentrations of energy that can affect multiple targets, or creating a temporary object or barrier of energy.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-environment-manipulation",
+    "name": "Environment Manipulation",
+    "source": "(Cypher System Rulebook, page 85)",
+    "description": "Foci that allow a character to move objects, affect gravity, create objects (or illusions of objects), and so on are environment manipulation foci. Given that, in many cases, energy is used as part of this process, this category and energy manipulation overlap to some extent. Environment manipulation foci prioritize abilities that indirectly affect enemies and allies via objects, forces, and alterations of the surroundings; energy manipulation foci prioritize directly damaging targets with the chosen energy or force.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-exploration",
+    "name": "Exploration",
+    "source": "(Cypher System Rulebook, page 86)",
+    "description": "Foci that allow a character to gather information, survive in unfamiliar environments, and find their way to new locations or track down particular creatures and foes are exploration foci. Surviving in unfamiliar environments requires a reasonable selection of defensive options; however, abilities that allow a character to find and learn are prioritized.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-influence",
+    "name": "Influence",
+    "source": "(Cypher System Rulebook, page 87)",
+    "description": "Foci that prioritize authority and influence—whether that's to make people or machines do as commanded, to help others, or to rise to some other prestigious and significant position—fall within the influence category.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-irregular",
+    "name": "Irregular",
+    "source": "(Cypher System Rulebook, page 88)",
+    "description": "Most foci have a basic theme, a \"character story\" that logically leads to a series of related abilities. However, certain foci themes are so wide that they don't fit into any other category except an irregular one of their own.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-movement-expertise",
+    "name": "Movement Expertise",
+    "source": "(Cypher System Rulebook, page 89)",
+    "description": "Foci that prioritize novel forms of movement—in order to excel in combat, escape situations most others can't, move with stealth for purposes of theft or escape, or move into locations normally inaccessible—fall within the movement expertise category. These foci usually have methods of granting either offense or defense through movement, though they may provide some means of doing both.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-striker-combat",
+    "name": "Striker Combat",
+    "source": "(Cypher System Rulebook, page 90)",
+    "description": "Striker combat foci prioritize dealing damage in battle over other concerns. Foci in this category offer defensive abilities as well, but they emphasize abilities that provide ways to spike damage to heights that other foci normally don't reach.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-support",
+    "name": "Support",
+    "source": "(Cypher System Rulebook, page 92)",
+    "description": "Foci that allow a character to help others succeed, defend others, heal others who are hurt, and so on are support foci. Of course, most foci abilities are often used in aid of others, but support foci (such as Siphons Power) prioritize aiding, healing, and improving the character who takes the focus.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  },
+  {
+    "id": "focus-category-tank-combat",
+    "name": "Tank Combat",
+    "source": "(Cypher System Rulebook, page 93)",
+    "description": "Foci that prioritize being able to take a lot of punishment and soak up excess damage from foes fall within the tank combat category. These foci provide offensive abilities too, as well as additional abilities related to the particular method by which improved protection is achieved, but defensive abilities are most pronounced.",
+    "tier_abilities": [],
+    "gm_intrusion": ""
+  }
+]

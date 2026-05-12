@@ -18,8 +18,8 @@ export default function SoftwarePage() {
         </Button>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-          <Code2 size={32} color="#4A7C9E" />
-          <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "primary.dark" }}>
+          <Code2 size={32} color="#6366f1" />
+          <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "text.primary" }}>
             Software
           </Typography>
         </Box>

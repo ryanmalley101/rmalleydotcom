@@ -1,0 +1,564 @@
+[
+  {
+    "id": "warrior",
+    "name": "Warrior",
+    "source": "(Cypher System Rulebook, page 23)",
+    "description": "You're a good ally to have in a fight. You know how to use weapons and defend yourself. Depending on the genre and setting in question, this might mean wielding a sword and shield in the gladiatorial arena, an AK-47 and a bandolier of grenades in a savage firefight, or a blaster rifle and powered armor when exploring an alien planet.",
+    "stat_pools": {},
+    "player_intrusions": [
+      "Perfect Setup: You're fighting at least three foes and each one is standing in exactly the right spot for you to use a move you trained in long ago, allowing you to attack all three as a single action. Make a separate attack roll for each foe. You remain limited by the amount of Effort you can apply on one action.",
+      "Old Friend: A comrade in arms from your past shows up unexpectedly and provides aid in whatever you're doing. They are on a mission of their own and can't stay longer than it takes to help out, chat for a while after, and perhaps share a quick meal.",
+      "Weapon Break: Your foe's weapon has a weak spot. In the course of the combat, it quickly becomes damaged and moves two steps down the object damage track ."
+    ],
+    "background_connection": [],
+    "example": "(Cypher System Rulebook, page 23) Ray wants to create a Warrior character for a modern campaign. He decides that the character is an ex-military fellow who is fast and strong. He puts 3 of his additional points into his Might Pool and 3 into his Speed Pool; his stat Pools are now Might 13, Speed 13, and Intellect 8. As a first-tier character, his Effort is 1, his Might Edge is 1, and his Speed Edge and Intellect Edge are both 0. His character is not particularly smart or charismatic. He wants to use a large combat knife (a medium weapon that inflicts 4 points of damage) and a .357 Magnum (a heavy pistol that inflicts 6 points of damage but requires the use of both hands). Ray decides not to wear armor, as it's not really appropriate to the setting, so for his first ability, he choosesTrained Without Armorso he eases Speed defense actions. For his second ability, he choosesCombat Prowessso he can inflict extra damage with his big knife. Ray wants to be fast as well as tough, so he selectsImproved Edge. This gives him aSpeedEdgeof 1. He rounds out his character withPhysical Skillsand chooses swimming and running. The Warrior can bear twocyphers. The GM decides that Ray's first cypher is a pill that restores 6 points of Might when swallowed, and his second is a small, easily concealed grenade that explodes like a firebomb when thrown, inflicting 3 points of damage to all withinimmediate range. Ray still needs to choose adescriptorand afocus. Looking ahead to the descriptor rules, Ray choosesStrong, which increases hisMightPoolto 17. He also becomes trained in jumping and breaking inanimate objects. (If he had chosen jumping as one of his physical skills, the Strong descriptor would have made him specialized in jumping instead of trained.) Being Strong also gives Ray an extra medium or heavyweapon. He chooses a baseball bat that he'll use in a pinch. He keeps it in the trunk of his car. For his focus, Ray choosesMasters Weaponry. This gives him yet another weapon of high quality. He chooses another combat knife and asks the GM if he could use it in his left hand—not to make attacks, but as a shield. This will ease hisSpeeddefense rollsif he has both knives out (the \"shield\" counts as an asset). The GM agrees. During the game, Ray's Warrior will be hard to hit—he is trained in Speed defense rolls, and his extra knife eases his defense rolls by another step. Thanks to his focus, he also inflicts 1 additional point ofdamagewith his chosen weapon. Now he inflicts 6 points of damage with his blade. Ray's character is a deadly combatant, likely starting the game with a reputation as a knife fighter. For his character arc, Ray choosesDefeat a Foe. That foe, he decides, is none other than someone in his company who was once a friend but went rogue.",
+    "tiers": {
+      "1": {
+        "name": "First-Tier Warrior",
+        "source": "(Cypher System Rulebook, page 21)",
+        "stats": [
+          {
+            "stat": "Effort",
+            "value": "Your Effort is 1."
+          },
+          {
+            "stat": "Physical Nature",
+            "value": "You have a Might Edge of 1 and a Speed Edge of 0, or you have a Might Edge of 0 and a Speed Edge of 1. Either way, you have an Intellect Edge of 0."
+          },
+          {
+            "stat": "Cypher Use",
+            "value": "You can bear two cyphers at a time."
+          },
+          {
+            "stat": "Weapons",
+            "value": "You become practiced with light, medium, and heavy weapons and suffer no penalty when using any kind of weapon. Enabler."
+          },
+          {
+            "stat": "Starting Equipment",
+            "value": "Appropriate clothing and two weapons of your choice, plus one expensive item, two moderately priced items, and up to four inexpensive items."
+          },
+          {
+            "stat": "Special Abilities",
+            "value": "Choose four of the abilities listed below. You can't choose the same ability more than once unless its description says otherwise. The full description for each listed ability can be found in Abilities, which also has descriptions for flavor and focus abilities in a single vast catalog."
+          }
+        ],
+        "abilities": [
+          "Bash (112)",
+          "Combat Prowess (120)",
+          "Control the Field (121)",
+          "Improved Edge (151)",
+          "No Need for Weapons (166)",
+          "Overwatch (168)",
+          "Physical Skills (170)",
+          "Practiced in Armor (171)",
+          "Quick Throw (174)",
+          "Swipe (188)",
+          "Trained Without Armor (193)"
+        ]
+      },
+      "2": {
+        "name": "Second-Tier Warrior",
+        "source": "(Cypher System Rulebook, page 22)",
+        "stats": [],
+        "abilities": [
+          "Crushing Blow (123)",
+          "Hemorrhage (149)",
+          "Reload (176)",
+          "Skill With Attacks (183)",
+          "Skill With Defense (183)",
+          "Successive Attack (187)"
+        ]
+      },
+      "3": {
+        "name": "Third-Tier Warrior",
+        "source": "(Cypher System Rulebook, page 22)",
+        "stats": [],
+        "abilities": [
+          "Deadly Aim (125)",
+          "Energy Resistance (134)",
+          "Experienced in Armor (136)",
+          "Expert Cypher Use (137)",
+          "Fury (144)",
+          "Lunge (159)",
+          "Reaction (174)",
+          "Seize the Moment (181)",
+          "Slice (183)",
+          "Spray (185)",
+          "Trick Shot (194)",
+          "Vigilance (196)"
+        ]
+      },
+      "4": {
+        "name": "Fourth-Tier Warrior",
+        "source": "(Cypher System Rulebook, page 22)",
+        "stats": [],
+        "abilities": [
+          "Amazing Effort (109)",
+          "Capable Warrior (118)",
+          "Experienced Defender (136)",
+          "Feint (139)",
+          "Increased Effects (153)",
+          "Momentum (164)",
+          "Pry Open (172)",
+          "Snipe (183)",
+          "Tough As Nails (192)"
+        ]
+      },
+      "5": {
+        "name": "Fifth-Tier Warrior",
+        "source": "(Cypher System Rulebook, page 23)",
+        "stats": [],
+        "abilities": [
+          "Adroit Cypher Use (108)",
+          "Arc Spray (110)",
+          "Greater Skill with Attacks (147)",
+          "Improved Success (152)",
+          "Jump Attack (156)",
+          "Mastery in Armor (161)",
+          "Mastery With Attacks (161)",
+          "Mastery With Defense (161)",
+          "Parry (168)"
+        ]
+      },
+      "6": {
+        "name": "Sixth-Tier Warrior",
+        "source": "(Cypher System Rulebook, page 23)",
+        "stats": [],
+        "abilities": [
+          "Again and Again (109)",
+          "Finishing Blow (140)",
+          "Magnificent Moment (159)",
+          "Murderer (165)",
+          "Spin Attack (185)",
+          "Weapon and Body (196)"
+        ]
+      }
+    }
+  },
+  {
+    "id": "adept",
+    "name": "Adept",
+    "source": "(Cypher System Rulebook, page 26)",
+    "description": "You master powers or abilities outside the experience, understanding, and sometimes belief of others. They might be magic, psychic powers, mutant abilities, or just a wide variety of intricate devices, depending on the setting.",
+    "stat_pools": {},
+    "player_intrusions": [
+      "Advantageous Malfunction: A device being used against you malfunctions. It might harm the user or one of their allies for a round, or activate a dramatic and distracting side effect for a few rounds.",
+      "Convenient Idea: A flash of insight provides you with a clear answer or suggests a course of action with regard to an urgent question, problem, or obstacle you're facing.",
+      "Inexplicably Unbroken: An inactive, ruined, or presumed-destroyed device temporarily activates and performs a useful function relevant to the situation. This is enough to buy you some time for a better solution, alleviate a complication that was interfering with your abilities, or just get you one more use out of a depleted cypher or artifact."
+    ],
+    "background_connection": [],
+    "example": "(Cypher System Rulebook, page 26) Jen wants to create an Adept—a sorcerer for a fantasy campaign. She decides to be somewhat well rounded, so she puts 2 of her additional points into each stat Pool, giving her a Might Pool of 9, a Speed Pool of 11, and an Intellect Pool of 14. Her Adept is smart and quick. She has an Intellect Edge of 1, a Might Edge of 0, and a Speed Edge of 0. As a first-tier character, her Effort is 1. As her initial abilities, she choosesOnslaughtandWard, giving her a strong offense and defense. She also choosesMagic Trainingand rounds out her character withScan, which she hopes will be useful in gaining insight and information. For this character, Onslaught, Ward, and Scan are all spells she has mastered through years of training and study. She can bear three cyphers. The GM gives her a potion that acts as a short-range teleporter, a small charm that restores 5 points to her Intellect Pool, and a fluid-filled flask that explodes like a fiery bomb. Jen's sorcerer is skilled with light weapons, so she chooses a dagger. For her descriptor, Jen choosesGraceful, which adds 2 points to her Speed Pool, bringing it to 13. That descriptor means she is trained in balancing and anything requiring careful movements, physical performing arts, and Speed defense tasks. Perhaps she is a dancer. In fact, she begins to develop a backstory that involves graceful, lithe movements that she incorporates into her spells. For her focus, she choosesLeads. This gives her training in social interactions, which again helps round her out—she's good in all kinds of situations. Moreover, she has theGood Adviceability, which enables her to be a focal point of her group. Her spells and focus abilities cost Intellect points to activate, so she's glad to have a lot of points in her Intellect Pool. In addition, her Intellect Edge will help reduce those costs. If she uses her Onslaught force blast without applying Effort, it costs 0 Intellect points and deals 4 points of damage. Her Intellect Edge will allow her to save points to devote toward applying Effort for other purposes, perhaps to boost the accuracy of Onslaught. For her character arc, Jen choosesAid a Friend. She decides that when her sorcerer character was young, she had a magical mentor. That mentor was later taken prisoner by a demon, so her character is always looking for clues on how to find the demon and release her friend from bondage.",
+    "tiers": {
+      "1": {
+        "name": "First-Tier Adept",
+        "source": "(Cypher System Rulebook, page 25)",
+        "stats": [
+          {
+            "stat": "Effort",
+            "value": "Your Effort is 1."
+          },
+          {
+            "stat": "Genius",
+            "value": "You have an Intellect Edge of 1, a Might Edge of 0, and a Speed Edge of 0."
+          },
+          {
+            "stat": "Expert Cypher Use",
+            "value": "You can bear three cyphers at a time."
+          },
+          {
+            "stat": "Starting Equipment",
+            "value": "Appropriate clothing, plus two expensive items, two moderately priced items, and up to four inexpensive items of your choice."
+          },
+          {
+            "stat": "Weapons",
+            "value": "You can use light weapons without penalty. You have an inability with medium weapons and heavy weapons; your attacks with medium and heavy weapons are hindered."
+          },
+          {
+            "stat": "Special Abilities",
+            "value": "Choose four of the abilities listed below. You can't choose the same ability more than once unless its description says otherwise. The full description for each listed ability can be found in Abilities, which also has descriptions for flavor and focus abilities in a single vast catalog."
+          }
+        ],
+        "abilities": [
+          "Distortion (130)",
+          "Erase Memories (136)",
+          "Far Step (138)",
+          "Hedge Magic (149)",
+          "Magic Training (159)",
+          "Onslaught (167)",
+          "Push (173)",
+          "Resonance Field (176)",
+          "Scan (179)",
+          "Shatter (182)",
+          "Ward (196)"
+        ]
+      },
+      "2": {
+        "name": "Second-Tier Adept",
+        "source": "(Cypher System Rulebook, page 26)",
+        "stats": [],
+        "abilities": [
+          "Adaptation (108)",
+          "Cutting Light (123)",
+          "Hover (149)",
+          "Mind Reading (162)",
+          "Retrieve Memories (177)",
+          "Reveal (178)",
+          "Stasis (186)"
+        ]
+      },
+      "3": {
+        "name": "Third-Tier Adept",
+        "source": "(Cypher System Rulebook, page 26)",
+        "stats": [],
+        "abilities": [
+          "Adroit Cypher Use (108)",
+          "Countermeasures (122)",
+          "Energy Protection (134)",
+          "Fire and Ice (140)",
+          "Force Field Barrier (143)",
+          "Sensor (181)",
+          "Targeting Eye (189)"
+        ]
+      },
+      "4": {
+        "name": "Fourth-Tier Adept",
+        "source": "(Cypher System Rulebook, page 26)",
+        "stats": [],
+        "abilities": [
+          "Death Touch (125)",
+          "Exile (136)",
+          "Invisibility (155)",
+          "Matter Cloud (161)",
+          "Mind Control (162)",
+          "Projection (172)",
+          "Rapid Processing (174)",
+          "Regeneration (175)",
+          "Reshape (176)",
+          "Wormhole (200)"
+        ]
+      },
+      "5": {
+        "name": "Fifth-Tier Adept",
+        "source": "(Cypher System Rulebook, page 26)",
+        "stats": [],
+        "abilities": [
+          "Absorb Energy (108)",
+          "Concussion (121)",
+          "Conjuration (121)",
+          "Create (122)",
+          "Dust to Dust (133)",
+          "Knowing the Unknown (156)",
+          "Master Cypher Use (160)",
+          "Teleportation (190)",
+          "True Senses (194)"
+        ]
+      },
+      "6": {
+        "name": "Sixth-Tier Adept",
+        "source": "(Cypher System Rulebook, page 26)",
+        "stats": [],
+        "abilities": [
+          "Control Weather (122)",
+          "Earthquake (133)",
+          "Move Mountains (164)",
+          "Traverse the Worlds (194)",
+          "Usurp Cypher (195)"
+        ]
+      }
+    }
+  },
+  {
+    "id": "explorer",
+    "name": "Explorer",
+    "source": "(Cypher System Rulebook, page 29)",
+    "description": "You are a person of action and physical ability, fearlessly facing the unknown. You travel to strange, exotic, and dangerous places, and discover new things. This means you're physical but also probably knowledgeable.",
+    "stat_pools": {},
+    "player_intrusions": [
+      "Fortuitous Malfunction: A trap or a dangerous device malfunctions before it can affect you.",
+      "Serendipitous Landmark: Just when it seems like the path is lost (or you are), a trail marker, a landmark, or simply the way the terrain or corridor bends, rises, or falls away suggests to you the best path forward, at least from this point.",
+      "Weak Strain: The poison or disease turns out not to be as debilitating or deadly as it first seemed, and inflicts only half the damage that it would have otherwise."
+    ],
+    "background_connection": [],
+    "example": "(Cypher System Rulebook, page 29) Sam decides to create an Explorer character for a science fiction campaign. This character will be a hardy soul who explores alien worlds. They put 3 additional points into their Might Pool, 2 into their Speed Pool, and 1 into their Intellect Pool; their stat Pools are now Might 13, Speed 11, and Intellect 10. As a first-tier character, their Effort is 1, their Might Edge is 1, and their Speed Edge and Intellect Edge are 0. Their character is fairly well-rounded so far. Sam immediately leaps in and starts choosing abilities. They pickDanger SenseandSurging Confidence, thinking those abilities will be generally useful. They also choosePracticed in Armor, reasoning that the character wears high-tech medium armor when exploring. Last, they chooseKnowledge Skillsand select geology and biology to help during interplanetary explorations. Sam's Explorer can bear two cyphers, which in this setting involve nanotechnology. The GM decides that one is a nanite injector that grants a +1 bonus to Might Edge when used, and the other is a device that can create one simple handheld object the user wishes. Sam's Explorer is not really geared toward fighting, but sometimes the universe is a dangerous place, so they note that they're carrying a medium blaster as well. Sam still needs a descriptor and a focus. Looking to the Descriptor chapter, they chooseHardy, which increases their Might Pool to 17. They also heal more quickly and can operate better when injured. They're trained in Might defense but have aninabilitywithinitiative; however, it's effectively canceled out by their Danger Sense (and vice versa). Sam could go back and select something else instead of Danger Sense, but they like it and decide to keep it. Overall, the descriptor ends up making the character tough but a little slow. For their focus, Sam choosesExplores Dark Places(in this case, weird ruins of alien civilizations). This gives the character a bunch of additional skills: searching, listening, climbing, balancing, and jumping. They're quite the capable Explorer. For their character arc, Sam choosesEnterprise. Exploring alien places sometimes turns up strange relics, and Sam figures they might be able to set up a service to reliably transport these items to responsible third parties, rather than allow them to fall into the hands of pirates and rich private collectors. For a small fee, of course.",
+    "tiers": {
+      "1": {
+        "name": "First-Tier Explorer",
+        "source": "(Cypher System Rulebook, page 28)",
+        "stats": [
+          {
+            "stat": "Effort",
+            "value": "Your Effort is 1."
+          },
+          {
+            "stat": "Physical Nature",
+            "value": "You have a Might Edge of 1, a Speed Edge of 0, and an Intellect Edge of 0."
+          },
+          {
+            "stat": "Cypher Use",
+            "value": "You can bear two cyphers at a time."
+          },
+          {
+            "stat": "Starting Equipment",
+            "value": "Appropriate clothing and a weapon of your choice, plus two expensive items, two moderately priced items, and up to four inexpensive items."
+          },
+          {
+            "stat": "Weapons",
+            "value": "You can use light and medium weapons without penalty. You have an inability with heavy weapons; your attacks with heavy weapons are hindered."
+          },
+          {
+            "stat": "Special Abilities",
+            "value": "Choose four of the abilities listed below. You can't choose the same ability more than once unless its description says otherwise. The full description for each listed ability can be found in Abilities, which also has descriptions for flavor and focus abilities in a single vast catalog."
+          }
+        ],
+        "abilities": [
+          "Block (115)",
+          "Danger Sense (124)",
+          "Decipher (126)",
+          "Endurance (134)",
+          "Find the Way (140)",
+          "Fleet of Foot (141)",
+          "Improved Edge (151)",
+          "Knowledge Skills (157)",
+          "Muscles of Iron (165)",
+          "No Need for Weapons (166)",
+          "Physical Skills (170)",
+          "Practiced in Armor (171)",
+          "Practiced With All Weapons (171)",
+          "Surging Confidence (188)",
+          "Trained Without Armor (193)"
+        ]
+      },
+      "2": {
+        "name": "Second-Tier Explorer",
+        "source": "(Cypher System Rulebook, page 29)",
+        "stats": [],
+        "abilities": [
+          "Curious (123)",
+          "Danger Instinct (124)",
+          "Enable Others (133)",
+          "Escape (136)",
+          "Eye for Detail (138)",
+          "Foil Danger (142)",
+          "Hand to Eye (148)",
+          "Investigative Skills (155)",
+          "Quick Recovery (173)",
+          "Range Increase (174)",
+          "Skill With Defense (183)",
+          "Stand Watch (186)",
+          "Travel Skills (193)",
+          "Wreck (200)"
+        ]
+      },
+      "3": {
+        "name": "Third-Tier Explorer",
+        "source": "(Cypher System Rulebook, page 29)",
+        "stats": [],
+        "abilities": [
+          "Controlled Fall (122)",
+          "Experienced in Armor (136)",
+          "Expert Cypher Use (137)",
+          "Ignore the Pain (150)",
+          "Obstacle Running (167)",
+          "Resilience (176)",
+          "Run and Fight (179)",
+          "Seize the Moment (181)",
+          "Skill With Attacks (183)",
+          "Stone Breaker (186)",
+          "Think Your Way Out (191)",
+          "Trapfinder (193)",
+          "Wrest From Chance (200)"
+        ]
+      },
+      "4": {
+        "name": "Fourth-Tier Explorer",
+        "source": "(Cypher System Rulebook, page 29)",
+        "stats": [],
+        "abilities": [
+          "Capable Warrior (118)",
+          "Expert Skill (137)",
+          "Increased Effects (153)",
+          "Read the Signs (174)",
+          "Runner (179)",
+          "Subtle Steps (187)",
+          "Tough As Nails (192)"
+        ]
+      },
+      "5": {
+        "name": "Fifth-Tier Explorer",
+        "source": "(Cypher System Rulebook, page 29)",
+        "stats": [],
+        "abilities": [
+          "Adroit Cypher Use (108)",
+          "Free to Move (143)",
+          "Group Friendship (147)",
+          "Hard to Kill (148)",
+          "Jump Attack (156)",
+          "Mastery With Defense (161)",
+          "Parry (168)",
+          "Physically Gifted (170)",
+          "Take Command (188)",
+          "Vigilant (196)"
+        ]
+      },
+      "6": {
+        "name": "Sixth-Tier Explorer",
+        "source": "(Cypher System Rulebook, page 29)",
+        "stats": [],
+        "abilities": [
+          "Again and Again (109)",
+          "Inspire Coordinated Actions (154)",
+          "Mastery in Armor (161)",
+          "Mastery With Attacks (161)",
+          "Negate Danger (165)",
+          "Share Defense (181)",
+          "Spin Attack (185)",
+          "Wild Vitality (198)"
+        ]
+      }
+    }
+  },
+  {
+    "id": "speaker",
+    "name": "Speaker",
+    "source": "(Cypher System Rulebook, page 32)",
+    "description": "You're good with words and good with people. You talk your way past challenges and out of jams, and you get people to do what you want.",
+    "stat_pools": {},
+    "player_intrusions": [
+      "Friendly NPC: An NPC you don't know, someone you don't know that well, or someone you know but who hasn't been particularly friendly in the past chooses to help you, though doesn't necessarily explain why. Maybe they'll ask you for a favor in return afterward, depending on how much trouble they go to.",
+      "Perfect Suggestion: A follower or other already-friendly NPC suggests a course of action with regard to an urgent question, problem, or obstacle you're facing.",
+      "Unexpected Gift: An NPC hands you a physical gift you were not expecting, one that helps put the situation at ease if things seem strained, or provides you with a new insight for understanding the context of the situation if there's something you're failing to understand or grasp."
+    ],
+    "background_connection": [],
+    "example": "(Cypher System Rulebook, page 32) Mary wants to create a Speaker for a Lovecraftian horror campaign. She puts 3 of her additional stat points into her Intellect Pool and 3 into her Speed Pool; her stat Pools are now Might 8, Speed 12, and Intellect 14. As a first-tier character, her Effort is 1, her Might Edge and Speed Edge are 0, and her Intellect Edge is 1. She's smart and charismatic but not particularly tough. Mary choosesFast TalkandSpin Identityto help get into places and learn things she wants to know. She's a bit of a con artist. She's good to her friends, however, and choosesEncouragementas well. Mary rounds out her first-tier abilities withInteraction Skills(deceiving and persuasion). A Speaker normally starts with two cyphers, but the GM rules that characters in this campaign start with only one—something creepy relating to their background. Mary's cypher is an odd pocket watch given to her by her grandfather. She doesn't know how or why, but when activated, the watch allows her to take twice as many actions for three rounds. Mary's character carries a small knife hidden in her bag in case of trouble. As a light weapon, it inflicts 2 points of damage, but attacks with it are eased. Mary choosesResilientfor her descriptor and decides that she can probably learn the truth behind some of the strange things that she's heard about without feeling too much trauma if it's horrible. Resilient increases her Might Pool to 10 and her Intellect Pool to 16. She's trained in Might and Intellect defense actions and gains an extrarecovery rolleach day. At first, Mary is sad that her descriptor gives her aninabilityin knowledge and puzzle tasks, but then she realizes that the flaw fits her character well—she's better at getting people to tell her what she needs to know than at figuring out the information herself. For her focus, Mary choosesMoves Like a Cat, granting her a final Speed Pool of 18 and training in balance. In the end, she's graceful and quick, charismatic, and hardier than she initially thought thanks to her drive. She's ready to investigate the weird. For her character arc, Mary choosesFall From Grace. She decides she's had an obsession with a strange tome that's been in her family for generations, and her character is drawn to its strange languages and rituals.",
+    "tiers": {
+      "1": {
+        "name": "First-Tier Speaker",
+        "source": "(Cypher System Rulebook, page 31)",
+        "stats": [
+          {
+            "stat": "Effort",
+            "value": "Your Effort is 1."
+          },
+          {
+            "stat": "Genius",
+            "value": "You have an Intellect Edge of 1, a Might Edge of 0, and a Speed Edge of 0."
+          },
+          {
+            "stat": "Cypher Use",
+            "value": "You can bear two cyphers at a time."
+          },
+          {
+            "stat": "Weapons",
+            "value": "You can use light weapons without penalty. You have an inability with medium and heavy weapons; your attacks with medium and heavy weapons are hindered."
+          },
+          {
+            "stat": "Starting Equipment",
+            "value": "Appropriate clothing and a light weapon of your choice, plus two expensive items, two moderately priced items, and up to four inexpensive items."
+          },
+          {
+            "stat": "Special Abilities",
+            "value": "Choose four of the abilities listed below. You can't choose the same ability more than once unless its description says otherwise. The full description for each listed ability can be found in Abilities, which also has descriptions for flavor and focus abilities in a single vast catalog."
+          }
+        ],
+        "abilities": [
+          "Anecdote (109)",
+          "Babel (112)",
+          "Demeanor of Command (127)",
+          "Encouragement (134)",
+          "Enthrall (136)",
+          "Erase Memories (136)",
+          "Fast Talk (138)",
+          "Inspire Aggression (154)",
+          "Interaction Skills (155)",
+          "Practiced With Medium Weapons (171)",
+          "Spin Identity (185)",
+          "Terrifying Presence (190)",
+          "Understanding (194)"
+        ]
+      },
+      "2": {
+        "name": "Second-Tier Speaker",
+        "source": "(Cypher System Rulebook, page 32)",
+        "stats": [],
+        "abilities": [
+          "Basic Follower (112)",
+          "Calm Stranger (118)",
+          "Disincentivize (129)",
+          "Gather Intelligence (144)",
+          "Impart Ideal (151)",
+          "Inspiring Ease (154)",
+          "Practiced in Armor (171)",
+          "Skill With Defense (183)",
+          "Speedy Recovery (185)",
+          "Unexpected Betrayal (195)"
+        ]
+      },
+      "3": {
+        "name": "Third-Tier Speaker",
+        "source": "(Cypher System Rulebook, page 32)",
+        "stats": [],
+        "abilities": [
+          "Accelerate (108)",
+          "Blend In (113)",
+          "Discerning Mind (129)",
+          "Expert Cypher Use (137)",
+          "Expert Follower (137)",
+          "Grand Deception (146)",
+          "Lead by Inquiry (157)",
+          "Mind Reading (162)",
+          "Oratory (167)",
+          "Perfect Stranger (169)",
+          "Quick Wits (174)",
+          "Telling (190)"
+        ]
+      },
+      "4": {
+        "name": "Fourth-Tier Speaker",
+        "source": "(Cypher System Rulebook, page 32)",
+        "stats": [],
+        "abilities": [
+          "Anticipate Attack (110)",
+          "Confounding Banter (121)",
+          "Feint (139)",
+          "Heightened Skills (149)",
+          "Psychosis (172)",
+          "Read the Signs (174)",
+          "Spur Effort (186)",
+          "Strategize (187)",
+          "Suggestion (188)"
+        ]
+      },
+      "5": {
+        "name": "Fifth-Tier Speaker",
+        "source": "(Cypher System Rulebook, page 32)",
+        "stats": [],
+        "abilities": [
+          "Adroit Cypher Use (108)",
+          "Discipline of Watchfulness (129)",
+          "Experienced in Armor (136)",
+          "Flee (141)",
+          "Foul Aura (143)",
+          "Knowing the Unknown (156)",
+          "Regeneration (175)",
+          "Skill With Attacks (183)",
+          "Stimulate (186)"
+        ]
+      },
+      "6": {
+        "name": "Sixth-Tier Speaker",
+        "source": "(Cypher System Rulebook, page 32)",
+        "stats": [],
+        "abilities": [
+          "Assume Control (111)",
+          "Battle Management (112)",
+          "Crowd Control (123)",
+          "Inspiring Success (154)",
+          "Recruit Deputy (175)",
+          "Shatter Mind (182)",
+          "True Senses (194)",
+          "Word of Command (199)"
+        ]
+      }
+    }
+  }
+]

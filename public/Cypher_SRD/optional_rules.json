@@ -1,0 +1,2092 @@
+[
+  {
+    "id": "optional-rule-using-other-pools-to-pay-cost-remainders",
+    "name": "Optional Rule: Using Other Pools to Pay Cost Remainders",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "If you lack the availablePoolpoints to pay the cost of performing a task, you can pay the remainder of the cost from your other Pools, in the same order they are depleted bytaking damage:Might, thenSpeed, and finally,Intellect. When you do, you don't change your position onthe damage trackas a result of the expenditure until after the task is resolved. Using this house rule, a wizard who is out of \"mana\" (Intellect points) might resort to blood sacrifice, casting spells by spending points from their Might Pool instead. A battered warrior whose Might and Speed pools are nearly depleted might yet be able to mount a defense—or final heroic act—by mustering their willpower (Intellect points). In either case, this is a risky strategy—placing PCs at risk of quickly moving even further downthe damage track. However, abilities likeMind for MightandThink Your Way Outmight feel a little less special when using this rule.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-using-effort-after-rolling-the-die",
+    "name": "Optional Rule: Using Effort After Rolling the Die",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Some players hate to fail a roll. If players decideroll the die, and then decide how many levels ofEffortafter rolling, they will never never feel like Effort used was \"wasted\" because of a low roll. However, this introduces new efficiency inPoolpoint expenditure, and might require the GM to find new ways of challenging the PCs. Here are a two possible arrangements:",
+    "bullets": [
+      {
+        "name": "Apply Effort After Rolling",
+        "text": "Before you roll the die , decide how many levels of Effort to apply to the task. After you roll the die and know the result, you can decide how each level Effort used is applied, for example, easing the task to succeed, inflicting additional damage, or do something else specified by a special ability ."
+      },
+      {
+        "name": "Declare Effort After Rolling",
+        "text": "After you roll the die and know the result, you can choose to use Effort on the task, for example, easing the task to succeed, inflicting additional damage, or do something else specified by a special ability . When using this option, the GM might decide that a special roll of natural 20 doesn't decrease the point cost of the action to 0."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-switching-character-options",
+    "name": "Optional Rule: Switching Character Options",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onSwitching Descriptors and Foci After Character Creation(437). As the story progresses andcharacter arcsare completed, PCs might need to switch theirdescriptororfocus. If the change would be too incongruous, encourage the player to create a new character instead.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-skills-from-backgrounds",
+    "name": "Optional Rule: Skills from Backgrounds",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onSkills from Backgrounds(235)in theCypher System Rulebook. The GM can allow players to choose one or two additionalnarrow skillsappropriate to their PC's background. For example, if anAdept's family owns a large vineyard as a result of rolling on theAdept Background Connectiontable, they might be skilled in wine-making or being a sommelier. Background skills aren't immediately applicable to the game's primary adventures, but should instead address other aspects of the PC, world, or setting. Skills with attacks, defense, or wearing armor are not appropriate background skills. The GM can also use theFurther CustomizationorXP Advanceoptional rules to allow PCs to start the game trained in even more skills.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-simplified-flavor",
+    "name": "Optional Rule: Simplified Flavor",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this rule,flavorabilities are added to a PC's list oftypeabilities—but no sacrifices from the list are made. Since this rule makes flavor purely additive, it's probably a good idea if every PC has the option to choose a flavor at the start of the game, or earn one in the game, for example, by completing acharacter arc.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-personalized-flavor",
+    "name": "Optional Rule: Personalized Flavor",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onUsing Character Types to Define the Setting(415). Using this rule, the GM allows personalized flavors for PCs. It can be a good idea to choose a new name for the PC's When using this option, it's a good the PC'stypea new name that reflects their individual, group, or societal role in the setting, and choose anyoptional character advancementsthey might have available to them.",
+    "bullets": [
+      {
+        "name": "Gaining a Flavor",
+        "text": "The GM might allow PCs to earn a flavor by completing a character arc like Join an Organization , Master a Skill , Mysterious Background , Transformation , or Uncover a Secret , or purchase a flavor by spending 4 XP as a long-term benefit or character advancement ."
+      },
+      {
+        "name": "Adding Flavor Abilities",
+        "text": "When a PC gains a flavor or advance to the next tier, that player and the GM should work together to create a list of special abilities appropriate for the PC's tier. If the PC gained their flavor at a after reaching second-tier, the GM should allow them to make a few additional exchanges of type abilities."
+      },
+      {
+        "name": "Approving Flavor Abilities",
+        "text": "The GM approves each ability to determine it is of appropriate tier, it is appropriate to the game setting, and—most importantly—won't make another PC feel redundant, or be disruptive in the game."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-learning-cantrips",
+    "name": "Optional Rule: Learning Cantrips",
+    "source": "(It's Only Magic, page 81)",
+    "text": "In somefantasysettings, cantrips are commonly available, but not everyone knows how to cast them (in the same way that phone and computer apps are common, but not everyone knows how to code an app). When someone tries to learn a cantrip, have them attempt a level 3 Intellect-based task (skills such as magical lore affect this). If they succeed, they learn the cantrip. If they fail, they don't. A PC only spends the 2XPto learn cantrips when they succeed at this roll. This way, learning a cantrip isn't automatic—it's more like passing a final exam. And there are ways for the character to \"cram\" for this test, including expending Effort, getting help, or using an appropriate asset.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-cantrips-by-alphabetical-order",
+    "name": "Cantrips by Alphabetical Order",
+    "source": "",
+    "text": "",
+    "bullets": [
+      {
+        "name": "",
+        "text": "You summon a nearby level 0 bee, housefly, gnat, or similar flying pest to a spot within an immediate distance. The pest acts normally and (appearing in an unfamiliar area) probably begins flying around, possibly landing on a creature. The cantrip doesn't work if there are no suitable pests within a short distance. Action."
+      },
+      {
+        "name": "",
+        "text": "You summon a nearby level 0 spider, cockroach, silverfish, or similar crawling pest to a spot within an immediate distance. The pest acts normally and (appearing in an unfamiliar area) probably begins moving around, possibly crawling on a creature. The cantrip doesn't work if there are no suitable pests within a short distance. Action."
+      },
+      {
+        "name": "",
+        "text": "You create up to four candle-like lights that move to your mental commands (but no farther away than how far you can reach), lasting about ten minutes. Each light can be a different color. Action."
+      },
+      {
+        "name": "",
+        "text": "You lower the temperature of a target within short range. If the target is a creature, for the next couple of rounds they feel like they're standing under an air conditioning vent. If the target is an object no larger than a 1-foot (30 cm) cube, you cool it down as if you'd dunked it into a bucket of ice. Action."
+      },
+      {
+        "name": "",
+        "text": "You remove dirt, mud, and similar substances from one set of clothing (such as the clothes you're wearing), about 1 cubic foot of loose material (clothes, curtains, a box of toys, and so on), or an immediate area on a surface (such as a wall or floor). When used on clothing, this also does a decent job of removing wrinkles. Action."
+      },
+      {
+        "name": "",
+        "text": "You change the color of an object, or you brighten or dull its color. The object can be up to about 1 cubic foot in size and up to a short distance away. If used to change a creature's hair color, it lasts a few days. Action."
+      },
+      {
+        "name": "",
+        "text": "When using a rideshare or taxi app, you are connected with a driver who can pick you up within a couple of minutes. If you use this cantrip in a remote area where drivers are scarce, results can get strange; for example, the car and driver might be ghosts, you might have to share your ride with a dangerous supernatural creature, or you might arrive at your destination minutes before or hours after you were picked up. Action."
+      },
+      {
+        "name": "",
+        "text": "You accelerate the preparation and cooking of one dish, reducing the time until it's ready by about ten minutes. (Time-consuming cooking, such as a large turkey, requires multiple castings.) Under normal circumstances, this doesn't burn, overcook, or otherwise ruin the dish. Action."
+      },
+      {
+        "name": "",
+        "text": "You cut an object up to level 2 as if using a sharp knife or a pair of scissors, up to an immediate distance away. For example, this works on rope, candles, food, cloth, paper, or even a thin wire or thin chain necklace. The object usually gives off harmless blue sparks when it's cut. Action."
+      },
+      {
+        "name": "",
+        "text": "You suppress light in a cubic or spherical area about 1 foot (30 cm) across within an immediate distance. Outdoors or in bright light, this area becomes very dim; otherwise, it becomes darkness. When you create this area, decide if it remains at a specific location (such as on a desk) or if it is attached to some part of you (such as your head or left hand) and moves with you. The cantrip ends after about a minute. Action."
+      },
+      {
+        "name": "",
+        "text": "You erase up to a page of text from a typical surface (such as paper, parchment, wood, or plastic) within immediate range. The writing slowly disappears over a few seconds. Affecting magical writing requires an Intellect-based attack roll. Action."
+      },
+      {
+        "name": "",
+        "text": "You create a bolt of energy that kills one common vermin creature (level 0) within a short distance, such as a fly, worm, cockroach, or mouse. One casting can affect multiple smaller creatures (such as ants or fleas) within 1 cubic foot. The spell is accompanied by a quick bolt of black and yellow energy. Action."
+      },
+      {
+        "name": "",
+        "text": "A table you touch somehow has room (and a chair) for one more person to comfortably sit there without affecting anyone else at the table. This lasts anywhere from ten minutes to an hour, or less if the person in the extra chair leaves for more than a few minutes. Action."
+      },
+      {
+        "name": "",
+        "text": "You update a recent fast food or delivery order so that when it arrives, it includes an additional order of French fries or other side available from the restaurant (tater tots, coleslaw, mashed potatoes, and so on). Sometimes this happens for free, and sometimes you have to pay an additional charge. Remember to tip your server. Action."
+      },
+      {
+        "name": "",
+        "text": "You create a crown-like manifestation of fire on your head that lasts for ten minutes. The fire doesn't burn you. If anyone touches it or makes a melee attack aimed at your head, you can make a free Intellect-based attack roll against them to inflict 1 point of damage. Action."
+      },
+      {
+        "name": "",
+        "text": "You create an illusory firework within short range, which bursts with sparkling lights and a loud pop. The effect is obviously an illusion but might distract or startle people who aren't expecting it. Action."
+      },
+      {
+        "name": "",
+        "text": "You touch one plate or bowl of food or one large glass or mug of liquid, improving its flavor. This doesn't affect the nutritional value or texture, nor does it fix spoiled food; it just makes it taste more to your preference (so you could eat spoiled meat or moldy vegetables and they'd taste fine). You decide the sort of flavor change—more or less spicy, salty, savory, sweet, and so on, in any combination appropriate for food or drink. Action."
+      },
+      {
+        "name": "",
+        "text": "Wards an immediate area (enough to cover a large table at a holiday family gathering) against conversation about a topic of your choice, such as \"the election,\" \"Mommy's trial,\" or \"that Cordell kid.\" Anytime someone in the area attempts to talk about this topic, make an Intellect-based roll against them; success means they either talk about something else or remain silent. The cantrip lasts for ten minutes or until you fail an Intellect-based roll to stop someone from talking about that topic. Action."
+      },
+      {
+        "name": "",
+        "text": "You gather a scattered bunch of items into a small space, as if you had spent a minute sweeping them together with your hands or a broom. This affects about 1 square yard (1 sq m), up to an immediate distance away. The cantrip is mainly useful for collecting things that have been spilled, or for making it easier to clean up a room. Action."
+      },
+      {
+        "name": "",
+        "text": "You sprout a pair of ghostly wings that immediately unfurl, then vanish a few seconds later. If you cast this cantrip while falling, you reduce the damage from the fall by 1 point. Enabler."
+      },
+      {
+        "name": "",
+        "text": "You tweak the traffic lights at an intersection within long range so that one of them turns green within a few seconds. The other lights in that system automatically adjust to compensate (turning yellow and then red for cross traffic). Depending on that traffic system, the light remains green anywhere from about ten seconds to a minute. Enabler."
+      },
+      {
+        "name": "",
+        "text": "You levitate or manipulate an object of 10 pounds (4.5 kg) or less at up to a short distance. The effect is not particularly strong—about the same strength as trying to push, pull, or twist something just using the strength of your hand (without your arm). Action."
+      },
+      {
+        "name": "",
+        "text": "You conceal one target within immediate range for about a minute. The target can be no larger than a typical rabbit, or several objects no larger than dice. The target is basically invisible to anyone in front of you, but the illusion doesn't work on anyone to your side or behind you. (If someone is intent on seeing the invisible target, make an Intellect-based attack roll against them to hide it from their view.) Action."
+      },
+      {
+        "name": "",
+        "text": "You toggle up to four light controls (such as a wall switch or a lamp's button, knob, or pull cord) within short range. You must be able to see these light controls or have a clear idea of where they are (such as turning on your front porch light and living room floor lamp from outside your home). You can toggle these switches on or off in any combination. Action."
+      },
+      {
+        "name": "",
+        "text": "You amplify your voice, allowing you to speak at up to three times your normal volume. This isn't enough to harm anyone, but you can speak comfortably to a large crowd or across a very long distance without effort. Action."
+      },
+      {
+        "name": "",
+        "text": "You create a costume mask on the face of a creature you touch. The mask can be simple (like a domino mask), fancy (like a masquerade ball mask), or deceptive (like a Halloween costume mask of a monster or specific person). The mask is obviously just a mask, not a disguise, but a deceptive mask viewed from at least a short distance away might fool someone into thinking it's a real face, providing an asset to disguise tasks at this range. The mask lasts for about a minute. If removed, the mask immediately disappears. Action."
+      },
+      {
+        "name": "",
+        "text": "You touch a broken object of up to level 3 and attempt to magically repair a single break or tear in it, such as a cracked stone wall, a shattered hand mirror, or a torn piece of clothing. The damage can be no larger than about what you can cover with both of your open hands. If you succeed at an Intellect-based roll against the object's level, you repair it (although it still shows signs of being previously broken, and may be fragile there). You can use this ability multiple times on the same object to repair larger breaks. Action."
+      },
+      {
+        "name": "",
+        "text": "You whisper a short message (about five to ten seconds) to a creature you can see within a long distance. The target hears it as if you had whispered it in their ear. Action."
+      },
+      {
+        "name": "",
+        "text": "You change the appearance of your eyes. If you just change their color to a different hue (such as to blue, green, or brown), the change lasts for an hour. If you change them to something unusual, such as red, yellow, solid black, or glowing, it only lasts for a minute. Action."
+      },
+      {
+        "name": "",
+        "text": "You affect flames within a short distance, making them appear brighter or dimmer, flicker strangely, or change color. This lasts for one minute. You can affect up to several dozen candles, a few torches, or one typical campfire with each casting of the cantrip. Action."
+      },
+      {
+        "name": "",
+        "text": "You open or close a small object within short range, such as a bag, box, bottle, footlocker, window, or lightweight door. This cantrip cannot lock or unlock locks. Action."
+      },
+      {
+        "name": "",
+        "text": "You write with your finger on a surface for up to ten minutes as if using a common ballpoint pen. The \"ink\" immediately dries once you write, but it can be smeared or cleaned up like a normal pen. The ink is blue, black, or dark brown, decided when you cast this cantrip. Action."
+      },
+      {
+        "name": "",
+        "text": "You teleport an object within an immediate distance into your upturned hand. The item has to be something you're carrying (such as a gem in your pouch or a dagger in your boot), something you can see (such as a coffee cup or mobile phone on the other side of the table), or something you know is within range (such as a note you saw someone put in their pocket). The cantrip affects one small object (for example, a cup or mobile phone) or up to a dozen smaller items from the same location (perhaps coins or dice). Action."
+      },
+      {
+        "name": "",
+        "text": "You muffle the noise from one target within a short distance for a few seconds. Breaking a window or knocking a glass off the table would be no louder than someone tapping their finger on the glass. An obnoxious security alarm would only be as loud as a computer speaker. A ringing phone would be barely audible. If you cast this on a willing creature, they gain an asset on stealth tasks for one round if they move no more than an immediate distance on their turn. Action."
+      },
+      {
+        "name": "",
+        "text": "You create a softly glowing band of colors resembling a rainbow, extending from your hand to an object or willing creature within short range. The far end doesn't move (a creature could move away from it by going around a corner or out of range). You can anchor your end in place or allow it to move when your hand moves. The rainbow gives off light like a candle and lasts about a minute. Action."
+      },
+      {
+        "name": "",
+        "text": "You change the shape of a metal, glass, or stone object you touch into a different shape. For example, you could turn a coin into a ring, a cup into a plate, or a piece of glass into something resembling a gemstone. This normally lasts about a minute, but the object tends to revert early if anyone else touches or examines it too closely. Action."
+      },
+      {
+        "name": "",
+        "text": "You create a harmless puff of smoke within an immediate distance. The smoke fills about a 1-foot (30 cm) cube and dissipates over the next few rounds. You decide if the smoke is white, grey, blue, brown, green, red, or yellow. Action."
+      },
+      {
+        "name": "",
+        "text": "You make seeds sprout at an accelerated rate, causing a week's worth of growth to happen in just a few moments. The seeds must be within a 1-foot (30 cm) cube and no more than an immediate distance from you. If the seeds are in viable soil, they take root as if planted there. If cast on immature or closed flowers, they bloom. If cast on a piece of unripe fruit, it immediately ripens. Action."
+      },
+      {
+        "name": "",
+        "text": "You sew two touched pieces of cloth or thin leather together, up to about 2 square yards (1.5 sq m). The stitches are of the same quality of hand stitching by a tailor or leatherworker of reasonable skill. You choose the path of the stitches, so you could create a piece of clothing by casting this cantrip several times. Instead of sewing together two items, you can unravel the stitches of a touched object, affecting up to 2 square yards (1.5 sq m). Action."
+      },
+      {
+        "name": "",
+        "text": "You create an image on your skin, as if tattooed there by a reasonably talented artist. The image can be no larger than your hand, and consists of just one color. You can cast this cantrip multiple times to create a larger tattoo, use more colors, or both. The image lasts about an hour. Action."
+      },
+      {
+        "name": "",
+        "text": "You summon a nearby object of stone, brick, concrete, cement, asphalt, or a similar hard and common mineral to your hand. The cantrip doesn't work if there are no suitable loose materials within a short distance. Action."
+      },
+      {
+        "name": "",
+        "text": "You control a piece of string, rope, or twine within short range, causing it to tie itself to another object within 1 foot (30 cm) of it, using any sort of simple, common knot (such as a square knot). Instead of tying a knot, you can cast this cantrip on a simple knot within short range, untying it. Action."
+      },
+      {
+        "name": "",
+        "text": "You create a single image of a creature or object within immediate range. The image must fit within a 1-foot (30 cm) cube. The image can move (for example, you could make the illusion of a mouse jump or crawl around), but it can't leave the area defined by the cube. The illusion includes sound (up to the volume of a person's normal speaking voice) but not smell. It lasts for one minute, but if you want to change the original illusion significantly—such as making a creature appear to be wounded— you must concentrate on it again (though doing so doesn't cost additional Intellect points). If you move beyond immediate range of the cube, the illusion vanishes. Action to create; action to modify."
+      },
+      {
+        "name": "",
+        "text": "You make the ground or floor vibrate within a short area, feeling similar to a mild earthquake. Other objects on the floor might vibrate or slide (no more than a hand's span) because of this vibration. Action."
+      },
+      {
+        "name": "",
+        "text": "You raise the temperature in a very small area (about 1 cubic foot) within short range, enough to make someone's face feel flushed or warm a drink to about the temperature of freshly served coffee. Action."
+      },
+      {
+        "name": "",
+        "text": "You clean the outside of a typical passenger automobile within immediate range as if it had gone through an automatic car wash. Very large or very dirty cars may require multiple castings. The cantrip works on motorcycles, bicycles, and other small vehicles as well. Action."
+      },
+      {
+        "name": "",
+        "text": "You alter the moisture level of an object or area within immediate range, affecting about a 1-foot (30 cm) cube or one set of clothing. If you want the target to be wetter, it is dampened as if you poured a cup of water on it. If you want it drier, it is dried as if you hung it out in the sun on a warm day. Action."
+      },
+      {
+        "name": "",
+        "text": "You improve wireless network reception in an immediate area for ten minutes. This improves poor or average reception to full strength and zero bars to at least one bar. When you cast this cantrip, you decide if this improved reception affects everyone in the area or just you. Action."
+      },
+      {
+        "name": "",
+        "text": "You use available materials to wrap up an object within an immediate distance. The wrapped object must fit within a 1-foot (30 cm) cube. For example, you could wrap a gift box with decorative paper, wrap a piece of paper around a letter to create an envelope, or wrap a pile of potatoes with burlap to create an easily carried bundle. Action."
+      },
+      {
+        "name": "",
+        "text": "You change the appearance of your face so you look about ten years younger than your normal appearance, lasting about an hour. Action."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-mutant-descriptor",
+    "name": "Optional Rule: Mutant Descriptor",
+    "source": "(Rust and Redemption, page 76)",
+    "text": "If a PC wants to play a mutant, they may do so by choosingMutantas their descriptor. Mutations gained by a character with the Mutant descriptor are always rolled randomly, although you should work with your player to ensure that the resulting PC is one that the player wants to play.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-currency-and-resource-depletion",
+    "name": "Optional Rule: Currency and Resource Depletion",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "",
+    "bullets": [
+      {
+        "name": "Purchasing Power",
+        "text": "Each PC counts their purchasing power based on price categories , up to 15 each. If a category exceeds 15, the PC removes 10, and adds 1 to the next highest price category (for example, a purchasing power of 10 inexpensive items is converted to 1 moderately-priced item). To convert a purchasing power back down into the previous category (for example, moderately-priced purchasing to inexpensive purchasing power), roll 1d6 and add the PC's Intellect Edge to the result."
+      },
+      {
+        "name": "Currency Depletion",
+        "text": "When a PC makes a purchase of a certain price category and has 10 or fewer purchasing power, roll for depletion using a d10 against the category's purchasing power. If the result exceeds the PC's purchasing power, the purchasing power for that category is reduced by 1. For example, if you have 4 purchasing power in the inexpensive category, and you roll a 5 on a purchase, it depletes to 3. If you buy something else and roll a 3, it remains at 3. If the PC makes a purchase and has more than 10 purchasing power, the purchasing power is reduced by 1 (no roll)."
+      },
+      {
+        "name": "Income",
+        "text": "PCs might have regular expenses, but also a regular source of income, such as a job. Income adds to a PC's purchasing power on a regular basis For example, every two weeks, a PC might earn enough income for 1 moderately-priced item and 5 inexpensive items. For simplicity's sake, it might be easier to account for income as what's disposable—left over after the PC has meets their obligations and usual expenses (for example, rent, bills, or feed for a loyal horse companion)."
+      },
+      {
+        "name": "Resources",
+        "text": "The GM can also set any crafting, building, and repairing resources to other depletion methods, for example, 1 in 1d6, 2 in 1d10, 3 in 1d20, or 42 in 1d100."
+      },
+      {
+        "name": "GM Intrusions",
+        "text": "Depleting finances and resources might be a good source of GM intrusion ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-lower-speed-effort-costs-for-wearing-armor",
+    "name": "Optional Rule: Lower Speed Effort Costs for Wearing Armor",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this optional rule, Speed Effort costs for wearing armor use the following table instead:",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-alternative-armor-encumbrance",
+    "name": "Optional Rule: Alternative Armor Encumbrance",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this optional rule, Armor doesn't impose a Speed Effort cost. Instead, wearing armor has the following two effects: When using this rule, use the modified versions of the following abilities:",
+    "bullets": [
+      {
+        "name": "Hourly Might Cost",
+        "text": "You must pay a number of Might points each hour the armor is worn."
+      },
+      {
+        "name": "Speed Pool Penalty",
+        "text": "Wearing armor reduces your Speed Pool 's point maximum."
+      },
+      {
+        "name": "",
+        "text": "Practiced in Armor (OG-CSRD)"
+      },
+      {
+        "name": "",
+        "text": "Experienced in Armor (OG-CSRD)"
+      },
+      {
+        "name": "",
+        "text": "Mastery in Armor (OG-CSRD)"
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-lethal-weapons",
+    "name": "Optional Rule: Lethal Weapons",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "The GM can use this optional rule to make weapon combat a central—and lethal—feature of the game by doubling the basedamageof successful weaponattacks. When using this optional rule, the GM might want to consider additional modifications to the game appropriate to the setting, including:",
+    "bullets": [
+      {
+        "name": "Light Weapons",
+        "text": "Attacks with light weapons aren't eased, unless it is a special weapon (determined by the GM)."
+      },
+      {
+        "name": "Effective Armor",
+        "text": "The Armor bonus from wearing physical armor is doubled."
+      },
+      {
+        "name": "Lethal Abilities",
+        "text": "Damage inflicted by special abilities and creatures and NPCs are doubled."
+      },
+      {
+        "name": "Martial Supremacy",
+        "text": "PCs can't choose type abilities that deal damage—unless they require the use of a weapon, for example, those from mundane foci ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-weapon-properties",
+    "name": "Optional Rule: Weapon Properties",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "The GM can add additional properties to weapons which benefit abilities listed in theSpecial AttackorErratacategories. Example weapon properties include: When using this rule, the GM should review theSpecial AttackandErrataabilities inChapter 9: Abilities, and assign them as appropriate character options.",
+    "bullets": [
+      {
+        "name": "Slashing",
+        "text": "+1 damage against unarmored targets; −1 damage against armored targets."
+      },
+      {
+        "name": "Stabbing",
+        "text": "+1 damage on all special rolls ; −1 damage on a successful attack roll of 5 or less."
+      },
+      {
+        "name": "Crushing",
+        "text": "Ignores 1 Armor ; −1 damage against unarmored targets."
+      },
+      {
+        "name": "Reaching",
+        "text": "Provides an asset to Speed defense rolls against melee attacks, unless the attacker is also using a reaching weapon; attack rolls are hindered in tight spaces."
+      },
+      {
+        "name": "Firearm",
+        "text": "Ignores 1 Armor ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-reviving-artifacts",
+    "name": "Optional Rule: Reviving Artifacts",
+    "source": "(It's Only Magic, page 95)",
+    "text": "While all artifacts have a depletion stat, in some settings artifacts may be \"revived\" after they deplete. Usually doing this has some kind of high cost, whether that be money, time, work, or the like. Depending on the setting, a character might take an artifact to a well-known repair person who charges a pretty penny for their services, they could make a bargain with a powerful entity who has special magic to bring items back to life, or they might sneak into a corporation to steal a prototype power source to get their artifact back in working condition. Typically, a revived artifact has the same depletion rate as it did when it was new. However, some repairs or fixes may be less substantial than others. In this case, move the depletion rate down to the next smaller die type. So an artifact that started at 1 in 1d100 would now be 1 in 1d20 (and if repaired again, might be 1 in 1d10). If the artifact's depletion is already using a d6, double the depletion number (for example, from 1–2 in 1d6 to 1–4 in 1d6). If the depletion number is equal to or higher than the highest number the die can roll (like 1–6 on a d6), change the artifact's depletion to \"automatic.\"",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-task-and-fate-dice-resolution",
+    "name": "Optional Rule: Task and Fate Dice Resolution",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this rule, the process PCs use to roll for tasks is changed. Instead of a d20, players roll 2d6—one is assigned to be the \"Task Die\", and the other is the \"Fate Die\". Effects on Gameplay Using this rule, some elements of gameplay will feel different:",
+    "bullets": [
+      {
+        "name": "Succeeding Tasks",
+        "text": "PCs will succeed at tasks at about the same rate, but most difficulty 1 tasks become routine —unless the PC is hindered, for example, due to an inability or some other circumstance."
+      },
+      {
+        "name": "Special Rolls",
+        "text": "Special rolls other than major effects are mostly eliminated, but major effects occur more frequently."
+      },
+      {
+        "name": "GM Intrusions",
+        "text": "The GM intrusion rate starts higher, and effects that increase it—for example, Horror Mode —have considerably more dramatic effects."
+      },
+      {
+        "name": "Abilities and Effects",
+        "text": "The GM might need to make a few other alterations for certain effects that still assume task resolution is handled by rolling a d20, for example, those granted by the Increased Effects ability (for example, allowing a minor effect on a roll of 5 on the fate die)."
+      },
+      {
+        "name": "Other Sizes of Fate Die",
+        "text": "Alternatively, the GM can assign the fate die to a different die instead, for example, the fate die could be set to a d10, triggering a GM intrusion on a 1, a minor effect on a 9, and a major effect on a 10. The fate die could even be a d20, and trigger special rolls normally."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-choosing-a-combat-effect-ahead-of-time",
+    "name": "Optional Rule: Choosing a Combat Effect Ahead of Time",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onChoosing a Combat Effect Ahead of Time(212). The following are only guidelines and examples, and the GM will probably want to modifying these rules to taste in practice—for example, PCs might need specific foreknowledge of their opponent to use these options, or that a PC has a minimum amount of training in their attack or defense task, or they might work more likepower stunts. The GM might also assign aninitial costfor using them.",
+    "bullets": [
+      {
+        "name": "Attack Rolls",
+        "text": "When making an attack , the PC can choose an effect they wish to apply to their attacker, and the GM hinders the attack roll one or more steps. If they succeed, the effect takes hold."
+      },
+      {
+        "name": "Defense Rolls",
+        "text": "When making a defense roll , a PC can describe an effect they wish to apply to their attacker, and the GM hinders the PC's defense roll an appropriate number of steps. If they succeed, the effect takes hold. The GM might require that applying certain effects also requires the use of the PC's next action."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-trading-damage-for-effect",
+    "name": "Optional Rule: Trading Damage for Effect",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onTrading Damage for Effectin the 2015 Cypher System Rulebook(224). A PC can tradedamageinflicted from a single attack for an effect. When trading damage, consult the following table, and add target's level. For example, a \"called shot\"—striking a specific body part of alevel 4 creature—requires a trade of 6 points of damage (2 for the effect, plus 4 for the creature's level). The attack must inflict at least 1 damage after making the trade or the effect doesn't take hold.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-modifying-abilities-using-initial-costs",
+    "name": "Optional Rule: Modifying Abilities Using Initial Costs",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onModifying Abilities on the Fly(419)in theCypher System Rulebook. Setting aninitial costis a good way to allow players to be creative with the use of Intellect-based abilities, similar to performing apower stunt:",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-damage-dice",
+    "name": "Optional Rule: Damage Dice",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Here a few more ideas for making damage a little less predictable. Most of these rules favor the PCs, especially against low levelcreatures. Rolling dice and calculating totals can slow down a game, so the GM should use these rules only if the players are happy rolling more dice and doing a little extra maths.",
+    "bullets": [
+      {
+        "name": "Weapon Die",
+        "text": "Additional polyhedral dice can be used instead of static weapon damage."
+      },
+      {
+        "name": "Weapon Dice Pools",
+        "text": "Some of the following formulae use \"kh\" for \"keep highest\". For example, \"3d6kh1\" means rolling three d6s, and keeping one result—the highest of the three."
+      },
+      {
+        "name": "Attack Rolls",
+        "text": "For every 3 an attack roll result shows in excess of the target number, the attack inflicts 1 additional damage. For example, if a PC attacks a level 2 foe with a target number of 6 and rolls a 16, they inflict 3 additional damage to the target. Additional damage from special rolls still applies as normal."
+      },
+      {
+        "name": "Defense Rolls",
+        "text": "For every 3 a defense roll result shows in deficit of the target number, the attack inflicts 1 additional damage. For example, a PC making a Speed defense roll in response to level 5 foe with a target number of 15 and rolls and 9, they take 2 additional damage from the attack."
+      },
+      {
+        "name": "Effort Dice",
+        "text": "Applying a level of Effort to damage increases amount of damage inflicted by the attack by 1d6 (instead of the usual 3)."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-ultimate-damage",
+    "name": "Optional Rule: Ultimate Damage",
+    "source": "(Neon Rain, page 149)",
+    "text": "Normally a character'sEffortscore is the limit to how many levels of Effort they can apply to a task. However, in some settings, firearms are ubiquitous, life-threatening injuries are common, and over-the-top violence is the norm (for example, acyberpunkgame). To represent this paradigm, treat a character's Effort score as 6 for the purpose of applying levels of Effort to damage. In other words, when it comes to using Effort for extra damage, a character can exceed their normal Effort limit (but not beyond the normal maximum of 6 levels of Effort). Applying Effort still costs the normal amount: 3 for the first level, 2 each for the second through sixth. (Quite an expensive option for a low-tier character with a lowEdge.) The GM is free to disallow players from using the ultimate damage rule against important NPCs (such as \"bosses\") where huge damage can end a fight quickly and anticlimactically. For those situations, the GM should inform the player (before anyPoolpoints are spent) that they can't exceed their Effort limit, and then the player decides if they want to apply Effort at all (anywhere from none up to their normal Effort limit). Alternatively, the GM can let the player exceed the normal Effort limit and spend the Pool points, then use aGM intrusionto reveal the NPC's \"plot armor\" against the ultimate damage (in a way, they're recompensating the character for the high Pool point expenditure); the player does not have the option to spend 1XPand refuse this intrusion. Although the Cypher System normally allows players to decide that an attack which reduces a foe to 0 health merely knocks them unconscious, the GM is free to say that a foe downed using the ultimate damage rule is dead despite any nonlethal intent by the PC. (Ultimate damage is not gentle!) For NPCs, the ultimate damage rule increases the damage for their unusual attacks by an amount equal to the NPC's level. What an \"unusual attack\" is depends on the NPC; it might be a basic extra-damage GM intrusion from a PC rolling 1 on a Speed defense roll, the explosion GM intrusion from a mechanical soldier, or when an assassin attacks from hiding. (In any case, it shouldn't affect the typical damage the NPC inflicts with its normal attack every round.)",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-consciousness-requires-intellect-points",
+    "name": "Optional Rule: Consciousness Requires Intellect Points",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this rule, a PC down one or more steps onthe damage trackrequires at least 1 point in their Intellect Pool to remain conscious. Most unconscious PCs can't take any actions other than to make arecovery roll. The GM might also consider pairing this rule with theFragilitymodule. Here are two possible options:",
+    "bullets": [
+      {
+        "name": "Debilitated",
+        "text": "If a debilitated PC's Intellect Pool is 0, they fall unconscious until they recover at least 1 Intellect point."
+      },
+      {
+        "name": "Impaired",
+        "text": "If an impaired PC's Intellect Pool is 0, they must succeed on a Might defense roll equal to the damage sustained, and again each time they take damage. On a failure, the PC falls unconscious until they recover at least 1 Intellect point."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-damage-to-pool-maximums",
+    "name": "Optional Rule: Damage to Pool Maximums",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This optional rule creates additional risk for PCs taking damage or using powerfulspecial abilitieswith lots ofEffort. Either situation creates lasting injuries that take longer to recover from.",
+    "bullets": [
+      {
+        "name": "Damage",
+        "text": "When damage reduces a PC's stat Pool to 0, the remainder is temporarily subtracted from that stat's Pool maximum. The remainder (and any further damage) are also applied to another stat Pool, as described under The Effects of Taking Damage . This effect is in addition to going down one step on the damage track as normal."
+      },
+      {
+        "name": "Using Abilities",
+        "text": "When a PC uses a special ability with a Pool point cost they can't pay, the remainder is instead temporarily subtracted from their maximum Pool points for that stat."
+      },
+      {
+        "name": "Recovering Pool Maximums",
+        "text": "A PC can recover temporary reductions to their stat Pool maximums by filling the Pool to its temporary maximum. While at the temporary maximum, healing , special abilities , cyphers , and artifacts (but not recovery rolls ) restore lost points to a stat Pool's maximum."
+      },
+      {
+        "name": "Pool Maximums Reaching Zero",
+        "text": "If any stat's Pool maximum is reduced to 0, the GM decides how best to proceed. For example, a PC might gain a permanent inability, permanently reduce a stat Pool maximum by 3, or die."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-making-recovery-rolls-in-any-order",
+    "name": "Optional Rule: Making Recovery Rolls in Any Order",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "PCs can make their one-action, ten-minute, and one-hourrecovery rollsin any order they choose. Additionally, when making arecovery roll, PCs can make unexpendedrecovery rollswith a shorter duration simultaneously. For example, when making a one-hourrecovery roll, a PC can also make their one-actionrecovery roll, ten-minuterecovery roll, or both.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-acting-while-under-attack",
+    "name": "Optional Rule: Acting While Under Attack",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onActing While Under Attack(426)in theCypher System Rulebook. In melee combat, if a PC or NPC takes an action other than tomoveorattack, each foe within reach can make an immediate attack against them. This is also a good rule to employ if you enjoy the feel of \"opportunity attacks\" from other games.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-drowning-and-suffocation",
+    "name": "Optional Rule: Drowning and Suffocation",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "",
+    "bullets": [
+      {
+        "name": "Struggling for Oxygen",
+        "text": "Struggling for air (for example, drowning, but near the surface) is a difficulty 4 Might check."
+      },
+      {
+        "name": "Running Out of Oxygen",
+        "text": "After a number of rounds with no air equal to 3 plus the PC's tier plus the PC's Might Edge , the PC must succeed on a Might task with a difficulty equal to 4 plus 1 for every 30 feet (10 m) of depth from the surface, or descend one step on the damage track ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-object-level-health-and-armor",
+    "name": "Optional Rule: Object Level, Health, and Armor",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this optional rule,attacking an objectis aMightaction with a difficulty equal to the object's level, similar to howcreature have levels and target numbers. Objects have health equal to their target number, and—depending on their construction—up to 3Armor. An object is destroyed if reduced to 0 health. It can be easier to resolve theFling,Force Field(as printed in theCypher System Rulebook), andForce Field Barrierusing this framework instead. However, other abilities likeBreaker,Destroyer, andField of Destructionabilities assume the use of theobject damage track.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-high-speed-chases",
+    "name": "Optional Rule: High-Speed Chases",
+    "source": "",
+    "text": "",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-high-speed-chases-vehicle-speed",
+    "name": "Vehicle Speed and Rounds",
+    "source": "(Neon Rain, page 147)",
+    "text": "When starting from a standstill, most vehicles move a long distance in one round. When already at speed, vehicles can move a very long distance in one round. That distance is decreased (from very long to long, or from long to medium) if the vehicle is not on a paved road, or if the driver must turn, brake, or maneuver in the same round. So you can assume a car or motorcycle moves a long distance in a straight line in its first round underway, and a very long distance in a straight line in its second round. If the car veers onto a gravel shoulder in its third round, it moves a long distance. If the car is on a gravel shoulder and the driver must weave to avoid obstacles, the car moves a medium distance in its fourth round. The GM can track these distances loosely. What matters is that if the car in the lead is moving faster, it's getting farther away. If the car in the lead is moving slower, the car in pursuit is getting closer.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-high-speed-chases-gaining-or-losimg-ground",
+    "name": "Gaining (or Losing) Ground",
+    "source": "(Neon Rain, page 147)",
+    "text": "When multiple vehicles are moving at the same speed in game terms (medium, long, or very long), one can still catch up to or evade the other. The driver makes two Speed rolls, one against the opposing driver's level, and one against the opposing vehicle's level. If both rolls succeed, the gap between vehicles either increases or decreases, depending on the PC driver's objective.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-high-speed-chases-actions-in-motion",
+    "name": "Actions in Motion",
+    "source": "(Neon Rain, page 148)",
+    "text": "By default, the driver's action each round is to control the vehicle. If moving in a straight line, this is a Speed task with a difficulty of 0, meaning that no roll is required. The driver can try to catch up to or shake another vehicle. The driver can turn, brake, or maneuver the car around obstacles; these are Speed tasks that vary in difficulty, but are typically 3 or 4 when moving at high speeds. Failure results are based on the situation but might involve a collision, a flat tire, or some other form of damage to the vehicle. Any task that distracts the driver from the road, such as reaching for a weapon in the backseat, hinders their next driving task by one step. This means that if the driver uses their action to get a handgun from the glove box, they must complete a difficulty 1 driving task in the next round. When the driver attempts to evade a hazard, their Speed defense is eased if the level of the vehicle exceeds that of the obstacle. The driver can use the car itself as a weapon, attacking multiple creatures within a short distance. To do so, the character must make a Speed defense roll against each foe to determine if they are hit; the task is eased if the vehicle's level is higher than the adversary's. While in a moving vehicle, attacks on characters outside of that vehicle—such as shooting the driver of the car behind yours—are hindered. Attacks on a vehicle as a whole—such as firing a grenade at the car tailing yours—are not. In a round where the car turns, brakes, or moves erratically, the actions of all passengers are hindered. In case of a collision, intentional or unintentional, all passengers must make a Speed defense roll to avoid injury.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-high-speed-chases-pooling-actions",
+    "name": "Pooling Actions",
+    "source": "(Neon Rain, page 148)",
+    "text": "Because the difficulty of all actions in the car depends on the car's movement, tracking which characters' tasks are hindered and why can become unwieldy. It may save time to have each character in the vehicle determine what they're doing in the round, then have everyone roll at once. This means that the difficulty of each task accounts for the planned actions of the other characters.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-additional-cooperative-actions",
+    "name": "Optional Rule: Additional Cooperative Actions",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section has been added by the editor, based onCooperative Actions(211)in the 2015 Cypher System Rulebook. These cooperative actions might not be good blanket rules for every circumstance, but they are still useful to think about how players might coordinate their actions, and how the GM might want to modify the game based on circumstance:",
+    "bullets": [
+      {
+        "name": "Cover Fire",
+        "text": "A character can aim near ranged attack near a foe, but narrowly miss on purpose. On a success, the attack inflicts no damage, and the foe's next attack is hindered."
+      },
+      {
+        "name": "Double Strike",
+        "text": "If one character makes a melee attack, and another character makes a ranged and both attacks hit the same foe, its next task is hindered."
+      },
+      {
+        "name": "Triple Team",
+        "text": "If at least three characters attack the same foe, each gains a +1 bonus to their attack roll."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-healing-limitations",
+    "name": "Optional Rule: Healing Limitations",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Each time anyone attempts to heal the same creature, the task is hindered by an additional step. The difficulty resets after that creature rests for ten hours.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-gaining-insight",
+    "name": "Optional Rule: Gaining Insight",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onGaining Insight(231). If a PC is planning something complex, or spending time to gain more information about a situation, they can spend 3 Intellect points and oneactionto gain additional, reliable information, which the GM provides in the form of a useful clue. The clue might provide foreknowledge of events, allowing the PC to recognize something, someone, or a pattern of behavior on the part of one or more NPCs. The GM decides what insight is gained, and ensures the information is useful and reliable. Gaining insight should never be used to \"trap\" a PC. Additionally, the GM can notify players that insights are available without revealing what they are, but allow PCs to purchase them with 1XPas aplayer intrusion, or 2 XP as ashort-term benefit.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-xp-advance",
+    "name": "Optional Rule: XP Advance",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onGetting an XP Advance(232). In games where it's not as important if the PCs share the same overall power grade, the GM might give a PC additional XP, which they can use to gain additional benefits. The following table provides suggestions for how the GM might assign costs for benefits purchased with an XP advance: A PC using this option usually gains an appropriate complication, which the GM decides is either permanent, or lasts until the XP advance is paid off as a debt, or the completion of an appropriatecharacter arc. These examples are not exhaustive, and might not be appropriate for every game or setting. For more ideas on balancing an XP advance with a complication, seeDrawbacks and PenaltiesandSerious Injuries and Conditions.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-starting-at-tier-0",
+    "name": "Optional Rule: Starting at Tier 0",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This optional rule allows the GM to start the game with less powerful PCs. If you are playing tier 0 PC, start by selecting adescriptorandtype(and perhaps aflavor) for your PC. Advancing to tier 1 involves four steps. Each step costs 4XP. The steps cans be purchased in any order.",
+    "bullets": [
+      {
+        "name": "Stat Pools",
+        "text": "Your starting Pools are determined by your type :"
+      },
+      {
+        "name": "Effort",
+        "text": "Your Effort is 0."
+      },
+      {
+        "name": "Edge",
+        "text": "Your Edge for all stats is 0."
+      },
+      {
+        "name": "Cypher Limit",
+        "text": "If you are an explorer , speaker , or warrior , you can bear one cypher at a time. If you are an adept , you can bear two."
+      },
+      {
+        "name": "Special Abilities",
+        "text": "You gain two special abilities available to your type (or flavor ) at tier 1."
+      },
+      {
+        "name": "Skills and Equipment",
+        "text": "Your starting skills (including with weapons ) and equipment are identical to those listed for a first-tier PC of your type ."
+      },
+      {
+        "name": "Increased Pools",
+        "text": "You gain 6 points to add to your stat Pools . You can allocate the points among your Pools however you wish."
+      },
+      {
+        "name": "Increased Edge",
+        "text": "If you are a warrior , you add 1 to your Might or Speed Edge (your choice). If you are an explorer , you add 1 to your Might Edge . If you are an adept or speaker , you add 1 to your Intellect Edge ."
+      },
+      {
+        "name": "Increased Effort",
+        "text": "Your Effort score increases to 1."
+      },
+      {
+        "name": "Focus",
+        "text": "You gain a focus , including any special abilities it offers to a tier 1 PC."
+      },
+      {
+        "name": "Reaching Tier 1",
+        "text": "Once you have purchased all four steps, you reach tier 1, gaining two more special abilities from your type (or flavor , and increasing your cypher limit by 1. From now on, you use the standard rules for character advancement ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-starting-at-tier-0-advancing",
+    "name": "Advancing to Tier 1",
+    "source": "",
+    "text": "Advancing to tier 1 involves four steps. Each step costs 4XP. The steps cans be purchased in any order.",
+    "bullets": [
+      {
+        "name": "Increased Pools",
+        "text": "You gain 6 points to add to your stat Pools . You can allocate the points among your Pools however you wish."
+      },
+      {
+        "name": "Increased Edge",
+        "text": "If you are a warrior , you add 1 to your Might or Speed Edge (your choice). If you are an explorer , you add 1 to your Might Edge . If you are an adept or speaker , you add 1 to your Intellect Edge ."
+      },
+      {
+        "name": "Increased Effort",
+        "text": "Your Effort score increases to 1."
+      },
+      {
+        "name": "Focus",
+        "text": "You gain a focus , including any special abilities it offers to a tier 1 PC."
+      },
+      {
+        "name": "Reaching Tier 1",
+        "text": "Once you have purchased all four steps, you reach tier 1, gaining two more special abilities from your type (or flavor , and increasing your cypher limit by 1. From now on, you use the standard rules for character advancement ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-splitting-xp",
+    "name": "Optional Rule: Splitting XP",
+    "source": "(Neon Rain, page 142)",
+    "text": "There are three primary ways that characters earnXPin the Cypher System:GM intrusions,character arcs, andGM awardsfor discoveries and story events. The assumption is that each character will spend about half their XP onimmediate benefits(rerolling a d20) andshort- and medium-term benefits, and half onadvancementandlong-term benefits. However, each player group probably has at least one outlier—the one who hoards XP for advancement and almost never uses it for rerolls, or who uses most of it on rerolls and rarely on advancement. Although both are reasonable options in a short-term game, in a long-term campaign where the characters reach tier 3 and higher, a character who rarely advances ends up weaker and with fewer options than a higher-tier character. For a long-term campaign, the GM can prevent this power disparity by using the following guidelines for spending XP: If you use this method, you might want to think of XP as falling into one of two categories, such as \"action XP and campaign XP,\" \"emergency XP and story XP,\" \"reroll XP and advancement XP,\" or even just \"red XP and blue XP.\" If you use cards or tokens to represent XP, make sure you have two visually distinct kinds so the players can easily tell them apart. You should also keep an eye on the individual XP totals for each character, just in case one character keeps ending up with a surplus of one kind and a scarcity in the other. (The player might be fine with this imbalance, but if not it's an opportunity for you to balance the scales, either by trading XP between the two categories or using the next session to award more of the XP they need.) This method is also a good way to encourage players to choose character arcs if they want to advance to higher tiers, as they can't rely on GM intrusion XP for advancement.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "XP from GM intrusions can only be spent on immediate, short, and medium-term benefits."
+      },
+      {
+        "name": "",
+        "text": "XP from character arcs can only be spent on long-term benefits and character advancement."
+      },
+      {
+        "name": "",
+        "text": "XP from GM awards (discoveries and story events) can only be spent on long-term benefits and character advancement."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-slower-advancement",
+    "name": "Optional Rule: Slower Advancement",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onHigher-Tier Characters(436)in theCypher System Rulebook. The following options allow the GM to slow the rate ofcharacter advancementand change the nature ofXPas a currency.",
+    "bullets": [
+      {
+        "name": "Expenditure Requirements",
+        "text": "The GM can require that some portion—for example, half—of the XP earned by a PC must be spent on immediate , short- and medium-term , or long-term benefits."
+      },
+      {
+        "name": "Two Kinds of XP",
+        "text": "The GM might separate XP into two types—one of which can be spent on character advancement, and another which cannot."
+      },
+      {
+        "name": "Milestone Advancement",
+        "text": "This option is a variant of Equal Advancement , except PCs purchase their character advancements as normal, but the GM decides when a PC advances to the next tier. This might be to wait until all PCs are ready to advance, just before or after a significant event in the campaign, or as part of a specific step of a character arc . An old-fashioned way of handling milestones is to require PCs to spend time, currency—or both—to advance to the next tier, potentially involving the instruction of a mentor or at least someone with something to teach the PC. Even if PCs do not reach new tiers at the same rate, some character arcs can be addressed quite effectively during \"downtime\" between adventures, providing other PCs with the opportunity to pursue those, or go carousing and explore nearby locations."
+      },
+      {
+        "name": "Tier Advancement Purchase",
+        "text": "After purchasing four character advancements , a PC doesn't reach a new tier. Instead, reaching a new tier requires another 4 XP purchase (or other amount determined by the GM)."
+      },
+      {
+        "name": "Require More Advancements Each Tier",
+        "text": "The GM decides on a number of additional character advancements a PC must purchase with XP to before advancing to the next tier. When using this rule, the GM decides any requirements or limitations for the additional advancements, including optional character advancements . When using this rule, PCs will gain additional breadth each tier in the form of additional skills, special abilities, or other benefits."
+      },
+      {
+        "name": "Increased Advancement Costs by Tier",
+        "text": "Each tier, the cost for purchasing a character advancement is increased by 1 XP. Additionally, every two tiers, a PC can hold 1 additional XP."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-advancing-beyond-tier-6",
+    "name": "Optional Rule: Advancing Beyond Tier 6",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is based onTiers Above Sixthin the 2015 Cypher System Rulebook(234). Challenging PCs above sixth tier probably involvesreally impossible tasks. After reaching sixth-tier, if the GM allows it, you can continue to spendXPto purchase the following character advancements. After purchasing four advancements, instead of advancing to a new tier, you gain one special ability of your choice from yourtypeorfocus. The GM might also assign additional benefits instead of tier advancement, for example, advancing a secondfocusby one tier and gaining its associated special abilities, or making a choice from a list ofpower shiftsorposthuman upgrades.",
+    "bullets": [
+      {
+        "name": "Increase Pools",
+        "text": "You gain 4 new points to add to your stat Pools . You can allocate the points among your Pools however you wish."
+      },
+      {
+        "name": "Increase Edge",
+        "text": "You add 1 to your Might , Speed or Intellect Edge , up to a maximum of 6. If you have features that permanently increase a stat's Edge, the maximum is increased by an equal amount. For example, a PC with the Roach descriptor and Golem Body ability has a maximum Might Edge and Speed Edge of 7. Likewise, a weakness from a harmful mutation or other source lowers a stat's maximum. Cyphers like Speed Boost and special abilities Beast Form that provide temporary increases to Edge function normally."
+      },
+      {
+        "name": "Increase Effort",
+        "text": "Your Effort score increases by 1, up to a maximum of 6."
+      },
+      {
+        "name": "Increase Skills",
+        "text": "Choose one skill (other than attacks or defense) or a special ability to become trained in. You can also use this advancement to become specialized in a skill or ability you're already trained in, or to cancel out an inability, becoming practiced in the task. You can choose this advancement up to three times, selecting a different skill or special ability each time."
+      },
+      {
+        "name": "Increase Recovery Rolls",
+        "text": "Add 2 to your recovery rolls ."
+      },
+      {
+        "name": "Armor Training",
+        "text": "Reduce your Speed Effort cost for wearing armor by 1."
+      },
+      {
+        "name": "Gain a Special Ability",
+        "text": "Select one new ability from your type or focus . If the GM allows, you can use this option to permanently gain a spellcasting or psionic ability, allowing you to use it by paying its Pool point cost instead of using a recovery roll or spending time to cast a spell or manifest a psionic ability."
+      },
+      {
+        "name": "Mutate",
+        "text": "If the GM allows this character advancement, you gain a beneficial mutation , powerful mutation , or distinctive mutations . The GM might allow you to choose a specific mutation, or require you to roll for a random one."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-spellcasting",
+    "name": "Optional Rule: Spellcasting",
+    "source": "(Cypher System Rulebook, page 260)",
+    "text": "Fantasy settings prioritize magic as an essential ingredient. But why restrict that magic to just wizards and similar characters? It's not uncommon in fantasy literature for a thief or warrior to learn a few spells as they steal or brawl through their adventures. Leiber's Gray Mouser knew some spells, Moorcock's Elric knew a lot, pretty much everyone in Anthony's Xanth books knew at least one, and so on. Of course, wizards and sorcerers specialize in spellcasting, which gives them clear superiority in magic use. But whether a character is a fireball-flinging wizard or a belligerent barbarian, anyone can learn some spellcasting under this optional rule. Under the spellcasting rule, any character, no matter their role or type, can choose to learn a spell as along-term benefit. After they learn one spell, they may learn more later if they wish, or just stick with the one. Any character can gain a spell byspending 3 XPand working with the GM to come up with an in-game story of how the PC learned it. Maybe they learned it as a child from their parent and practiced it enough to actually do it; perhaps they spent a month hiding in a wizard's library reading; it could be that they found a weird magical amulet that imbues them with the spell; and so on. Next, choose one low-tier ability fromChapter 9: Abilities. If the GM agrees it is appropriate, the character gains that ability as their spell, with a few caveats. The spell can't be used like a normal ability gained through a PC'stypeorfocus. Instead, a character must either use arecovery rollor spend many minutes or longer evoking their spell, in addition to paying itsPoolcost (if any). Once a character has learned at least one spell, they can opt to learn additional spells later. Each time, they must spend an additional 3XPand work with the GM to come up with an in-game story of how the character's magical learning has progressed. Two additional rules for learning additional spells apply: Otherwise, gaining and casting additional spells are as described for the character'sfirst spell.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "First Spell (260)"
+      },
+      {
+        "name": "",
+        "text": "More Spells (260)"
+      },
+      {
+        "name": "",
+        "text": "Crafting Magic Items (GF, 49) (IOM, 90)"
+      },
+      {
+        "name": "",
+        "text": "Prepared vs. Spontaneous (260) (GF, 23)"
+      },
+      {
+        "name": "",
+        "text": "Ritual Magic (GF, 56)"
+      },
+      {
+        "name": "",
+        "text": "Assigning Different Limits for Supernatural Abilities (OG-CSRD)"
+      },
+      {
+        "name": "",
+        "text": "Cantrips (IOM, 82)"
+      },
+      {
+        "name": "",
+        "text": "Crafting Ingredients (IOM, 79)"
+      },
+      {
+        "name": "",
+        "text": "Covens (IOM, 88)"
+      },
+      {
+        "name": "",
+        "text": "Familiars (IOM, 94)"
+      },
+      {
+        "name": "",
+        "text": "Mystical Martial Arts (GF, 68)"
+      },
+      {
+        "name": "",
+        "text": "Psionics (SF, 50)"
+      },
+      {
+        "name": "Using a Recovery Roll to Cast a Spell",
+        "text": "If the character uses a one-action, ten-minute, or one-hour recovery roll as part of the same action to cast the spell (including paying any Pool costs), they can use the ability as an action. This represents a significant mental and physical drain on the character, because the normal benefit of recovering points in a Pool is not gained."
+      },
+      {
+        "name": "Spending Time to Cast a Spell",
+        "text": "If the character takes at least ten minutes chanting, mumbling occult phonemes, concentrating deeply, or otherwise using all their actions, they can cast a low-tier spell (if they also pay any Pool costs). An hour is required to cast mid-tier spells. Ten hours are required to cast a high-tier spell."
+      },
+      {
+        "name": "",
+        "text": "First, a character must be at least tier 3 and have previously gained one low-tier spell before they can learn a mid-tier spell."
+      },
+      {
+        "name": "",
+        "text": "Second, a character must be at least tier 5 and have previously gained one mid-tier spell before they can learn a high-tier spell."
+      },
+      {
+        "name": "Cyphers and Artifacts",
+        "text": "Creating new cyphers and artifacts that replicate the effects of abilities is a good way to try out adding new abilities to PCs. If they are subtle cyphers , the PCs can pay 1 XP to request the cypher, and use the ability again. If it's a manifest cypher or artifact , the PC focuses the supernatural ability through it. If the artifact depletes, the PCs might find a way to revive it . PCs might also be able to craft or repair these artifacts."
+      },
+      {
+        "name": "Acquiring Supernatural Abilities and Joining Covens",
+        "text": "Another simple solution is to allow PCs to purchase new supernatural abilities for 4 XP , and pay for their use just as they would any other—using their stat Pool points (as described in More Powerful Psionics ). PCs using abilities in this way might learn them from a coven —which might take the form of a magic university, a secret society of like-minded wizards, or a psionic cult ."
+      },
+      {
+        "name": "Tier-Based Limits",
+        "text": "The GM might determine PCs can learn (and prepare , if necessary) a number of supernatural abilities based on their Tier, for example:"
+      },
+      {
+        "name": "Daily Limits",
+        "text": "Supernatural abilities might be limited to one, two, or three uses each day. If a low-tier PC uses a high-tier ability, they might need up to 1d6 days to be able to cast it again."
+      },
+      {
+        "name": "Depletion",
+        "text": "Each time a supernatural ability (or only certain abilities) are activated, the player rolls for an assigned depletion, similar to an artifact . For example, an ability with a depletion of 1 in 1d10 has a 10% chance of depleting, 1 in 1d20 has a 5% chance of depleting, and so on. The GM might also assign the depletion a recharge rate or method—usually either the next day at dawn, or the completion of a one-hour or ten-hour recovery roll , but other arrangements might also be interesting, for example, recharging at a specific location with a well of available power. In some cases, memorizing supernatural abilities might require a successful Intellect tasks, or performing ritual magic in order to invoke the ability later. Consider the two following arrangements: Universal Depletion. A PC with supernatural abilities begins with a depletion of 10 in 1d20, and can pay 3 XP as a long-term benefit to lower their depletion rating by 1, to a minimum of 1. Once depleted, the PC can't cast use their supernatural abilities until after their next ten-hour recovery roll . Individual Depletion. Each supernatural ability has its own depletion rating. Low-tier spells are usually 1 in 1d10, mid-tier spells are usually 3 in 1d10, and high-tier spells are usually 5 in 1d10."
+      },
+      {
+        "name": "",
+        "text": "Universal Depletion. A PC with supernatural abilities begins with a depletion of 10 in 1d20, and can pay 3 XP as a long-term benefit to lower their depletion rating by 1, to a minimum of 1. Once depleted, the PC can't cast use their supernatural abilities until after their next ten-hour recovery roll ."
+      },
+      {
+        "name": "",
+        "text": "Individual Depletion. Each supernatural ability has its own depletion rating. Low-tier spells are usually 1 in 1d10, mid-tier spells are usually 3 in 1d10, and high-tier spells are usually 5 in 1d10."
+      },
+      {
+        "name": "Stress",
+        "text": "If the game uses the optional Stress module, see Stress and the Supernatural and Ability Category: Stress ."
+      },
+      {
+        "name": "Backlash and Corruption",
+        "text": "Here's an old idea: Using a supernatural ability costs nothing—however, each time the PC casts a spell, their GM intrusion rate is raised by 1 until they finish a ten-hour recovery roll . Additionally, triggering a GM intrusion on a task prompted by using supernatural abilities might corrupt the caster. The PC rolls a 1d20 on the following table:"
+      },
+      {
+        "name": "Supernatural Stat Pool",
+        "text": "This option is a more extreme measure that will have profound effects on the game: PCs with supernatural abilities gain a new stat Pool —Magic, Mana, Essence, Psi—whatever makes sense for the setting. Whatever the name, the new stat's Pool begins with 8 points, and has an Edge of 0. Regardless of the Pool the special ability's cost is usually paid from, it is paid from the new Pool's points instead, and tasks it prompts are related to that stat instead of the ability's usual Might , Speed , or Intellect . PCs can use the Increasing Capabilities character advancement to assign additional points to their new stat Pool, and Moving Toward Perfection to increase the new stat's Edge. Reducing the new stat Pool to 0 points probably doesn't send the PC down the damage track —but that's up to the GM. In some settings, becoming a supernatural PC might bind your fate to the world in new ways."
+      },
+      {
+        "name": "Enablers and Durations",
+        "text": "If a supernatural ability is an Enabler, it's unclear how long its effects should last after activation. For example, if a player learns Ward as a supernatural ability and uses a recovery roll to activate it, how long does the PC benefit from the Armor bonus it provides? Ultimately, the GM must decide what's appropriate. The GM should consider the following options (and might assign different supernatural abilities different durations): Preparation Counts. The enabler ability is always active so long as the ability is prepared. Duration Assignment. The enabler ability is active for ten minutes, one hour, one day, or until the PC makes a ten-hour recovery roll . Minimum Concentration. The ability remains active until the PC makes a recovery roll ."
+      },
+      {
+        "name": "",
+        "text": "Preparation Counts. The enabler ability is always active so long as the ability is prepared."
+      },
+      {
+        "name": "",
+        "text": "Duration Assignment. The enabler ability is active for ten minutes, one hour, one day, or until the PC makes a ten-hour recovery roll ."
+      },
+      {
+        "name": "",
+        "text": "Minimum Concentration. The ability remains active until the PC makes a recovery roll ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-handling-pcs-as-children",
+    "name": "Optional Rule: Handling PCs as Children",
+    "source": "(Cypher System Rulebook, page 266)",
+    "text": "The regular character creation process makes fully competent, adult characters. To account for playing children, the GM could adopt this optional rule. First, the players make their characters normally, and then they apply the following adjustments to their PCs, as appropriate to their age category. You might also consider applying a tier cap of 3 to childhood adventure games with kids of up to thirteen years old, and a tier cap of 4 for childhood adventure games featuring PCs who are aged fourteen to seventeen.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-forced-downtime",
+    "name": "Optional Rule: Forced Downtime",
+    "source": "(Neon Rain, Page 139)",
+    "text": "In a cyberpunk campaign, it's easy to fall into the RPG story trap that every single day for the PCs is fraught with danger, intrigue, conflict, and strange encounters, creating a non-stop pace that leads to characters burning through all the advancement steps and reaching tier 6 within just a few in-game weeks. There are two reasons to avoid letting this happen to the campaign.",
+    "bullets": [
+      {
+        "name": "It's Unrealistic",
+        "text": "It takes more than a few weeks for a person (even an exceptional one like a PC) to change from a relative nobody with a few skills and interesting abilities to a nigh-indestructible chromed-up badass."
+      },
+      {
+        "name": "It Limits Storylines",
+        "text": "This accelerated tempo makes it hard for the GM to include storylines for longer-term events like trade wars between megacorporations, slow-burning schemes between influential families and politicians, and a gradual increase in street-level activism that leads to riots, anarchy, and perhaps even revolution. In a typical fantasy campaign where the PCs wander from village to village dealing with local problems, the required travel time between adventure locations acts to slow down the overall timeline of the campaign. In a cyberpunk campaign, particularly one taking place almost exclusively in and around one major city, there's no longer a travel-induced brake on the timeline. Instead, the GM should use a more direct method: forcing the characters to take time off in between their active gigs. Here are some easy ways to do this."
+      },
+      {
+        "name": "Advancement",
+        "text": "The rules assume that character advancements take place almost instantly, without any need for training or study, even if it means the character is suddenly gaining new abilities, new skills, or adding to their stat pools. An easy way to slow a campaign timeline is to require some story-induced downtime to justify gaining (or mastering) a new ability. A character increasing their Might or Speed Pool needs to spend some time at the gym or dojo. One adding to their Intellect Pool needs to take a college class or attend a meditation retreat. Learning how to use a new ability requires the character to practice, watch holotutorials, or both. And so on. An easy guideline is to have the character spend about a week of downtime for each advancement they choose; this in itself means extending the campaign timeline by at least 20 weeks (five tears beyond tier 1, with four advancements each)."
+      },
+      {
+        "name": "Expenses and Splurging",
+        "text": "The GM should encourage the players to see their characters getting paid as a windfall situation: instead of struggling to meet their day-to-day expenses, the characters have some money to burn. They can pay off debts, pick out some new equipment and cybernetics , party or vacation a bit, and perhaps find a safer or sexier place to live. Even if the GM hand-waves basic expenses like rent, food, clothing, and so on (with the assumption that the characters are spending some of their time outside of a game session doing boring, risk-free work to pay for their mediocre standard of living), the extra money from a typical gig gives the PCs some time to cool off and distract themselves from their dystopian existence. Not taking time off to relax is bad for a person's mental health, and that sort of stress can build up and lead to SHITS. Even in a campaign where SHITS isn't really something PCs have to deal with, the GM can encourage downtime by hindering the characters' Intellect-based tasks (starting with one step, increasing about one step per week), reflecting their ongoing fatigue, emotional damage, and burnout."
+      },
+      {
+        "name": "Lasting Damage",
+        "text": "The lasting damage rule gives a character an injury that they can't fix with a simple recovery roll . They only recover slowly during light activity or complete rest. Using this rule, a typical 4-point wound from a medium pistol becomes something that requires four days of complete bed rest, or twelve days of regular activity, during which time the character isn't at full strength. Diseases, poisons, and even something or even something like a grenade's explosioncould trigger a group GM intrusion for lasting damage that leaves all of the PCs wanting some extra time to heal. Also, this section's entry on lasting damage encourages the GM to sometimes damage or destroy a character's cybernetics —a bloodless but hard-hitting way to show the lethality of dystopian cyberpunk. More of these attacks also push characters to slow down a little bit."
+      },
+      {
+        "name": "Life Happens",
+        "text": "Sometimes your daily life throws you a curveball, ruining your plans. There's a heat wave and it's too hot to go outside. There's a power outage and you can't get the surgery, interview, or mainframe access you need. It's time to do your taxes. Everyone in your group of friends gets a bad cold. There's a fire in your apartment building and you have to live out of a hotel for a few days before they declare it safe to return. A sports game, political event, or controversial television episode leads to riots in the streets. A terrorist act (or the suspicion of one) shuts down all travel in or out of a specific neighborhood. None of the fixers the PCs know have interesting, suitable, or well-paying gigs to offer the PCs. Any of these things happening during a game session could be a GM intrusion, complicating an encounter, but outside of a game session, it's just life—things happen that delay your plans, giving frenetic characters (and players) an excuse to let some time slide by."
+      },
+      {
+        "name": "Splitting XP",
+        "text": "Most of the options in this section are ways to let the campaign calendar move forward more slowly. However, you can also address the \"speedy zero to hero\" problem from the other (advancement) direction by reducing the amount of XP the characters can use for tier advancement. Characters still earn the same amount of XP, but it's allocated for specific uses (rerolls, advancements, and more). The section on splitting XP gives more details about this option."
+      },
+      {
+        "name": "Surgical Recovery",
+        "text": "Getting a cybernetic implant reqRewards and Lootuires surgery, and a body needs time after surgery to heal, build up strength, and learn how to use the newly implanted device so it functions as automatically as the user's own limbs. A minor surgical procedure typically leaves a person sore and stiff for a few days. A major procedure requires weeks or even a couple of months before the character feels back to normal again. Major surgeries are anything that replaces limbs, connects to or augments bones and major muscles, penetrates the skull, or directly interfaces with the character's brain or spinal cord (everything else counts as a minor surgery). While recovering, the character's tasks are hindered (by two steps for a major surgery). Anything other than bed rest and light activity (such as going for a short walk) risks the character injuring themselves, inflicting up to 6 points of damage (ignores Armor); whether this damage is Might, Speed, or Intellect depends on the nature of the surgery the character is recovering from. Some major surgeries might even move the character down the damage track to impaired or debilitated until they've had time to recover. These penalties will likely make players insist on their characters taking adequate time to rest. They may even coordinate their characters' schedules so two or more people have their bigger surgeries at the same time—an excellent opportunity to relax at a spa, take a cruise, or otherwise enjoy some quiet time off with friends. Obviously, a GM wanting to slow down the pace of the campaign by using cybernetic recovery times shouldn't then punish the characters for resting. In other words, don't wait until all multiple characters are hindered from their surgeries to introduce a story plot that requires them to get out of bed and fight while penalized."
+      },
+      {
+        "name": "The GM Says So",
+        "text": "Ultimately, it's always fine for the GM to just skip the campaign forward an arbitrary amount of time. There's nothing wrong with ending a session by saying, \"You completed the gig, the fixer congratulates you and transfers the money to your accounts, you go home, and take a couple of weeks off to relax and recover.\""
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-wild-firing",
+    "name": "Optional Rule: Wild Firing",
+    "source": "(Neon Rain, page 150)",
+    "text": "Abilities likeSprayandArc Sprayallow a character to fire multiple shots in one round, which is defined as five to ten seconds long. Obviously, even \"single shot\" 21st-century firearms like revolvers are able to fire more than once every few seconds, but a typical character can only fire once per round if they want a chance of hitting. The wild firing rule allows a character to shoot multiple times in a round, even withoutSprayorArc Spray, but their odds of hitting are much lower. As an action, a character can make a wild firing attack with a firearm, sending multiple shots in the general direction of their foe. This attack is hindered by two steps. If it hits, it inflicts 1 less point of damage than normal (and if the weapon has an attachment or feature that inflicts additional damage, such as electricity or fire, the attack doesn't include this damage). If the character uses wild firing as part of helping an ally's attack or defense, the help provides an additional asset (over the standard one asset for helping). Typically, wild firing uses the rest of the ammunition in the firearm, although the GM might say that one or two shots remain if the weapon was fully loaded before the wild spray attack. Wild firing cannot be combined withArc Spray,Spray, or similar abilities to make additional attacks or fire additional times. If a character with a firearm is helping an ally's attack or creating a distraction for a foe, it's reasonable for the GM to say that the character has to fire the weapon at least once as part of helping. Unless otherwise stated, a firearm holds ten bullets. Reloading a weapon (either with individual bullets or swapping in a new clip) is an action.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-psionics",
+    "name": "Optional Rule: Psionics",
+    "source": "(The Stars are Fire, page 51)",
+    "text": "Through sheer force of will, a psionic character can unleash inborn mental abilities such as telepathy, precognition, and telekinesis. As a GM, your first decision must be whether you want to incorporate psionics into your setting. If you do not want to allow psionics into your game, then restrict foci likeCommands Mental Powers,Focuses Mind Over Matter, andSeparates Mind From Body. And of course, restrict thesuggested typesof Psion and Psychic Knight. Under the latent psionics rule, any character, no matter their role or type, can unlock a psionic ability (either purposefully, or accidentally), as along-term benefit(seefirst psi ability\" hereafter). After they unlock one psionic ability, they may unlock more later if they wish (or if their ability seeks to reveal itself), or just try to stick with the one. Any character can unlock a psionic ability byspending 3 XPand working with the GM to come up with an in-game story of how the character unlocked it. Next, choose one low-tier ability fromChapter 9: Abilities. If the GM agrees it is appropriate, the character gains that ability as their psionic ability, with a few caveats. The ability can't be used like a normal ability gained through a PC's type or focus. Instead, a character must either expend arecovery rollor spend many minutes or longer evoking the psionic ability before it takes effect, in addition to paying itsPoolcost (if any). Once a character has unlocked at least one psionic ability, they can opt to unlock additional abilities later. Each time, they must spend an additional 3XPand work with the GM to come up with an in-game story of how the character's mental development has progressed. Two additional rules for learning additional psionic abilities apply: Characters with explicitly psionic foci likeCommands Mental Powers,Focuses Mind Over Matter,Separates Mind from Body, and possibly others—as well types likePsion and Psychic Knight—are also considered to be psionic characters, and moreover, specialized ones. Their psionic abilities—provided by theirtypeorfocus—are used simply by paying theirPoolcosts. Extra time or physical effort isn't required to manifest them. That's because they've trained to use those abilities, rather than having stumbled upon them accidentally like a latent character. Specialized characters can use the optional latency rule to further expand their psionic potential, unlocking it just like other characters, with the same limitations. Optionally, specialized characters who have a psionic type and/or focus gain one additional benefit if they also opt for latent abilities. Given that they are already adept at unlocking abilities and using them as quickly and easily as another character might shoot a laser pistol, they've got some flexibility. Such a PC can replace up to three abilities granted by their type and/or focus with three other psionic abilities they've unlocked as a latent ability of the same tier. To do so, they must spend at least one uninterrupted hour in meditation. Usually, this is something that requires a fresh mind, and must be done soon after a ten-hour recovery.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "Latent Psionics (SF, 50)"
+      },
+      {
+        "name": "",
+        "text": "First Psi Ability (SF, 50)"
+      },
+      {
+        "name": "",
+        "text": "Psions and the Optional Latent Psionics Rule (SF, 51)"
+      },
+      {
+        "name": "",
+        "text": "More Powerful Psionics (SF, 51)"
+      },
+      {
+        "name": "",
+        "text": "Assigning Different Limits for Supernatural Abilities (OG-CSRD)"
+      },
+      {
+        "name": "",
+        "text": "Stress (OG-CSRD)"
+      },
+      {
+        "name": "Expending a Recovery Roll to Manifest a Psionic Ability",
+        "text": "If the character expends a one-action, ten-minute, or one-hour recovery roll as part of the same action to manifest a psionic ability (including paying any Pool costs), they can use the ability as an action."
+      },
+      {
+        "name": "Expending Time to Manifest a Psionic Ability",
+        "text": "If the character takes at least ten minutes meditating, concentrating deeply, or otherwise using all their actions, they can manifest a low-tier psionic ability (if they also pay any Pool costs). An hour is required to manifest mid-tier abilities. Ten hours are required to manifest a high-tier ability."
+      },
+      {
+        "name": "",
+        "text": "First, a character must be at least tier 3 and have previously unlocked one low-tier psionic ability before they can learn a mid-tier psionic ability."
+      },
+      {
+        "name": "",
+        "text": "Second, a character must be at least tier 5 and have previously unlocked one mid-tier psionic ability before they can unlock a high-tier ability."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-posthuman-upgrades",
+    "name": "Optional Rule: Posthuman Upgrades",
+    "source": "(The Stars are Fire, page 53)",
+    "text": "Posthuman upgrades are either available to everyone as the setting begins or opened up later during the campaign as a significant plot development. Note that many focus and type abilities might be considered to have come from the kind up bodily upgrades normally associated with posthuman transformation, especially high-tier abilities. Which is one way to go. On the other hand, you could provide actual upgrades, such as presented here, which actually increase the base power level of characters. You have a few options for adding posthuman upgrades to your setting. Characters might gain an initial upgrade for \"free,\" mechanically speaking. After that, you might decide that that's enough and they're done. Or, you could allow further upgrades, each requiring them to expend 4XPand serving as an Other Option requirement forcharacter advancement. In this case, consider expanding the number of steps required for advancing a tier from four to five. Immediate Posthuman Upgrades:As part of character creation, PCs are given the options presented hereafter because the setting demands it. Narrative options include (but are not limited to): Delayed Posthuman Upgrades:Sometime after the players have a few sessions under their belt, present the options hereafter to the PCs because of a dramatic update to the plot. If one PC gains the option to upgrade, then all the PCs should have that same advantage. Narrative options include (but are not limited to): Posthuman \"packages\" that PCs might enjoy include the following. You should decide which are available, and which ones your PCs gain. A character may also gain posthuman abilities by way ofpower shifts. Under this rule, posthuman characters begin with two power shifts. They can \"unlock\" one more each time they expend 4XPtoward advancing their character.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "PCs are part of a program designed to adapt them to being able to survive and thrive in conditions other than the 1 G, 1 atmosphere, oxygenated, Goldilocks environment of the Earth."
+      },
+      {
+        "name": "",
+        "text": "PCs begin their career as super-soldiers to fight aliens or to serve as corporate spies."
+      },
+      {
+        "name": "",
+        "text": "PCs serve as long-lived guardians to watch over a generation ship hurtling at slower-than-light speeds between the stars."
+      },
+      {
+        "name": "",
+        "text": "PCs are children of a far-future civilization that routinely upgrades its citizens."
+      },
+      {
+        "name": "",
+        "text": "PCs, exploring a cache of ancient ultra or other fantastic tech, find a device that provides unexpected upgrades in the process of healing them from other injuries."
+      },
+      {
+        "name": "",
+        "text": "PCs are kidnapped by aliens or conglomerate operatives, and upgraded—with some command-and-control circuits also installed—to serve some specific purpose."
+      },
+      {
+        "name": "",
+        "text": "PCs learn a \"new science,\" allowing them to tap cosmic energies other creatures are unaware of."
+      },
+      {
+        "name": "",
+        "text": "You are not adversely affected by long-term microgravity or high-radiation conditions common in space. In addition, you can withstand high acceleration (up to 15 G) for about an hour without passing out, having a stroke, a heart attack, and so on (though longer periods of acceleration could still result in such outcomes). Add +1 to your Intellect Edge. Enabler."
+      },
+      {
+        "name": "",
+        "text": "You can withstand high-gravity planets and high acceleration (up to 15 G) indefinitely. For periods of up to an hour, you can withstand double that. Add +1 to your Might Edge. Enabler."
+      },
+      {
+        "name": "",
+        "text": "You can breathe underwater in pressures of up to 100 atmospheres indefinitely, up to triple that for about an hour. You have an asset to all tasks performed in water. Add +1 to your Speed Edge. Enabler."
+      },
+      {
+        "name": "",
+        "text": "Only one of your brain hemispheres sleeps at a time, so you are always awake and aware. In addition, you have a magnetoreception sixth sense that allows you to \"see\" into objects and through doors up to a short distance. Your initiative and perception tasks are eased. You can forge a connection with electronic equipment you touch, allowing you to attempt to communicate, analyze, or even hack the device. Enabler."
+      },
+      {
+        "name": "",
+        "text": "You have left biology behind and uploaded yourself into a biomechanical form known as a synth. You enjoy the benefits of the spaceborn package and expanded consciousness package, and one posthuman power shift. Enabler."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-infatuation",
+    "name": "Optional Rule: Infatuation",
+    "source": "(Cypher System Rulebook, page 287)",
+    "text": "When a PC is near someone they are infatuated with, particularly in the early stages of that infatuation, they must make an Intellect defense roll with a difficulty determined by the GM based on the situation (not on the level of the subject of the infatuation). Failure might mean that the character does or says something awkward or embarrassing either in an attempt to impress or when trying to hide the infatuation. Or it could mean that for one round, the player loses control of the character, and the GM decides what the PC does next, such as risk their own safety to help an endangered character. However, GMs should welcome player input into this situation. The point is to portray that when we're distracted by the powerful feelings (and hormones) related to infatuation, we don't always react in the best way, the smartest way, or even the way we want to. Infatuation can happen whether the PC is attracted to an NPC or a PC.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-relationship-levels",
+    "name": "Optional Rule: Relationship Levels",
+    "source": "",
+    "text": "",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-power-shifts",
+    "name": "Optional Rule: Power Shifts",
+    "source": "(Cypher System Rulebook, page 293)",
+    "text": "Superheroes can do things that other people cannot. They throw cars, blast through brick walls, leap onto speeding trains, and cobble together interdimensional gateways in a few hours. It's tempting to say that such characters are stronger, faster, or smarter, so they should have higherMight,Speed, orIntellectPools. However, simply bumping up stat Pools or Edge doesn't fully represent this dramatic increase in power. Instead, consider using an optional rule called power shifts. A typical superhero PC gets five power shifts. Power shifts are like permanent free levels ofEffortthat are always active. They don't count toward a character's maximumEffortuse (nor do they count asskillsorassets). They simply ease tasks that fall into specific categories, which include (but are not necessarily limited to) the following. The archetypes suggest how to assign yourpower shifts. This is an important aspect of designing your hero because power shifts are what make your characters exceptional in a \"supers\" way. Superheroes are known for being faster, tougher, stronger, or smarter than regular people, and that sort of comparison isn't always part of the abilities you get from your type or focus. A regular person might be very skilled at martial arts, but a superhero martial artist might punch through an iron door, dodge a burst of bullets from a machine gun at close range, or quickly recover from a mortal wound, all thanks to power shifts. This part of each archetype writeup assumes your hero starts with five power shifts, but most archetype descriptions give only two or three suggestions, allowing you some flexibility to customize your superhero. For example, a master athlete with two power shifts in healing is a very different character than one with two power shifts in resilience. In some cases, you might need to tinker with the aesthetics of the abilities described in the character options to make them fit your character. Each shift eases the task (except for shifts that affectdamageorArmor, as specified in the list above). Applying two shifts eases the task by two steps, and applying 3 shifts eases the task by three steps. A character assigns their five power shifts as desired, but most characters should not be allowed to assign more than three to any one category. Once the shifts are assigned, they should not change (however, researching an experimental procedure to change a character's power shifts could be the culmination of a character arc such asUncover a Secret). For example, a superstrong character might put three of their shifts into strength and the other two into resilience. Whenever they lift something heavy, smash through a wall, or throw an object, they ease the task by three steps before applyingEffort,skill, orassets. Thus, alldifficultiesfrom 0 to 3 are routine for them. They smash through level 3 doors as if they don't exist. As another example, a masked vigilante character with a utility belt full of gadgets and great acrobatic skills might put two shifts in dexterity, one in accuracy, one in intelligence, and one in healing. They're not actually superpowered, just tough and well trained. The following superhero archetypes are detailed inClaim the Sky: Some superhero character concepts are about breaking the normal power level for a hero. In most cases, you can do this usingpower shifts. For example, if you want your strong hero to be really strong, put one or more power shifts into strength. If you want your archer character to be really good at shooting arrows, put a power shift into single attack (bows). If you want your speedster hero to be really fast, put a power shift into power (Fleet of Foot). And so on. But what if you want your character to be a swashbuckling teleporter who blinks all over the battlefield? There's no low-tier teleportation ability, so you can't be a teleporter as a tier 1 character, and the character concept isn't nearly as fun if you have to wait until tier 4 before you can learn a teleportation ability (likeShort Teleportation). This is where you can (with the GM's approval) use a power shift for the prodigy option. Prodigy lets you give up one of your lower-tier abilities for a higher-tier ability that matches your character concept. For example, if your swashbuckling teleporter is aGracefulExplorerwhoFights With Panache, you could give up one of your tier 1 Explorer abilities (so you'd only have three instead of four) or give up your tier 1 focus ability, Fights With Panache, and instead select the tier 4 abilityShort Teleportation. Choosing prodigy as a power shift is an interesting trade-off for your character; you end up with a powerful ability that you couldn't get otherwise, but at the cost of a power shift (which the other characters are probably using to add to their skills, damage, or defenses). Keep in mind that higher-tier abilities tend to cost more Pool points (especially because your Edge as a low-tier character is less than that of a higher-tier character), so you'll weaken yourself if you use that ability often—which might be a good reason to allocate more points to thatstatPool, or assign a power shift to healing so you have more opportunities per day to recover points. Theoretically, you could put two power shifts in prodigy for the same ability, allowing you to select a high-tier ability. However, there are two reasons not to do this. First, those high-tier abilities usually have even higher costs, which limits how often you can use them. Second, if you start out with the best version of that ability, there's no room to grow. It's fun when your character impresses other superheroes by improving an ability, and it's really handy when your nemesis supervillain underestimates you based on your old limitations. So unless the GM wants every superhero PC to start with one top-tier ability, give yourself room to grow and use prodigy only to get a mid-tier ability. Some GMs will want to allow PCs to increase theirpower shifts. Having a characterspend 10 XPto do so would probably be appropriate. Other GMs will want to run superhero games with PCs of greater or lesser power (cosmic-level heroes or street-level heroes, perhaps). In such cases, the GM should grant the PCs more or fewer power shifts at the game's start.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "Atlantean (CTS, 11)"
+      },
+      {
+        "name": "",
+        "text": "Bearer of the item (CTS, 11)"
+      },
+      {
+        "name": "",
+        "text": "Beastly hero (CTS, 12)"
+      },
+      {
+        "name": "",
+        "text": "Beastmaster (CTS, 12)"
+      },
+      {
+        "name": "",
+        "text": "Bug hero (CTS, 13)"
+      },
+      {
+        "name": "",
+        "text": "Builder (CTS, 13)"
+      },
+      {
+        "name": "",
+        "text": "Cyborg (CTS, 14)"
+      },
+      {
+        "name": "",
+        "text": "Dark energy master (CTS, 16)"
+      },
+      {
+        "name": "",
+        "text": "Elastic (CTS, 16)"
+      },
+      {
+        "name": "",
+        "text": "Energy master (CTS, )17"
+      },
+      {
+        "name": "",
+        "text": "Extra limbs (CTS, 18)"
+      },
+      {
+        "name": "",
+        "text": "Force field master (CTS, 19)"
+      },
+      {
+        "name": "",
+        "text": "Friendly thing (CTS, 19)"
+      },
+      {
+        "name": "",
+        "text": "Genius (CTS, 20)"
+      },
+      {
+        "name": "",
+        "text": "Giant hero (CTS, 21)"
+      },
+      {
+        "name": "",
+        "text": "Half-vampire (CTS, 21)"
+      },
+      {
+        "name": "",
+        "text": "Hard light master (CTS, 22)"
+      },
+      {
+        "name": "",
+        "text": "Hunter (CTS, 22)"
+      },
+      {
+        "name": "",
+        "text": "Illusionist (CTS, 23)"
+      },
+      {
+        "name": "",
+        "text": "Master athlete (CTS, 24)"
+      },
+      {
+        "name": "",
+        "text": "Master martial artist (CTS, 25)"
+      },
+      {
+        "name": "",
+        "text": "Mentalist (CTS, 25)"
+      },
+      {
+        "name": "",
+        "text": "Multiplier (CTS, 26)"
+      },
+      {
+        "name": "",
+        "text": "Nature master (CTS, 27)"
+      },
+      {
+        "name": "",
+        "text": "Paragon (CTS, 28)"
+      },
+      {
+        "name": "",
+        "text": "Phase master (CTS, 28)"
+      },
+      {
+        "name": "",
+        "text": "Plant (CTS, 29)"
+      },
+      {
+        "name": "",
+        "text": "Power replicator (CTS, 29)"
+      },
+      {
+        "name": "",
+        "text": "Powered armor hero (CTS, 30)"
+      },
+      {
+        "name": "",
+        "text": "Rage monster (CTS, 31)"
+      },
+      {
+        "name": "",
+        "text": "Robot (CTS, 31)"
+      },
+      {
+        "name": "",
+        "text": "Sensory adept (CTS, 32)"
+      },
+      {
+        "name": "",
+        "text": "Shapechanger (CTS, 33)"
+      },
+      {
+        "name": "",
+        "text": "Sorcerer (CTS, 33)"
+      },
+      {
+        "name": "",
+        "text": "Speedster (CTS, 34)"
+      },
+      {
+        "name": "",
+        "text": "Superspy (CTS, 35)"
+      },
+      {
+        "name": "",
+        "text": "Telekinetic (CTS, 36)"
+      },
+      {
+        "name": "",
+        "text": "Teleporter (CTS, 37)"
+      },
+      {
+        "name": "",
+        "text": "Tiny hero (CTS, 37)"
+      },
+      {
+        "name": "",
+        "text": "Unkillable beast (CTS, 38)"
+      },
+      {
+        "name": "",
+        "text": "Weapon master (CTS, 38)"
+      },
+      {
+        "name": "Superheroes",
+        "text": "At tier 1, you have five power shifts . You can purchase more power shifts with 10 XP ."
+      },
+      {
+        "name": "Teen Supers",
+        "text": "At tier 1, you have three power shifts . At tiers 2 and 4, you gain a power shift, which you can apply to one type or focus ability. If the ability inflicts damage, choose to dedicate the power shift to easing the attack task, or increasing damage inflicted by 3."
+      },
+      {
+        "name": "Potent Bloodlines",
+        "text": "At tier 1, you have three power shifts . At tiers 2, 4, and 6, you gain another power shift."
+      },
+      {
+        "name": "Mastery",
+        "text": "You can gain a power shift by completing an appropriate character arc . You can't gain a number of power shifts greater than your tier."
+      },
+      {
+        "name": "XP Purchase",
+        "text": "You can spend 10 XP to gain one power shift, up to a number equal to your tier."
+      },
+      {
+        "name": "Beyond Tier 6",
+        "text": "You can gain power shifts as described under Advancing Beyond Tier 6 ."
+      },
+      {
+        "name": "Super-Focus",
+        "text": "If a modern PC with a mundane focus gains superpowers, the nature of their new powers can be realized by choosing a \"super-focus\" in one of the following ways: Become Super. The PC makes their existing focus \"super\". The GM should allow them choose at least one low-tier ability from Chapter 9: Abilities to help complete their superpower package. Second Focus. The PC gains a second super- focus . Any power shifts gained can't be applied to their first focus, and when they advance to a new tier, only the second super-focus provides new abilities to the PC. Fantastic Transformations. The PC assumes a completely different identity when their superpowers are active. Use the optional rules for Fantastic Transformations ."
+      },
+      {
+        "name": "",
+        "text": "Become Super. The PC makes their existing focus \"super\". The GM should allow them choose at least one low-tier ability from Chapter 9: Abilities to help complete their superpower package."
+      },
+      {
+        "name": "",
+        "text": "Second Focus. The PC gains a second super- focus . Any power shifts gained can't be applied to their first focus, and when they advance to a new tier, only the second super-focus provides new abilities to the PC."
+      },
+      {
+        "name": "",
+        "text": "Fantastic Transformations. The PC assumes a completely different identity when their superpowers are active. Use the optional rules for Fantastic Transformations ."
+      },
+      {
+        "name": "GM-Assigned or Player-Chosen Power Shifts",
+        "text": "The GM assigns the PC a number of power shifts , as described under Power Shifts in Other Genres . The GM might also decide how some or all of the PC's power shifts are assigned, allow the player to choose what to do with their power shifts, or leave matters up to a roll of the die."
+      },
+      {
+        "name": "Mastering New Powers",
+        "text": "Learning to use superpowers can be tricky. Until PCs complete a character arc like Learn , the GM might assign the PC an inability when using their fledgling powers, or raise the GM intrusion rate for the PC. GM intrusions might take the form of accidental or uncontrollable manifestation of superpowers."
+      },
+      {
+        "name": "Other Changes",
+        "text": "Gaining powers might cause other dramatic changes in a PC. Most begin a new character arc , but some might change their descriptor , type , or gain a flavor ."
+      },
+      {
+        "name": "Supers Gain an XP Advance",
+        "text": "To set increase the baseline between PCs with and without superpowers even further, use the optional starting at tier 0 rules for normal PCs, and use the optional XP Advance or starting just past tier 1 rules for superpowered PCs."
+      },
+      {
+        "name": "",
+        "text": "off-beat superheroes"
+      },
+      {
+        "name": "",
+        "text": "henshin heroes and magical girls"
+      },
+      {
+        "name": "",
+        "text": "werewolves"
+      },
+      {
+        "name": "",
+        "text": "divine, demonic, or eldritch possession"
+      },
+      {
+        "name": "Starting Pools",
+        "text": "Your Might , Speed or Intellect Pools have 6 points each. You get 2 additional points to divide among your stat Pools however you wish."
+      },
+      {
+        "name": "Descriptor",
+        "text": "Choose a descriptor . Some descriptors—for example, Mystical —might not be appropriate for mundane forms."
+      },
+      {
+        "name": "Skills",
+        "text": "Choose three skills (other than attacks or defense) appropriate to the setting."
+      },
+      {
+        "name": "Background",
+        "text": "Add a background connection you have to the setting."
+      },
+      {
+        "name": "Minimized Advancement",
+        "text": "To best preserve the dramatic tension between your mundane life and fantastic forms , your mundane form doesn't gain character advancements or reach new tiers. The GM might make occasional exceptions, for example, as a reward for the completion of a significant character arc . Each time your mundane form advances, you must choose a different option. Examples of mundane form advancements include: Pools. You gain 4 additional points to divide among your stat Pools however you wish. Effort. You have an Effort score of 1. Edge. You increase your Might , Speed or Intellect Edge to 1. Focus. You gain the tier 1 abilities from a mundane focus ."
+      },
+      {
+        "name": "",
+        "text": "Pools. You gain 4 additional points to divide among your stat Pools however you wish."
+      },
+      {
+        "name": "",
+        "text": "Effort. You have an Effort score of 1."
+      },
+      {
+        "name": "",
+        "text": "Edge. You increase your Might , Speed or Intellect Edge to 1."
+      },
+      {
+        "name": "",
+        "text": "Focus. You gain the tier 1 abilities from a mundane focus ."
+      },
+      {
+        "name": "",
+        "text": "activate an artifact"
+      },
+      {
+        "name": "",
+        "text": "speak aloud an incantation, invocation, or oath"
+      },
+      {
+        "name": "",
+        "text": "make a specific set of complex motions"
+      },
+      {
+        "name": "",
+        "text": "perform a brief ritual"
+      },
+      {
+        "name": "",
+        "text": "move to another plane of existence"
+      },
+      {
+        "name": "",
+        "text": "fall asleep and begin to dream"
+      },
+      {
+        "name": "",
+        "text": "log onto a virtual reality where the PC's fantastic adventures take place"
+      },
+      {
+        "name": "",
+        "text": "involuntarily triggered by heightened emotional states, stress, or other specific circumstances—preferably something that is a good source of GM intrusion —on a failed Intellect defense roll , the transformation takes hold"
+      },
+      {
+        "name": "Descriptor",
+        "text": "Choose a descriptor . It can be the as your mundane form 's descriptor, but some transformations involve substantial changes in stature or personality."
+      },
+      {
+        "name": "Type",
+        "text": "Choose a type (and perhaps a flavor )."
+      },
+      {
+        "name": "Focus",
+        "text": "Choose a focus ."
+      },
+      {
+        "name": "Other Options",
+        "text": "The GM might also assign your fantastic form a number of power shifts (as described under Power Shifts in Other Genres ) or make use of other optional rules ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-power-shifts-in-other-genres",
+    "name": "Power Shifts in Other Genres",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Power shiftsandpower stuntsare a staple of the superhero genre, but the GM might use them in other genres, like afantasygame where with apotheosis or cultivation themes, or amodernsetting where vampires with amazing powers prowl the streets, or any setting where the GM wants to encourage creative use of PC abilities. If you enjoy this rules module, consider purchasingClaim the Sky,Gods of the Fall,Stay Alive!, orUnmasked. The GM decides which power shifts are available, and how they are gained. Once assigned, power shifts don't change unless something dramatic happens, like the culmination of acharacter arc. A PC can't put more than three shifts into the same category without approval from the GM. Here are a few possible arrangements:",
+    "bullets": [
+      {
+        "name": "Superheroes",
+        "text": "At tier 1, you have five power shifts . You can purchase more power shifts with 10 XP ."
+      },
+      {
+        "name": "Teen Supers",
+        "text": "At tier 1, you have three power shifts . At tiers 2 and 4, you gain a power shift, which you can apply to one type or focus ability. If the ability inflicts damage, choose to dedicate the power shift to easing the attack task, or increasing damage inflicted by 3."
+      },
+      {
+        "name": "Potent Bloodlines",
+        "text": "At tier 1, you have three power shifts . At tiers 2, 4, and 6, you gain another power shift."
+      },
+      {
+        "name": "Mastery",
+        "text": "You can gain a power shift by completing an appropriate character arc . You can't gain a number of power shifts greater than your tier."
+      },
+      {
+        "name": "XP Purchase",
+        "text": "You can spend 10 XP to gain one power shift, up to a number equal to your tier."
+      },
+      {
+        "name": "Beyond Tier 6",
+        "text": "You can gain power shifts as described under Advancing Beyond Tier 6 ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-power-shifts-after-character-creation",
+    "name": "Optional Rule: Gaining Superpowers After Character Creation",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Gaining superpowers can be part of any campaign with fantastic elements. It can be permanent, or temporary. In fact, it's not necessary for every PC in the group to have anywhere near the same number ofpower shifts. If a PC gains superpowers in the course of the story, the GM can use these rules. If you enjoy this rules module, consider purchasingThe Origin.",
+    "bullets": [
+      {
+        "name": "Super-Focus",
+        "text": "If a modern PC with a mundane focus gains superpowers, the nature of their new powers can be realized by choosing a \"super-focus\" in one of the following ways: Become Super. The PC makes their existing focus \"super\". The GM should allow them choose at least one low-tier ability from Chapter 9: Abilities to help complete their superpower package. Second Focus. The PC gains a second super- focus . Any power shifts gained can't be applied to their first focus, and when they advance to a new tier, only the second super-focus provides new abilities to the PC. Fantastic Transformations. The PC assumes a completely different identity when their superpowers are active. Use the optional rules for Fantastic Transformations ."
+      },
+      {
+        "name": "",
+        "text": "Become Super. The PC makes their existing focus \"super\". The GM should allow them choose at least one low-tier ability from Chapter 9: Abilities to help complete their superpower package."
+      },
+      {
+        "name": "",
+        "text": "Second Focus. The PC gains a second super- focus . Any power shifts gained can't be applied to their first focus, and when they advance to a new tier, only the second super-focus provides new abilities to the PC."
+      },
+      {
+        "name": "",
+        "text": "Fantastic Transformations. The PC assumes a completely different identity when their superpowers are active. Use the optional rules for Fantastic Transformations ."
+      },
+      {
+        "name": "GM-Assigned or Player-Chosen Power Shifts",
+        "text": "The GM assigns the PC a number of power shifts , as described under Power Shifts in Other Genres . The GM might also decide how some or all of the PC's power shifts are assigned, allow the player to choose what to do with their power shifts, or leave matters up to a roll of the die."
+      },
+      {
+        "name": "Mastering New Powers",
+        "text": "Learning to use superpowers can be tricky. Until PCs complete a character arc like Learn , the GM might assign the PC an inability when using their fledgling powers, or raise the GM intrusion rate for the PC. GM intrusions might take the form of accidental or uncontrollable manifestation of superpowers."
+      },
+      {
+        "name": "Other Changes",
+        "text": "Gaining powers might cause other dramatic changes in a PC. Most begin a new character arc , but some might change their descriptor , type , or gain a flavor ."
+      },
+      {
+        "name": "Supers Gain an XP Advance",
+        "text": "To set increase the baseline between PCs with and without superpowers even further, use the optional starting at tier 0 rules for normal PCs, and use the optional XP Advance or starting just past tier 1 rules for superpowered PCs."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-fantastic-transformations",
+    "name": "Optional Rule: Fantastic Transformations",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "These optional rules allow GMs to create dramatic tension by giving PCs a weaker,mundane form, and a second, dramatically more powerfulfantastic form. These PCs might lead a double life, and be pushed to their limits to maintain a balance between their normal life and their fantastic exploits—as the two worlds inevitably collide or otherwise come into conflict. If you enjoy this rules module, consider purchasingUnmasked. GMs and players should establish the nature or source of the transformations, and come up with a good description of each PC's transformation. Possible themes for fantastic forms include: To accomplish this, create character sheets for each form as follows: First, create your mundane form. This is probably how you spend most of your time, and what most people would consider your \"real life\"—going to school or work, maintainingrelationshipswith friends, family, or loved ones, and dealing with day-to-day happenings. When your transform, you become a far more powerful being. Assuming your fantastic form usually requires anaction, but the GM might set additional requirements, including (but not limited to) some combination of the following: Fantastic forms start out as standard tier 1 PC, and gaincharacter advancementsby spending 4XP. The GM decides which character options are available to PCs' fantastic forms, as outlined in theCampaign Design Checklist—some settings will need to be more restrictive than others.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "off-beat superheroes"
+      },
+      {
+        "name": "",
+        "text": "henshin heroes and magical girls"
+      },
+      {
+        "name": "",
+        "text": "werewolves"
+      },
+      {
+        "name": "",
+        "text": "divine, demonic, or eldritch possession"
+      },
+      {
+        "name": "Starting Pools",
+        "text": "Your Might , Speed or Intellect Pools have 6 points each. You get 2 additional points to divide among your stat Pools however you wish."
+      },
+      {
+        "name": "Descriptor",
+        "text": "Choose a descriptor . Some descriptors—for example, Mystical —might not be appropriate for mundane forms."
+      },
+      {
+        "name": "Skills",
+        "text": "Choose three skills (other than attacks or defense) appropriate to the setting."
+      },
+      {
+        "name": "Background",
+        "text": "Add a background connection you have to the setting."
+      },
+      {
+        "name": "Minimized Advancement",
+        "text": "To best preserve the dramatic tension between your mundane life and fantastic forms , your mundane form doesn't gain character advancements or reach new tiers. The GM might make occasional exceptions, for example, as a reward for the completion of a significant character arc . Each time your mundane form advances, you must choose a different option. Examples of mundane form advancements include: Pools. You gain 4 additional points to divide among your stat Pools however you wish. Effort. You have an Effort score of 1. Edge. You increase your Might , Speed or Intellect Edge to 1. Focus. You gain the tier 1 abilities from a mundane focus ."
+      },
+      {
+        "name": "",
+        "text": "Pools. You gain 4 additional points to divide among your stat Pools however you wish."
+      },
+      {
+        "name": "",
+        "text": "Effort. You have an Effort score of 1."
+      },
+      {
+        "name": "",
+        "text": "Edge. You increase your Might , Speed or Intellect Edge to 1."
+      },
+      {
+        "name": "",
+        "text": "Focus. You gain the tier 1 abilities from a mundane focus ."
+      },
+      {
+        "name": "",
+        "text": "activate an artifact"
+      },
+      {
+        "name": "",
+        "text": "speak aloud an incantation, invocation, or oath"
+      },
+      {
+        "name": "",
+        "text": "make a specific set of complex motions"
+      },
+      {
+        "name": "",
+        "text": "perform a brief ritual"
+      },
+      {
+        "name": "",
+        "text": "move to another plane of existence"
+      },
+      {
+        "name": "",
+        "text": "fall asleep and begin to dream"
+      },
+      {
+        "name": "",
+        "text": "log onto a virtual reality where the PC's fantastic adventures take place"
+      },
+      {
+        "name": "",
+        "text": "involuntarily triggered by heightened emotional states, stress, or other specific circumstances—preferably something that is a good source of GM intrusion —on a failed Intellect defense roll , the transformation takes hold"
+      },
+      {
+        "name": "Descriptor",
+        "text": "Choose a descriptor . It can be the as your mundane form 's descriptor, but some transformations involve substantial changes in stature or personality."
+      },
+      {
+        "name": "Type",
+        "text": "Choose a type (and perhaps a flavor )."
+      },
+      {
+        "name": "Focus",
+        "text": "Choose a focus ."
+      },
+      {
+        "name": "Other Options",
+        "text": "The GM might also assign your fantastic form a number of power shifts (as described under Power Shifts in Other Genres ) or make use of other optional rules ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-fantastic-transformations-mundane",
+    "name": "Mundane Form",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "First, create your mundane form. This is probably how you spend most of your time, and what most people would consider your \"real life\"—going to school or work, maintainingrelationshipswith friends, family, or loved ones, and dealing with day-to-day happenings.",
+    "bullets": [
+      {
+        "name": "Starting Pools",
+        "text": "Your Might , Speed or Intellect Pools have 6 points each. You get 2 additional points to divide among your stat Pools however you wish."
+      },
+      {
+        "name": "Descriptor",
+        "text": "Choose a descriptor . Some descriptors—for example, Mystical —might not be appropriate for mundane forms."
+      },
+      {
+        "name": "Skills",
+        "text": "Choose three skills (other than attacks or defense) appropriate to the setting."
+      },
+      {
+        "name": "Background",
+        "text": "Add a background connection you have to the setting."
+      },
+      {
+        "name": "Minimized Advancement",
+        "text": "To best preserve the dramatic tension between your mundane life and fantastic forms , your mundane form doesn't gain character advancements or reach new tiers. The GM might make occasional exceptions, for example, as a reward for the completion of a significant character arc . Each time your mundane form advances, you must choose a different option. Examples of mundane form advancements include: Pools. You gain 4 additional points to divide among your stat Pools however you wish. Effort. You have an Effort score of 1. Edge. You increase your Might , Speed or Intellect Edge to 1. Focus. You gain the tier 1 abilities from a mundane focus ."
+      },
+      {
+        "name": "",
+        "text": "Pools. You gain 4 additional points to divide among your stat Pools however you wish."
+      },
+      {
+        "name": "",
+        "text": "Effort. You have an Effort score of 1."
+      },
+      {
+        "name": "",
+        "text": "Edge. You increase your Might , Speed or Intellect Edge to 1."
+      },
+      {
+        "name": "",
+        "text": "Focus. You gain the tier 1 abilities from a mundane focus ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-fantastic-transformations-fantastic",
+    "name": "Fantastic Form",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "When your transform, you become a far more powerful being. Assuming your fantastic form usually requires anaction, but the GM might set additional requirements, including (but not limited to) some combination of the following: Fantastic forms start out as standard tier 1 PC, and gaincharacter advancementsby spending 4XP. The GM decides which character options are available to PCs' fantastic forms, as outlined in theCampaign Design Checklist—some settings will need to be more restrictive than others.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "activate an artifact"
+      },
+      {
+        "name": "",
+        "text": "speak aloud an incantation, invocation, or oath"
+      },
+      {
+        "name": "",
+        "text": "make a specific set of complex motions"
+      },
+      {
+        "name": "",
+        "text": "perform a brief ritual"
+      },
+      {
+        "name": "",
+        "text": "move to another plane of existence"
+      },
+      {
+        "name": "",
+        "text": "fall asleep and begin to dream"
+      },
+      {
+        "name": "",
+        "text": "log onto a virtual reality where the PC's fantastic adventures take place"
+      },
+      {
+        "name": "",
+        "text": "involuntarily triggered by heightened emotional states, stress, or other specific circumstances—preferably something that is a good source of GM intrusion —on a failed Intellect defense roll , the transformation takes hold"
+      },
+      {
+        "name": "Descriptor",
+        "text": "Choose a descriptor . It can be the as your mundane form 's descriptor, but some transformations involve substantial changes in stature or personality."
+      },
+      {
+        "name": "Type",
+        "text": "Choose a type (and perhaps a flavor )."
+      },
+      {
+        "name": "Focus",
+        "text": "Choose a focus ."
+      },
+      {
+        "name": "Other Options",
+        "text": "The GM might also assign your fantastic form a number of power shifts (as described under Power Shifts in Other Genres ) or make use of other optional rules ."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-transitory-mutations",
+    "name": "Optional Rule: Transitory Mutations",
+    "source": "(Rust and Redemption, page 75)",
+    "text": "Use this optional rule if you'd prefer some flux in what mutations the PCs have available. A volatile mutation is one that mutates into something different over time. When using this rule, a volatile mutation arises spontaneously or is triggered, replacing the specific benefit (or drawback) of the volatile mutation previously granted to the PC. You can use this optional rule instead of the mutant descriptor optional rule, or allow both in the same game. If using transitory mutations, not every PC in your game needs to have a volatile mutation. Volatile Mutations:A character can begin the game with one volatile mutation that changes during play, onedistinctive mutationthat usually does not change, and, at their option, one or twocosmetic mutations. Alternatively, the PC could gain a volatile mutation (and one distinctive mutation) after their first encounter withradiationor some other mutagenic agent. Additional encounters with radiation don't give a PC further volatile mutations but could cause the one they have to mutate into something else. If the PC gains a volatile mutation, roll randomly on theBeneficial Mutationstable. That mutation lasts until a triggering event occurs, at which time their volatile mutation is replaced, as indicated. A character normally cannot trigger replacement simply by willing it to occur, but they could choose to fail theIntellectdefense rollthat some triggers require to maintain their current volatile mutation. Adjusting the Volatility:Choose which triggering events apply to determine how volatile you'd like transitory mutations to be in your setting. For instance, if you prefer that volatile mutations change only when PCs encounterradiation, choose that option and ignore the others. Alternatively, you might prefer more variability and use most or even all the triggering events noted. Cyphers as Volatile Mutations:If a character has volatile mutations, one way to handle it is to give them an additional subtle cypher slot, and their volatile mutation is whatever subtle cypher is in that slot. A character can begin the game with one cypher volatile mutation that changes during play (or gain it after surviving radiation damage) and one distinctive mutation that usually does not change, plus—at their option—one or two cosmetic mutations. A cypher volatile mutation operates almost entirely like regular volatile mutations, except as follows.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "The character finishes a ten-hour recovery ; replace with a randomly rolled beneficial mutation ."
+      },
+      {
+        "name": "",
+        "text": "A character takes damage for the first time in ten hours and fails a difficulty 3 Intellect defense roll ; replace with a randomly rolled beneficial mutation , assuming the character's roll isn't a 1, 19, or 20."
+      },
+      {
+        "name": "",
+        "text": "The character triggers or receives a GM intrusion ; replace with a random roll on the Harmful Mutations table."
+      },
+      {
+        "name": "",
+        "text": "The character gains a minor effect on a d20 roll and decides the effect is that their volatile mutation changes; replace with two randomly rolled beneficial mutations . Both are replaced the next time the character gains a new volatile mutation."
+      },
+      {
+        "name": "",
+        "text": "The character gains a major effect on a d20 roll and decides the effect is that their volatile mutation changes; replace with a random result from the Powerful Mutations table. It is replaced the next time the character gains a new volatile mutation."
+      },
+      {
+        "name": "",
+        "text": "The character takes damage from radiation (or other established mutagen in your setting) for the first time in ten hours and fails an Intellect defense roll against a difficulty equal to the attack; replace with a randomly rolled beneficial mutations , assuming the character's roll isn't a 1, 19, or 20."
+      },
+      {
+        "name": "",
+        "text": "Any random roll on the Beneficial Mutations table should instead be a random roll on the Subtle Cypher table. That includes the two rolls granted to PCs who use a special minor effect to replace their volatile mutation's effect."
+      },
+      {
+        "name": "",
+        "text": "A roll of 1 still replaces the PC's volatile mutation with a randomly rolled harmful mutation ."
+      },
+      {
+        "name": "",
+        "text": "A roll of 20 still replaces the PC's volatile mutation with a randomly rolled powerful mutation ."
+      },
+      {
+        "name": "",
+        "text": "A cypher volatile mutation can be used more than once before it is replaced, but each additional attempt to use it requires that the character succeed on an Intellect task. The difficulty of the task begins at the level of the cypher and increases by one step each additional time the character attempts to reuse the mutation. On a failed roll, the mutation is replaced."
+      },
+      {
+        "name": "",
+        "text": "When the cypher volatile mutation is replaced, roll the level for the new mutation."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-i-have-that",
+    "name": "Optional Rule: I Have That!",
+    "source": "(We Are All Mad Here, page 71)",
+    "text": "In fairy tales, characters often have exactly the right mundane piece of equipment that they need to bypass a story-related obstacle hidden away in a pocket or a bag. Rather than having the PCs stock up on mundane items like marbles, rope, and breadcrumbs in town, use theI Have That!rule. This means players don't have to keep exact track of their characters' mundane equipment; instead, they spend an amount to get an unspecified \"Pocket Item\" in that category. Then, when they're out in the world and realize they could solve a problem with an item, they can just say, \"I have that!\" and pull it from their pocket. All Pocket Items are one-use only; after using them, the PC marks off one of their Pocket Items for the appropriateprice category. Most Pocket Items are inexpensive, but moderate and expensive Pocket Items exist, and are likely more useful than their less expensive counterparts. The GM has veto power over items that they don't think you could have found or carried.",
+    "bullets": [
+      {
+        "name": "",
+        "text": "Apple"
+      },
+      {
+        "name": "",
+        "text": "Ashes (handful)"
+      },
+      {
+        "name": "",
+        "text": "Breadcrumbs"
+      },
+      {
+        "name": "",
+        "text": "Butter"
+      },
+      {
+        "name": "",
+        "text": "Candy"
+      },
+      {
+        "name": "",
+        "text": "Chalk"
+      },
+      {
+        "name": "",
+        "text": "Cricket in a cage"
+      },
+      {
+        "name": "",
+        "text": "Cup"
+      },
+      {
+        "name": "",
+        "text": "Egg"
+      },
+      {
+        "name": "",
+        "text": "Fabric"
+      },
+      {
+        "name": "",
+        "text": "Flyswatter"
+      },
+      {
+        "name": "",
+        "text": "Glass jar"
+      },
+      {
+        "name": "",
+        "text": "Glue"
+      },
+      {
+        "name": "",
+        "text": "Honey"
+      },
+      {
+        "name": "",
+        "text": "Leather"
+      },
+      {
+        "name": "",
+        "text": "Magnets"
+      },
+      {
+        "name": "",
+        "text": "Marbles"
+      },
+      {
+        "name": "",
+        "text": "Nails"
+      },
+      {
+        "name": "",
+        "text": "Needle and thread"
+      },
+      {
+        "name": "",
+        "text": "Paper"
+      },
+      {
+        "name": "",
+        "text": "Plait of hair"
+      },
+      {
+        "name": "",
+        "text": "Pot of fat"
+      },
+      {
+        "name": "",
+        "text": "Pot of grease"
+      },
+      {
+        "name": "",
+        "text": "Ribbon"
+      },
+      {
+        "name": "",
+        "text": "Rice (handful)"
+      },
+      {
+        "name": "",
+        "text": "Straw"
+      },
+      {
+        "name": "",
+        "text": "Tacks"
+      },
+      {
+        "name": "",
+        "text": "Wax"
+      },
+      {
+        "name": "",
+        "text": "Wool"
+      },
+      {
+        "name": "",
+        "text": "Bird in a cage"
+      },
+      {
+        "name": "",
+        "text": "Sewing shears"
+      },
+      {
+        "name": "",
+        "text": "Thimble"
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-exceeding-cypher-limits",
+    "name": "Optional Rule: Exceeding Cypher Limits",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "PCs increase the theircypher limitthrough a suite ofspecial abilitiesthey gain access from theirtypeat certain tiers—Expert Cypher Use,Adroit Cypher Use, andMaster Cypher Use. There are also a number ofabilities related to cyphers, for example: In some settings, there might be an explanation for thecypher limit, for example, unstable interactions between magic or high technology. Here are a few different ways a GM might handle a PC exceeding their cypher limit:",
+    "bullets": [
+      {
+        "name": "",
+        "text": "Extra Use allows for the possibility of holding onto a cypher after using it."
+      },
+      {
+        "name": "",
+        "text": "Tier 6 Adepts can choose the Usurp Cypher ability to make a cypher a permanent part of their repertoire."
+      },
+      {
+        "name": "",
+        "text": "The Uses Wild Magic focus allows a PC to bear additional subtle cyphers ."
+      },
+      {
+        "name": "Dampening",
+        "text": "All a PC's tasks are hindered by a number of steps equal to the number of cyphers they carry in excess of their limit. For example, a PC with a cypher limit of 3 carrying 5 cyphers would have all their tasks hindered by two steps."
+      },
+      {
+        "name": "Maintenance",
+        "text": "A PC gaining a cypher in excess of their limit must succeed on an Intellect task. The difficulty of the task is the number of cyphers in excess of the PC's limit they intend to bear, plus the level of the highest level cypher they intend to bear. For example, a tier 2 PC with a cypher limit of 2 attempting to gain a third level 4 cypher would need to succeed on a difficulty 5 Intellect task. On a failure, one of the cyphers is lost (determined randomly). Optionally, the GM might require the PC repeat the task the once each day, once each hour, or in addition to any other effects triggered by a GM intrusion ."
+      },
+      {
+        "name": "Volatility",
+        "text": "The PC's GM intrusion rate is raised by 1 for each cypher they bear in excess of their limit. In addition to any other effects of the intrusion, the player loses one random cypher they bear. For example, a PC with a cypher limit of 2 who is bearing 4 cyphers would trigger a GM intrusion on a d20 roll of 1–3. Such GM intrusions cause one random cypher the PC bears to produce volatile effects:"
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-transferring-subtle-cyphers",
+    "name": "Optional Rule: Transferring Subtle Cyphers",
+    "source": "(Rust and Redemption, page 132)",
+    "text": "A PC with a subtle cypher can use it on an ally they can touch and speak with as their action instead of gaining the effect themself. They manage this feat by motivating the recipient through speech and interaction, effectively inspiring the recipient in the same way the subtle cypher would have affected the character with the cypher. This uses the action of the character activating the cypher, not the recipient.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-normal-cyphers-duplicating-fantastic-effects",
+    "name": "Optional Rule: Normal Cyphers Duplicating Fantastic Effects",
+    "source": "(Cypher System Rulebook, page 381)",
+    "text": "If the GM and players are willing to stretch their imaginations a bit, it's possible to include some fantastic cypher effects in a game where only normal cypher effects should exist, even if the PCs are only using subtle cyphers. The player using the cypher just needs to come up with a practical, realistic explanation for how the fantastic result occurred (perhaps with a much shorter or reduced effect than what's described in the cypher text). For example, a PC with aphase changerwho is trapped in a prison cell could say that instead of physically phasing through the wall, using the cypher means they find a long-forgotten secret door connected to a narrow hallway leading to safety. A PC with afire detonationcould say they notice a can of paint thinner in the room, kick it over, and throw a table lamp into the spill, creating a spark and a momentary burst of harmful flames. A PC with amonobladecould say they spot structural flaws in an opponent's armor, allowing them to attack for the rest of that combat in such a way that the foe's Armor doesn't count. These interpretations of fantastic cyphers in a non-fantastic setting require player ingenuity and GM willingness to embrace creative solutions (similar to players usingplayer intrusionsto make a change in the game world). The GM always has the right to veto the explanation for the fantastic effect, allowing the player to choose a different action instead of using the fantastic cypher.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-separate-reroll-and-gm-intrusion-refusal-costs",
+    "name": "Optional Rule: Separate Reroll and GM Intrusion Refusal Costs",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this optional rule, the 1XPcosts forrerolling the dieand avoiding aGM intrusiontriggered by aspecial rollare treated as separate expenditures. Possible outcomes of this include:",
+    "bullets": [
+      {
+        "name": "",
+        "text": "If a player decides to keep the GM intrusion, but pays 1 XP to reroll the die and succeeds, the GM intrusion still complicates the situation."
+      },
+      {
+        "name": "",
+        "text": "If the PC pays 1 XP to avoid the GM intrusion but keeps the roll, the outcome is that of a normal unsuccessful roll."
+      },
+      {
+        "name": "",
+        "text": "If a PC pays 2 XP, they avoid the GM intrusion and make another roll."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-trading-success-for-gm-intrusion",
+    "name": "Optional Rule: Trading Success for GM Intrusion",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "Using this optional rule, if a PC fails a task by only 1 difficulty level (3 or fewer on the d20 roll), they can choose to succeed instead, but the GM makes a freeGM intrusion.",
+    "bullets": []
+  },
+  {
+    "id": "optional-rule-effort-for-npcs",
+    "name": "Optional Rule: Effort for NPCs",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "This section is basedOptional Rule: Effort for NPCsby Monte Cooke. In addition toGM intrusion, this rule provides the GM with a way to allowNPCs,creatures, orfollowersto useEffortjust like PCs. An NPC using Effort on an action temporarily increases their effective level. Insituations that don't involve PCs, Effort allows an NPC to rise to the occasion in a daringcombat between NPCs, or to succeed at a particularly daunting task. However, becausethe player always rolls, NPCs using Effort can affect the difficulty of the PC's roll: In addition tohealth and other modifications, assigning how much Effort an NPC can use and how they use it is a great way to create dynamic individualized NPCs. The GM might assign a different types and levels of Effort for different NPCs. When assigning Effort to an NPC, the GM should consider the following options:",
+    "bullets": [
+      {
+        "name": "",
+        "text": "If an NPC uses a level of Effort to defend themselves, the PC's attack is hindered."
+      },
+      {
+        "name": "",
+        "text": "If an NPC uses a level of Effort ease an attack or special ability, the PC's defense roll against it is hindered."
+      },
+      {
+        "name": "",
+        "text": "If an NPC uses a level of Effort to increase damage and the PC fails their defense roll, the amount of damage inflicted is increased by 3—or by 2, if it was an area attack ."
+      },
+      {
+        "name": "Effort from Health",
+        "text": "Some NPCs can spend 1 health point to use one level of Effort. This is a major expense to a level 2 NPC, but a not a big deal to a level 6 NPC. This option is easy to account for, since health is already defined in the creature's listing."
+      },
+      {
+        "name": "Effort from Level",
+        "text": "Some NPCs can use one level Effort a number of times equal to their level. This is a little trickier, requiring the GM to keep track of the NPC's available Effort. However, it might be a better method for followers the PC accounts for."
+      },
+      {
+        "name": "Multiple Levels of Effort",
+        "text": "A few NPCs might be able to use multiple levels Effort. An NPC can't use a number of levels of Effort that exceeds their level, nor can they exceed the six-step limit for easing a task."
+      },
+      {
+        "name": "Recovering Effort",
+        "text": "Persistent NPCs and followers should regain their ability to use of Effort, after a length of time determined by the GM."
+      },
+      {
+        "name": "Berserker Clan",
+        "text": "The GM creates a tribe of raging level 3 berserkers with Effort from Health . Most of the berserkers can only spend one level of Effort at a time, but the GM allows the chieftain to spend up to three levels of Effort, spending 1 health point for each level of Effort she uses. This allows the chieftain to threaten the party's heavily armored warrior with deadly accuracy and damage. The GM also assigns the chieftain additional health for her spend her Effort from."
+      },
+      {
+        "name": "Werewolf Pack",
+        "text": "The GM creates a pack of level 4 werewolves with Effort from Level and Multiple Levels of Effort . Each werewolf might use their four levels of Effort differently: one level of Effort four times, two levels of Effort twice, or four levels of Effort just once (or some other combination). The point is that where, when, and how each werewolf uses their Effort becomes a source of drama within the story."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-effort-for-npcs-assigning",
+    "name": "Assigning Effort to NPCs",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "In addition tohealth and other modifications, assigning how much Effort an NPC can use and how they use it is a great way to create dynamic individualized NPCs. The GM might assign a different types and levels of Effort for different NPCs. When assigning Effort to an NPC, the GM should consider the following options:",
+    "bullets": [
+      {
+        "name": "Effort from Health",
+        "text": "Some NPCs can spend 1 health point to use one level of Effort. This is a major expense to a level 2 NPC, but a not a big deal to a level 6 NPC. This option is easy to account for, since health is already defined in the creature's listing."
+      },
+      {
+        "name": "Effort from Level",
+        "text": "Some NPCs can use one level Effort a number of times equal to their level. This is a little trickier, requiring the GM to keep track of the NPC's available Effort. However, it might be a better method for followers the PC accounts for."
+      },
+      {
+        "name": "Multiple Levels of Effort",
+        "text": "A few NPCs might be able to use multiple levels Effort. An NPC can't use a number of levels of Effort that exceeds their level, nor can they exceed the six-step limit for easing a task."
+      },
+      {
+        "name": "Recovering Effort",
+        "text": "Persistent NPCs and followers should regain their ability to use of Effort, after a length of time determined by the GM."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-effort-for-npcs-example-npcs",
+    "name": "Example NPCs with Effort",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "",
+    "bullets": [
+      {
+        "name": "Berserker Clan",
+        "text": "The GM creates a tribe of raging level 3 berserkers with Effort from Health . Most of the berserkers can only spend one level of Effort at a time, but the GM allows the chieftain to spend up to three levels of Effort, spending 1 health point for each level of Effort she uses. This allows the chieftain to threaten the party's heavily armored warrior with deadly accuracy and damage. The GM also assigns the chieftain additional health for her spend her Effort from."
+      },
+      {
+        "name": "Werewolf Pack",
+        "text": "The GM creates a pack of level 4 werewolves with Effort from Level and Multiple Levels of Effort . Each werewolf might use their four levels of Effort differently: one level of Effort four times, two levels of Effort twice, or four levels of Effort just once (or some other combination). The point is that where, when, and how each werewolf uses their Effort becomes a source of drama within the story."
+      }
+    ]
+  },
+  {
+    "id": "optional-rule-creatures-with-multiple-parts",
+    "name": "Optional Rule: Creatures with Multiple Parts",
+    "source": "(OG-CSRD Editorial Addition)",
+    "text": "It's a simple trick to use aGM intrusionto change one creature into another—for example, aGoblingaining drinking a potion that causes it to become anOrcwith theBeefed Uptemplate, or a dyingChildrevealing its true form as host to aDemon, but you can also create a single, powerful creature made up of smaller parts, each with its ownmodificationsand capable of performing anactioneach round. For example, a kraken might have a number of specialized tentacles that need to be driven off individually. In another example, an ancient wyrm might use multiple creatures to represent its many heads, wings, claws, and tail. Creatures with multiple parts don't typically die if one of their parts is reduced to 0 health, but that part can't take actions or be used, for example, a wyrm whose wings are reduced to 0 health might not be able to fly. You could also design creatures with a well-defended but vulnerable points that hinders Attack rolls, but if reduced to 0 health, causes the creature's remaining parts to die.",
+    "bullets": []
+  }
+]

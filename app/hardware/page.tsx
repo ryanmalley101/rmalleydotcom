@@ -18,8 +18,8 @@ export default function HardwarePage() {
         </Button>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-          <Cpu size={32} color="#5A8C5A" />
-          <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "primary.dark" }}>
+          <Cpu size={32} color="#22d3ee" />
+          <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "text.primary" }}>
             Hardware
           </Typography>
         </Box>

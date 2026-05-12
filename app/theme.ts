@@ -1,30 +1,55 @@
-// src/theme.ts
+import { createTheme } from '@mui/material/styles';
 
-import { createTheme, ThemeOptions } from '@mui/material/styles';
-
-// Your theme options
-export const themeOptions: ThemeOptions = {
+const theme = createTheme({
   palette: {
-    // NOTE: 'type' is deprecated in MUI v5 and later.
-    // If you are using MUI v5+, you might omit it or use mode: 'light'.
-    mode: 'light', // Use 'mode' instead of 'type' for MUI v5+
+    mode: 'dark',
     primary: {
-      main: '#887569',
-      light: 'rgba(190, 178, 170, 1)',
-      dark: 'rgb(95, 81, 73)'
+      main:  '#818cf8',  // indigo-400 — links, back buttons, chips
+      light: '#c7d2fe',  // indigo-200 — hover states
+      dark:  '#6366f1',  // indigo-500 — button fills, section headings
     },
     secondary: {
-      main: '#E1E8E0',
+      main: '#22d3ee',   // cyan — hardware accent
     },
     background: {
-      default: '#F1EEE7',
-      paper: '#d5b59c',
+      default: '#0f1117',
+      paper:   '#1a1d27',
+    },
+    text: {
+      primary:   '#f1f5f9',  // slate-100
+      secondary: '#94a3b8',  // slate-400
+      disabled:  '#475569',  // slate-600
+    },
+    divider: 'rgba(255,255,255,0.08)',
+    error: {
+      main: '#f87171',   // red-400
+    },
+    success: {
+      main: '#4ade80',   // green-400
+    },
+    warning: {
+      main: '#fbbf24',   // amber-400
+    },
+    info: {
+      main: '#38bdf8',   // sky-400
     },
   },
-  // Add other options like typography, components, etc., here
-};
-
-// Create the theme instance
-const theme = createTheme(themeOptions);
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: 'rgba(255,255,255,0.08)',
+        },
+      },
+    },
+  },
+});
 
 export default theme;
