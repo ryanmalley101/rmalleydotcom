@@ -1,41 +1,33 @@
 "use client";
 
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardActionArea,
-  CardContent,
-  Grid,
-} from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import Link from "next/link";
 import { Code2, Cpu, Sword } from "lucide-react";
 
 const categories = [
   {
     title: "Software",
-    description:
-      "Web applications, tools, and programming projects.",
+    meta: "TypeScript · Next.js · Python",
+    description: "Web applications, tools, and programming projects.",
     icon: Code2,
     href: "/software",
-    accent: "#4A7C9E",
+    accent: "#6366f1",
   },
   {
     title: "Hardware",
-    description:
-      "Electronics, embedded systems, and physical builds.",
+    meta: "C / C++ · RTOS · PCB design",
+    description: "Electronics, embedded systems, and physical builds.",
     icon: Cpu,
     href: "/hardware",
-    accent: "#5A8C5A",
+    accent: "#22d3ee",
   },
   {
     title: "Tabletop",
-    description:
-      "D&D tools, monster creators, and tabletop game aids.",
+    meta: "D&D 5e · React · game systems",
+    description: "D&D tools, monster creators, and tabletop game aids.",
     icon: Sword,
     href: "/tabletop",
-    accent: "#8C5A3A",
+    accent: "#f59e0b",
   },
 ];
 
@@ -46,97 +38,113 @@ export default function HomePage() {
         minHeight: "100vh",
         backgroundColor: "background.default",
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
+        alignItems: "center",
         py: 8,
       }}
     >
       <Container maxWidth="md">
-        {/* Hero */}
-        <Box sx={{ textAlign: "center", mb: 8 }}>
-          <Typography
-            variant="h2"
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              color: "primary.dark",
-              letterSpacing: "-0.02em",
-              mb: 1.5,
-            }}
-          >
-            Ryan Malley
-          </Typography>
-          <Typography
-            variant="h6"
-            sx={{ color: "primary.main", fontWeight: 400 }}
-          >
-            Projects &amp; Work
+        {/* Available badge */}
+        <Box
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 1,
+            mb: 4,
+            px: 1.5,
+            py: 0.5,
+            borderRadius: 10,
+            border: "1px solid rgba(99,102,241,0.25)",
+            backgroundColor: "rgba(99,102,241,0.08)",
+          }}
+        >
+          <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#22c55e", flexShrink: 0 }} />
+          <Typography sx={{ fontSize: "0.75rem", color: "#a5b4fc", letterSpacing: 0.5 }}>
+            Open to contract work
           </Typography>
         </Box>
 
+        {/* Name */}
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            fontWeight: 800,
+            color: "text.primary",
+            letterSpacing: "-0.03em",
+            lineHeight: 1.05,
+            mb: 1.5,
+          }}
+        >
+          Ryan Malley
+        </Typography>
+
+        {/* Role */}
+        <Typography
+          variant="h6"
+          sx={{ color: "primary.main", fontWeight: 600, mb: 2, letterSpacing: 0.2 }}
+        >
+          Software Engineer
+        </Typography>
+
+        {/* Bio */}
+        <Typography
+          variant="body1"
+          sx={{ color: "text.secondary", mb: 6, maxWidth: 460, lineHeight: 1.75 }}
+        >
+          I build web tools, embedded systems, and tabletop RPG aids.
+          This is where I keep the things I&apos;ve made.
+        </Typography>
+
         {/* Category cards */}
-        <Grid container spacing={3} justifyContent="center">
-          {categories.map(({ title, description, icon: Icon, href, accent }) => (
-            <Grid size={{ xs: 12, sm: 4 }} key={title}>
-              <Card
-                elevation={2}
+        <Box sx={{ display: "flex", gap: 2.5, flexWrap: "wrap" }}>
+          {categories.map(({ title, meta, description, icon: Icon, href, accent }) => (
+            <Box
+              key={title}
+              component={Link}
+              href={href}
+              sx={{
+                flex: "1 1 180px",
+                backgroundColor: "background.paper",
+                border: "1px solid rgba(255,255,255,0.06)",
+                borderTop: `3px solid ${accent}`,
+                borderRadius: "0 0 10px 10px",
+                p: 2.5,
+                textDecoration: "none",
+                transition: "background-color 0.15s, box-shadow 0.15s",
+                "&:hover": {
+                  backgroundColor: "#222535",
+                  boxShadow: `0 8px 28px ${accent}22`,
+                },
+              }}
+            >
+              <Box sx={{ mb: 1.5 }}>
+                <Icon size={20} color={accent} />
+              </Box>
+              <Typography
+                sx={{ fontWeight: 700, fontSize: "0.95rem", color: "text.primary", mb: 0.5 }}
+              >
+                {title}
+              </Typography>
+              <Typography
                 sx={{
-                  height: "100%",
-                  backgroundColor: "background.paper",
-                  transition: "transform 0.15s, box-shadow 0.15s",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: 6,
-                  },
+                  fontSize: "0.7rem",
+                  color: "text.disabled",
+                  fontFamily: "monospace",
+                  mb: 1.5,
+                  letterSpacing: 0.2,
                 }}
               >
-                <CardActionArea
-                  component={Link}
-                  href={href}
-                  sx={{ height: "100%", p: 1 }}
-                >
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      textAlign: "center",
-                      gap: 2,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: "50%",
-                        backgroundColor: accent,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Icon size={28} color="#fff" />
-                    </Box>
-                    <Typography
-                      variant="h5"
-                      component="h2"
-                      sx={{ fontWeight: 600, color: "primary.dark" }}
-                    >
-                      {title}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
+                {meta}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ color: "text.secondary", fontSize: "0.8rem", lineHeight: 1.55 }}
+              >
+                {description}
+              </Typography>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </Container>
     </Box>
   );

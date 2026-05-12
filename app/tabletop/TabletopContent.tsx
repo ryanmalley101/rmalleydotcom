@@ -175,6 +175,22 @@ export default function TabletopContent({ encounterTables }: Props) {
                     </Typography>
                 </Box>
 
+                {/* Cypher System SRD */}
+                <Box sx={{ mb: 5 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+                        <BookOpen size={22} color="#8C5A3A" />
+                        <Typography variant="h5" component={Link} href="/tabletop/cypher" sx={{
+                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
+                            "&:hover": { textDecoration: "underline" },
+                        }}>
+                            Cypher System SRD
+                        </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                        Searchable Cypher System Reference Document — abilities, creatures, cyphers, descriptors, foci, and more.
+                    </Typography>
+                </Box>
+
                 {/* Random Encounter Tables */}
                 <Box>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>

@@ -1,0 +1,1224 @@
+[
+  {
+    "id": "arc-aid-a-friend",
+    "name": "Aid a Friend",
+    "source": "(Cypher System Rulebook, page 242)",
+    "description": "Someone needs your help.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Answering the Call. Offering to help (or responding to a request for help)."
+      },
+      {
+        "name": "Step(s) and Climax",
+        "text": "Depends on the friend's arc. Rewards are the same for you as for the friend."
+      },
+      {
+        "name": "Resolution",
+        "text": "You speak with your friend and learn if they are satisfied. Together, you share what you've learned (if anything) and where you will go from here."
+      }
+    ],
+    "notes": [
+      "When a PC friend takes a character arc, you can select this arc to help them with whatever their arc is (if appropriate). The steps and climax depend entirely on their chosen arc. If the friend is an NPC, the steps and climax are lifted from another arc appropriate to whatever they seek to do.",
+      "It's difficult, but possible, to aid a friend with an arc even if that friend is unwilling to accept (or is ignorant of) your help.",
+      "The cost and rewards for a character with this arc are the same as those described in the original character arc."
+    ]
+  },
+  {
+    "id": "arc-assist-an-organization",
+    "name": "Assist an Organization",
+    "source": "(Cypher System Rulebook, page 242)",
+    "description": "You set out to accomplish something that will further an organization. You're probably allied with them or they are rewarding you for your help in some fashion.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Responding to the Call. You work out all the details of what's expected of you, and what rewards (if any) you might get. You also get the specifics of what's required to join and advance."
+      },
+      {
+        "name": "Step",
+        "text": "Sizing up the Task. This requires some action. A reconnaissance mission. An investigation."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Undertaking the Task. Because this arc can vary so widely based on the task involved, there might be multiple steps like this one."
+      },
+      {
+        "name": "Climax",
+        "text": "Completing the Task."
+      },
+      {
+        "name": "Resolution",
+        "text": "Collecting your reward (if any) and conferring with the people in the organization that you spoke to. Perhaps getting access to higher-ranking people in the organization. You can choose to have your connection to the organization increase rather than take the standard reward."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-avenge",
+    "name": "Avenge",
+    "source": "(Cypher System Rulebook, page 242)",
+    "description": "Someone close to you or important to you in some way has been wronged. The most overt version of this arc would be to avenge someone's death. Avenging is different than revenge, as revenge is personal—you are the wronged party. But in the Avenge character arc, you are avenging a wrong done to someone else.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Declaration. You publicly declare that you are going to avenge the victim(s). This is optional."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Tracking the Guilty. You track down the guilty party. This might not be physically finding them if you already know where they are. Instead, it might be discovering a way to get at them if they are distant, difficult to reach, or well protected. This step might be repeated multiple times, if applicable."
+      },
+      {
+        "name": "Step",
+        "text": "Finding the Guilty. You finally find the guilty party, or find a path or make a plan to reach them. Now all that's left is to confront them."
+      },
+      {
+        "name": "Climax",
+        "text": "Confrontation. You confront the guilty party. This might be a public accusation and demonstration of guilt, a trial, or an attack to kill, wound, or apprehend them—whatever you choose to be appropriate."
+      },
+      {
+        "name": "Resolution",
+        "text": "You resolve the outcome and the ramifications of the confrontation and decide what to do next."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-become-an-advocate",
+    "name": "Become an Advocate",
+    "source": "(We Are All Mad Here, page 177)",
+    "description": "You desire to help and support others, especially those who are dealing with difficult situations. This might be related to something you've personally experienced, something you're knowledgeable about, or both. You can advocate in any number of ways, including being an emotional support system, helping other voices be heard, defending and safeguarding others' rights, and generally being an ally.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Sizing up Your Skills. You decide what best enables you to be a good advocate, and create a plan."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Training and Research. You learn about being a good advocate, possibly by finding a mentor or organization that can help you."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Building Your Skills. You practice the skills you've learned, and review the successes and failures to continue to improve."
+      },
+      {
+        "name": "Climax",
+        "text": "Lean on Me. You assist one or more people through a difficult time using your training, skills, and experience."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on everything you've learned and decide what to do next."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-birth",
+    "name": "Birth",
+    "source": "(Cypher System Rulebook, page 242)",
+    "description": "You are becoming a parent.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Impregnation."
+      },
+      {
+        "name": "Step",
+        "text": "Finding a Caretaker. This might be a physician, midwife, doula, or similar person. This is optional."
+      },
+      {
+        "name": "Step",
+        "text": "Complication. A complication arises that threatens the pregnancy, the birth parent, or both."
+      },
+      {
+        "name": "Step",
+        "text": "Preparation. You prepare a place for the delivery as well as a safe place for the infant to live once born."
+      },
+      {
+        "name": "Climax",
+        "text": "Delivery. The baby is born. Success means the child survives."
+      },
+      {
+        "name": "Resolution",
+        "text": "You get the baby to the place you have prepared and settle in, deciding what to do next."
+      }
+    ],
+    "notes": [
+      "The Birth character arc assumes you already have a partner or a surrogate. If you want your character to find a romantic partner or spouse, you can use theRomancearc. And of course, nonhuman characters might reproduce in other ways.",
+      "This arc is usually followed by theRaise a Childarc."
+    ]
+  },
+  {
+    "id": "arc-build",
+    "name": "Build",
+    "source": "(Cypher System Rulebook, page 243)",
+    "description": "You are going to build a physical structure—a house, a fortress, a workshop, a defensive wall, and so on. This arc would also cover renovating an existing structure or substantially adding to one. Of course, this doesn't have to be physical construction. You might build something with spells or other supernatural abilities.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Make a Plan. This almost certainly involves literally drawing up blueprints or plans."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Find a Site. This might be extremely straightforward—a simple examination of the site—or it might be an entire exploratory adventure. (If the latter, it might involve multiple such steps.)"
+      },
+      {
+        "name": "Step(s)",
+        "text": "Gather Materials. Depending on what you are building and what it is made out of, this could involve multiple steps. There probably are substantial costs involved as well."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Construction. Depending on what you are building, this could involve multiple steps. It might also take a considerable amount of time and work."
+      },
+      {
+        "name": "Climax",
+        "text": "Completion. The structure is finished."
+      },
+      {
+        "name": "Resolution",
+        "text": "You put the structure to its desired use and see if it holds up."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-cleanse",
+    "name": "Cleanse",
+    "source": "(Cypher System Rulebook, page 243)",
+    "description": "Someone or something has been contaminated, probably by evil spirits, radiation, a deadly virus, foul magic, or the like, and you want to rid them of such influences or contaminants. This could also be a curse, a possession, an infestation, or something else.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Analyzing the Threat. You determine the nature of the contamination."
+      },
+      {
+        "name": "Step",
+        "text": "Find the Solution. Almost every contamination has its own particular solution, and this likely involves research and consultation."
+      },
+      {
+        "name": "Step",
+        "text": "Getting Ready. The solution probably involves materials, spells, or other things that you must gather and prepare."
+      },
+      {
+        "name": "Climax",
+        "text": "The Cleansing. You confront the contamination."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on the events that have transpired and what effects they might have on the future. How can you keep this from happening again?"
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-creation",
+    "name": "Creation",
+    "source": "(Cypher System Rulebook, page 244)",
+    "description": "You want to make something. This might be a magic item, a painting, a novel, or a machine.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Make a Plan. You figure out what you need, what you're going to do, and how you're going to do it."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Gather Materials. Depending on what you are creating and what it is made out of, this could involve multiple steps. There probably are substantial costs involved as well."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Progress. Depending on what you are creating, this could involve multiple steps. It might also take a considerable amount of time and work."
+      },
+      {
+        "name": "Climax",
+        "text": "Completion. It's finished! Is it what you wanted? Does it work?"
+      },
+      {
+        "name": "Resolution",
+        "text": "You think about what you have learned from the process and use or enjoy the fruits of your labor."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-defeat-a-foe",
+    "name": "Defeat a Foe",
+    "source": "(Cypher System Rulebook, page 244)",
+    "description": "Someone stands in your way or is threatening you. You must overcome the challenge they represent. Defeat doesn't always mean kill or even fight. Defeating a foe could mean beating them in a chess match or in competition for a desired mentor.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Sizing up the Competition. This requires some action. A reconnaissance mission. An investigation."
+      },
+      {
+        "name": "Step",
+        "text": "Investigation. This requires some action. A reconnaissance mission. An investigation."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Diving In. You travel toward your opponent, overcome their lackeys, or take steps to reach them so you can confront them. This step can take many forms, and there might be more than one such step. This step is always active."
+      },
+      {
+        "name": "Climax",
+        "text": "Confrontation. The contest, challenge, fight, or confrontation occurs."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on what you've learned and what the consequences of your actions might be."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-defense",
+    "name": "Defense",
+    "source": "(Cypher System Rulebook, page 244)",
+    "description": "A person, place, or thing is threatened, and you want to protect it.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Analyze the Situation. What are you defending, and what threats are involved?"
+      },
+      {
+        "name": "Step",
+        "text": "Account for Your Resources. How are you going to defend?"
+      },
+      {
+        "name": "Step(s)",
+        "text": "Fend Off Danger. The forces threatening what you are protecting probably make an initial threat that you'll have to defeat. It's not the main threat, though. There might be multiple such initial threats."
+      },
+      {
+        "name": "Climax",
+        "text": "Protect. The true threat reveals itself and you confront it."
+      },
+      {
+        "name": "Resolution",
+        "text": "A time for reflection on everything that occurred, and an assessment of the person, place, or thing's safety going forward."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-develop-a-bond",
+    "name": "Develop a Bond",
+    "source": "(Cypher System Rulebook, page 244)",
+    "description": "You want to get closer to another character. This might be to make a friend, find a mentor, or establish a contact in a position of power. It might be to turn a friend into a much closer friend. The character might be an NPC or a PC.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Getting to Know You. You learn what you can about the other character."
+      },
+      {
+        "name": "Step",
+        "text": "Initial Attempt. You attempt to make contact. This might involve sending messages or gifts through a courier, using an intermediary, or just going up and saying hello, depending on the situation."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Building a Relationship. There might be many such steps as you develop the relationship."
+      },
+      {
+        "name": "Climax",
+        "text": "Bond. You succeed or fail at forging the bond."
+      },
+      {
+        "name": "Resolution",
+        "text": "You enjoy the fruits of your new relationship."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-develop-coping-strategies",
+    "name": "Develop Coping Strategies",
+    "source": "(We Are All Mad Here, page 178)",
+    "description": "You want to develop better ways of moving through the world while living with a mental illness. This isn't a \"cure\" or a \"fix.\" It isa step toward mitigating symptoms or struggles by developing healthy emotional coping strategies.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Explore Your Inner Self. You spend time with your emotions and thoughts in order to pinpoint which struggle or symptom you'd like to develop a coping strategy for."
+      },
+      {
+        "name": "Step",
+        "text": "Make a Plan. Almost every struggle or symptom has a particular set of steps that you can go through to better cope with it. This will likely involve research and consultation."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Practice. At every opportunity, practice the coping strategies that you're learning and pay attention to where they work and fail. You might try different strategies and see which ones seem better suited to your particular needs."
+      },
+      {
+        "name": "Climax",
+        "text": "Deal With It. You're put into a situation that tests your coping strategies. They don't have to work perfectly in order for you to succeed."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on what you've learned and decide where you want to go from here."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-enterprise",
+    "name": "Enterprise",
+    "source": "(Cypher System Rulebook, page 245)",
+    "description": "You want to create and run a business or start an organization. Maybe you're a craftsperson who wants to sell your creations. Maybe you like baking and you want to start a catering service. Or maybe you want to start a secret society or found a school to teach young mutants how to use their powers. You'll almost certainly have to make new connections, find (and somehow pay for) a location, and deal with all manner of administrative duties.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Drawing up a Plan. What's your goal, and how are you going to achieve it?"
+      },
+      {
+        "name": "Step",
+        "text": "Account for Your Resources. How much financing does the enterprise need compared to what you've got? If you need more, how will you get it? How many people other than yourself are needed to begin, and how many will you need to sustain things once they are up and running?"
+      },
+      {
+        "name": "Step",
+        "text": "Finding a Location. You probably need a place to run your enterprise—a store, a workshop, a base of operations, and so on. You find a location and look into what it will take to buy or rent it."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Building the Enterprise. You procure the needed equipment or personnel. You make the connections and deals to get things started. You obtain important permits or other legal documents. You test new products. You actually start the business. Each of these developments (and likely others) can be counted as a separate step, so there will be many steps."
+      },
+      {
+        "name": "Climax",
+        "text": "Profit and Loss. You determine whether your enterprise will take off and carry on into the future, or fall apart before it gets a chance to blossom. This occurs in a single dramatic moment—your first major client, your organization's first big meeting or mission, or whatever else is appropriate."
+      },
+      {
+        "name": "Resolution",
+        "text": "A time for reflection on everything that occurred, and how you're going to move forward."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-establishment",
+    "name": "Establishment",
+    "source": "(Cypher System Rulebook, page 245)",
+    "description": "You want to prove yourself as someone of importance. This can take many forms—socially, within your order, financially, or even romantically.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Assessment. You assess yourself as well as who you need to prove yourself to."
+      },
+      {
+        "name": "Step(",
+        "text": "s): Appearances Matter. You improve your look. Enhance your wardrobe. Spruce up your house. Whatever it takes to get attention from the right people. There might be many such steps."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Self-Aggrandizement. You need to get the word out to get people talking about you. There might be many such steps."
+      },
+      {
+        "name": "Climax",
+        "text": "Grabbing Attention. You do something big, like host a party for influential people or produce a play that you wrote. You make a big splash or a big crash."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on what you did and where you go from here."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-explore",
+    "name": "Explore",
+    "source": "(Cypher System Rulebook, page 245)",
+    "description": "Something out there is unknown and you want to explore its secrets. This is most likely an area of wilderness, a new planet, an otherworldly dimension, or something similar.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Make a Plan. Not only do you draw up a plan for your exploration, but if appropriate, you also make a formal declaration to relevant parties of what you're going to do."
+      },
+      {
+        "name": "Step(",
+        "text": "s): Gather Resources. You get the supplies, vehicles, and help you need. Depending on where you are going and what is required, this could involve multiple steps. There probably are substantial costs involved as well."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Travel. You go where you wish to explore. There might be many such steps, depending on how long it takes to get there."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Exploration. This is the meat of the arc, but it's probably a series of small moves and minor victories. There might be many such steps."
+      },
+      {
+        "name": "Climax",
+        "text": "Conquest. You make the big discovery or truly master the area. You might not have explored every inch of the place, but if you are successful, you can claim to be done."
+      },
+      {
+        "name": "Resolution",
+        "text": "You return home and possibly share your findings."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-fall-from-grace",
+    "name": "Fall from Grace",
+    "source": "(Cypher System Rulebook, page 245)",
+    "description": "This is an odd character arc in that it's (presumably) not something that a character would want. It is something that a player selects on a meta level for the character because it makes for an interesting story. It also sets up the potential for future arcs, such asRedemption. It's important that this involve actions you take. For example, you fall into substance abuse. You treat people badly. You make mistakes that endanger others. In other words, the fall isn't orchestrated by someone else—it's all your own doing.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "The Descent. Things go bad."
+      },
+      {
+        "name": "Step(",
+        "text": "s): Further Descent. Things get worse. Depending on the situation, this might involve many steps."
+      },
+      {
+        "name": "Step",
+        "text": "Lashing Out. You treat others poorly as you descend."
+      },
+      {
+        "name": "Climax",
+        "text": "Rock Bottom. There is no chance for success here. Only failure."
+      },
+      {
+        "name": "Resolution",
+        "text": "You wallow in your own misery."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-finish-a-great-work",
+    "name": "Finish a Great Work",
+    "source": "(Cypher System Rulebook, page 246)",
+    "description": "Something that was begun in the past must now be completed. This might involve destroying an evil artifact, finishing the construction of a monument, developing the final steps of a cure for a disease, or uncovering a lost temple forgotten to the ages.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Assessing the Past. You look at what has come before and where it still needs to go. This almost certainly involves some real research."
+      },
+      {
+        "name": "Step",
+        "text": "Conceive a Plan. You make a plan on how to move forward."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Progress. You make significant progress or overcome a barrier to completion. This may involve multiple such steps."
+      },
+      {
+        "name": "Climax",
+        "text": "Completion. This involves the big finish to the past work."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on what you did and where you go from here."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-growth",
+    "name": "Growth",
+    "source": "(Cypher System Rulebook, page 246)",
+    "description": "Willingly or unwillingly, you are going to change. This is another meta arc. It's less about a goal and more about character development. While it's possible that the growth involved is intentional, in most people's lives and stories, it is emergent. A character might become less selfish, braver, a better leader, or experience some other form of growth.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "The Beginning. Change usually begins slowly, in a small, almost imperceptible way."
+      },
+      {
+        "name": "Step(",
+        "text": "s): Change. Growth involves many small steps."
+      },
+      {
+        "name": "Step",
+        "text": "Overcoming an Obstacle. The temptation to resort to your old ways is always present."
+      },
+      {
+        "name": "Climax",
+        "text": "Self-Evident Change. This is a dramatic about-face. This is the moment where you do something the \"old you\" would never have done, and it has a profound effect on you and those around you. With either success or failure, growth is possible."
+      },
+      {
+        "name": "Resolution",
+        "text": "You recognize the change in yourself and move forward."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-instruction",
+    "name": "Instruction",
+    "source": "(Cypher System Rulebook, page 246)",
+    "description": "You teach a pupil. You have knowledge on a topic and are willing to share. This can be a skill, an area of lore, a combat style, or the use of a special ability. This is usually a fairly long-term arc. Sometimes teaching a pupil is a side matter, and sometimes the pupil takes on more of an apprentice role and spends a great deal of time with you, traveling with you and perhaps even living in your house (or you living in theirs).",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Taking on the Student."
+      },
+      {
+        "name": "Step",
+        "text": "Getting to Know Them. You assess your pupil's strengths and weaknesses and try to get an idea of what they need to learn and how you can teach it to them."
+      },
+      {
+        "name": "Step(s)",
+        "text": "The Lessons. Teaching is often a slow, gradual process."
+      },
+      {
+        "name": "Step",
+        "text": "Breakdown. Many times, a student needs to have a moment of crisis to really learn something. Maybe they get dejected, or maybe they rebel against your teaching techniques."
+      },
+      {
+        "name": "Climax",
+        "text": "Graduation. This is when you recognize that the pupil has learned what they need. It usually comes at a dramatic moment."
+      },
+      {
+        "name": "Resolution",
+        "text": "You and the pupil say your goodbyes, and you look toward the future."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-join-an-organization",
+    "name": "Join an Organization",
+    "source": "(Cypher System Rulebook, page 247)",
+    "description": "You want to join an organization. This might be a military organization, a corporation, a secret society, a religion, or something else.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Getting the Details. You learn all you can about the organization and how one becomes a member."
+      },
+      {
+        "name": "Step(",
+        "text": "s): Making a Contact. Friends on the inside are always important."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Performing a Deed. The organization might want to test your worth, or this might be a ceremony you must take part in. It might include paying some sort of dues or fee. Or all of these things."
+      },
+      {
+        "name": "Climax",
+        "text": "Proving Your Worth. This is the point at which you attempt to show the organization that they would be better off with you as a member."
+      },
+      {
+        "name": "Resolution",
+        "text": "You consider your efforts and assess what your membership gets you."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-justice",
+    "name": "Justice",
+    "source": "(Cypher System Rulebook, page 247)",
+    "description": "You try to right a wrong or bring a wrongdoer to justice.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Declaration. You publicly declare that you are going to bring justice in this situation. This is optional."
+      },
+      {
+        "name": "Step(",
+        "text": "s): Tracking the Guilty. You track down the guilty party, assuming there is one. This might not be physically finding them if you already know where they are. Instead, it might be discovering a way to get at them if they are distant, difficult to reach, or well protected. This step might be repeated multiple times, if applicable."
+      },
+      {
+        "name": "Step",
+        "text": "Helping the Victim. Righting a wrong does not always involve confronting a wrongdoer. Part of it might be about helping those who were wronged."
+      },
+      {
+        "name": "Climax",
+        "text": "Confrontation. You confront the guilty party. This might be a public accusation and demonstration of guilt, a trial, or an attack to kill, wound, or apprehend them—whatever you choose to be appropriate."
+      },
+      {
+        "name": "Resolution",
+        "text": "You resolve the outcome and ramifications of the confrontation and decide what to do next."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-learn",
+    "name": "Learn",
+    "source": "(Cypher System Rulebook, page 247)",
+    "description": "You want to learn something. This isn't the same as theUncover a Secretarc, in which you're looking for a bit of information. This is a skill or whole area of knowledge you want to gain proficiency with. This is learning a new language, how to play an instrument, or how to be a good cook. Thus, it's not about gaining a level or rank in climbing, but learning to be an experienced mountaineer.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Focusing on the Problem."
+      },
+      {
+        "name": "Step",
+        "text": "Finding a Teacher or a Way to Teach Yourself. Now you can truly begin."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Learn. Depending on what you're learning, this could involve one step or quite a few."
+      },
+      {
+        "name": "Climax",
+        "text": "The Test. You put your new knowledge to the test in a real situation."
+      },
+      {
+        "name": "Resolution",
+        "text": "You relax a bit and decide what to do next."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-master-a-skill",
+    "name": "Master a Skill",
+    "source": "(Cypher System Rulebook, page 247)",
+    "description": "You're skilled, but you want to become the best. This arc might logically follow theLearnarc. As with the Learn arc, this can involve any kind of training at all, not just a skill.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Finding the Path. You've learned the basics. Now it's time for the advanced material."
+      },
+      {
+        "name": "Step",
+        "text": "Discovering a Master. You find a master to help you become a master."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Learn. Depending on what you're mastering, this could involve one step or quite a few."
+      },
+      {
+        "name": "Step",
+        "text": "The Last Step. Eventually, you realize that even a master cannot teach you the last step. You must learn it on your own."
+      },
+      {
+        "name": "Climax",
+        "text": "The Test. You put your mastery to the test in a real situation—and considering your goal, it's probably a very important situation."
+      },
+      {
+        "name": "Resolution",
+        "text": "You relax a bit and decide what to do next."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-mysterious-background",
+    "name": "Mysterious Background",
+    "source": "(Cypher System Rulebook, page 247)",
+    "description": "You don't know who your parents were, but you want to find out. The mystery might be something other than your parentage, but that's a common theme in this kind of arc. You want to know where you come from—there's some kind of mystery in your past.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Beginning the Search."
+      },
+      {
+        "name": "Step",
+        "text": "Research. You look into your own family background, if possible."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Investigation. You talk to people who might know. You follow clues."
+      },
+      {
+        "name": "Climax",
+        "text": "Discovery. You discover the secret of your own background. You determine if what you learn is good or bad, but either way discovery means success."
+      },
+      {
+        "name": "Resolution",
+        "text": "You contemplate how this new knowledge sits with you."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-new-discovery",
+    "name": "New Discovery",
+    "source": "(Cypher System Rulebook, page 248)",
+    "description": "You want to invent a new device, process, spell, or something similar. A cure for a heretofore unknown disease? An invocation with a result you've never heard of before? A method for getting into an impregnable vault? Any of these and more could be your discovery. While similar to theCreationarc and theLearnarc, the New Discovery arc involves blazing a new trail. No one can teach you what you want to know. You've got to do it on your own.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "The Idea. You draw up plans for the thing you want to invent or discover."
+      },
+      {
+        "name": "Step",
+        "text": "Research. You learn what people have done before and recognize where they fell short."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Trial and Error. You test your hypothesis. This often ends in many failures before you get a success."
+      },
+      {
+        "name": "Climax",
+        "text": "Eureka! It's time to put the discovery to the true test."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on your discovery and probably compile your notes and write it all down, for posterity's sake if nothing else."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-put-down-roots",
+    "name": "Put Down Roots",
+    "source": "(We Are All Mad Here, page 178)",
+    "description": "If you choose this arc, you are hoping to create a strong support system among your friends and fellow travelers. You seek the assistance of those around you to help you through difficult times and you wish to offer assistance back. This connection might be to your fellow PCs, to a group of NPCs that you meet along the way, or as part of an already-established group or organization.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Let's Be Friends. You propose the idea of a support system to those you'd like to include."
+      },
+      {
+        "name": "Step",
+        "text": "Reach Out. You do the hard work of making yourself vulnerable to others by being honest and open about who you are. You create a safe space for others to do the same."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Accept and Give Help. You ask for and accept help and support from the group. You give help and support to others when it's needed."
+      },
+      {
+        "name": "Climax",
+        "text": "Strong Bond. During a time of crisis, the group works together to support and uplift you, and you are there for them in return."
+      },
+      {
+        "name": "Resolution",
+        "text": "You enjoy the benefits of having a supportive group of people in your life."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-raise-a-child",
+    "name": "Raise a Child",
+    "source": "(Cypher System Rulebook, page 248)",
+    "description": "You raise a child to adulthood. It can be your biological child or one you adopt. It can even be a child taken under your wing, more a young protégé than a son or daughter. This is obviously a very long-term arc.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Sharing Your Home. The child now lives with you."
+      },
+      {
+        "name": "Step",
+        "text": "Care and Feeding. You learn to meet the child's basic needs."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Basic Instruction. You teach them to walk, talk, and read. You teach them to care for themselves."
+      },
+      {
+        "name": "Step(s)",
+        "text": "The Rewards Are Many. The child loves you. Relies on you. Trusts you. Eventually, helps you."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Ethical Instruction. You instill your basic ethics in the child, hoping that they will mature into an adult you can be proud of."
+      },
+      {
+        "name": "Climax",
+        "text": "Adulthood. At some point the child leaves the proverbial nest. You determine, at this point, your own success or failure."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on the memories you have made."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-recover-from-a-wound-or-trauma",
+    "name": "Recover from a Wound (or Trauma)",
+    "source": "(Cypher System Rulebook, page 248)",
+    "description": "You need to heal. This isn't just for healing simple damage. This involves recovering from a major debilitating injury, illness, or shock. Severe damage, the loss of a body part, and emotional trauma all fall into this category.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Rest. The first thing you need to do is rest."
+      },
+      {
+        "name": "Step",
+        "text": "Self Care. You take care of your own needs."
+      },
+      {
+        "name": "Step",
+        "text": "Getting Aid. Someone helps."
+      },
+      {
+        "name": "Step",
+        "text": "Medicine. Some kind of drug, cure, poultice, potion, or remedy aids your recovery."
+      },
+      {
+        "name": "Step",
+        "text": "Therapy. With the help of someone else, you exercise your injury or cope with your trauma."
+      },
+      {
+        "name": "Climax",
+        "text": "Acceptance or Recovery. You try to move on and use what has been damaged (or learn how to function without it)."
+      },
+      {
+        "name": "Resolution",
+        "text": "You get on with your life."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-redemption",
+    "name": "Redemption",
+    "source": "(Cypher System Rulebook, page 248)",
+    "description": "You've done something very wrong, but you want to atone and make it right again. This is like theJusticearc or theUndo a Wrongarc, except you are the wrongdoer. This could be a follow-up to theFall From Gracearc.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Regret. You are determined to rebuild, recover, and restore."
+      },
+      {
+        "name": "Step",
+        "text": "Forgiveness. You apologize and ask for forgiveness."
+      },
+      {
+        "name": "Step",
+        "text": "Identifying the Needs. You determine what needs to be done to atone for your transgression."
+      },
+      {
+        "name": "Climax",
+        "text": "Making Good. You perform an act that you hope will redeem your past misdeed."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on what has happened but now look to the future."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-repay-a-debt",
+    "name": "Repay a Debt",
+    "source": "(Cypher System Rulebook, page 248)",
+    "description": "You owe someone something, and it's time to make good.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Debts Come Due. You determine to do what is needed to make good on the debt. It might involve repaying money, but more appropriately it's performing a deed or a series of deeds."
+      },
+      {
+        "name": "Step",
+        "text": "Talking It Over. You discuss the matter with the person you owe, if possible. You ensure that what you're doing is what they want."
+      },
+      {
+        "name": "Climax",
+        "text": "Repayment. Either you do something to earn the money or goods you owe, or you undertake a major task that will compensate the other person."
+      },
+      {
+        "name": "Resolution",
+        "text": "You relax knowing that your debt is repaid, and you look to the future."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-rescue",
+    "name": "Rescue",
+    "source": "(Cypher System Rulebook, page 249)",
+    "description": "Someone or something of great importance has been taken, and you want to get them or it back.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Heeding the Call. You determine what has happened, and who or what is missing."
+      },
+      {
+        "name": "Step",
+        "text": "Tracking. You discover who has taken them, and where."
+      },
+      {
+        "name": "Step",
+        "text": "Travel. You go to where they are being held and get information on the location and who is involved. Maybe make a plan."
+      },
+      {
+        "name": "Climax",
+        "text": "Rescue Operation. You go in and get them."
+      },
+      {
+        "name": "Resolution",
+        "text": "You return them home."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-restoration",
+    "name": "Restoration",
+    "source": "(Cypher System Rulebook, page 249)",
+    "description": "You're down but not out. You want to restore your good name. Recover what you've lost. Rebuild what has been destroyed. You've fallen down or have been knocked down, but either way you want to pick yourself up. This is a possible follow-up to theFall From Gracearc.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Vow to Yourself. You are determined to rebuild, recover, and restore."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Work. You rebuild, recover, and restore. If all your money was stolen, you make more. If your house was destroyed, you rebuild it. If your reputation was tarnished, you perform deeds that restore your good name."
+      },
+      {
+        "name": "Climax",
+        "text": "The Final Act. You undertake one last major task that will bring things back to where they were (or close to it). A lot is riding on this moment."
+      },
+      {
+        "name": "Resolution",
+        "text": "You enjoy a return to things the way they were before."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-revenge",
+    "name": "Revenge",
+    "source": "(Cypher System Rulebook, page 249)",
+    "description": "Someone did something that harmed you. Unlike theAvengearc, this arc probably isn't about tracking down a murderer, but it might involve pursuing someone who stole from you, hurt you, or otherwise brought you grief. The key is that it's personal. Otherwise, use the Justice arc.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Vow. You swear revenge."
+      },
+      {
+        "name": "Step(",
+        "text": "s): Finding a Clue. You find a clue to tracking down the culprit."
+      },
+      {
+        "name": "Climax",
+        "text": "Confrontation. You confront the culprit."
+      },
+      {
+        "name": "Resolution",
+        "text": "You deal with the aftermath of the confrontation and move on. You think about whether you are satisfied by gaining your revenge."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-romance",
+    "name": "Romance",
+    "source": "(Cypher System Rulebook, page 249)",
+    "description": "You want to strike up a relationship with a romantic partner. Perhaps you have a specific person in mind, or maybe you're just interested in a relationship in general.",
+    "steps": [
+      {
+        "name": "Opening(s)",
+        "text": "Caught Someone's Eye. You meet someone you are interested in. (Since this can be short-lived, it's possible to have this opening occur more than once.)"
+      },
+      {
+        "name": "Step(s)",
+        "text": "Courtship. You begin seeing the person regularly. Although not every \"date\" is a step in the arc, significant moments are, and there may be a few of them."
+      },
+      {
+        "name": "Climax",
+        "text": "Commitment. You may or may not be interested in a monogamous relationship. Regardless, you and your love have made some kind of commitment to each other."
+      },
+      {
+        "name": "Resolution",
+        "text": "You think about the future. Marriage? Children? These are only some of the possibilities."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-solve-a-mystery",
+    "name": "Solve a Mystery",
+    "source": "(Cypher System Rulebook, page 249)",
+    "description": "Different from theLearnarc and theUncover a Secretarc, this arc is about solving a crime or a similar action committed in the fairly recent past. It's not about practice or study, but about questions and answers. In theory, the mystery doesn't have to be a crime. It might be \"Why is this strange caustic substance leaking into my basement?\"",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Pledging to Solve the Mystery."
+      },
+      {
+        "name": "Step",
+        "text": "Research. You get some background."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Investigation. You ask questions. You look for clues. You cast divinations. This likely encompasses many such steps."
+      },
+      {
+        "name": "Climax",
+        "text": "Discovery. You come upon what you believe to be the solution to the mystery."
+      },
+      {
+        "name": "Resolution",
+        "text": "In this step, which is far more active than most resolutions, you confront the people involved in the mystery with what you've discovered, or you use the information in some way (such as taking it to the proper authorities)."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-take-the-wrong-path",
+    "name": "Take the Wrong Path",
+    "source": "(We Are All Mad Here, page 178)",
+    "description": "Much likeFall From Grace, Take the Wrong Path isn't typically an arc that a character intentionally desires. It's something the player chooses on a meta level for the character because it makes for an interesting story and sets up possible future arcs, such as Put Down Roots. In this case, perhaps the character manages their anxiety by drinking too much, becoming isolated, or starting too many fights. Perhaps they attempt to deal with grief by overeating (or undereating), by pushing away loved ones, or by becoming intimate with others without regard for their safety.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "The Fork. You take the first steps down the wrong path, even if you don't know it yet."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Farther Down the Path. Things continue to get worse because of your actions. This may play out over any number of steps."
+      },
+      {
+        "name": "Step",
+        "text": "Briars and Thorns. Your actions hurt yourself and those around you."
+      },
+      {
+        "name": "Climax",
+        "text": "Dead End. There is no chance for success here. Only failure."
+      },
+      {
+        "name": "Resolution",
+        "text": "You wallow in your own misery."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-theft",
+    "name": "Theft",
+    "source": "(Cypher System Rulebook, page 250)",
+    "description": "Someone else has something you want.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Setting Your Sights. You make a plan."
+      },
+      {
+        "name": "Step",
+        "text": "Casing the Joint. You scout out the location of the thing (or learn its location)."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Getting to the Object. Sometimes, many steps are involved before you reach the object you wish to take. For example, if, in order to steal something from a vault, you need to approach one of the guards while they are off duty and bribe them to look the other way when you break in, that is covered in this step."
+      },
+      {
+        "name": "Climax",
+        "text": "The Attempt. You make your heist."
+      },
+      {
+        "name": "Resolution",
+        "text": "You decide what to do with the thing you've stolen and contemplate the repercussions you might face for stealing it."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-train-a-creature",
+    "name": "Train a Creature",
+    "source": "(Cypher System Rulebook, page 250)",
+    "description": "You want to domesticate and train an animal or other creature. While the beast doesn't need to be wild, it must not already be domesticated and trained.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Getting Acquainted. You get to know the creature a bit, and it gets to know you."
+      },
+      {
+        "name": "Step",
+        "text": "Research. You get information on the type of creature or advice from others who have trained one."
+      },
+      {
+        "name": "Step",
+        "text": "Domestication. After some work, the creature is no longer a threat to you or anyone else, and it can live peacefully in your home or wherever you wish."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Training. Each time you use this step, you teach the creature a new, significant command that it will obey regularly and immediately."
+      },
+      {
+        "name": "Climax",
+        "text": "Completion. Believing the creature's training to be complete, you put it in a situation where that is put to the test."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on the experience."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-transformation",
+    "name": "Transformation",
+    "source": "(Cypher System Rulebook, page 250)",
+    "description": "You want to be different in a specific way. Because theGrowtharc covers internal change, this one focuses primarily on external change. This could take many forms, and probably varies greatly by genre. In some settings, it could even be death, which might turn you into a ghost. For the change to be an arc, it should be difficult and perhaps risky.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Deciding on the Transformation."
+      },
+      {
+        "name": "Step",
+        "text": "Research. You look into how the change can be made and what it entails."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Investigation. This is an active step toward making the change. It might involve getting more information, materials or ingredients, or something else."
+      },
+      {
+        "name": "Climax",
+        "text": "Change. You make the change, with some risk of failure or disaster."
+      },
+      {
+        "name": "Resolution",
+        "text": "You contemplate how this change affects you going forward."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-uncover-a-secret",
+    "name": "Uncover a Secret",
+    "source": "(Cypher System Rulebook, page 250)",
+    "description": "There is knowledge out there that you want. It could be an attempt to find and learn a specific special ability. This could also be a hunt for a lost password or a key that will open a sealed door, the true name of a devil, the secret background of an important person, or how the ancients constructed that strange monolith.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Naming the Secret. You give your goal a name. \"I am seeking the lost martial art of the Khendrix, who could slice steel with their bare hands.\""
+      },
+      {
+        "name": "Step(",
+        "text": "s): Research. You scour libraries and old tomes for clues and information."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Investigation. You talk to people to gain clues and information."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Tracking. You track down the source of the secret information and travel to it."
+      },
+      {
+        "name": "Climax",
+        "text": "Revelation. You find and attempt to use the secret, whatever that entails."
+      },
+      {
+        "name": "Resolution",
+        "text": "You contemplate how this secret affects you and the world."
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "arc-undo-a-wrong",
+    "name": "Undo a Wrong",
+    "source": "(Cypher System Rulebook, page 250)",
+    "description": "Someone did something horrible, and its ramifications are still felt, even if it happened long ago. You seek to undo the damage, or at least stop it from continuing.",
+    "steps": [
+      {
+        "name": "Opening",
+        "text": "Vowing to Put Right What Once Went Wrong."
+      },
+      {
+        "name": "Step",
+        "text": "Make a Plan. You learn all you can about the situation and then make a plan to put things right."
+      },
+      {
+        "name": "Step(s)",
+        "text": "Progress. This is an active step toward undoing the wrong. It might involve finding something, defeating someone, destroying something, building something, or almost anything else, depending on the circumstances."
+      },
+      {
+        "name": "Climax",
+        "text": "Change. You face the challenge of the former wrong, and either overcome it or fail."
+      },
+      {
+        "name": "Resolution",
+        "text": "You reflect on what you've accomplished and think about the future."
+      }
+    ],
+    "notes": [
+      "This is different from theJusticearc because this isn't about justice (or even revenge)—it's about literally undoing something bad that happened in the past, such as a great library being burned to the ground, a sovereign people being driven from their land, and so on."
+    ]
+  }
+]

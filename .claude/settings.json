@@ -6,7 +6,11 @@
       "Bash(node -e ' *)",
       "Bash(npm run *)",
       "Bash(node -e \"const p = require\\('./node_modules/lucide-react/package.json'\\); console.log\\(p.version\\)\")",
-      "Bash(node -e \"const d=require\\('./public/5_5_SRD/monsters.json'\\); const m=d.monsters[0]; console.log\\(JSON.stringify\\(m, null, 2\\)\\)\")"
+      "Bash(node -e \"const d=require\\('./public/5_5_SRD/monsters.json'\\); const m=d.monsters[0]; console.log\\(JSON.stringify\\(m, null, 2\\)\\)\")",
+      "Bash(Get-ChildItem app *)",
+      "Bash(Select-Object FullName)",
+      "Bash(powershell -Command \"Get-Content 'public\\\\Cypher_SRD\\\\index.json' | Select-String '\\\\\"type\\\\\"' | Select-Object -Unique | Sort-Object | Select-Object -First 50\")",
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)"
     ]
   }
 }

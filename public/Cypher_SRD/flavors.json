@@ -1,0 +1,429 @@
+[
+  {
+    "id": "flavor-charms-and-figments",
+    "name": "Charms and Figments Flavor",
+    "source": "(It's Only Magic, page 70)",
+    "description": "Creating illusions and affecting minds are sometimes considered \"soft\" magical disciplines (as opposed to \"hard\" disciplines that manipulate energy or physical matter). It's common for a character with an interest in one to learn a few spells in the other.",
+    "tiers": {
+      "1": [
+        "Background Music (IOM, 65, 70)",
+        "Fast Talk (138)",
+        "Goad (145)",
+        "Impart Ideal (151)",
+        "Mental Link (161)",
+        "Minor Illusion (162)"
+      ],
+      "2": [
+        "Calm Stranger (118)",
+        "Cloud Personal Memories (119)",
+        "Illusory Duplicate (150)",
+        "Misdirect Blame (163)"
+      ],
+      "3": [
+        "Advanced Command (108)",
+        "Illusory Disguise (150)",
+        "Soothe the Savage (184)"
+      ],
+      "4": [
+        "Calm (118)",
+        "Major Illusion (160)",
+        "Mind Control (162)",
+        "Psychic Burst (172)",
+        "Psychic Suggestion (172)"
+      ],
+      "5": [
+        "Crowd Control (123)",
+        "Mind Games (162)",
+        "Projection (172)"
+      ],
+      "6": [
+        "Flee (141)",
+        "Terrifying Image (189)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-combat",
+    "name": "Combat Flavor",
+    "source": "(Cypher System Rulebook, page 36)",
+    "description": "Combat flavor makes a character more martial. ASpeakerwith combat flavor in afantasysetting would be a battle bard. AnExplorerwith combat flavor in ahistoricalgame might be a pirate. AnAdeptflavored with combat in a science fiction setting could be a veteran of a thousand psychic wars.",
+    "tiers": {
+      "1": [
+        "Danger Sense (124)",
+        "Practiced in Armor (171)",
+        "Practiced With Medium Weapons (171)"
+      ],
+      "2": [
+        "Bloodlust (115)",
+        "Combat Prowess (120)",
+        "Trained Without Armor (193)"
+      ],
+      "3": [
+        "Practiced With All Weapons (171)",
+        "Skill With Attacks (183)",
+        "Skill With Defense (183)",
+        "Successive Attack (187)"
+      ],
+      "4": [
+        "Capable Warrior (118)",
+        "Deadly Aim (125)",
+        "Fury (144)",
+        "Misdirect (163)",
+        "Spray (185)"
+      ],
+      "5": [
+        "Experienced Defender (136)",
+        "Hard Target (148)",
+        "Parry (168)"
+      ],
+      "6": [
+        "Greater Skill With Attacks (147)",
+        "Mastery in Armor (161)",
+        "Mastery With Defense (161)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-cozy-magic",
+    "name": "Cozy Magic Flavor",
+    "source": "(It's Only Magic, page 71)",
+    "description": "Sometimes a sorcerer isn't interested in combat magic and secrets of the universe. Sometimes \"cozy magic\" is enough: bonding with a group of close friends, having a nice house, and providing support and comfort in times of need.",
+    "tiers": {
+      "1": [
+        "Advice From a Friend (109)",
+        "Check Status (IOM, 71)",
+        "Comfort and Encouragement (IOM, 71)",
+        "Gift of Appeasement (IOM, 71)"
+      ],
+      "2": [
+        "Emotional Support Pet (IOM, 72)",
+        "Fetch (139)",
+        "Safe Sex (IOM, 72, 75, 76)",
+        "Spectral Servant (IOM, 72)",
+        "Telepathic (189)"
+      ],
+      "3": [
+        "Informer (153)",
+        "Laundry Day (IOM, 72)",
+        "Spring Cleaning (IOM, 72)"
+      ],
+      "4": [
+        "Able Assistance (108)",
+        "Pay It Forward (168)",
+        "Thinking Ahead (191)"
+      ],
+      "5": [
+        "Group Friendship (147)",
+        "Undo (195)"
+      ],
+      "6": [
+        "Drawing on Life's Experiences (131)",
+        "Stimulate (186)",
+        "Telepathic Network (190)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-divination",
+    "name": "Divination Flavor",
+    "source": "(It's Only Magic, page 73)",
+    "description": "Knowledge is power! Characters with the divination flavor are familiar with using magic to learn information, see into hidden places, and discover secrets.",
+    "tiers": {
+      "1": [
+        "Babel (112)",
+        "Scan (179)",
+        "Third Eye (191)"
+      ],
+      "2": [
+        "Diagnose Device (IOM, 73, 75)",
+        "Mind Reading (162)",
+        "Open Mind (167)",
+        "Premonition (171)",
+        "See History (180)"
+      ],
+      "3": [
+        "Creature Insight (123)",
+        "Device Insight (129)",
+        "Question Past Self (IOM, 73)",
+        "Retrieve Memories (177)"
+      ],
+      "4": [
+        "Reading the Room (175)",
+        "Remote Viewing (176)",
+        "Sensor (181)"
+      ],
+      "5": [
+        "Knowing the Unknown (156)",
+        "Read the Signs (176)",
+        "True Senses (194)"
+      ],
+      "6": [
+        "See Through Time (191)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-magic",
+    "name": "Magic Flavor",
+    "source": "(Cypher System Rulebook, page 36)",
+    "description": "You know a little about magic. You might not be a wizard, but you know the basics—how it works, and how to accomplish a few wondrous things. Of course, in your setting, \"magic\" might actually mean psychic powers, mutant abilities, weird alien tech, or anything else that produces interesting and useful effects.",
+    "tiers": {
+      "1": [
+        "Blessing of the Gods (114)",
+        "Closed Mind (119)",
+        "Entangling Force (136)",
+        "Hedge Magic (149)",
+        "Magic Training (159)",
+        "Mental Link (161)",
+        "Premonition (171)"
+      ],
+      "2": [
+        "Concussive Blast (121)",
+        "Fetch (139)",
+        "Force Field (143)",
+        "Lock (159)",
+        "Repair Flesh (176)"
+      ],
+      "3": [
+        "Distance Viewing (130)",
+        "Fire Bloom (140)",
+        "Fling (141)",
+        "Force at Distance (142)",
+        "Summon Giant Spider (188)"
+      ],
+      "4": [
+        "Elemental Protection (133)",
+        "Ignition (150)",
+        "Pry Open (172)"
+      ],
+      "5": [
+        "Create (122)",
+        "Divine Intervention (130)",
+        "Dragon's Maw (131)",
+        "Fast Travel (139)",
+        "True Senses (194)"
+      ],
+      "6": [
+        "Relocate (176)",
+        "Summon Demon (188)",
+        "Traverse the Worlds (194)",
+        "Word of Death (200)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-modern-magic",
+    "name": "Modern Magic Flavor",
+    "source": "(It's Only Magic, page 74)",
+    "description": "Characters who live in amodern world with magic and technologyoften know a bit about mixing the two of them together. These characters usually pick up a few useful spells (such as disrupting hostile magic or disabling a mugger's pistol) from various sources, much like how people tend to learn skills unrelated to their day job (like cooking, dancing, and playing guitar).",
+    "tiers": {
+      "1": [
+        "Cantrips (IOM, 82) (choose any four)",
+        "Annoy Electronics (IOM, 74)",
+        "Arcanaphone (IOM, 74)",
+        "Enhance Athletics (IOM, 74)",
+        "Mage Clock (IOM, 74)",
+        "Spellpay (IOM, 74)",
+        "Ward (196)"
+      ],
+      "2": [
+        "Charm Machine (119)",
+        "Dispel Magic (IOM, 75)",
+        "Gun Jammer (IOM, 47, 75)",
+        "Magical Power Current (IOM, 75)",
+        "Safe Fall (179)",
+        "Safe Sex (IOM, 72, 75, 76)",
+        "Third Eye (191)"
+      ],
+      "3": [
+        "Diagnose Device (IOM, 73, 75)",
+        "Network Tap (165)",
+        "Sensor (181)"
+      ],
+      "4": [
+        "Repair Machine (IOM, 75)",
+        "Soothe the Savage (184)"
+      ],
+      "5": [
+        "Granite Wall (146)",
+        "Tower of Will (193)"
+      ],
+      "6": [
+        "Information Gathering (153)",
+        "Trust to Luck (194)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-protection",
+    "name": "Protection Flavor",
+    "source": "(It's Only Magic, page 76)",
+    "description": "Characters with the protection flavor use magic to defend against hostile environments, hazardous substances, dangerous creatures, and intrusive mental powers.",
+    "tiers": {
+      "1": [
+        "Closed Mind (119)",
+        "Resonance Field (176)",
+        "Ward (196)"
+      ],
+      "2": [
+        "Safe Sex (IOM, 72, 75, 76)",
+        "Trained Without Armor (193)",
+        "Wind Armor (199)"
+      ],
+      "3": [
+        "Energy Protection (134)",
+        "Force Field Barrier (143)",
+        "Unstealable Charm (IOM, 76)"
+      ],
+      "4": [
+        "Counter Danger (122)",
+        "Elemental Protection (133)",
+        "Poison Resistance (170)"
+      ],
+      "5": [
+        "Defensive Field (127)",
+        "Nothing But Defend (166)",
+        "Tower of Intellect (193)"
+      ],
+      "6": [
+        "Reactive Field (174)",
+        "Untouchable (195)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-skills-and-knowledge",
+    "name": "Skills and Knowledge Flavor",
+    "source": "(Cypher System Rulebook, page 37)",
+    "description": "This flavor is for characters in roles that call for more knowledge and more real-world application of talent. It's less flashy and dramatic than supernatural powers or the ability to hack apart multiple foes, but sometimes expertise or know-how is the real solution to a problem.",
+    "tiers": {
+      "1": [
+        "Interaction Skills (155)",
+        "Investigative Skills (155)",
+        "Knowledge Skills (157)",
+        "Physical Skills (170)",
+        "Travel Skills (193)"
+      ],
+      "2": [
+        "Extra Skill (138)",
+        "Tool Mastery (192)",
+        "Understanding (194)"
+      ],
+      "3": [
+        "Flex Skill (141)",
+        "Improvise (152)"
+      ],
+      "4": [
+        "Multiple Skills (165)",
+        "Quick Wits (174)",
+        "Task Specialization (189)"
+      ],
+      "5": [
+        "Practiced With Medium Weapons (171)",
+        "Read the Signs (174)"
+      ],
+      "6": [
+        "Skill With Attacks (183)",
+        "Skill With Defense (183)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-stealth",
+    "name": "Stealth Flavor",
+    "source": "(Cypher System Rulebook, page 34)",
+    "description": "Characters with the stealth flavor are good at sneaking around, infiltrating places they don't belong, and deceiving others. They use these abilities in a variety of ways, including combat. AnExplorerwith stealth flavor might be a thief, while aWarriorwith stealth flavor might be an assassin. An Explorer with stealth flavor in asuperherosetting might be a crimefighter who stalks the streets at night.(34)",
+    "tiers": {
+      "1": [
+        "Danger Sense (124)",
+        "Goad (145)",
+        "Legerdemain (157)",
+        "Opportunist (167)",
+        "Stealth Skills (186)"
+      ],
+      "2": [
+        "Contortionist (121)",
+        "Find an Opening (139)",
+        "Get Away (145)",
+        "Sense Ambush (181)",
+        "Surprise Attack (188)"
+      ],
+      "3": [
+        "Evanesce (136)",
+        "From the Shadows (144)",
+        "Gambler (144)",
+        "Inner Defense (154)",
+        "Misdirect (163)",
+        "Run and Fight (179)",
+        "Seize the Moment (181)"
+      ],
+      "4": [
+        "Ambusher (109)",
+        "Debilitating Strike (126)",
+        "Outwit (168)",
+        "Preternatural Senses (171)",
+        "Tumbling Moves (194)"
+      ],
+      "5": [
+        "Assassin Strike (110)",
+        "Mask (160)",
+        "Return to Sender (177)",
+        "Uncanny Luck (194)"
+      ],
+      "6": [
+        "Exploit Advantage (137)",
+        "Spring Away (186)",
+        "Thief's Luck (191)",
+        "Twist of Fate (194)"
+      ]
+    }
+  },
+  {
+    "id": "flavor-technology",
+    "name": "Technology Flavor",
+    "source": "(Cypher System Rulebook, page 35)",
+    "description": "Characters with a flavor of technology typically are from science fiction or at least modern-day settings (although anything is possible). They excel at using, dealing with, and building machines. AnExplorerwith technology flavor might be a starship pilot, and aSpeakerflavored with technology could be a techno-priest.",
+    "tiers": {
+      "1": [
+        "Datajack (124)",
+        "Hacker (147)",
+        "Machine Interface (159)",
+        "Scramble Machine (179)",
+        "Tech Skills (189)",
+        "Tinker (192)"
+      ],
+      "2": [
+        "Distant Interface (130)",
+        "Machine Efficiency (159)",
+        "Overload Machine (168)",
+        "Serv-0 (181)",
+        "Serv-0 Defender (181)",
+        "Serv-0 Repair (181)",
+        "Tool Mastery (192)"
+      ],
+      "3": [
+        "Mechanical Telepathy (161)",
+        "Serv-0 Scanner (181)",
+        "Ship Footing (182)",
+        "Shipspeak (183)",
+        "Spray (185)"
+      ],
+      "4": [
+        "Machine Bond (159)",
+        "Robot Fighter (178)",
+        "Serv-0 Aim (181)",
+        "Serv-0 Brawler (181)",
+        "Serv-0 Spy (181)"
+      ],
+      "5": [
+        "Control Machine (121)",
+        "Jury-Rig (156)",
+        "Machine Companion (159)"
+      ],
+      "6": [
+        "Information Gathering (153)",
+        "Master Machine (160)"
+      ]
+    }
+  }
+]

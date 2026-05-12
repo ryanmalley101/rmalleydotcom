@@ -1,0 +1,2174 @@
+[
+  {
+    "term": "Game master (GM)",
+    "definition": "The player who doesn't run a character, but instead guides the flow of the story and runs all the NPCs."
+  },
+  {
+    "term": "Nonplayer character (NPC)",
+    "definition": "Characters run by the GM. Think of them as the minor characters in the story, or the villains or opponents. This includes any kind of creature as well as people."
+  },
+  {
+    "term": "Party",
+    "definition": "A group of player characters (and perhaps some NPC allies)."
+  },
+  {
+    "term": "Player character (PC)",
+    "definition": "A character run by a player rather than the GM. Think of the PCs as the main characters in the story."
+  },
+  {
+    "term": "Player",
+    "definition": "The players who run characters in the game."
+  },
+  {
+    "term": "Session",
+    "definition": "A single play experience. Usually lasts a few hours. Sometimes one adventure can be accomplished in a session. More often, one adventure is multiple sessions."
+  },
+  {
+    "term": "Adventure",
+    "definition": "A single portion of the campaign with a beginning and an end. Usually defined at the beginning by a goal put forth by the PCs and at the end by whether or not they achieve that goal."
+  },
+  {
+    "term": "Campaign",
+    "definition": "A series of sessions strung together with an overarching story (or linked stories) with the same player characters. Often, but not always, a campaign involves a number of adventures."
+  },
+  {
+    "term": "Character",
+    "definition": "Anything that can act in the game. Although this includes PCs and human NPCs, it also technically includes creatures, aliens, mutants, automatons, animate plants, and so on. The word \"creature\" is usually synonymous."
+  },
+  {
+    "term": "Aquatic",
+    "definition": "The animal either breathes water instead of air or is able to breathe water in addition to breathing air."
+  },
+  {
+    "term": "Armor",
+    "definition": "The animal has a thick hide or shell, granting +1 to Armor."
+  },
+  {
+    "term": "Constrict",
+    "definition": "The animal can grip its opponent fast after making a melee attack (usually with a bite or claw), easing attack rolls against that foe on later turns until the animal releases the foe."
+  },
+  {
+    "term": "Fast",
+    "definition": "The animal can move a long distance on its turn instead of a short distance."
+  },
+  {
+    "term": "Flying",
+    "definition": "The animal can fly, which (depending on the type of animal) may be up to a short or long distance on its turn."
+  },
+  {
+    "term": "Hands",
+    "definition": "The animal has paws or hands that are nearly as agile as those of a human. Unlike with most animal shapes, the animal's tasks that require hands are not hindered (although the GM may decide that some tasks requiring human agility, such as playing a flute, are still hindered)."
+  },
+  {
+    "term": "Scent",
+    "definition": "The animal has a strong sense of smell, gaining an asset on tracking and dealing with darkness or blindness."
+  },
+  {
+    "term": "Small",
+    "definition": "The animal is considerably smaller than a human, easing its Speed defense tasks but hindering tasks to move heavy things."
+  },
+  {
+    "term": "Venom",
+    "definition": "The animal is poisonous (usually through a bite), inflicting 1 additional point of damage."
+  },
+  {
+    "term": "Magic familiar",
+    "definition": "level 3, Speed defense as level 5 due to size, one knowledge skill as level 4"
+  },
+  {
+    "term": "Transitional dimension",
+    "definition": "A dimension where distances are shorter compared to those in other dimensions, so travel through it is faster than normal movement."
+  },
+  {
+    "term": "Drone buddy",
+    "definition": "level 2; flies a short distance each round"
+  },
+  {
+    "term": "Fleet drone",
+    "definition": "level 3; flies a short distance each round"
+  },
+  {
+    "term": "Embedded drone",
+    "definition": "level 4, long-range embedded pistol inflicts 4 damage, flies a short distance each round"
+  },
+  {
+    "term": "Adorable animal",
+    "definition": "level 1, positive social interactions as level 3"
+  },
+  {
+    "term": "Secondary drone",
+    "definition": "level 2; flies a short distance each round"
+  },
+  {
+    "term": "Fiery forgeborn",
+    "definition": "level 4; anyone who tries to touch or strike the forgeborn with a melee attack automatically takes 1 fire damage"
+  },
+  {
+    "term": "Dust diamondback",
+    "definition": "level 3, Speed defense as level 4; health 12; bite deals 3 damage plus 1 Speed damage (ignores Armor) on a failed Might defense roll"
+  },
+  {
+    "term": "Spectral Servant",
+    "definition": "level 1"
+  },
+  {
+    "term": "Level of Equipment",
+    "definition": "Mundane equipment is about level 4—less if of inferior quality or materials, more if of superior quality or materials. This means that in a setting based on the distant past, the default level might be 3, while in the future it might be 5 or 6. So an average serf 's tool in the Dark Ages is level 3, easily broken, while an average tool on a space station is level 6, made of advanced polymers."
+  },
+  {
+    "term": "Action",
+    "definition": "Anything a character does that is significant—punch a foe, leap a chasm, activate a device, use a special power, and so on. Each character can take one action in a round."
+  },
+  {
+    "term": "Character",
+    "definition": "Any creature in the game capable of acting, whether it is a player character (PC) run by a player or a nonplayer character (NPC) run by the game master (GM). In the Cypher System, even bizarre creatures, sentient machines, and living energy beings can be \"characters.\""
+  },
+  {
+    "term": "Difficulty",
+    "definition": "A measure of how easy it is to accomplish a task. Difficulty is rated on a scale from 1 (lowest) to 10 (highest). Altering the difficulty to make a task harder is called \"hindering.\" Altering it to make a task easier is called \"easing.\" All changes in difficulty are measured in steps. Difficulty often equates directly with level, so opening a level 3 locked door probably has a difficulty of 3."
+  },
+  {
+    "term": "Ease",
+    "definition": "A decrease in a task's difficulty , usually by one step. If something doesn't say how many steps it eases a task, then it reduces the difficulty by one step."
+  },
+  {
+    "term": "Effort",
+    "definition": "Spending points from a stat Pool to reduce the difficulty of a task. A PC decides whether or not to apply Effort on their turn before the roll is made. NPCs never apply Effort."
+  },
+  {
+    "term": "Hinder",
+    "definition": "An increase in a task's difficulty , usually by one step. If something doesn't say how many steps it hinders a task, then it increases the difficulty by one step."
+  },
+  {
+    "term": "Inability",
+    "definition": "The opposite of trained —you're hindered whenever you attempt a task that you have an inability in. If you also become trained in the task, the training and the inability cancel each other out and you become practiced."
+  },
+  {
+    "term": "Level",
+    "definition": "A way to measure the strength, difficulty , power, or challenge of something in the game. Everything in the game has a level. NPCs and objects have levels that determine the difficulty of any task related to them. For example, an opponent's level determines how hard they are to hit or avoid in combat. A door's level indicates how hard it is to break down. A lock's level determines how hard it is to pick. Levels are rated on a scale from 1 (lowest) to 10 (highest). PC tiers are a little like levels, but they go only from 1 to 6 and mechanically work very differently than levels—for example, a PC's tier does not determine a task's difficulty."
+  },
+  {
+    "term": "Practiced",
+    "definition": "The normal, unmodified ability to use a skill —not trained, specialized, or an inability. Your type determines what weapon skills you're practiced in; if you aren't practiced with a type of weapon, you have an inability in it."
+  },
+  {
+    "term": "Roll",
+    "definition": "A d20 roll made by a PC to determine whether an action is successful. Although the game occasionally uses other dice, when the text simply refers to \"a roll,\" it always means a d20 roll."
+  },
+  {
+    "term": "Round",
+    "definition": "A length of time about five to ten seconds long . There are about ten rounds in a minute. When it's really important to track precise time, use rounds. Basically, it's the length of time to take an action in the game, but since everyone more or less acts simultaneously, all characters get to take an action each round."
+  },
+  {
+    "term": "Specialized",
+    "definition": "Having an exceptional amount of skill in a task. Being specialized eases the task by two steps. So, if you are specialized in climbing, all your climbing tasks are eased by two steps."
+  },
+  {
+    "term": "Stat",
+    "definition": "One of the three defining characteristics for PCs: Might , Speed , or Intellect . Each stat has two values: Pool and Edge . Your Pool represents your raw, innate ability, and your Edge represents knowing how to use what you have. Each stat Pool can increase or decrease over the course of play—for example, you can lose points from your Might Pool when struck by an opponent, spend points from your Intellect Pool to activate a special ability , or rest to recover points in your Speed Pool after a long day of marching. Anything that damages a stat, restores a stat, or boosts or penalizes a stat affects the stat's Pool."
+  },
+  {
+    "term": "Task",
+    "definition": "Any action that a PC attempts. The GM determines the difficulty of the task. In general, a task is something that you do and an action is you performing that task, but in most cases they mean the same thing ."
+  },
+  {
+    "term": "Trained",
+    "definition": "Having a reasonable amount of skill in a task. Being trained eases the task. For example, if you are trained in climbing, all climbing tasks for you are eased. If you become very skilled at that task, you become specialized instead of trained. You do not need to be trained to attempt a task."
+  },
+  {
+    "term": "Turn",
+    "definition": "The part of the round when a character or creature takes its actions . For example, if a Warrior and an Adept are fighting an orc , each round the Warrior takes an action on their turn, the Adept takes an action on their turn, and the orc takes an action on its turn. Some abilities or effects last only one turn, or end when the next turn is started."
+  },
+  {
+    "term": "Signature Abilities",
+    "definition": "Fantastic sidekicks gain abilities listed in Chapter 9: Abilities through Signature Ability . These abilities note how costs are paid, and any limits or modifications to the ability's activation requirements or effects. Be sure to record these modifications when adding these abilities to the sidekick's character sheet ."
+  },
+  {
+    "term": "Template Fantastic Sidekicks",
+    "definition": "Example fantastic sidekicks list a selection of decisions for the sidekick, along with a selection of sidekick abilities to choose at each new tier reached by the associated PC. A few recommend swapping another ability in for the fantastic niche's offering for that tier."
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Golems are usually made of natural materials—typically bone, clay, flesh, metal, or stone. Once awakened, they are utterly loyal to their creator (or whoever else they are designed to imprint upon)—although their enthusiasm to do as they are told is frequently outmatched by their inability to understand nuance."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Smash. 4 points of bludgeoning damage"
+  },
+  {
+    "term": "Increased Training",
+    "definition": "Physical Skills (170) (running, jumping)"
+  },
+  {
+    "term": "Construction Flaw",
+    "definition": "Inability in Speed defense"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Fortified Position (143) (no cost) Tier 2: Increased Recovery (OG-CSRD) Tier 3: Nine Lives (OG-CSRD) Tier 4: Power Strike (171) (1 health; can spend 1 additional health to apply a level of Effort, up to maximum equal to the associated PC's tier) Tier 5: Unmovable (195) (1 health) Tier 6: Terrifying Gaze (190) (3 health)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Mechanic droids are nearly ubiquitous—anyone who is anyone has one. As such, they are not treated with much acclaim or notice, although depending on how much they've been through together—some grow quite attached to theirs."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Discharge Coil. Hindered; 3 points of electricity damage"
+  },
+  {
+    "term": "Increased Training",
+    "definition": "Tech Skills (189) (piloting, repairing)"
+  },
+  {
+    "term": "Construction Flaw",
+    "definition": "Inability in all social interaction and swimming"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Swap Bashing Attack (OG-CSRD) for Instruction (OG-CSRD) Tier 1: Datajack (124) (no cost) Tier 2: Tinker (192) (no cost) Tier 3: Ship Footing (182) (1 health) Tier 4: Concussive Blast (121) (1 health) Tier 5: Force Field (Errata) (2 health) Tier 6: Reactive Field (174)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "A strong AI in a flexible metal housing that hovers no more than an immediate distance off the ground, with 1d6 prehensile limbs. The housing contains an electronic supercomputer hardware running sophisticated personality core software. It can speak with an extensive vocabulary."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Emitter. 2 points of radiation damage (ignores Armor)"
+  },
+  {
+    "term": "Increased Training",
+    "definition": "Tech Skills (189) (computers, machines)"
+  },
+  {
+    "term": "Construction Flaw",
+    "definition": "Inability in Might defense"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Swap Bashing Attack (OG-CSRD) for Network Dead Zone (IOM, 66) Tier 1: Scan (179) (no cost) Tier 2: Predictive Equation (171) (1 health) Tier 3: Hack the Impossible (147) (2 health) Tier 4: Distance Viewing (130) (3 health) Tier 5: Knowing the Unknown (156) (once each day; specialized in this ability) Tier 6: Precognition (171) (3 health)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Some robots are just made to knock heads with other robots. Rock 'em, sock 'em, stick 'em in the ring. Build 'em up. Break 'em? Build 'em back better."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Jab. Eased; 2 points of bludgeoning damage Hook. 4 points of bludgeoning damage Uppercut. Hindered; 6 points of bludgeoning damage"
+  },
+  {
+    "term": "Construction Flaw",
+    "definition": "Inability in Intellect defense"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Swap Increased Training (OG-CSRD) for Increased Armor (OG-CSRD) , Increased Damage (OG-CSRD) , or Increased Defense (OG-CSRD) Tier 1: Fortified Position (143) Tier 2: Increased Accuracy (OG-CSRD) Tier 3: Increased Defense (OG-CSRD) (Speed) Tier 4: Increased Level (OG-CSRD) Tier 5: Increased Size (OG-CSRD) Tier 6: Increased Threat (OG-CSRD)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Virtually identical to adult humans, replicants are stronger and faster, with a sim AI created to give a convincing performance of the human condition. Manufactured beings with grafted memories, a few replicants manage to feel something akin to human emotion."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "The replicant's internal weaponry deploys and retracts as if they had the Weaponization (151) ability): Light Attack. Eased; 2 points bludgeoning, puncturing, or slicing damage Medium Attack. 4 points bludgeoning, puncturing, or slicing damage"
+  },
+  {
+    "term": "Increased Training",
+    "definition": "Interaction Skills (189) (deceiving, persuasion)"
+  },
+  {
+    "term": "Construction Flaw",
+    "definition": "Inability in crafting, building, and repairing"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Instruction (OG-CSRD) Tier 2: Instruction (OG-CSRD) Tier 3: Face Morph (138) Tier 4: Body Morph (CTS, 49) (1 health) Tier 5: Impersonate (151) (1 health) Tier 6: All-Out Con (109) (once each day)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "An alicorn resembles large goat or a white horse, with a single spiral horn protruding from its forehead."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Bite. Eased; 2 points of piercing damage Hooves. 4 points of bludgeoning damage Horn. 4 points of puncturing damage (on a hit, the sidekick can deal additional radiation damage (ignores Armor) equal to the associated PC's tier; the PC must make a recovery roll before the sidekick can do this again)"
+  },
+  {
+    "term": "Immunity",
+    "definition": "Poison and disease"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Increased Movement (OG-CSRD) Tier 2: Increased Initiative (OG-CSRD) Tier 3: Trusty Steed (OG-CSRD) Tier 4: Dodge and Resist (131) Tier 5: Will of Legend (199) Tier 6: Resuscitate (177) (3 health; once each day)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Centaurs are hardy folk who roam mountains and plains. Their bodies combine the upper body of a human and the lower body and legs of a horse. Centaurs are as intelligent as humans, capable of speech."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Bow. Long range; 4 points of puncturing damage Fist. Eased; 2 points of bludgeoning damage Hooves. 4 points of bludgeoning damage"
+  },
+  {
+    "term": "Immunity",
+    "definition": "Cold"
+  },
+  {
+    "term": "Additional Equipment",
+    "definition": "Bow (medium weapon, long range)"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Swap Healing Touch (149) for Practiced With All Weapons (171) Tier 1: Increased Movement (OG-CSRD) Tier 2: Trusty Steed (OG-CSRD) Tier 3: Increased Accuracy (OG-CSRD) Tier 4: Increased Level (OG-CSRD) Tier 5: Speed Burst (185) (2 health) Tier 6: Swap Restore Life (177) for Lethal Damage (158) Tier 6: Cognizant Offense (119)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "A phoenix is a magical bird with the powers of healing, fire, and rebirth."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Flame Jet. 4 points of fire damage Talons. Eased; 2 points of slicing damage"
+  },
+  {
+    "term": "Immunity",
+    "definition": "Fire"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Winged Sidekick (OG-CSRD) (twice) Tier 2: Signature Attack (fire) Tier 3: Fire Bloom (140) (2 health) Tier 4: Signature Attack (OG-CSRD) Tier 5: Nine Lives (OG-CSRD) Tier 6: Inferno Trail (153)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "A sphinx is a chimera, usually with the head of human, the body of a lion or reptile, and the wings of an eagle. Sphinxes are intelligent enough to speak, although they only do so rarely. When they do, it is worth listening."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Mystic Gaze. Eased; 2 points of arcane damage (ignores Armor); short range Talons. 4 points of slicing damage"
+  },
+  {
+    "term": "Immunity",
+    "definition": "Psychic (Intellect)"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Winged Sidekick (OG-CSRD) (twice) Tier 2: Dream Thief (132) Tier 3: Draw Conclusion (131) (1 health) Tier 4: Up to Speed (OG-CSRD) Tier 5: Knowing the Unknown (174) (once each day; specialized in this ability) Tier 6: Break their Mind (4 health)"
+  },
+  {
+    "term": "Matching Damage Types",
+    "definition": "A dragon's Increased Resistance might also determine the damage type dealt by their Signature Attack , Fire Bloom , Bolts of Power , and Wall of Lightning . Alternatively, make a new roll on the Signature Attack table for each ability's damage type."
+  },
+  {
+    "term": "Other Dragon Advancements",
+    "definition": "Powerful dragons are innate spellcasters (gaining spells through Signature Ability ), or naturally gaining gain power shifts at certain tiers ."
+  },
+  {
+    "term": "Infinite Variety",
+    "definition": "Mon can be created and evolved randomly, except for the details of Increased Training and Signature Ability at tiers 2, 4, and 6. As PCs spend time with their mon after they evolve, they'll probably have a good idea for what kind of signature ability the mon might develop."
+  },
+  {
+    "term": "Matching Damage Types",
+    "definition": "If a special attack ability seems perfect but deals the wrong damage type, change it to match the sidekick's Signature Attack ."
+  },
+  {
+    "term": "Collecting Mon",
+    "definition": "If PCs encounter wild mon—even exceptional ones. PCs might also tame multiple mon. The GM sets a reasonable limit for how many mon a PC can maintain, and how many can be simultaneously active as a sidekick."
+  },
+  {
+    "term": "Using Cyphers as Spells",
+    "definition": "A spellbound sidekick might be a familiar , or the magic ally to a PC with the Keeps a Magic Ally focus or Soul Familiar ability."
+  },
+  {
+    "term": "Using Cyphers as Spells",
+    "definition": "When using this type of familiar, it's worth considering the optional Spellcasting rules, including Assigning Different Limits for Supernatural Abilities —especially the spells as cyphers and artifacts option. Using this option, a personal cypher deck of pre-selected cypher spells can really speed up the process of drawing new cyphers into the sidekick's repertoire."
+  },
+  {
+    "term": "Spellbound Sidekicks as a Gateway to Another World",
+    "definition": "The sidekick might gain Traverse the Worlds (194) as a cypher or artifact, taking the PCs to the magical realm of their origin."
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Kodama are wooden nature spirits. While they appear to wear masks, the growth of a face is merely for the benefit of interacting with people they know. Among their own kind, kodama have no need for a face. They are kindly, and are especially fond of music."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Stinging Nettles. 3 points of ambient poison damage (ignores Armor; short range)"
+  },
+  {
+    "term": "Needs",
+    "definition": "Access to fertile soil every 1d6 days"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Bee Cantrip (IOM, 82) Sprout Cantrip (IOM, 86)"
+  },
+  {
+    "term": "Blessings of the Gods",
+    "definition": "Nature and Health"
+  },
+  {
+    "term": "Vulnerability (Fire)",
+    "definition": "Attacks, effects, or ambient damage that deal fire damage ignore the sidekick's armor, and inflict 2 additional points of damage."
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Increased Armor (OG-CSRD) Tier 2: Grasping Foliage (146) Tier 3: Calm (118) Tier 4: Restorative Bloom (GF, 32) (once each day) Tier 5: Insect Eruption (154) (once each day) Tier 6: Resuscitate (177) (once each day)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Sometimes, a child's imaginary friend is brough to life by the wishes or dreams of a child. Imaginary friends usually exist only so long as the child continues to practice an active belief in them, but a rare few manage to reintroduce themselves to the child as an adult."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Prank. 3 points of ambient arcane damage (ignores Armor)"
+  },
+  {
+    "term": "Needs",
+    "definition": "The associated PC's belief they exist"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Extra Chair Cantrip (IOM, 83) Extra Fries Cantrip (IOM, 83)"
+  },
+  {
+    "term": "Blessings of the Gods",
+    "definition": "Silence and Trickery"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Invisibility (155) (no cost; always active; the associated PC and others who believe in the sidekick can see them at all times; anyone who cannot see the sidekick also can't hear or understand their words) Tier 2: Misdirect Blame (163) (1 health; can spend 1 additional health to apply a level of Effort) Tier 3: Pay it Forward (168) Tier 4: Apportation (110) (once each day) Tier 5: Improved Apportation (151) (once each day) Tier 6: Undo (195)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "A shade is a ghost—an unliving remnant of another person, whose unfinished business in life prevents them from moving on to the next phase of existence. Most ghosts are obsessives who are so singularly minded about their unfinished business that they all other sense of self."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Haunting Touch. 3 points of ambient dark matter damage (ignores Armor)"
+  },
+  {
+    "term": "Needs",
+    "definition": "Attend to unfinished business in life"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Darkness Cantrip (IOM, 83) Tremor Cantrip (IOM, 87)"
+  },
+  {
+    "term": "Blessings of the Gods",
+    "definition": "Death and Silence"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Elusive (133) Tier 2: Speaker for the Dead (184) Tier 3: Advanced Command (108) Tier 4: Psychic Burst (172) Tier 5: Terrifying Presence (190) Tier 6: Break their Mind (116)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": ""
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Enkindling Touch. 3 points of ambient fire damage (ignores Armor)"
+  },
+  {
+    "term": "Needs",
+    "definition": "Access to flammable objects"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Fire Crown Cantrip (IOM, 84) Obedient Flames Cantrip (IOM, 86)"
+  },
+  {
+    "term": "Blessings of the Gods",
+    "definition": "Fire and War"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Increased Resistance (OG-CSRD) (fire) Tier 2: Increased Accuracy Tier 3: Increased Size (once each day, lasts 1 hour) Tier 4: Ignition (150) (2 health) Tier 5: Inferno Trail (153) (once each day) Tier 6: Reactive Field (174) (deals fire damage instead of electricity)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": ""
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Whelm. 3 points of ambient cold damage (ignores Armor)"
+  },
+  {
+    "term": "Needs",
+    "definition": "Submersion in water once every 1d6 days"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Chill Cantrip (IOM, 82) Wet or Dry Cantrip (IOM, 87)"
+  },
+  {
+    "term": "Blessings of the Gods",
+    "definition": "Peace and Water"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Increased Resistance (Fire) (OG-CSRD) Tier 1: Swim (188) Tier 2: Grappling Attack Tier 3: Moving Like Water (164) (1 health) Tier 4: Freezing Touch (143) (2 health) Tier 5: Mist Cloud (CTS, 53) (no cost; can spend 1 health to apply a level of Effort, up to maximum equal to the associated PC's tier) Tier 6: Using the Environment (195)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": ""
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Fulmination. 3 points of ambient electricity damage (ignores Armor; short range)"
+  },
+  {
+    "term": "Needs",
+    "definition": "Continuous motion"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Hand Cantrip (IOM, 85) Gather Cantrip (IOM, 84)"
+  },
+  {
+    "term": "Blessings of the Gods",
+    "definition": "Air and Knowledge"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Winged Sidekick Tier 2: Winged Sidekick Tier 3: Increased Movement (also doubles the speed of Walk Through Walls (196) ) Tier 4: Blink of an Eye (115) (2 health) Tier 5: Rampage Tier 6: Wind Chariot (199) (4 health; can spend 1 additional health to apply a level of Effort, up to maximum equal to the associated PC's tier)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Bogeys are what go bump in the night, lurking under the beds and inside the closets of easily frightened children with their monstrous features."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Light Attack. Eased; 2 points of damage Medium Attack. 4 points of damage"
+  },
+  {
+    "term": "Skills",
+    "definition": "Specialized in intimidation; trained in Might defense"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Darkness Cantrip (IOM, 83) Forbidden Topic Cantrip (IOM, 84) Mystic Eyes Cantrip (IOM, 85) Tremor Cantrip (IOM, 87)"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Terrifying Presence (190) Tier 2: Ribbons of Dark Matter (178) (1 health) Tier 3: Evanesce (136) (1 health) Tier 4: Dark Matter Shroud (124) (2 health) Tier 5: Increased Threat (once each day; lasts 1 hour) Tier 6: Nightmare (165) (4 health)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Brownies are diminutive fey that—unlike most of their kind—enjoy the hustle and bustle of urban centers as much as the wilderness. They can understand others and speak, and especially enjoy making things, haggling, and making formal agreements with others—but if anyone falls short of their part of a bargain, brownies will stop at nothing to get what they're owed."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Inexecrable Vulgarity. 2 points of Intellect damage (ignores Armor); short range; the sidekick must be able to speak, and the target must be able to hear the words"
+  },
+  {
+    "term": "Skills",
+    "definition": "Trained in deceiving, persuasion, and Speed defense"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Cut Cantrip (IOM, 83) Gather Cantrip (IOM, 84) Stitch (IOM, 86) Tie Cantrip (IOM, 87)"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Swap Minor Illusion (162) for Sense Material (RR, 78) (gold, silver, gems, or other precious metals) Tier 1: Sense Oddity (RR, 80) Tier 2: Find the Hidden (140) (2 health) Tier 3: Uncanny Luck (194) (2 health) Tier 4: Unstealable Charm (IOM, 76) (no cost; can maintain the ability on a number of objects equal to the associated PC's tier; can spend 1 health to apply a level of Effort, up to maximum equal to the associated PC's tier) Tier 5: Reshape (176) Tier 6: Thief's Luck (191)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Mystic foxes are mercurial beings who occasionally take an interest in the life of one particular human, appearing—disappearing—without warning. The sidekick can speak and understand the words of others, but only rarely takes interest in the affairs of others."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Bite. Eased; 2 points of puncturing damage Tail Swipe. 3 points of arcane damage"
+  },
+  {
+    "term": "Skills",
+    "definition": "Specialized in running, trained in Intellect defense"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Candles Cantrip (IOM, 82) Cooking Cantrip (IOM, 83) Ghostly Wings Cantrip (IOM, 84) (manifests as a fan of fox tails) Quiet Cantrip (IOM, 86)"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Magical Repertoire (GF, 32) Tier 2: Razzle Dazzle (can spend 1 health to apply a level of Effort, up to maximum equal to the associated PC's tier) Tier 3: Wilderness Encouragement (198) (1 health) Tier 4: Invisibility (155) (2 health) Tier 5: Razzle Dazzle Tier 6: All-Out Con (109) (twice each day)"
+  },
+  {
+    "term": "Creature Type",
+    "definition": "Nixies are troublesome fey who generally prefer solitude. When employed as a sidekick, their powers can elevate even mundane children to legendary heroes."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Unarmed Strike. Eased; 2 points of bludgeoning damage Zap. 3 points of arcane damage"
+  },
+  {
+    "term": "Skills",
+    "definition": "Trained in perception, flying, and Speed defense"
+  },
+  {
+    "term": "Cantrips",
+    "definition": "Erase Cantrip (IOM, 83) Firework Cantrip (IOM, 84) Reshape Cantrip (IOM, 86) Tie Cantrip (IOM, 87)"
+  },
+  {
+    "term": "Suggested Sidekick Abilities",
+    "definition": "Tier 1: Winged Sidekick (twice) Tier 2: Inspire Action (154) Tier 3: Minor Wish (162) (2 health; the sidekick affects the associated PC; the sidekick does not need to retreat) Tier 4: Hard to Kill (148) Tier 5: Moderate Wish (162) (once each day; the sidekick affects the associated PC; the sidekick does not need to retreat) Tier 6: Permanent Illusion (169) (once every 1d6 days)"
+  },
+  {
+    "term": "Dianxue",
+    "definition": "The touch of death—killing by using precise nonlethal force on key points of the body."
+  },
+  {
+    "term": "Neili",
+    "definition": "Internal force— building up and cultivating the energy known as qi and using it for supernatural effects."
+  },
+  {
+    "term": "Level",
+    "definition": "The overall level of the ritual, which determines how many subtasks it has."
+  },
+  {
+    "term": "Time",
+    "definition": "The preparation time (if any) and performance time."
+  },
+  {
+    "term": "Roles",
+    "definition": "Things other characters can do to participate and help."
+  },
+  {
+    "term": "Side Effects",
+    "definition": "Negative consequences for failed rolls or GM intrusions."
+  },
+  {
+    "term": "Reagents",
+    "definition": "Resources that can help success."
+  },
+  {
+    "term": "Pool",
+    "definition": "What kind of Pool points the ritual costs."
+  },
+  {
+    "term": "Other Assets",
+    "definition": "Kinds of abilities that can help success."
+  },
+  {
+    "term": "Battleaxe",
+    "definition": "A wooden pole with a blade on one end."
+  },
+  {
+    "term": "Blowgun",
+    "definition": "A long hollow tube used to shoot darts. You can fire it with one hand, but you need two hands to load it."
+  },
+  {
+    "term": "Bow",
+    "definition": "A bent piece of flexible wood with a taut string connected to each end. It fires arrows. You need two hands to fire it."
+  },
+  {
+    "term": "Broadsword",
+    "definition": "A long-bladed sword, longer than a dagger, heavier than a rapier, but not as large as a greatsword."
+  },
+  {
+    "term": "Club",
+    "definition": "A simple bludgeon, such as a sturdy tree branch, board, or improvised weapon."
+  },
+  {
+    "term": "Crank crossbow",
+    "definition": "A weapon similar to a light crossbow, but it has a magazine that holds five bolts. You turn a small crank to advance to the next bolt (this is not an action). Action to load an empty magazine with five bolts, action to reload the crossbow with a new magazine. It can be used as a rapid-fire weapon."
+  },
+  {
+    "term": "Dagger",
+    "definition": "A very short blade for stabbing or slicing."
+  },
+  {
+    "term": "Flail",
+    "definition": "A handle with a chain on one end and a ball or spiked ball at the end of the chain."
+  },
+  {
+    "term": "Greataxe",
+    "definition": "A larger, heavier version of the battleaxe, sometimes with two opposing blades instead of one."
+  },
+  {
+    "term": "Greatsword",
+    "definition": "A two-handed version of the broadsword."
+  },
+  {
+    "term": "Hammer",
+    "definition": "A wooden handle with a heavy metal head, either one-sided (like a carpenter's hammer) or two-sided (like a sledgehammer)."
+  },
+  {
+    "term": "Hand crossbow",
+    "definition": "A smaller and weaker version of a light crossbow. It fires crossbow bolts. You can fire it with one hand. You need two hands to load it."
+  },
+  {
+    "term": "Handaxe",
+    "definition": "A light, one-handed axe that's good for melee or throwing."
+  },
+  {
+    "term": "Heavy crossbow",
+    "definition": "A heavier, more powerful version of a light crossbow. You need two hands to fire or load it. Action to reload."
+  },
+  {
+    "term": "Heavy mace",
+    "definition": "A larger, two-handed version of a mace."
+  },
+  {
+    "term": "Javelin",
+    "definition": "A light spear that's designed to be thrown."
+  },
+  {
+    "term": "Light crossbow",
+    "definition": "A bow with a handle and mechanism for drawing and holding the string. It fires crossbow bolts. You can fire it with one hand. You need two hands to load it. Action to reload."
+  },
+  {
+    "term": "Mace",
+    "definition": "A wooden handle with a heavy metal head that's spherical, flanged, or knobbed."
+  },
+  {
+    "term": "Maul",
+    "definition": "A larger version of the hammer, such as a sledgehammer."
+  },
+  {
+    "term": "Net",
+    "definition": "A net designed for battle rather than fishing. It has metal hooks at each intersection to help catch your enemy. You can throw it with one hand. Action to refold it so it can be thrown again. If you hit an opponent with the net, all of their physical actions are hindered until they take an action to remove it."
+  },
+  {
+    "term": "Pick",
+    "definition": "A hafted weapon with a sideways metal spike on the end, similar to a miner's tool."
+  },
+  {
+    "term": "Polearm",
+    "definition": "Various kinds of spears, sometimes with hooks or additional blades for special purposes like tripping a foe or pulling an opponent from their mount."
+  },
+  {
+    "term": "Quarterstaff",
+    "definition": "A wooden pole about 4 to 5 feet (1.2 to 1.5 m) long."
+  },
+  {
+    "term": "Rapier",
+    "definition": "A light sword with a thin blade used for stabbing and slashing."
+  },
+  {
+    "term": "Scimitar",
+    "definition": "A medium-length sword with a strongly curved blade."
+  },
+  {
+    "term": "Sickle",
+    "definition": "A one-handed hafted weapon with a sharply curved blade, originally used for harvesting crops but adapted for use as a weapon."
+  },
+  {
+    "term": "Sling",
+    "definition": "A small pouch connected to two cords. You put a stone or bullet (metal slug) in the pouch, hold the end of the cords, spin it, and let go of one of the cords to hurl the projectile. You can fire it with one hand. You need two hands to load it. Action to reload."
+  },
+  {
+    "term": "Spear",
+    "definition": "A one-handed pole about 3 to 5 feet (1 to 1.5 m) long with a stabbing blade on the end."
+  },
+  {
+    "term": "Throwing dart",
+    "definition": "A very short, light spear meant to be thrown rather than used in melee."
+  },
+  {
+    "term": "Trident",
+    "definition": "A three-pronged spear, often used for spear fishing."
+  },
+  {
+    "term": "Unarmed",
+    "definition": "A typical punch, kick, or other weaponless attack."
+  },
+  {
+    "term": "Whip",
+    "definition": "A leather cord with a handle, used more for tricks and inflicting punishments than for deadly combat."
+  },
+  {
+    "term": "Beastskin",
+    "definition": "An improved form of hides and furs, usually crafted from a creature with especially tough skin such as a giant lizard or rhinoceros."
+  },
+  {
+    "term": "Breastplate",
+    "definition": "A fitted metal plate or set of plates that protect your torso but not your arms or legs, giving you greater movement than full plate at the cost of some protection."
+  },
+  {
+    "term": "Brigandine",
+    "definition": "Long strips of metal attached to a cloth or leather backing. Often called \"splint mail.\""
+  },
+  {
+    "term": "Chainmail",
+    "definition": "Mail armor made from hundreds of interlocking metal rings or links. Often called \"chain\" or \"chain armor.\""
+  },
+  {
+    "term": "Dwarven breastplate",
+    "definition": "A high-quality breastplate crafted by a skilled dwarf, providing good protection and great mobility. Dwarven breastplate is medium armor (2 Armor) but encumbers the wearer as if it were light armor (it has a Speed Effort cost of 1). Not all dwarf-crafted breastplates count as this type of armor (only exceptionally skilled dwarven smiths know how to make it)."
+  },
+  {
+    "term": "Elven chainmail",
+    "definition": "A high-quality suit of chainmail crafted by a skilled elf, providing good protection and excellent mobility. Elven chainmail is medium armor (2 Armor) but is no more encumbering than a typical outfit of normal clothing (it has no Speed Effort cost ). Not all elf-crafted chainmail counts as this type of armor (only exceptionally skilled elven smiths know how to make it)."
+  },
+  {
+    "term": "Full plate",
+    "definition": "A complete suit of fitted metal plates that give excellent coverage and protection against attacks. The joints are protected by small layered plates over flexible chain. Sometimes called \"plate mail.\""
+  },
+  {
+    "term": "Heavy cloth",
+    "definition": "Clothing that's heavy enough to reduce the effect of attacks against you, such as winter clothing or a fashionable leather outfit. Heavy cloth provides 1 Armor against piercing or slashing attacks like arrows and swords, but not bashing attacks like clubs or hammers. Heavy cloth doesn't have a Speed Effort cost . It can't be worn with other kinds of armor."
+  },
+  {
+    "term": "Hides and furs",
+    "definition": "Made from thick or poorly cured animal skins. It's heavier and bulkier than other kinds of leather armor, but easier to make, especially by resource-poor crafters."
+  },
+  {
+    "term": "Leather jerkin",
+    "definition": "Armor made of hardened pieces of leather (usually boiled or treated with chemicals) that mainly covers your torso. It's stiffer than leather used for clothing, but still flexible enough that you can bend and twist in it. Some jerkins are reinforced with metal studs (and may be called \"studded leather\"), and brigandine improves upon that concept."
+  },
+  {
+    "term": "Padded",
+    "definition": "Cloth armor that is deliberately designed with multiple layers to be thick and protective. This is sometimes called \"quilted armor\" because it is a layer of padding sewn between two layers of cloth. Padded armor provides 1 Armor against piercing or slashing attacks like arrows and swords, but not bashing attacks like clubs or hammers. Padded armor doesn't have a Speed Effort cost . It can't be worn with other kinds of armor."
+  },
+  {
+    "term": "Scale",
+    "definition": "Mail armor made from overlapping scales or plates attached to a leather or cloth backing. Often called \"scale mail.\""
+  },
+  {
+    "term": "Shield",
+    "definition": "Provides an asset to Speed defense rolls. Shield sizes vary from a small buckler to a large kite shield (in the Cypher System, the difference is mainly flavor, and for game purposes they all grant the wearer the same benefit). You must have one free hand to use a shield."
+  },
+  {
+    "term": "Acid",
+    "definition": "A flask of strong acid. Can be thrown up to short range, inflicting acid damage as a light weapon (ignores Armor). If poured carefully, it can damage or destroy a small item or areas made of stone or metal."
+  },
+  {
+    "term": "Adventuring pack",
+    "definition": "Includes 50 feet (15 m) of rope, three days' iron rations, three spikes, small hammer, a set of warm clothes, boots, and three torches."
+  },
+  {
+    "term": "Alchemist fire",
+    "definition": "A flask of chemicals that burst into flames upon contact with air. The flames burn out after one round. Can be thrown up to short range, inflicting fire damage as a light weapon (ignores Armor)."
+  },
+  {
+    "term": "Alchemist tools",
+    "definition": "A sturdy wooden case with tiny flasks, stirring rods, droppers, and other materials used in alchemy. It grants an asset for identifying potion cyphers and similar mysterious liquids."
+  },
+  {
+    "term": "Bag of heavy tools",
+    "definition": "Contains a hammer, six spikes, crowbar, large tongs, chisel, and 10 feet (3 m) of strong rope."
+  },
+  {
+    "term": "Bag of light tools",
+    "definition": "Contains a small hammer, small tongs, pliers, small pry bar, awl, lockpicks, 10 feet (3 m) of string, 3 feet (1 m) of metal wire, and a handful of nails."
+  },
+  {
+    "term": "Battering ram",
+    "definition": "This sturdy plank is capped with hard metal. It provides an asset for breaking down doors."
+  },
+  {
+    "term": "Book",
+    "definition": "A book with information on a particular topic, such as geography, history, magic, or religion. Provides an asset on appropriate rolls if the character reads or skims the book for at least ten minutes before attempting the task (this assumes the character has already read the book and is looking for relevant information)."
+  },
+  {
+    "term": "Caltrops, bag",
+    "definition": "A bag of hard things you scatter on the ground to slow or injure anyone walking through an area. One bag covers an immediate area and makes that area count as difficult terrain . A creature can safely move through it as if it were difficult terrain (half speed). If a creature moves through the area at normal speed, they must make a difficulty 2 Speed defense roll or take 2 points of Speed damage (ignores Armor)."
+  },
+  {
+    "term": "Candle",
+    "definition": "A candle burns for one hour and creates dim light in an immediate area."
+  },
+  {
+    "term": "Climbing kit",
+    "definition": "A set of crampons, pitons, ropes, and tools. Provides an asset on climbing tasks."
+  },
+  {
+    "term": "Crowbar",
+    "definition": "This bent length of metal grants an asset on tasks to open doors, treasure chests, and similar objects."
+  },
+  {
+    "term": "Disguise kit",
+    "definition": "Makeup, simple prosthetics, and a wig or two, suitable for disguises for a theatrical production. Provides an asset on disguise tasks. Some parts are reusable, but the kit runs out after about five uses."
+  },
+  {
+    "term": "Healing kit",
+    "definition": "A collection of bandages, needles, thread, and basic medicines. Provides an asset on healing tasks. Some parts are reusable, but the kit runs out after about five uses."
+  },
+  {
+    "term": "Lamp",
+    "definition": "A hollow container filled with oil that slowly burns to provide light (often resembling a \"genie lamp\"). A lamp creates normal light in an immediate area and dim light out to the short area beyond that. It burns for three to four hours on 1 pint (.5 L) of oil. If dropped, it might spill oil, break, or both."
+  },
+  {
+    "term": "Lantern",
+    "definition": "An improved version of a lamp, with a wick that draws oil and glass or metal panes to protect it from wind. A lantern creates normal light in an immediate area and dim light out to the short area beyond that. It burns for three to four hours on 1 pint (.5 L) of oil. If dropped, it is less likely to spill than a lamp."
+  },
+  {
+    "term": "Lockpicks",
+    "definition": "Also known as thieves' tools, this set provides everything a skilled person needs to pick locks and disarm traps."
+  },
+  {
+    "term": "Manacles",
+    "definition": "Metal or heavy wooden restraints that hold an enemy's wrists or ankles in place and are secured with a pin. A common set of manacles is level 5."
+  },
+  {
+    "term": "Oil",
+    "definition": "A pint (.5 L) of lamp oil in a leather flask. It burns for three to four hours in a lantern or lamp. If prepped with a burning wick, it can be thrown, inflicting fire damage as a light weapon (ignores Armor). If poured on a flat surface, it makes an immediate area slippery. A creature can safely move through the oil slick as if it were difficult terrain (half speed). If a creature moves through the area at normal speed, they must make a difficulty 3 Speed defense roll or slip on the oil and fall prone. Lighting the oil slick makes it burn for one or two rounds and inflicts 1 point of fire damage (ignores Armor) on anyone in or moving through the area."
+  },
+  {
+    "term": "Signal horn",
+    "definition": "This horn can be heard up to a mile away."
+  },
+  {
+    "term": "Spyglass",
+    "definition": "This device grants an asset on perception tasks to see things at long range or longer."
+  },
+  {
+    "term": "Tent",
+    "definition": "This has enough room for two humans or three smaller people."
+  },
+  {
+    "term": "Torch",
+    "definition": "A wooden stick with some kind of fuel on one end (such as burlap and wax). It burns for one hour, creating normal light in an immediate area and dim light in the short area beyond that. A torch is fragile and usually breaks if used to hit something"
+  },
+  {
+    "term": "Artisan's outfit",
+    "definition": "A suitable outfit for a person who performs a trade (blacksmith, cobbler, and so on). Often includes an apron and a belt for holding tools."
+  },
+  {
+    "term": "Ascetic's outfit",
+    "definition": "A simple outfit worn by monks and other people who eschew displays of wealth and status. Specific styles vary by climate and the philosophical tenets of the wearer, but a typical example is a loose shirt, loose breeches, sandals, a cap, and several cloth straps that can serve as a belt, scarf, or simple adornments."
+  },
+  {
+    "term": "Cold-weather outfit",
+    "definition": "A heavier set of clothing for protection against cold weather."
+  },
+  {
+    "term": "Entertainer's costume",
+    "definition": "Interesting (and usually colorful) clothing appropriate for an entertainer such as an actor, bard, juggler, or acrobat."
+  },
+  {
+    "term": "Explorer's outfit",
+    "definition": "A set of sturdy clothing for adventurers and experienced travelers who want to be prepared for various activities and environments."
+  },
+  {
+    "term": "Fancy outfit",
+    "definition": "A stylish set of clothes according to the local fashions and customs. Generally the minimum required for meeting with important townsfolk such as a mayor or noble. Higher-status events require outfits that cost up to four times as much."
+  },
+  {
+    "term": "Peasant's outfit",
+    "definition": "Very simple clothing for free people of low social status. Includes a kerchief or cap, shirt or blouse, trousers or skirt, and heavy cloth shoes or foot wrappings."
+  },
+  {
+    "term": "Priestly vestments",
+    "definition": "Garments appropriate for performing ceremonies for a specific religion. A common example is a hat or headdress, long tunic or dress, tabard or stole, and shoes, with the outer pieces marked with appropriate symbols."
+  },
+  {
+    "term": "Traveler's outfit",
+    "definition": "A comfortable set of clothes that includes gloves, a protective hat, a jacket, and a cloak with a hood."
+  },
+  {
+    "term": "Wizard's outfit",
+    "definition": "Clothing that identifies the wearer as a practitioner of arcane magic. A typical outfit includes an interesting hat or cap, a robe with long sleeves and many pockets, and shoes, often adorned with runes or representations of magical creatures such as dragons. Scholars and sages wear very similar garments that lack the mystical aspects of wizard clothing."
+  },
+  {
+    "term": "Draft horse",
+    "definition": "A strong horse able to carry or pull heavy loads."
+  },
+  {
+    "term": "Guard dog",
+    "definition": "A dog specially trained to guard. Better suited for watching or patrolling an area against thieves and intruders than it is for accompanying adventurers into dangerous locations."
+  },
+  {
+    "term": "Pony",
+    "definition": "A smaller type of horse, suitable for pulling a cart, carrying smaller loads than a full-sized horse, or serving as a mount for a smaller-than-human creature such as a dwarf or halfling."
+  },
+  {
+    "term": "Riding horse",
+    "definition": "A horse trained for riding and able to carry a typical adult human. Riding horses tend to panic in combat."
+  },
+  {
+    "term": "Warhorse",
+    "definition": "A horse trained to be calm during the noise and action of combat, used either as a mount or to pull a vehicle such as a chariot."
+  },
+  {
+    "term": "Level",
+    "definition": "Like the difficulty of a task, each trap has a level. You use the level to determine the target number a PC must reach to find, evade, or disable the trap. In each entry, the difficulty number for the trap is listed after its level (always three times the trap's level)."
+  },
+  {
+    "term": "Description",
+    "definition": "This general description explains what the trap does, how it operates, whether it resets automatically, if it has a limited number of uses, and so on."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Generally, when a trap hits a creature, it inflicts its level in damage regardless of the form of attack (arrow, poison, collapsing ceiling, and so on). The entries always specify the amount of damage inflicted, even if it's the normal amount for a trap of its level."
+  },
+  {
+    "term": "Modifications",
+    "definition": "Use these numbers when a trap's information says to use a different target number. For example, a level 4 trap might say \"defends as level 5,\" which means PCs attacking it or trying to disable it must roll a target number of 15 (for difficulty 5) instead of 12 (for difficulty 4). Typical modifiers are to the trap's attacks, defenses, and stealth (how hard or easy it is to notice the trap)."
+  },
+  {
+    "term": "GM Intrusion",
+    "definition": "This entry suggests one or more ways to use GM intrusions in an encounter with the trap. It's just one possible idea of many, and the GM is encouraged to come up with their own uses of the game mechanic."
+  },
+  {
+    "term": "Blindness",
+    "definition": "The poison blinds the creature if they fail a defense roll. Typical durations are one minute, ten minutes, and one hour."
+  },
+  {
+    "term": "Choking",
+    "definition": "The poison makes the creature choke and cough if they fail a defense roll. Typical durations are one minute, ten minutes, and one hour. Severe versions of choking poison might make a creature start to suffocate."
+  },
+  {
+    "term": "Damage Track",
+    "definition": "The poison moves the creature down one step on the damage track if they fail a defense roll."
+  },
+  {
+    "term": "Debilitating",
+    "definition": "The poison hinders all of the creature's actions by one or two steps if they fail a defense roll. (Some poisons may affect only certain kinds of actions, such as Speed defense rolls or Might-based tasks.) Typical durations are ten minutes, one hour, and ten hours."
+  },
+  {
+    "term": "Instant Damage",
+    "definition": "The poison inflicts damage (Might, Speed, or Intellect) one time if the creature fails a defense roll."
+  },
+  {
+    "term": "Ongoing Damage",
+    "definition": "The poison inflicts damage (Might, Speed, or Intellect) immediately. When a certain amount of time has passed (such as every round or every minute), it inflicts damage again if the creature fails its defense roll. The ongoing damage usually ends on its own (such as after five additional rounds of damage) or after the creature makes a defense roll against it. Usually the ongoing damage is a much smaller amount than the initial damage, such as 1 point every round."
+  },
+  {
+    "term": "Paralysis",
+    "definition": "The poison prevents the creature from taking any physical actions if they fail a defense roll (this might leave them standing in place like a statue, or make them go limp and collapse to the floor). Typical durations are ten minutes, one hour, and ten hours."
+  },
+  {
+    "term": "Sleep",
+    "definition": "The poison knocks the creature unconscious if they fail a defense roll. Typical durations are ten minutes, one hour, and ten hours. The poison might also make the creature groggy, hindering all actions for an additional amount of time equal to how long the unconsciousness would have lasted (for example, knocking out a creature for an hour and then making them groggy for an hour, even if they're awakened early)."
+  },
+  {
+    "term": "Lycanthrope",
+    "definition": "Formally, a human who can transform into a wolf. Informally, a human who can transform into an animal, such as a bear, rat, tiger, or wolf"
+  },
+  {
+    "term": "Death manifestation",
+    "definition": "level 7"
+  },
+  {
+    "term": "Dragontooth warrior",
+    "definition": "level equal to the artifact level, Speed defense as artifact level + 1 due to shield; Armor 1; spear attack (melee or short range) inflicts damage and impedes movement of victim to immediate range for one round"
+  },
+  {
+    "term": "Bat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Black bear",
+    "definition": "level 3; attacks as level 4"
+  },
+  {
+    "term": "Blacksmith",
+    "definition": "level 2; metalworking as level 4; health 8"
+  },
+  {
+    "term": "Cat",
+    "definition": "level 1; Speed defense as level 3 due to size and quickness"
+  },
+  {
+    "term": "Catfolk",
+    "definition": "level 3; balancing and climbing as level 4; damage inflicted 4 points"
+  },
+  {
+    "term": "Centaur",
+    "definition": "level 4; health 15; moves a long distance each round"
+  },
+  {
+    "term": "Crocodile",
+    "definition": "level 4; Armor 1; swims a short distance each round"
+  },
+  {
+    "term": "Dire wolf",
+    "definition": "level 4; attacks and perception as level 5; Armor 1"
+  },
+  {
+    "term": "Dog",
+    "definition": "level 2; perception as level 3"
+  },
+  {
+    "term": "Dog, guard",
+    "definition": "level 3; attacks and perception as level 4"
+  },
+  {
+    "term": "Elephant",
+    "definition": "level 5; health 20; Armor 1"
+  },
+  {
+    "term": "Farmer",
+    "definition": "level 2; animal handling as level 3; health 8"
+  },
+  {
+    "term": "Gargoyle",
+    "definition": "level 3; Armor 5; damage inflicted 5 points; flies a short distance each round"
+  },
+  {
+    "term": "Giant ape",
+    "definition": "level 3; climbing and attacks as level 4"
+  },
+  {
+    "term": "Giant crab",
+    "definition": "level 6; Armor 4; pincer attack holds prey and automatically inflicts damage each turn until the target succeeds at a Might or Speed defense task"
+  },
+  {
+    "term": "Giant frog",
+    "definition": "level 3"
+  },
+  {
+    "term": "Giant octopus",
+    "definition": "level 5; Might defense and stealth as level 6; health 25; attacks four times as an action"
+  },
+  {
+    "term": "Giant scorpion",
+    "definition": "level 4; Armor 2; damage inflicted 4 points plus 4 points of Speed damage (ignores Armor) on a failed Might defense task"
+  },
+  {
+    "term": "Giant snake",
+    "definition": "level 4; health 18; Armor 2; damage inflicted 4 points plus 3 points of Speed damage (ignores Armor) on a failed Might defense task"
+  },
+  {
+    "term": "Gnoll",
+    "definition": "level 2; Speed defense as level 3 due to shield; health 8; Armor 2"
+  },
+  {
+    "term": "Gorilla",
+    "definition": "level 2; attacks as level 3; damage inflicted 3 points"
+  },
+  {
+    "term": "Griffon",
+    "definition": "level 4; perception as level 5; Armor 1; flies a long distance each round"
+  },
+  {
+    "term": "Grizzly bear",
+    "definition": "level 5; health 20; Armor 1"
+  },
+  {
+    "term": "Hawk",
+    "definition": "level 2; flies a long distance each round"
+  },
+  {
+    "term": "Hippogryph",
+    "definition": "level 3; attacks as level 4; flies a long distance each round."
+  },
+  {
+    "term": "Horse",
+    "definition": "level 3; moves a long distance each round"
+  },
+  {
+    "term": "Leopard",
+    "definition": "level 4; climbing, jumping, stealth, and attacks as level 5; Armor 1"
+  },
+  {
+    "term": "Lion or tiger",
+    "definition": "level 5; attacks as level 6; Armor 1"
+  },
+  {
+    "term": "Lizardfolk",
+    "definition": "level 3; Armor 1"
+  },
+  {
+    "term": "Merchant",
+    "definition": "level 2; haggling and assessment tasks as level 3"
+  },
+  {
+    "term": "Mummy",
+    "definition": "level 6; ancient history, ancient religion, climbing, and stealth as level 8; health 24; Armor 2; damage inflicted 7 points"
+  },
+  {
+    "term": "Nymph",
+    "definition": "level 3; stealth and positive social interactions as level 6"
+  },
+  {
+    "term": "Pegasus",
+    "definition": "level 3; Speed defense as level 4; moves or flies a long distance each round"
+  },
+  {
+    "term": "Pterodactyl",
+    "definition": "level 3; Armor 1; flies a long distance each round"
+  },
+  {
+    "term": "Rat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Roc",
+    "definition": "level 6; health 25; Armor 2; flies a long distance each round; attacks twice as an action"
+  },
+  {
+    "term": "Shark",
+    "definition": "level 3; attacks as level 4; health 15; Armor 2"
+  },
+  {
+    "term": "Undead claw",
+    "definition": "level 1; attacks as level 3, Speed defense as level 3 due to quickness and size; health 5; Armor 1"
+  },
+  {
+    "term": "Unicorn",
+    "definition": "level 4; Might defense, perception, and attacks as level 5; health 15; Armor 1; makes two attacks as its action; once per hour can teleport up to 1 mile; once per hour can heal a creature for 4 Pool points (or health) and remove poisons up to level 4"
+  },
+  {
+    "term": "Villager",
+    "definition": "level 1"
+  },
+  {
+    "term": "Viper",
+    "definition": "level 2; bite inflicts 3 points of Speed damage (ignores Armor)"
+  },
+  {
+    "term": "Warhorse",
+    "definition": "level 4; moves a long distance each round"
+  },
+  {
+    "term": "Werebear",
+    "definition": "level 5; attacks as level 6; Armor 1; damage inflicted 6 points; regenerates 2 health per round (unless recently wounded by dd)"
+  },
+  {
+    "term": "Wererat",
+    "definition": "level 3; Speed defense and stealth as level 4; regenerates 2 health per round (unless recently wounded by silver)"
+  },
+  {
+    "term": "Wereshark",
+    "definition": "level 4; attacks as level 5; health 15; Armor 2; regenerates 2 health per round (unless recently wounded by silver)"
+  },
+  {
+    "term": "Weretiger",
+    "definition": "level 5; attacks as level 6; Armor 1; damage inflicted 6 points; regenerates 2 health per round (unless recently wounded by silver)"
+  },
+  {
+    "term": "Wolf",
+    "definition": "level 3; perception as level 4"
+  },
+  {
+    "term": "Yeti",
+    "definition": "level 3; attacks, perception, and stealth as level 4; Armor 1"
+  },
+  {
+    "term": "Businessperson",
+    "definition": "level 2; business tasks as level 3"
+  },
+  {
+    "term": "Cat",
+    "definition": "level 1; Speed defense as level 3"
+  },
+  {
+    "term": "Clerk",
+    "definition": "level 2"
+  },
+  {
+    "term": "Dog",
+    "definition": "level 2; perception as level 3"
+  },
+  {
+    "term": "Dog, guard",
+    "definition": "level 3; attacks and perception as level 4"
+  },
+  {
+    "term": "Horse",
+    "definition": "level 3; moves a long distance each round"
+  },
+  {
+    "term": "Rat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Worker",
+    "definition": "level 2; health 8"
+  },
+  {
+    "term": "Renewable Parts",
+    "definition": "You can take renewable animal parts without harming a creature."
+  },
+  {
+    "term": "Nonrenewable Parts",
+    "definition": "Taking nonrenewable parts involves harming—maybe even killing—a creature."
+  },
+  {
+    "term": "Over the Counter (OTC)",
+    "definition": "OTC drugs are inexpensive and ubiquitous. These drugs can be purchased in convenience stores and vending machines, or found in a well-stocked medicine cabinet."
+  },
+  {
+    "term": "Prescription (℞)",
+    "definition": "℞ Only drugs are created for therapeutic purposes. If such a drug is prescribed to a character, the price ranges vary depending on what the character's health insurance covers. If purchased on the secondary market or the black market, the cost is negotiable."
+  },
+  {
+    "term": "Street",
+    "definition": "Street drugs are synthesized solely for recreational purposes. Price is set at the dealer's discretion, fluctuating according to supply and demand."
+  },
+  {
+    "term": "Weak AI",
+    "definition": "An algorithmic-based code with specific tasks, such as a chess bot, smart pistol, or voice-activated helper app on a smartphone. It can't do anything except what it was programmed to do."
+  },
+  {
+    "term": "Sim AI",
+    "definition": "A program with the capacity to understand directions, interpret multiple kinds of data, and draw conclusions from its findings, but that lacks consciousness like a human. An example is a self-directed police robot that can navigate public spaces, use facial recognition to find criminals, intervene in obvious crime situations (including neutralizing aggressors) and respond to typical questions, but it isn't actually thinking. A sim AI is essentially a stronger form of weak AI."
+  },
+  {
+    "term": "Strong AI",
+    "definition": "A strong AI has all of the abilities of a sim AI, and it can think and generalize the way a human can. In a typical cyberpunk setting, a strong AI doesn't have full human citizenship or rights, and it's digitally confined to prevent it from trying to escape, cause harm, or overthrow its creators (although there may be a few strong AIs that evolved out of sim AIs and are free to act in the world, whether toward grand plans like global domination or smaller goals like controlling a fleet of AI-piloted limousines)."
+  },
+  {
+    "term": "Post-singularity AI",
+    "definition": "An AI created by a strong AI, designed to be better than and exceed the limitations of their first-generation AI predecessors. In a typical cyberpunk setting, post-singularity AI is just speculation, or its existence is kept hidden from the general public. These AIs would probably consider humanity their enemies at worst or their captors at best, and are kept locked behind multiple firewalls (perhaps in an older, sealed-off internet) to protect the megacorporations' interests."
+  },
+  {
+    "term": "Inhibitor Chip",
+    "definition": "level 5; when activated, character's tasks are hindered by two steps, and the character falls unconscious for one minute if they fail an Intellect defense task."
+  },
+  {
+    "term": "Programming",
+    "definition": "Slip past security measures, modify a device or software's function, code programs for later use."
+  },
+  {
+    "term": "Research",
+    "definition": "Identify useful information within the drive or network."
+  },
+  {
+    "term": "Perception",
+    "definition": "Identify useful information within the drive or network, detect attacks by other hackers."
+  },
+  {
+    "term": "Deception",
+    "definition": "Avoid detection, misdirect the attention of administrators or other hackers."
+  },
+  {
+    "term": "Stealth",
+    "definition": "Avoid detection."
+  },
+  {
+    "term": "Speed, Agility, Manual Dexterity",
+    "definition": "Counteract other hackers' efforts by typing really fast."
+  },
+  {
+    "term": "Weak AI",
+    "definition": "level 1; up to level 7 when it comes to a narrowly specific application of knowledge or skill"
+  },
+  {
+    "term": "Sim AI",
+    "definition": "level equal to the ship, station, or installation in which it is installed"
+  },
+  {
+    "term": "Strong AI",
+    "definition": "level 5–8, up to level 8 when it comes to a specific application of knowledge or skill."
+  },
+  {
+    "term": "Post-singularity AI",
+    "definition": "level 10; see godmind"
+  },
+  {
+    "term": "Innocuous rodent",
+    "definition": "level 1"
+  },
+  {
+    "term": "Guard beast",
+    "definition": "level 3; perception as level 4"
+  },
+  {
+    "term": "Corporate drone",
+    "definition": "level 2"
+  },
+  {
+    "term": "Physical laborer",
+    "definition": "level 2; health 8"
+  },
+  {
+    "term": "Homunculus",
+    "definition": "level 2; alchemy, all defenses, and stealth as level 3"
+  },
+  {
+    "term": "Businessperson",
+    "definition": "level 2"
+  },
+  {
+    "term": "Cat",
+    "definition": "level 1; Speed defense as level 3"
+  },
+  {
+    "term": "Clerk",
+    "definition": "level 2"
+  },
+  {
+    "term": "Dog",
+    "definition": "level 2; perception as level 3"
+  },
+  {
+    "term": "Dog, vicious",
+    "definition": "level 3; attacks and perception as level 4"
+  },
+  {
+    "term": "Groundskeeper/caretaker",
+    "definition": "level 2; health 8"
+  },
+  {
+    "term": "Man in Black",
+    "definition": "level 4; carries weird weapons, including those with long range"
+  },
+  {
+    "term": "Rat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Tarantula",
+    "definition": "level 1"
+  },
+  {
+    "term": "Distrustful relative",
+    "definition": "level 2"
+  },
+  {
+    "term": "Jealous ex",
+    "definition": "level 2; attacks as level 3"
+  },
+  {
+    "term": "Nosy neighbor",
+    "definition": "level 2; perception as level 3"
+  },
+  {
+    "term": "Rival suitor",
+    "definition": "level 2; interactions as level 3"
+  },
+  {
+    "term": "The unattainable",
+    "definition": "level 3; interactions as level 7, resistance to all interactions as level 9"
+  },
+  {
+    "term": "Accuracy",
+    "definition": "All attack rolls"
+  },
+  {
+    "term": "Dexterity",
+    "definition": "Movement, acrobatics, initiative , and Speed defense"
+  },
+  {
+    "term": "Flight",
+    "definition": "The character can fly a short distance each round; each additional shift increases this speed (whether the flight comes from a power shift or a character ability) by one range category (long for two shifts, very long for three shifts)"
+  },
+  {
+    "term": "Healing",
+    "definition": "One extra recovery roll per shift (each one action, all coming before other normal recovery rolls )"
+  },
+  {
+    "term": "Increased Range",
+    "definition": "Increases the range of one ability or attack. A touch-range ability (such as Shock ) increases to short range, a short-range ability increases to long range, and a long-range ability increases to very long range"
+  },
+  {
+    "term": "Intelligence",
+    "definition": "Intellect defense rolls and all knowledge, science, and crafting tasks"
+  },
+  {
+    "term": "Power",
+    "definition": "Use of a specific power, including damage (3 additional points per shift) but not attack rolls"
+  },
+  {
+    "term": "Prodigy",
+    "definition": "Give up a lower-tier ability to get a higher-tier ability"
+  },
+  {
+    "term": "Resilience",
+    "definition": "Might defense rolls and Armor (+1 per shift)"
+  },
+  {
+    "term": "Savant",
+    "definition": "Two specific skills (other than attacks, defenses, or a special ability), such as history, perception, or persuasion"
+  },
+  {
+    "term": "Single Attack",
+    "definition": "Attack rolls and damage (3 additional points per shift) for one specific kind of attack, such as pistols, kicks, or Thrust"
+  },
+  {
+    "term": "Strength",
+    "definition": "All tasks involving strength, including jumping and dealing damage in melee or thrown attacks (3 additional points of damage per shift) but not attack rolls"
+  },
+  {
+    "term": "Fire Mastery",
+    "definition": "You gain the Hellfire ability. If you gain his power shift again, your Hellfire adds 2 additional damage."
+  },
+  {
+    "term": "Ice Mastery",
+    "definition": "Your Ice Creation ability allows you create larger objects without using a level of Effort. Additionally, you gain the Icy Path ability. If you gain this power shift again, the level of your Icy Path constructs increases by 1, and they last longer—first to 10 minutes, then to one hour, then to ten hours."
+  },
+  {
+    "term": "Dog, guard",
+    "definition": "level 3; attacks and perception as level 4"
+  },
+  {
+    "term": "Genetically enhanced bruiser",
+    "definition": "level 3; attacks as level 4; health 15; 5 points of melee damage"
+  },
+  {
+    "term": "Ninja",
+    "definition": "level 3; stealth as level 6"
+  },
+  {
+    "term": "Robot minion",
+    "definition": "level 4; Armor 2"
+  },
+  {
+    "term": "Bystander",
+    "definition": "level 2"
+  },
+  {
+    "term": "Scientist",
+    "definition": "level 2; science-related tasks as level 4"
+  },
+  {
+    "term": "Worker",
+    "definition": "level 2; health 8"
+  },
+  {
+    "term": "Discovering Scavenger Subtle Cyphers",
+    "definition": "Anytime PCs in your game are eligible for discovering a subtle cypher , consider giving someone in the group a scavenger subtle cypher. No more than one PC in the group should have a scavenger subtle cypher at any given time. Once they use it, you can give another PC in the group one, preferably something different."
+  },
+  {
+    "term": "Using a Scavenger Subtle Cypher",
+    "definition": "The character uses their action to activate the scavenger subtle cypher, as usual. At the end of their turn, they gain the indicated resource."
+  },
+  {
+    "term": "Secondary Effect",
+    "definition": "Any time an AI-fashioned manifest cypher is used, there's a chance the AI who created it for their own ambiguous purpose becomes aware, if that instance still operates somewhere. That usually has no bearing on the situation, but if the PC triggers an intrusion while using the cypher, a fledgling instance of the AI tries to install on the PC, who must succeed on an Intellect defense roll against the cypher's level to avoid coming under the control of the AI for one minute, or until they succeed on an Intellect defense roll on their turn. A PC under AI control might stand and do nothing, fall mysteriously unconscious, or take an action to advance the AI's goals."
+  },
+  {
+    "term": "Warriors",
+    "definition": "level 3; Armor 1; swords inflict 3 points of damage"
+  },
+  {
+    "term": "Angry ants",
+    "definition": "swarm as a level 1 creature; constantly whisper insults, slurs, and obscenities; those physically attacked must also succeed on a difficulty 3 Might defense task or be stunned and lose their next turn"
+  },
+  {
+    "term": "Erlking",
+    "definition": "level 6, stealth as level 7; health 27; Armor 4; short-range whisper attack enthralls target for one hour or until attacked; root tendril attacks on up to three separate targets in immediate range; silvered and cold iron weapons ignore the erlking 's Armor"
+  },
+  {
+    "term": "Faerie",
+    "definition": "level 4, deception and Speed defense as level 5; short-range magic dust attack inflicts damage or makes target amenable to faerie suggestions for one minute"
+  },
+  {
+    "term": "Feral tree",
+    "definition": "level 3; Armor 3; rooted in place; lashing branches attack up to three characters as a single action and on a failed Might defense task, hold the victim in place until they can escape"
+  },
+  {
+    "term": "Nymph",
+    "definition": "level 3, stealth and positive social interactions as level 6"
+  },
+  {
+    "term": "Pixie",
+    "definition": "level 2, stealth and finding lost items as level 6"
+  },
+  {
+    "term": "Razorblade butterflies",
+    "definition": "level 1; swarm as a level 3 creature able to attack all creatures in an area an immediate distance across"
+  },
+  {
+    "term": "Talking cat",
+    "definition": "level 1, knowledge tasks as level 7"
+  },
+  {
+    "term": "Troll",
+    "definition": "level 6; claws inflict 7 points of damage and grab victim until they escape; grabbed creature takes 10 points of damage per round; troll regains 3 points of health per round"
+  },
+  {
+    "term": "Bear",
+    "definition": "level 5; health 20; Armor 1; two magical abilities"
+  },
+  {
+    "term": "Cat",
+    "definition": "level 2; two magical abilities"
+  },
+  {
+    "term": "Fish",
+    "definition": "level 2; one magical ability"
+  },
+  {
+    "term": "Fox/Rabbit/Monkey",
+    "definition": "level 3; cunning and trickery as level 5; two magical abilities"
+  },
+  {
+    "term": "Horse/Donkey",
+    "definition": "level 4; two magical abilities"
+  },
+  {
+    "term": "Mouse/Rat",
+    "definition": "level 2; one magical ability"
+  },
+  {
+    "term": "Raven/Owl",
+    "definition": "level 3; intelligence and cunning as level 4; one magical ability"
+  },
+  {
+    "term": "Snake/Serpent",
+    "definition": "level 3; bite inflicts 4 points of Intellect damage (ignores Armor); one magical ability"
+  },
+  {
+    "term": "Songbird",
+    "definition": "level 1; offer sage advice to those they choose; one magical ability"
+  },
+  {
+    "term": "Stag/Hart",
+    "definition": "level 4; Armor 1; horns inflict 3 points of damage; two magical abilities"
+  },
+  {
+    "term": "Bagheera",
+    "definition": "level 7; stalking, hunting, sneaking, and chasing prey as level 8; persuasion and positive social interactions as level 8; inflicts 6 points of damage with teeth and claws; can pounce on a victim from a long distance away to inflict 7 points of damage and knock the victim prone."
+  },
+  {
+    "term": "Beast (with a capital B)",
+    "definition": "level 6; intimidation and protection as level 7; Armor 2; inflicts 4 points of damage with an item related to their beloved (gardening shears, for example)."
+  },
+  {
+    "term": "Cheshire Cat",
+    "definition": "level 6; punning and wordplay as level 7, Speed defense as level 8 due to intangibility; will disappear rather than fight."
+  },
+  {
+    "term": "Puss in Boots",
+    "definition": "level 5; planning, scheming, persuasion, and deception as level 7; Armor 2; inflicts 4 points of damage with elaborate swordplay."
+  },
+  {
+    "term": "Gingerbread Creatures",
+    "definition": "level 2, Speed defense as level 4 due to quickness; when touched or eaten, some gingerbread creatures release a sweet, slow poison that inflicts 1 point of damage each round for 1d6 rounds."
+  },
+  {
+    "term": "Geppetto's Children",
+    "definition": "level 4; Armor 1; have a passion for creating, collecting, and using cyphers, particularly detonation cyphers"
+  },
+  {
+    "term": "Virgilius's Copper Dogs",
+    "definition": "level 5; Armor 2"
+  },
+  {
+    "term": "Dwarf",
+    "definition": "level 4; Armor 2; mining pick inflicts 4 points of damage; beards provide magical abilities such as finding treasure, enabling flight, shapeshifting, and turning invisible. Cutting a dwarf's beard off or learning their name provides an asset on all interactions with that dwarf."
+  },
+  {
+    "term": "Angiks",
+    "definition": "level 3; talons inflict 4 points of damage"
+  },
+  {
+    "term": "Changelings",
+    "definition": "level 2; shapeshifting and knowledge of the fey world as level 4"
+  },
+  {
+    "term": "Nymphs",
+    "definition": "level 3; stealth and positive social interactions as level 6"
+  },
+  {
+    "term": "Pixies",
+    "definition": "level 2; stealth and finding lost items as level 6"
+  },
+  {
+    "term": "Drowning Fairies",
+    "definition": "level 6; persuasion and creating illusions as level 7; can grab a creature in short range and pull them into and under the water and attempt to drown them (level 6 Might or Speed defense task to break free)"
+  },
+  {
+    "term": "Fuath",
+    "definition": "level 5; defense as level 7 due to intangibility; if they know a person's name, they can gain control over the person, forcing them to do their bidding for a short time"
+  },
+  {
+    "term": "Naiad",
+    "definition": "level 4; can cause water to boil, inflicting 3 points of heat damage on foes; can unleash flash floods that sweep all foes back a very long distance and inflict 2 points of ambient damage (ignores Armor)"
+  },
+  {
+    "term": "Cat",
+    "definition": "level 1; Speed defense as level 3"
+  },
+  {
+    "term": "Dodo",
+    "definition": "level 1"
+  },
+  {
+    "term": "Dog",
+    "definition": "level 2; perception as level 3"
+  },
+  {
+    "term": "Dog, guard",
+    "definition": "level 3; attacks and perception as level 4"
+  },
+  {
+    "term": "Horse",
+    "definition": "level 3; moves a long distance each round"
+  },
+  {
+    "term": "Merchant",
+    "definition": "level 2; haggling as level 3"
+  },
+  {
+    "term": "Noble",
+    "definition": "level 2; pleasant social interaction as level 4"
+  },
+  {
+    "term": "Rat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Serf",
+    "definition": "level 2; animal handling as level 3"
+  },
+  {
+    "term": "Snake, poisonous",
+    "definition": "level 1; attacks as level 4"
+  },
+  {
+    "term": "Warhorse",
+    "definition": "level 4; moves a long distance each round"
+  },
+  {
+    "term": "Head on scorpion legs",
+    "definition": "level 3; on failed Might defense roll, stinger deals an additional 3 Speed damage (ignores Armor)"
+  },
+  {
+    "term": "Demonic bull",
+    "definition": "level 5; health 33; gores twice each round for 6 damage each; if killed, returns to life next midnight"
+  },
+  {
+    "term": "Dark dimension",
+    "definition": "level 3; occupants take 3 Intellect damage (ignores Armor) each round until they can escape with an Intellect-based roll as their action"
+  },
+  {
+    "term": "Disturbing sleep",
+    "definition": "level 5; PCs take 1 Intellect damage (ignores Armor) each minute asleep but can attempt an Intellect defense roll each minute to wake"
+  },
+  {
+    "term": "Wild one",
+    "definition": "level 5, wilderness and magical lore as level 7; health 24; Armor 1; batters foes twice as their action"
+  },
+  {
+    "term": "Insidious thing",
+    "definition": "level 5; health 18; attacks with toothed tentacles; where damaged, target's skin is discolored for several weeks"
+  },
+  {
+    "term": "Forgeborn, queen of gears",
+    "definition": "level 4; Armor 2; two bashing attacks"
+  },
+  {
+    "term": "Giant scorpion",
+    "definition": "level 3; poison stinger deals additional 3 Speed damage (ignores Armor) on failed Might defense roll"
+  },
+  {
+    "term": "Outlaws",
+    "definition": "level 2; when working as a group of at least five, the outlaws make two level 5 long-ranged rifle attacks each round that deal 5 damage each."
+  },
+  {
+    "term": "Soldier",
+    "definition": "level 2, attacks and damage while on horseback as level 3"
+  },
+  {
+    "term": "Captain",
+    "definition": "level 4; health 25"
+  },
+  {
+    "term": "Wooden casket",
+    "definition": "level equal to entombing round cypher; dissolves at midnight"
+  },
+  {
+    "term": "Awful thing",
+    "definition": "level 5; health 18; attacks with toothed tentacles; where damaged, target's skin is discolored for several weeks"
+  },
+  {
+    "term": "Bat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Bear, black",
+    "definition": "level 3, attacks as level 4"
+  },
+  {
+    "term": "Bear, grizzly",
+    "definition": "level 5; health 20; Armor 1"
+  },
+  {
+    "term": "Bison",
+    "definition": "level 2; health 15"
+  },
+  {
+    "term": "Cat",
+    "definition": "level 1, Speed defense as level 3 due to size and quickness"
+  },
+  {
+    "term": "Coyote",
+    "definition": "level 3, stealth as level 4"
+  },
+  {
+    "term": "Dog",
+    "definition": "level 2, perception as level 3"
+  },
+  {
+    "term": "Hawk",
+    "definition": "level 2; flies a long distance each round"
+  },
+  {
+    "term": "Horse",
+    "definition": "level 3; moves a long distance each round"
+  },
+  {
+    "term": "Jackrabbit",
+    "definition": "level 1; moves a long distance each round"
+  },
+  {
+    "term": "Mountain lion",
+    "definition": "level 4; climbing, jumping, stealth, and attacks as level 5; Armor 1"
+  },
+  {
+    "term": "Mustang",
+    "definition": "level 3; health 12; moves a long distance each round"
+  },
+  {
+    "term": "Pronghorn cattle",
+    "definition": "level 3; health 15; horns deal 4 points of damage"
+  },
+  {
+    "term": "Rat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Rattlesnake",
+    "definition": "level 2; venomous bite attack eased, deals 3 points of Speed damage (ignores Armor) for three rounds"
+  },
+  {
+    "term": "Vulture",
+    "definition": "level 1, Speed defense as level 3 due to size and quickness, perception as level 5; flies a long distance each round"
+  },
+  {
+    "term": "Wolf",
+    "definition": "level 3, perception as level 4"
+  },
+  {
+    "term": "Card shark",
+    "definition": "level 2, gambling with card games as level 5, pistol attacks as level 3"
+  },
+  {
+    "term": "Doctor",
+    "definition": "level 2, healing tasks as level 3"
+  },
+  {
+    "term": "Hunter/Fisher/Trapper",
+    "definition": "level 2, stealth and wilderness survival tasks as level 4"
+  },
+  {
+    "term": "Preacher",
+    "definition": "level 2, persuasion as level 3"
+  },
+  {
+    "term": "Prospector",
+    "definition": "level 2, perception as level 4; pickaxe deals 3 points of damage"
+  },
+  {
+    "term": "Rancher",
+    "definition": "level 2, animal husbandry as level 4"
+  },
+  {
+    "term": "Settler",
+    "definition": "level 2, homesteading as level 3"
+  },
+  {
+    "term": "Soldier",
+    "definition": "level 2, initiative as level 4; rifle deals 4 points of damage"
+  },
+  {
+    "term": "Chupacabra",
+    "definition": "Level 3, Speed defense as level 4 due to quickness, stealth and perception as level 7; health 13; Armor 2; bites for 5 points of damage; long range quill attack puts target to sleep for one hour on a failed difficulty 5 Might defense roll (target can try to wake each round)"
+  },
+  {
+    "term": "Deathtumbler",
+    "definition": "Level 3, Speed defense as level 4, disguise (as rotting carrion) as level 6; slashes with toothed branches for 3 points of damage; mundane attacks against deathtumbler deal only 1 point of damage each; attacks all targets in immediate area if it has surprise, dealing damage and, on a failed Might defense roll, 3 additional points of Speed damage (ignores Armor)"
+  },
+  {
+    "term": "Grizzly Bull",
+    "definition": "Level 6, Speed defense as level 5 due to size, breaking through walls as level 8; health 28; Armor 1; horns attack deal 6 points of damage; if a foe within immediate range misses the bull, the grizzly bull gets an immediate extra attack"
+  },
+  {
+    "term": "Jackalope",
+    "definition": "Level 2, Speed defense as level 4, stealth and illusions as level 5; moves a long distance each round, immediate when burrowing; gores with antlers for 3 points of damage; creates illusion that can fill a short area and lasts for ten minutes or until interacted with"
+  },
+  {
+    "term": "Nightcrawler",
+    "definition": "Level 4, Speed defense as level 3; bite deals 5 points of damage"
+  },
+  {
+    "term": "Quetzalsaur",
+    "definition": "Level 6, Speed defense as level 4 due to size; health 33; Armor 2; flies a long distance each round; beak attack for 7 points of damage; vomits up two zombie helpers (corpses of past victims) once per conflict"
+  },
+  {
+    "term": "Locomotem",
+    "definition": "Level 6, Speed defense as level 4 due to size; health 30; Armor 5; steam whistle (once per hour) stuns creatures in immediate range on failed Might defense roll"
+  },
+  {
+    "term": "Fleshmare",
+    "definition": "Level 4; health 24; Armor 3; hoof attack deals 6 points of damage; electrical damage heals instead of harms fleshmare"
+  },
+  {
+    "term": "Alchehemoth",
+    "definition": "Level 5, Speed defense as level 4 due to size; health 27; fists deal 7 points of damage; inebriating breath causes creatures in immediate range to fall into booze fueled slumber for one hour on failed Might defense roll"
+  },
+  {
+    "term": "Bounty hunter",
+    "definition": "Level 4; tracking, surveillance, stealth, and disguise as level 6; health 15; Armor 1; attacks twice with long range pistol; a melee attack with locking cuffs (level 5) binds target to a nearby large object on a failed Speed defense roll"
+  },
+  {
+    "term": "Deadshot",
+    "definition": "Level 5; initiative as level 8; health 27; Armor 4; long range pistol attack deals 7 points of damage; once a minute fires necrotic bullet that deals 3 points of damage each round (ignores Armor) until bullet extracted with a difficulty 4 healing task"
+  },
+  {
+    "term": "Gunslinger",
+    "definition": "Level 4, initiative as level 7; health 18; Armor 1; long range pistol attack deals 6 points of damage (or 8 points with eased attack if they attack before their foe); every hit increases damage by 1 point for the rest of the encounter (to a maximum of +10)"
+  },
+  {
+    "term": "Lawman",
+    "definition": "Level 5, Might defense as level 6; health 20; Armor 1; long range rifle attacks; the first time a lawman would normally succumb to their wounds (having lost all their health), they instead gain a second wind (and 10 health); banishing rounds deal full damage to ghosts and similarly protected creatures"
+  },
+  {
+    "term": "Ghost Rider",
+    "definition": "Level 6; health 20; Armor 1; rides a skeletal mount a long distance each round; long range pistol attack deals 6 damage; short range curse causes target who fails an Intellect defense roll to lose their next turn as they freeze in terror"
+  },
+  {
+    "term": "Wraith Lord",
+    "definition": "Level 5, stealth as level 6; health 22; Armor 1; flies a short distance each round (or is mounted on a quetzalsaur); spectral weapon deals 6 points of Speed damage (ignores Armor) and induces target to fall one step on the damage track each day a Might defense roll fails (three successes purge the effect); if destroyed, a wraith usually reforms the following midnight"
+  },
+  {
+    "term": "Zombie sorcerer",
+    "definition": "Level 4; health 18; moves an immediate distance each round; long range necrotic blast deals 4 points of Speed damage (ignores Armor) to all in an immediate area, or 1 point even with a successful defense roll; even numbered attack rolls that would reduce its health to 0 reduce health to 1 instead"
+  },
+  {
+    "term": "Level",
+    "definition": "Like the difficulty of a task, each creature and NPC has a level attached to it. You use the level to determine the target number a PC must reach to attack or defend against the opponent. In each entry, the difficulty number for the creature or NPC is listed in parentheses after its level. As shown on the following table, the target number is three times the level ."
+  },
+  {
+    "term": "Description",
+    "definition": "Following the name of the creature or NPC is a general description of its appearance, nature, intelligence, or background."
+  },
+  {
+    "term": "Motive",
+    "definition": "This entry is a way to help the GM understand what a creature or NPC wants. Every creature or person wants something, even if it's just to be left alone."
+  },
+  {
+    "term": "Environment",
+    "definition": "This entry describes whether the creature tends to be solitary or travel in groups and what kind of terrain it inhabits (such as \"They travel in packs through dry wastes and temperate lowlands\")."
+  },
+  {
+    "term": "Health",
+    "definition": "A creature's target number is usually also its health, which is the amount of damage it can sustain before it is dead or incapacitated. For easy reference, the entries always list a creature's health, even when it's the normal amount for a creature of its level."
+  },
+  {
+    "term": "Damage Inflicted",
+    "definition": "Generally, when creatures hit in combat, they inflict their level in damage regardless of the form of attack. Some inflict more or less or have a special modifier to damage. Intelligent NPCs often use weapons, but this is more a flavor issue than a mechanical one. In other words, it doesn't matter if a level 3 foe uses a sword or claws—it deals the same damage if it hits. The entries always specify the amount of damage inflicted, even if it's the normal amount for a creature of its level."
+  },
+  {
+    "term": "Armor",
+    "definition": "This is the creature's Armor value. Sometimes the number represents physical armor, and other times it represents natural protection. This entry doesn't appear in the game stats if a creature has no Armor."
+  },
+  {
+    "term": "Movement",
+    "definition": "Movement determines how far the creature can move in a single turn. Creatures have movements of immediate, short, long, or very long, which equate to the ranges of the same name. Most PCs have an effective movement of short, so if they are chasing (or being chased by) a creature with immediate movement, their Speed tasks are eased; if the creature's movement is long or greater, the PCs' Speed tasks are hindered."
+  },
+  {
+    "term": "Modifications",
+    "definition": "Use these default numbers when a creature's information says to use a different target number. For example, a level 4 creature might say \"defends as level 5,\" which means PCs attacking it must roll a target number of 15 (for difficulty 5) instead of 12 (for difficulty 4). In special circumstances, some creatures have other modifications, but these are almost always specific to their level."
+  },
+  {
+    "term": "Combat",
+    "definition": "This entry gives advice on using the creature in combat, such as \"This creature uses ambushes and hit-and-run tactics.\" At the end of the combat listing, you'll also find any special abilities, such as immunities, poisons, and healing skills. GMs should be logical about a creature's reaction to a particular action or attack by a PC. For example, a mechanical creation is immune to normal diseases, a character can't poison a being of energy (at least, not with a conventional poison), and so on."
+  },
+  {
+    "term": "Interaction",
+    "definition": "This entry gives advice on using the creature in interactions, such as \"These creatures are willing to talk but respond poorly to threats,\" or \"This creature is an animal and acts like an animal.\""
+  },
+  {
+    "term": "Use",
+    "definition": "This entry gives the GM suggestions for how to use the creature in a game session. It might provide general notes or specific adventure ideas."
+  },
+  {
+    "term": "Loot",
+    "definition": "This entry indicates what the PCs might gain if they take items from their fallen foes (or trade with or trick them). It doesn't appear in the game stats if the creature has no loot."
+  },
+  {
+    "term": "GM Intrusion",
+    "definition": "This optional entry in the stats suggests a way to use GM intrusion in an encounter with the creature. It's just one possible idea of many, and the GM is encouraged to come up with their own uses of the game mechanic."
+  },
+  {
+    "term": "Bear, black",
+    "definition": "level 3; attacks as level 4"
+  },
+  {
+    "term": "Bear, grizzly",
+    "definition": "level 5; health 20; Armor 1"
+  },
+  {
+    "term": "Dog",
+    "definition": "level 2; perception as level 3"
+  },
+  {
+    "term": "Dog, guard",
+    "definition": "level 3; attacks and perception as level 4"
+  },
+  {
+    "term": "Hawk",
+    "definition": "level 2; flies a long distance each round"
+  },
+  {
+    "term": "Horse",
+    "definition": "level 3; moves a long distance each round"
+  },
+  {
+    "term": "Rat",
+    "definition": "level 1"
+  },
+  {
+    "term": "Rattlesnake",
+    "definition": "level 2; bite inflicts 3 points of Speed damage (ignores Armor)"
+  },
+  {
+    "term": "Moth swarm",
+    "definition": "level 2"
+  },
+  {
+    "term": "Woody vine",
+    "definition": "level 4; Armor 1"
+  },
+  {
+    "term": "Monstrous glowing roach",
+    "definition": "level 5; Speed defense as level 4; Armor 2; mandible attack inflicts 7 damage and results in a check on the Glowing Roach Effects table"
+  },
+  {
+    "term": "Chosen driver",
+    "definition": "level 2, social interaction as level 1, driving and repairs as level 3"
+  },
+  {
+    "term": "Skeletal steed",
+    "definition": "level 4"
+  },
+  {
+    "term": "Cannibal",
+    "definition": "level 3; deception and other interaction tasks as level 6; health 12"
+  },
+  {
+    "term": "Hacker",
+    "definition": "level 2; programming, digital infiltration, and repairing computers as level 7"
+  },
+  {
+    "term": "Mad scientist",
+    "definition": "level 4; most actions as level 6 due to gadgets, serums, artifacts, etc."
+  },
+  {
+    "term": "Marauder",
+    "definition": "level 4; initiative and intimidation as level 7; health 28; Armor 1"
+  },
+  {
+    "term": "Master detective",
+    "definition": "level 5; perception, intuition, initiative, and detecting falsehood as level 9"
+  },
+  {
+    "term": "Politician",
+    "definition": "level 2; all interaction tasks as level 6"
+  },
+  {
+    "term": "Priest",
+    "definition": "level 2; religious lore and all interaction tasks as level 6"
+  },
+  {
+    "term": "Professor",
+    "definition": "level 2; knowledge of science and all interaction tasks as level 6"
+  },
+  {
+    "term": "Soldier",
+    "definition": "level 3; perception as level 4; health 12; Armor 1; attacks inflict 5 points of damage"
+  },
+  {
+    "term": "Forgeborn assistant",
+    "definition": "level 3; health 15; Armor 1 Especially accomplished alchemists may have a far more powerful forgeborn assistant, such as a deadshot or angalith ."
+  },
+  {
+    "term": "Lawyer",
+    "definition": "level 2, law and intimidation as level 4"
+  },
+  {
+    "term": "Bodyguard",
+    "definition": "level 2; Armor 1; short-range pistol inflicts 4 damage"
+  },
+  {
+    "term": "Fleshbeast",
+    "definition": "level 4; attacks as level 5; health 15; Armor 1"
+  },
+  {
+    "term": "Exceptional hunter",
+    "definition": "level 5; attacks and Intellect defense as level 6; perception, tracking, and creature lore as level 7; health 20; attacks deal 6 damage"
+  },
+  {
+    "term": "Priest",
+    "definition": "level 2, religious lore and all interaction tasks as level 6"
+  },
+  {
+    "term": "Soldier",
+    "definition": "level 3, perception as level 4; health 12; Armor 1; attacks inflict 5 damage"
+  },
+  {
+    "term": "Dwarf officer",
+    "definition": "level 5; health 16; damage inflicted 7 points"
+  },
+  {
+    "term": "Dwarf priest",
+    "definition": "level 5; health 16; can heal one creature for 10 points or all within immediate range for 5 points"
+  },
+  {
+    "term": "Sorcerer's Apprentice",
+    "definition": "level 3"
+  },
+  {
+    "term": "Green-whiskered soldiers",
+    "definition": "level 4; Armor 2; unloaded rifles deal 4 points of damage"
+  },
+  {
+    "term": "Black book (artifact)",
+    "definition": "level 6; allows the user to cast animate, blood to stone, enchant, or endless passage. Casting a spell from the black book costs 2 Intellect points and is an action. Depletion: 1 in 1d6"
+  },
+  {
+    "term": "Tiara of Pailis (artifact)",
+    "definition": "level 7; allows the wearer to fly a long distance each round (as an action). The wearer can control their speed, direction, and height. Depletion: 1 in 1d20"
+  },
+  {
+    "term": "Trained large fish",
+    "definition": "level 2; attacks as level 3; swims a long distance each round"
+  },
+  {
+    "term": "Spirit",
+    "definition": "level 3; flesh-decaying touch inflicts 3 points of damage"
+  },
+  {
+    "term": "Assistant",
+    "definition": "level 2, healing as level 3"
+  },
+  {
+    "term": "Vulture familiars",
+    "definition": "level 4"
+  },
+  {
+    "term": "Dread's robot minion",
+    "definition": "level 3; Armor 1; long-range laser attack inflicts 4 points of damage"
+  },
+  {
+    "term": "Assassin of Wrath",
+    "definition": "level 4; stealth as level 7"
+  },
+  {
+    "term": "Enchanted axe (artifact)",
+    "definition": "level 7; inflicts 7 points of damage; can be activated to move a long distance away from the wielder and attack a foe as an action. Depletion: 1 in 1d20 (check each activation)"
+  },
+  {
+    "term": "Spawned troll",
+    "definition": "level 4; Might defense as level 5; health 15; Armor 1; claws inflict 5 points of damage; grabbed victim suffers 5 points of damage each round held by troll"
+  },
+  {
+    "term": "Familiar",
+    "definition": "level 3; health 9; Armor 1"
+  },
+  {
+    "term": "Subtle Cyphers",
+    "definition": "Cyphers that don't have a physical form are called subtle cyphers ."
+  },
+  {
+    "term": "Manifest Cyphers",
+    "definition": "Cyphers that have a physical form are called manifest cyphers ."
+  },
+  {
+    "term": "Might",
+    "definition": "Physical actions that involve brute force or endurance use Might ."
+  },
+  {
+    "term": "Speed",
+    "definition": "Physical actions that involve quickness, coordination, or agility use Speed ."
+  },
+  {
+    "term": "Intellect",
+    "definition": "Actions that involve intelligence, education, insight, willpower, or charm use Intellect ."
+  }
+]

@@ -1,0 +1,702 @@
+[
+  {
+    "id": "ability-mutation-distinctive-abnormally-large-head",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your head is significantly larger than normal, with a bulging forehead and elongated skull. You gain two assets to any task involving knowledge, memory, lore, understanding, and figuring out puzzles. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-acid-resistance",
+    "name": "",
+    "category": "beneficial",
+    "description": "You have +5 to Armor against damage from acid.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-adhesion-pads",
+    "name": "",
+    "category": "beneficial",
+    "description": "Your hands and feet have naturally adhesive pads and thus are assets in tasks involving climbing, keeping your footing, or retaining your grip.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-aquatic",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your body is streamlined and finned, your fingers and toes webbed. You gain two assets in swimming, and you can see perfectly underwater (as if above water). Although you have lungs, you also have gills, so you can breathe underwater. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-bludgeoning-resistance",
+    "name": "",
+    "category": "beneficial",
+    "description": "You have +2 to Armor against damage from crushing attacks.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-carapace",
+    "name": "",
+    "category": "distinctive",
+    "description": "You gain +2 to Armor. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-skin",
+    "name": "",
+    "category": "powerful",
+    "description": "Your skin changes colors as you wish. This is an asset in tasks involving hiding. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-chlorophyll",
+    "name": "",
+    "category": "distinctive",
+    "description": "You gain nutrients from the sun and don't need to eat or breathe if you have daily exposure to sunlight. Your skin, not surprisingly, is green. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-cold-resistance",
+    "name": "",
+    "category": "beneficial",
+    "description": "You have +4 to Armor against damage from cold.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-covered-in-bursting-pods",
+    "name": "",
+    "category": "distinctive",
+    "description": "Fruit-like pods grow here and there across your entire body. You can walk and move normally. As your action, you can rupture one pod, creating a burst of color, sound, and odor that dazes all creatures within immediate range on their next turn, hindering their tasks. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-cyborg-arm",
+    "name": "",
+    "category": "distinctive",
+    "description": "One of your arms is a bulky organo-metallic arm-like living machine. You can project a ray of burning light from the arm at a target within short range as your action, inflicting 4 points of damage. You have no sense of touch with the arm or hand, so you are hindered when attempting physical tasks with that arm/hand and for tasks that require you to use both hands. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-covered-in-spiny-needles-spikes",
+    "name": "",
+    "category": "distinctive",
+    "description": "Any creature striking you with its body automatically suffers 1 point of damage. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-darksight",
+    "name": "",
+    "category": "powerful",
+    "description": "You can see in complete darkness as if it were light. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-deformed-leg",
+    "name": "",
+    "category": "harmful",
+    "description": "All movement tasks are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-deformed-face-appearance",
+    "name": "",
+    "category": "harmful",
+    "description": "All pleasant interaction tasks are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-deformed-arm-hand",
+    "name": "",
+    "category": "harmful",
+    "description": "All tasks involving the arm or hand are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-disease-immunity",
+    "name": "",
+    "category": "beneficial",
+    "description": "You are immune to all diseases.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-disruptive-field-electronics",
+    "name": "",
+    "category": "powerful",
+    "description": "When you wish it, you disrupt devices within immediate range (no roll needed). All devices operate as if they were 3 levels lower while in range of your field. Devices reduced to level 0 or below do not function. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-disruptive-field-flesh",
+    "name": "",
+    "category": "powerful",
+    "description": "When you wish it, you disrupt flesh within immediate range. All creatures within range of your field take 1 point of damage. If you apply a level of Effort to increase the damage rather than affect the difficulty, each target takes 2 additional points of damage. If your attack fails, targets in the area still take 1 point of damage. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-disruptive-field-thoughts",
+    "name": "",
+    "category": "powerful",
+    "description": "When you wish it, you disrupt thoughts within immediate range. Intellect actions for all creatures within range are hindered. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-drain-power",
+    "name": "",
+    "category": "powerful",
+    "description": "You can drain the power from an artifact or device, allowing you to regain 1 Intellect point per level of the device. You regain points at the rate of 1 point per round and must give your full concentration to the process each round. The GM determines whether the device is fully drained (likely true of most handheld or smaller devices) or retains some power (likely true of large machines). Action to initiate; action each round to drain.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-extra-arms",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have one or two extra arms. They can hold objects, wield weapons, hold a shield, and so on. This mutation does not increase the number of actions you can take in a round or the number of attacks you can attempt. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-extra-eye",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have an extra eye on your forehead that you normally keep closed, but you can open it in dim light and see as if in bright light, and see in total darkness as if in very dim light. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-extra-eyes-on-hands-fingers",
+    "name": "",
+    "category": "distinctive",
+    "description": "You can peek around corners without exposing yourself to danger. This is an asset in initiative and all perception tasks. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-extra-joint-in-arm",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your arms are long and jointed so that you have two elbows in each. You have a long reach and can strike foes from unexpected angles. This mutation is an asset when making melee attacks. However, you can modify your attacks only by using Speed, not Might. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-extra-joint-in-legs",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your legs are long and jointed so that you have two knees in each. You have a long stride, and this mutation is an asset for all running, climbing, jumping, and balancing tasks. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-extra-legs",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have two extra legs. They are an asset in any task involving running, keeping your feet, and standing your ground. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-extra-mouth",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have an extra mouth on your hand, face, or stomach. This mouth is filled with razor-sharp teeth and, if used to attack, inflicts 3 points of damage. You can also speak with two voices at once. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-eyes-on-stalks",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your eyes are on stalks and can move in any direction, independently of each other. You can peek around corners without exposing yourself to danger. This is an asset in initiative and all perception tasks. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-face-dancing-",
+    "name": "",
+    "category": "powerful",
+    "description": "You can alter your features enough to give you an asset in all tasks involving disguise. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-feed-off-pain",
+    "name": "",
+    "category": "powerful",
+    "description": "Any time a creature within immediate range suffers at least 3 points of damage (after Armor subtraction) in one attack, you can restore 1 point to one of your Pools, up to its maximum. You can feed off any creature in this way, whether friend or foe. You never regain more than 1 point per round. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-filered-lungs",
+    "name": "",
+    "category": "powerful",
+    "description": "You have an asset to Might defense rolls against vapors or noxious gases. You can survive in a hostile breathing environment (such as underwater or in a vacuum) for up to ten minutes. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-fire-resistance",
+    "name": "",
+    "category": "beneficial",
+    "description": "You have +3 to Armor against damage from fire.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-gluey-globs",
+    "name": "",
+    "category": "powerful",
+    "description": "You can produce gluey globs at your fingertips. This is an asset in tasks involving climbing or keeping your grip. You can also fling these globs in immediate range, and if they hit, they hinder the target's physical tasks for one round. Enabler to use in a task; action to use as an attack.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-gravity-negation",
+    "name": "",
+    "category": "powerful",
+    "description": "You float slowly into the air. If you concentrate, you can control your movement at half your normal speed; otherwise, you drift with the wind or with any momentum you have gained. This effect lasts for up to ten minutes. Action to initiate.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-horrible-growth",
+    "name": "",
+    "category": "harmful",
+    "description": "A large goiter, immobile tendril, or useless extra eye hangs from your face, hindering all pleasant interactions (with most creatures, particularly humans).",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-improved-circulation",
+    "name": "",
+    "category": "beneficial",
+    "description": "You gain +5 to your Might Pool.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-improved-musculature",
+    "name": "",
+    "category": "beneficial",
+    "description": "You gain +5 to your Might Pool.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-improved-nervous-system",
+    "name": "",
+    "category": "beneficial",
+    "description": "You gain +5 to your Speed Pool.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-improved-neural-processes",
+    "name": "",
+    "category": "beneficial",
+    "description": "You gain +5 to your Intellect Pool.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-increased-lung-capacity",
+    "name": "",
+    "category": "beneficial",
+    "description": "You can hold your breath for five minutes.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-magnetic-flesh",
+    "name": "",
+    "category": "powerful",
+    "description": "You attract or repel metal when you desire. Not only do small metal objects cling to you, but this mutation is an asset in tasks involving climbing on metal or keeping your grip on a metal item. This mutation is an asset to Speed defense tasks when being attacked by a metal foe or a foe with a metal weapon. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-malformed-brain",
+    "name": "",
+    "category": "harmful",
+    "description": "All memory- or cognitive-related tasks are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-mentally-vulnerable",
+    "name": "",
+    "category": "harmful",
+    "description": "All Intellect defense tasks are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-mirrored",
+    "name": "",
+    "category": "distinctive",
+    "description": "You gain +2 to Armor against heat, radiation, lasers, and similar attacks. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-no-breath",
+    "name": "",
+    "category": "powerful",
+    "description": "You do not need to breathe. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-no-scent",
+    "name": "",
+    "category": "beneficial",
+    "description": "You cannot be tracked or located by scent, and you never have offensive odors.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-no-water",
+    "name": "",
+    "category": "powerful",
+    "description": "You do not need to drink water to survive. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-phase-shifting",
+    "name": "",
+    "category": "powerful",
+    "description": "You can pass slowly through solid barriers at a rate of 1 inch (3 cm) per round (minimum of one round to pass through the barrier). You can't act (other than moving) or perceive anything until you pass entirely through the barrier. You can't pass through energy barriers. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-poison-immunity",
+    "name": "",
+    "category": "beneficial",
+    "description": "You are immune to all poisons.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-power-device",
+    "name": "",
+    "category": "powerful",
+    "description": "You can charge an artifact or other device (except a cypher) so that it can be used once. The cost is 1 Intellect point plus 1 point per level of the device. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-proboscis",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have a long, moth-like proboscis instead of a mouth. You can speak, but your voice is ever-so-slightly muffled. You take all your nutrition as a liquid, but you can gain sustenance from most plants by inserting the sharp tip of your proboscis into it. You can also feed on the blood of living (or recently living) creatures. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-processor-dreams",
+    "name": "",
+    "category": "beneficial",
+    "description": "When you sleep, you process information so that after you wake, you have an asset in any Intellect actions held over from the previous day. For example, if you have to determine whether an unknown plant is poisonous, you could \"sleep on it\" and make the determination the next day with an asset on the action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-puncture-resistance",
+    "name": "",
+    "category": "beneficial",
+    "description": "You have +2 to Armor against damage from puncturing attacks.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-psychic-resistance",
+    "name": "",
+    "category": "beneficial",
+    "description": "You have +3 to Armor against Intellect damage.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-pyrokinesis",
+    "name": "",
+    "category": "powerful",
+    "description": "You can cause a flammable object you can see within immediate range to spontaneously catch fire. If used as an attack, this power inflicts 2 points of damage. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-quills",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have quills that you can launch from your body to attack a foe within short range. This attack inflicts 4 points of damage, and you never run out of ammo. You can also use this attack in melee. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-regeneration",
+    "name": "",
+    "category": "powerful",
+    "description": "In addition to regaining points through normal recovery rolls , you regain 1 point to your Might Pool or Speed Pool per hour, regardless of whether you rest, until both Pools are at their maximum. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-roots-instead-of-feet",
+    "name": "",
+    "category": "distinctive",
+    "description": "If you take a minute to burrow your roots into the ground in conjunction with making a recovery roll , add +2 to the points regained from the roll. You can't move from where you rooted for one minute, even if taking what is normally a one-action recovery roll . Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-rubbery-body",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your bluish-grey body is rubbery through and through. You can act normally and can stretch just your arms to reach things within immediate range that would normally require you to move. You can ignore up to 2 points of falling damage. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-savage-bite",
+    "name": "",
+    "category": "powerful",
+    "description": "Your mouth widens surprisingly, and hidden, pointed teeth emerge when you wish it. You can make a bite attack that inflicts 3 points of damage. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-scaly-body",
+    "name": "",
+    "category": "distinctive",
+    "description": "You gain +2 to Armor. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-scent",
+    "name": "",
+    "category": "beneficial",
+    "description": "You can sense creatures, objects, and terrain by scent as well as a normal human can by sight. You can detect scents with that degree of accuracy only in short range, but you can sense strong odors from much farther away (far better than a normal human can). Like a hound, you can track creatures by their scent.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-sense-material",
+    "name": "",
+    "category": "beneficial",
+    "description": "You can sense the presence of any single substance within short range, although you don't learn details or the precise location. You and the GM should work together to determine the substance: water, iron, plastic, granite, wood, flesh, salt, and so on. You do not need to concentrate to sense the material.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-sense-oddity",
+    "name": "",
+    "category": "powerful",
+    "description": "You can sense the presence of an object or creature possessing fantastic abilities (because of alien technology, transdimensional interference, nanites, or similar) within short range. You do not learn details or the precise location. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-sickly",
+    "name": "",
+    "category": "harmful",
+    "description": "All Might defense tasks are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-shaggy-fur",
+    "name": "",
+    "category": "distinctive",
+    "description": "You gain +1 to Armor (+2 against damage from cold) and have an asset on stealth tasks. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-slicing-resistance",
+    "name": "",
+    "category": "beneficial",
+    "description": "You have +2 to Armor against damage from slicing attacks.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-slippery-skin",
+    "name": "",
+    "category": "beneficial",
+    "description": "You secrete a slippery oil, giving you an asset in any task involving slipping from another's grip, slipping from bonds, squeezing through a small opening, and so on.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-slow-and-lumbering",
+    "name": "",
+    "category": "harmful",
+    "description": "All Speed defense tasks are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-snake-tail",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have a prehensile tail that is 6 feet (2 m) long. It is an asset for all tasks involving grappling or wrestling. The tail can grasp large objects. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-snake-tail-instead-of-legs",
+    "name": "",
+    "category": "distinctive",
+    "description": "Instead of legs, you have a snaky tail that is 8 feet (2.5 m) long. You move at the same speed and have an asset for all tasks involving grappling or wrestling. The tail is prehensile enough to grasp large objects. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-snakelike-arm",
+    "name": "",
+    "category": "distinctive",
+    "description": "One of your arms ends in a fanged mouth. You can use it to attack, inflicting 3 points of damage. If you make a second successful attack with the arm, you also inject a poison that inflicts 4 points of Speed damage (ignores Armor). You can't use the snakelike arm for anything other than biting. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-spider-eyes",
+    "name": "",
+    "category": "distinctive",
+    "description": "Instead of normal eyes, you have a crown of shiny orb-like spider eyes. They provide an asset to initiative and perception tasks. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-spider-legs",
+    "name": "",
+    "category": "distinctive",
+    "description": "Instead of normal legs, you have a wide torso with six or eight spiderlike legs. They are an asset in any task involving running, keeping your feet, standing your ground, and climbing. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-spider-legs-from-torso",
+    "name": "",
+    "category": "distinctive",
+    "description": "In addition to your normal limbs, six or eight spiderlike legs, each 6 feet (2 m) long, extend from your sides. They are an asset in any task involving running, keeping your feet, standing your ground, and climbing. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-spit-acid",
+    "name": "",
+    "category": "powerful",
+    "description": "You can make an attack with immediate range. You spit a glob of acid that inflicts 2 points of damage. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-spit-webs",
+    "name": "",
+    "category": "powerful",
+    "description": "You can make up to 10 feet (3.5 m) of a strong, ropelike material each day at the rate of about 1 foot (30 cm) per minute. The webbing is level 3. You can also spit globs of webbing in immediate range, and if they hit, the target's physical tasks are hindered for one round. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-spit-needles",
+    "name": "",
+    "category": "powerful",
+    "description": "You can make an attack with immediate range. You spit a needle that inflicts 1 point of damage. If you make a second successful attack roll, the needle also injects a poison that inflicts 4 points of Speed damage (ignores Armor). Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-strengthened-bones",
+    "name": "",
+    "category": "beneficial",
+    "description": "You gain +5 to your Might Pool.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-stinger-in-elbow",
+    "name": "",
+    "category": "powerful",
+    "description": "You can make an attack with your elbow that inflicts 2 points of damage. If you make a second successful attack roll, your stinger also injects a poison that inflicts 4 points of Speed damage (ignores Armor). Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-stinger-in-finger",
+    "name": "",
+    "category": "powerful",
+    "description": "You can make an attack with your hand that inflicts 1 point of damage. If you make a second successful attack roll, your stinger also injects a poison that inflicts 4 points of Speed damage (ignores Armor). Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-stinging-tendril",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have a prehensile tendril (or tail) that grows from some part of your body and ends in a poisonous stinger. You can make an attack with your stinger that inflicts 2 points of damage. If you make a second successful attack roll, the stinger also injects a poison that inflicts 4 points of Speed damage (ignores Armor). The tendril (or tail) can't be used for anything else. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-suggestive-voice",
+    "name": "",
+    "category": "beneficial",
+    "description": "Your voice is so perfectly modulated that it is an asset in all interaction tasks.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-telepathy",
+    "name": "",
+    "category": "powerful",
+    "description": "You can speak telepathically with others who are within short range. Communication is two-way, but the other party must be willing and able to communicate. You don't have to see the target, but you must know that it's within range. You can have more than one active contact at once, but you must establish contact with each target individually. Each contact lasts up to ten minutes. In addition to the normal options for using Effort, you can use a level of Effort to increase the duration of contact to a full day. Action to establish contact.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-powerful-telekinesis",
+    "name": "",
+    "category": "powerful",
+    "description": "You can exert force on objects within short range. Once activated, your power has an effective Might Pool of 10, a Might Edge of 1, and an Effort of 2 (approximately equal to the strength of a fit, capable, adult human), and you can use it to move objects, push against objects, and so on. For example, you could lift and pull a light object anywhere within range to yourself or move a heavy object (like a piece of furniture) about 10 feet (3.5 m). This power lacks the fine control to wield a weapon or move objects with much speed, so in most situations, it's not a means of attack. You can't use this ability on your own body. The power lasts for one hour or until its Might Pool is depleted, whichever comes first. Action.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-telekinetic-shield",
+    "name": "",
+    "category": "beneficial",
+    "description": "You reflexively use telekinesis to ward away attacks, giving you an asset in Speed defense tasks.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-tendrils-instead-of-arms",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your arms are tendrils 6 feet (2 m) long (or only one arm is a tendril, if you prefer). Although you lose the fine manipulative ability of fingers and a thumb, you can still grasp objects, have a much longer reach, and have an asset for all tasks involving grappling or wrestling. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-tendrils-instead-of-eyes",
+    "name": "",
+    "category": "distinctive",
+    "description": "You are blind, but each eye socket has a retractable tendril that is 10 feet (3.5 m) long. These tendrils can feel around rapidly to give you a physical sense of everything within immediate range. Further, they can be used to manipulate very light objects, activate controls, and so forth. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-tendrils-instead-of-fingers",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your fingers are tendrils 1 foot (30 cm) long. They are an asset to any task involving climbing, grasping, or keeping your grip. Further, you can effectively pick up and hold two objects in each hand rather than one. You can't wield more than one weapon per hand. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-tendrils-instead-of-legs-feet",
+    "name": "",
+    "category": "distinctive",
+    "description": "Your legs or feet are tendrils that are 6 feet (2 m) long (or only one leg or foot is a tendril, if you prefer). You can still walk and move normally, and you have an asset for all tasks involving grappling or wrestling. The tendrils are prehensile enough to grasp large objects. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-tendrils-on-forehead",
+    "name": "",
+    "category": "distinctive",
+    "description": "Four to six tendrils, each 1 to 2 feet (30 to 60 cm) long, come out of your forehead. They can grasp and carry anything that your hand could, although a large object would block your field of vision. Also roll on the Beneficial Mutations table. Enabler.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-beneficial-thick-hide",
+    "name": "",
+    "category": "beneficial",
+    "description": "You gain +1 to Armor.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-useless-eye",
+    "name": "",
+    "category": "harmful",
+    "description": "One of your eyes is unusable or missing. Tasks specifically involving eyesight (spotting, searching, and so on) are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-useless-ear",
+    "name": "",
+    "category": "harmful",
+    "description": "One of your ears is unusable or missing. Tasks specifically involving hearing are hindered.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-useless-limb",
+    "name": "",
+    "category": "harmful",
+    "description": "One of your limbs is unusable or missing.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-weakness-in-intellect",
+    "name": "",
+    "category": "harmful",
+    "description": "Any time you spend points from your Intellect Pool, the cost is increased by 1 point.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-weakness-in-might",
+    "name": "",
+    "category": "harmful",
+    "description": "Any time you spend points from your Might Pool, the cost is increased by 1 point.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-harmful-weakness-in-speed",
+    "name": "",
+    "category": "harmful",
+    "description": "Any time you spend points from your Speed Pool, the cost is increased by 1 point.",
+    "source": ""
+  },
+  {
+    "id": "ability-mutation-distinctive-wings",
+    "name": "",
+    "category": "distinctive",
+    "description": "You have feathered or fleshy wings on your back that allow you to glide, carried by the wind. They are not powerful enough to carry you aloft like a bird's wings. Enabler.",
+    "source": ""
+  }
+]

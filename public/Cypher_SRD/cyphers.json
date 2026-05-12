@@ -1,0 +1,1722 @@
+[
+  {
+    "id": "cypher-adhesion",
+    "name": "Adhesion",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "Allows for automatic climbing of any surface, even horizontal ones. Lasts for ten minutes per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-age-taker",
+    "name": "Age Taker",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Begins a process of rejuvenation that removes years from the wearer's physiological age. Over the course of the next seven days, the wearer sheds a number of years equal to three times the cypher's level. The cypher doesn't regress physiological age past the age of twenty-three.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-analeptic",
+    "name": "Analeptic",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Restores a number of points equal to the cypher's level to the user's Speed Pool.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-antivenom",
+    "name": "Antivenom",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Renders user immune to poisons of the cypher's level or lower for one hour per cypher level (and ends any such ongoing effects, if any, already in the user's system).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-armor-reinforcer",
+    "name": "Armor Reinforcer",
+    "type": "manifest",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "The user's Armor gains an enhancement for twenty-four hours. Roll a d6 to determine the result.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-attractor",
+    "name": "Attractor",
+    "type": "manifest",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "One unanchored item the user's size or smaller within long range (very long range if the cypher level is 8 or higher) is drawn immediately to them. This takes one round. The item has no momentum when it arrives.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-banishing",
+    "name": "Banishing",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, each time the user strikes a solid creature or object, it generates a burst of energy that teleports the creature or object an immediate distance in a random direction (not up or down). The teleported creature's actions (including defense) are hindered on its next turn (hindered by two steps if the cypher level is 5 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-best-tool",
+    "name": "Best Tool",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "Provides an additional asset for any one task using a tool, even if that means exceeding the normal limit of two assets.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-blackout",
+    "name": "Blackout",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "An area within immediate range of the user becomes secure against any effect outside the area that sees, hears, or otherwise senses what occurs inside. To outside observers, the area is a \"blur\" to any sense applied. Taps, scrying sensors, and other direct surveillance methods are also rendered inoperative within the area for a day.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 384)"
+  },
+  {
+    "id": "cypher-blinking",
+    "name": "Blinking",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, each time the user is struck hard enough to take damage (but not more than once per round), they teleport an immediate distance in a random direction (not up or down). Since the user is prepared for this effect and their foe is not, the user's defenses are eased for one round after they teleport.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 385)"
+  },
+  {
+    "id": "cypher-burst-of-speed",
+    "name": "Burst of Speed",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "For one minute, a user who normally can move a short distance as an action can move a long distance instead.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 385)"
+  },
+  {
+    "id": "cypher-catholicon",
+    "name": "Catholicon",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Cures any disease of the cypher level or lower.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 385)"
+  },
+  {
+    "id": "cypher-chemical-factory",
+    "name": "Chemical Factory",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "After one hour, the sweat of the user produces 1d6 doses of a valuable liquid (these doses are not considered cyphers). They must be used within one week. Roll a d100 to determine the effect.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 385)"
+  },
+  {
+    "id": "cypher-comprehension",
+    "name": "Comprehension",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "Within five minutes, the user can understand the words of a specific language keyed to the cypher (two languages if the cypher is level 5 or higher). This is true even of creatures that do not normally have a language. If the user could already understand the language, the cypher has no effect. Once the cypher is used, the effect is permanent, and the cypher no longer counts against the number of cyphers that a PC can bear.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 385)"
+  },
+  {
+    "id": "cypher-condition-remover",
+    "name": "Condition Remover",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "Cures one occurrence of one specific health condition of the cypher level or lower. It does not prevent the possibility of future occurrences of the same condition. Roll a d20 to determine what it cures.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 385)"
+  },
+  {
+    "id": "cypher-contingent-activator",
+    "name": "Contingent Activator",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "If the device is activated in conjunction with another cypher, the user can specify a condition under which the linked cypher will activate. The linked cypher retains the contingent command until it is used (either normally or contingently). For example, when this cypher is linked to a cypher that provides a form of healing or protection, the user could specify that the linked cypher will activate if they become damaged to a certain degree or are subject to a particular dangerous circumstance. Until the linked cypher is used, this cypher continues to count toward the maximum number of cyphers a PC can carry.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-controlled-blinking",
+    "name": "Controlled Blinking",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "For the next day, each time the user is struck hard enough to inflict damage (but no more than once per round), they teleport to a spot they desire within immediate range. Since they are prepared for this effect and their foe is not, the user's defenses are eased for one round after they teleport.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-curative",
+    "name": "Curative",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Restores a number of points equal to the cypher's level to the user's Might Pool.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-curse-bringer",
+    "name": "Curse Bringer",
+    "type": "manifest",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "The cypher can be activated when given to an individual who doesn't realize its significance. The next time the victim attempts an important task when the cypher is in their possession, the task is hindered by three steps.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-darksight",
+    "name": "Darksight",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "Grants the ability to see in the dark for five hours per cypher level. (For a more realistic game, this cypher could instead make the user specialized in low-light spotting.)",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-death-bringer",
+    "name": "Death Bringer",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next minute, when the user strikes an NPC or creature of the cypher level or lower, they can choose to make a second attack roll. If the second attack roll is a success, the target is killed. If the target is a PC, the character instead moves down one step on the damage track .",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-density",
+    "name": "Density",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, each time the user strikes a solid creature or object with a weapon, the weapon suddenly increases dramatically in weight, causing the blow to inflict 2 additional points of damage.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-detonation",
+    "name": "Detonation",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes in an immediate radius, inflicting damage equal to the cypher's level. Roll a d100 to determine the type of damage.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-detonation-creature",
+    "name": "Detonation (Creature)",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes and creates a momentary teleportation gate. A random creature whose level is equal to or less than the cypher's level appears through the gate and attacks the closest target. After about one minute, the creature vanishes.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-detonation-desiccating",
+    "name": "Detonation (Desiccating)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that bursts in an immediate radius, draining moisture from everything within it. Living creatures take damage equal to the cypher's level. Water in the area is vaporized.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-detonation-flash",
+    "name": "Detonation (Flash)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that bursts in an immediate radius, blinding all within it for one minute (ten minutes if the cypher is level 4 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 386)"
+  },
+  {
+    "id": "cypher-detonation-gravity",
+    "name": "Detonation (Gravity)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that bursts in an immediate radius, inflicting damage equal to the cypher's level by increasing gravity tremendously for one second. All creatures in the area are crushed to the ground for one round and cannot take physical actions.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-gravity-inversion",
+    "name": "Detonation (Gravity Inversion)",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes, and for one hour gravity reverses within long range of the explosion.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-massive",
+    "name": "Detonation (Massive)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes in a short-range radius, inflicting damage equal to the cypher's level. Roll a d100 to determine the type of damage.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-matter-disruption",
+    "name": "Detonation (Matter Disruption)",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes in an immediate radius, releasing nanites that rearrange matter in random ways. Inflicts damage equal to the cypher's level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-pressure",
+    "name": "Detonation (Pressure)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes in an immediate radius, inflicting impact damage equal to the cypher's level. Also moves unattended objects out of the area if they weigh less than 20 pounds (9 kg) per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-singularity",
+    "name": "Detonation (Singularity)",
+    "type": "fantastic",
+    "level": "10",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes and creates a momentary singularity that tears at the fabric of the universe. Inflicts 20 points of damage to all within short range, drawing them (or their remains) together to immediate range (if possible). Player characters in the radius who fail a Might defense roll move down one step on the damage track .",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-sonic",
+    "name": "Detonation (Sonic)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes with terrifying sound, deafening all in an immediate radius for ten minutes per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-spawn",
+    "name": "Detonation (Spawn)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that bursts in an immediate radius, blinding all within it for one minute and inflicting damage equal to the cypher's level. The burst spawns 1d6 additional detonations; in the next round, each additional detonation flies to a random spot within short range and explodes in an immediate radius. Roll a d100 to determine the type of damage dealt by all detonations:",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-detonation-web",
+    "name": "Detonation (Web)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Projects a small physical explosive up to a long distance away that explodes in an immediate radius and creates sticky strands of goo. PCs caught in the area must use a Might-based action to get out, with the difficulty determined by the cypher level. NPCs break free if their level is higher than the cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-disarm",
+    "name": "Disarm",
+    "type": "subtle",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "One NPC within immediate range whose level is lower than the cypher level drops whatever they are holding.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 387)"
+  },
+  {
+    "id": "cypher-disguise-module",
+    "name": "Disguise Module",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "For the next ten minutes per cypher level, the user's features become almost identical to those of one designated person they have previously interacted with, easing by two steps attempts to disguise the user as that person. Once designated, the user cannot shift the effect to look like another person, though they can remove the module to look like themselves again before the end of the duration.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-disrupting",
+    "name": "Disrupting",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, each time the user strikes a solid creature or object, the attack generates a burst of nanites that directly attack its organic cells. The target takes 1 additional point of damage. If the target's level is less than the cypher's level, it loses its next action; otherwise its next action is hindered.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-eagleseye",
+    "name": "Eagleseye",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "Grants the ability to see ten times as far as normal for one hour per cypher level. (For a more realistic game, the eagleseye cypher could instead give the user two assets on tasks involving seeing to long distances.)",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-effect-resistance",
+    "name": "Effect Resistance",
+    "type": "subtle",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "Provides a chance for additional resistance to directly damaging effects of all kinds, such as fire, lightning, and the like, for one day. (It does not provide resistance to blunt force, slashing, or piercing attacks.) If the level of the effect is of the cypher level or lower, the user gains an additional defense roll to avoid it. On a successful defense roll, treat the attack as if the user had succeeded on their regular defense roll. (If the user is an NPC, a PC attacking them with this kind of effect must succeed on two attack rolls to harm them.)",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-effort-enhancer-combat",
+    "name": "Effort Enhancer (Combat)",
+    "type": "subtle",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "For the next hour, the user can apply one free level of Effort to any task (including a combat task) without spending points from a Pool. The free level of Effort provided by this cypher does not count toward the maximum amount of Effort a character can normally apply to one task. Once this free level of Effort is used, the effect of the cypher ends.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-effort-enhancer-noncombat",
+    "name": "Effort Enhancer (Noncombat)",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next hour, the user can apply one free level of Effort to a noncombat task without spending points from a Pool. The level of Effort provided by this cypher does not count toward the maximum amount of Effort a character can normally apply to one task. Once this free level of Effort is used, the effect of the cypher ends.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-enduring-shield",
+    "name": "Enduring Shield",
+    "type": "subtle",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "For the next day, the user has an asset to Speed defense rolls.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-equipment-cache",
+    "name": "Equipment Cache",
+    "type": "manifest",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "The user can rummage around and produce from the cypher a desired piece of equipment (not an artifact) whose level does not exceed the cypher's level. The piece of equipment persists for up to one day, unless its fundamental nature allows only a single use (such as with a grenade).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-farsight",
+    "name": "Farsight",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "The user can observe a location they have visited previously, regardless of how far away it is (even across galaxies). This vision persists for up to ten minutes per cypher level. The character can switch between viewing this location and viewing their current location once per round.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-fireproofing",
+    "name": "Fireproofing",
+    "type": "manifest",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "A nonliving object treated by this cypher has Armor against fire damage equal to the cypher's level for one day.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-flame-retardant-wall",
+    "name": "Flame-Retardant Wall",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "Creates an immobile plane of permeable energy up to 20 feet by 20 feet (6 m by 6 m) for one hour per cypher level. The plane conforms to the space available. Flames passing through the plane are extinguished.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 388)"
+  },
+  {
+    "id": "cypher-force-cube",
+    "name": "Force Cube",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "Creates an immobile cube composed of six planes of solid force, each 30 feet (9 m) to a side, for one hour. The planes conform to the space available. (Although a force cube's walls are not gaseous permeable, there is likely enough air within for trapped creatures to breathe for the hour it lasts.)",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 389)"
+  },
+  {
+    "id": "cypher-force-field",
+    "name": "Force Field",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, the user is surrounded by a powerful force field, granting them +1 to Armor (+2 to Armor if the cypher level is 5 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 389)"
+  },
+  {
+    "id": "cypher-force-screen-projector",
+    "name": "Force Screen Projector",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "Creates an immobile plane of solid force up to 20 feet by 20 feet (6 m by 6 m) for one hour. The plane conforms to the space available.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 389)"
+  },
+  {
+    "id": "cypher-force-shield-projector",
+    "name": "Force Shield Projector",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "Creates a shimmering energy shield around the user for one hour, during which time they gain +3 to Armor (or +4 to Armor if the cypher is level 5 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 389)"
+  },
+  {
+    "id": "cypher-friction-reducer",
+    "name": "Friction Reducer",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "Spread across an area up to 10 feet (3 m) square, this makes things extremely slippery. For one hour per cypher level, movement tasks in the area are hindered by three steps.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 389)"
+  },
+  {
+    "id": "cypher-frigid-wall",
+    "name": "Frigid Wall",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Creates a wall of supercooled air up to 30 feet by 30 feet by 1 foot (9 m by 9 m by 30 cm) that inflicts damage equal to the cypher's level on anything that passes through it. The wall conforms to the space available. It lasts for ten minutes.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 389)"
+  },
+  {
+    "id": "cypher-gas-bomb",
+    "name": "Gas Bomb",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Thrown a short distance, this bursts in a poisonous cloud within an immediate area. The cloud lingers for 1d6 rounds unless conditions dictate otherwise. Roll a d100 to determine the effect.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 389)"
+  },
+  {
+    "id": "cypher-gravity-nullifier",
+    "name": "Gravity Nullifier",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "For one hour, the user can float into the air, moving vertically up to a short distance per round (but not horizontally without taking some other action, such as pushing along the ceiling). The user must weigh less than 50 pounds (23 kg) per level of the cypher.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 390)"
+  },
+  {
+    "id": "cypher-gravity-nullifying-application",
+    "name": "Gravity Nullifying Application",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "If a nonliving object no larger than a human (two humans if the cypher level is 6 or higher) is coated by this cypher, it floats 1d20 feet in the air permanently and no longer has weight if carried (though it needs to be strapped down).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 390)"
+  },
+  {
+    "id": "cypher-heat-attack",
+    "name": "Heat Attack",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, each time the user strikes a solid creature or object, the attack generates a burst of heat that inflicts 2 additional points of damage.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 390)"
+  },
+  {
+    "id": "cypher-hunter-seeker",
+    "name": "Hunter/Seeker",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "With long-range movement, this intelligent missile tracks and attacks a specified target (target must be within sight when selected). If it misses, it continues to attack one additional time per cypher level until it hits. For example, a level 4 hunter/seeker will attack a maximum of five times. Roll a d100 to determine the type of attack.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 390)"
+  },
+  {
+    "id": "cypher-image-projector",
+    "name": "Image Projector",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "Projects one of the following immobile images in the area described for one hour. The image appears up to a close distance from the user (long distance if the cypher level is 4 or higher, very long distance if the cypher level is 6 or higher). Scenes include movement, sound, and smell. Roll a d100 to determine the image.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 390)"
+  },
+  {
+    "id": "cypher-inferno-wall",
+    "name": "Inferno Wall",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Creates a wall of extreme heat up to 30 feet by 30 feet by 1 foot (9 m by 9 m by 30 cm) that inflicts damage equal to the cypher's level on anything that passes through it. The wall conforms to the space available. It lasts for ten minutes.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 390)"
+  },
+  {
+    "id": "cypher-infiltrator",
+    "name": "Infiltrator",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "Tiny capsule launches and moves at great speed, mapping and scanning an unknown area. It moves 500 feet (150 m) per level, scanning an area up to 50 feet (15 m) per level away from it. It identifies basic layout, creatures, and major energy sources and either transmits this information back to the user (perhaps by telepathy or an electronic signal) or returns to the user to show what it saw. Its movement is blocked by any physical or energy barrier.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 390)"
+  },
+  {
+    "id": "cypher-information-sensor",
+    "name": "Information Sensor",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Over the course of one day, the user can activate the cypher a total number of times equal to its level. Each time, they can select a living creature within long range and learn the following about it: level, origin, species, name, and possibly other facts (such as an individual's credit score, home address, phone number, and related information).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 391)"
+  },
+  {
+    "id": "cypher-instant-servant",
+    "name": "Instant Servant",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "Small device expands into a humanoid automaton that is roughly 2 feet (60 cm) tall. Its level is equal to the cypher's level, and it can understand the verbal commands of the character who activated it. Once the servant is activated, commanding it is not an action. It can make attacks or perform actions as ordered to the best of its abilities, but it cannot speak. The automaton has short-range movement but never goes farther than long range from the character who activated it. At the GM's discretion, the servant might have specialized knowledge, such as how to operate a particular device. Otherwise, it has no special knowledge. In any case, the servant is not artificially intelligent or capable of initiating action. It does only as commanded. The servant operates for one hour per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 391)"
+  },
+  {
+    "id": "cypher-instant-shelter",
+    "name": "Instant Shelter",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "With the addition of water and air, this cypher expands into a simple one-room structure with a door and a transparent window (two rooms with an internal door if the cypher level is 7 or higher). The structure is 10 feet by 10 feet by 20 feet (3 m by 3 m by 6 m). It is made from a durable, nonflammable material similar to sandstone, and is permanent and immobile once created.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 391)"
+  },
+  {
+    "id": "cypher-intellect-booster",
+    "name": "Intellect Booster",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Adds 1 to the user's Intellect Edge for one hour (or 2 if the cypher is level 5 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 391)"
+  },
+  {
+    "id": "cypher-intelligence-enhancement",
+    "name": "Intelligence Enhancement",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "All of the user's tasks involving intelligent deduction—such as playing chess, inferring a connection between clues, solving a mathematical problem, finding a bug in computer code, and so on—are eased by two steps for one hour. In the subsequent hour, the strain hinders the same tasks by two steps.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 391)"
+  },
+  {
+    "id": "cypher-knowledge-enhancement",
+    "name": "Knowledge Enhancement",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, the character has training in a predetermined skill (or two skills if the cypher is level 5 or higher). The skill could be anything (including something specific to the operation of a particular device), or roll a d100 to choose a common skill.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 391)"
+  },
+  {
+    "id": "cypher-lightning-wall",
+    "name": "Lightning Wall",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Creates a wall of electric bolts up to 30 feet by 30 feet by 1 foot (9 m by 9 m by 30 cm) that inflicts damage equal to the cypher's level on anything that passes through it. The wall conforms to the space available. It lasts for ten minutes.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 391)"
+  },
+  {
+    "id": "cypher-machine-control",
+    "name": "Machine Control",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Splits into two pieces; one is affixed to a device and the other to a character. The character can then use their mind to control the device at long range, bidding it to do anything it could do normally. Thus, a device could be activated or deactivated, and a vehicle could be piloted. The control lasts for ten minutes per cypher level, and once the device is chosen, it cannot be changed.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-magnetic-attack-drill",
+    "name": "Magnetic Attack Drill",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The user throws this cypher at a target within short range, and it drills into the target for one round, inflicting damage equal to the cypher's level. If the target is made of metal or wearing metal (such as armor), the attack is eased.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-magnetic-master",
+    "name": "Magnetic Master",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Establishes a connection with one metal object within short range that a human could hold in one hand. The user can then move or manipulate the object anywhere within short range (each movement or manipulation is an action). For example, they could wield a weapon or drag a helm affixed to a foe's head to and fro. The connection lasts for ten rounds per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-magnetic-shield",
+    "name": "Magnetic Shield",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "For ten minutes per cypher level, metal objects cannot come within immediate range of the user. Metal items already in the area when the device is activated are slowly pushed out.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-manipulation-beam",
+    "name": "Manipulation Beam",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Over the course of one day, the user can activate the cypher a total number of times equal to its level. Each time, they can affect an object they can see within long range that is not too heavy for them to affect physically. The effect must occur over the course of a round and could include closing or opening a door, keying in a number on a keypad, transferring an object a short distance, wresting an object from another creature's grasp (on a successful Might-based roll), or pushing a creature an immediate distance. (A manipulation beam could be used to operate a computer at a distance, which would make some infiltration and hacking jobs easier.)",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-matter-transference-ray",
+    "name": "Matter Transference Ray",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "The user can target one nonliving object within long range that is their size or smaller of the cypher level or lower. The object is transferred directly to a random location at least 100 miles (160 km) away. If the GM feels it appropriate to the circumstances, only a portion of an object is transferred (a portion whose volume is no more than the user's).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-meditation-aid",
+    "name": "Meditation Aid",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Restores a number of points equal to the cypher's level to the user's Intellect Pool.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-memory-switch",
+    "name": "Memory Switch",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The user selects a point within long range, and the minds of all thinking creatures within immediate range of that point are attacked. Victims are dazed and take no action for a round, and they have no memory of the preceding hour.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-mental-scrambler",
+    "name": "Mental Scrambler",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Two rounds after being activated, the device creates an invisible field that fills an area within short range and lasts for one minute. The field scrambles the mental processes of all thinking creatures. The effect lasts as long as they remain in the field and for 1d6 rounds after, although an Intellect defense roll is allowed each round to act normally (both in the field and after leaving it). Each mental scrambler is keyed to a specific effect. Roll a d100 to determine the effect.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 392)"
+  },
+  {
+    "id": "cypher-metal-death",
+    "name": "Metal Death",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Produces a stream of foam that covers an area about 3 feet by 3 feet (1 m by 1 m), transforming any metal that it touches into a substance as brittle as thin glass. The foam affects metal to a depth of about 6 inches (15 cm).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-mind-meld",
+    "name": "Mind Meld",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "Lets the user speak telepathically with creatures they can see within short range for up to one hour. The user can't read a target's thoughts, except those that are specifically \"transmitted.\"",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-mind-restricting-wall",
+    "name": "Mind-Restricting Wall",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Creates an immobile plane of permeable energy up to 20 feet by 20 feet (6 m by 6 m) for one hour. The plane conforms to the space available. Intelligent creatures passing through the plane fall unconscious for up to one hour, or until slapped awake or damaged.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-mind-stabilizer",
+    "name": "Mind Stablizer",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "The user gains +5 to Armor against Intellect damage.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-monoblade",
+    "name": "Monoblade",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Produces a 6-inch (15 cm) blade that's the same level as the cypher. The blade cuts through any material of a level lower than its own. If used as a weapon, it is a light weapon that ignores Armor of a level lower than its own. The blade lasts for ten minutes.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-monohorn",
+    "name": "Monohorn",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "The user gains a horn in the center of their forehead. The horn is deadly sharp and strong, and it spirals down to a solid base where it fuses with their flesh and bone. The user is specialized in making melee attacks with the horn, which is considered a medium weapon. The horn lasts for a number of hours equal to the cypher's level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-motion-sensor",
+    "name": "Motion Sensor",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "For one hour per cypher level, the user knows when any movement occurs within short range, and when large creatures or objects move within long range (the cypher distinguishes between the two). It also indicates the number and size of the creatures or objects in motion.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-null-field",
+    "name": "Null Field",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "The user and all creatures within immediate range gain +3 to Armor (+5 if the cypher is level 8 or higher) against damage of a specified kind for one hour. Roll a d100 to determine the effect.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-nullification-ray",
+    "name": "Nullification Ray",
+    "type": "manifest",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "The user can immediately end one ongoing effect within long range that is produced by an artifact, cypher, or special ability.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-nutrition-and-hydration",
+    "name": "Nutrition and Hydration",
+    "type": "subtle",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "The user can go without food and water for a number of days equal to the cypher's level without ill effect.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-perfect-memory",
+    "name": "Perfect Memory",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "Allows the user to mentally record everything they see for thirty seconds per cypher level and store the recording permanently in their long-term memory. This cypher is useful for watching someone pick a specific lock, enter a complex code, or do something else that happens quickly.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-perfection",
+    "name": "Perfection",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The user treats their next action as if they had rolled a natural 20.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 393)"
+  },
+  {
+    "id": "cypher-personal-environment-field",
+    "name": "Personal Environment Field",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Creates an aura of temperature and atmosphere that will sustain a human safely for a day. The aura extends to 1 foot (30 cm) around the user (double that radius if the cypher is level 7 or higher). It does not protect against sudden flashes of temperature change (such as from a heat ray). A small number of these cyphers (1%) accommodate the preferred environment of a nonhuman, nonterrestrial creature.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 394)"
+  },
+  {
+    "id": "cypher-phase-changer",
+    "name": "Phase Changer",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "Puts the user out of phase for one minute (two minutes if the cypher is level 6 or higher). During this time, they can pass through solid objects as though they were entirely insubstantial, like a ghost. They cannot make physical attacks or be physically attacked.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 394)"
+  },
+  {
+    "id": "cypher-phase-disruptor",
+    "name": "Phase Disruptor",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Puts a portion of a physical structure (like a wall or floor) out of phase for one hour. It affects an area equal to one 5-foot (1.5 m) cube per cypher level. While the area is out of phase, creatures and objects can pass through it as if it were not there, although one cannot see through it, and it blocks light.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 394)"
+  },
+  {
+    "id": "cypher-poison-emotion",
+    "name": "Poison (Emotion)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The victim feels a specific emotion for one hour. Roll a d100 to determine the emotion.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 394)"
+  },
+  {
+    "id": "cypher-poison-explosive",
+    "name": "Poison (Explosive)",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "Once this substance enters the bloodstream, it travels to the brain and reorganizes into an explosive that detonates when activated, inflicting 10 points of damage (ignores Armor). Roll a d100 to determine what activates the poison.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 394)"
+  },
+  {
+    "id": "cypher-poison-mind-controlling",
+    "name": "Poison (Mind Controlling)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The victim must carry out a specific action in response to a specific trigger. Roll a d100 to determine the action.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 394)"
+  },
+  {
+    "id": "cypher-poison-mind-disrupting",
+    "name": "Poison (Mind Disrupting)",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The victim suffers Intellect damage equal to the cypher's level and cannot take actions for a number of rounds equal to the cypher's level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 394)"
+  },
+  {
+    "id": "cypher-psychic-communique",
+    "name": "Psychic Communique",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a one-time, one-way telepathic message of up to ten words per cypher level, with an unlimited range, to anyone they know.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-radiation-spike",
+    "name": "Radiation Spike",
+    "type": "manifest",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Delivers a powerful burst of radiation that disrupts the tissue of any creature touched, inflicting damage equal to the cypher's level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-ray-emitter",
+    "name": "Ray Emitter",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a ray of destructive energy up to very long range that inflicts damage equal to the cypher's level. Roll a d100 to determine the type of energy.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-ray-emitter-command",
+    "name": "Ray Emitter (Command)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a ray up to long range (very long range if the cypher is level 6 or higher) that forces a target to obey the next verbal command given (if it is understood) for one round per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-ray-emitter-fear",
+    "name": "Ray Emitter (Fear)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a ray up to long range (very long range if the cypher is level 6 or higher) that causes the target to flee in terror for one minute.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-ray-emitter-friend-slaying",
+    "name": "Ray Emitter (Friend Slaying)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a ray up to long range (very long range if the cypher is level 6 or higher) that causes the target to attack its nearest ally for one round.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-ray-emitter-mind-disrupting",
+    "name": "Ray Emitter (Mind Disrupting)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a ray of destructive energy up to very long range that inflicts Intellect damage equal to the cypher's level. Also, the victim cannot take actions for a number of rounds equal to the cypher's level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-ray-emitter-numbing",
+    "name": "Ray Emitter (Numbing)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a ray of energy up to long range (very long range if the cypher is level 6 or higher) that numbs one limb of the target, making it useless for one minute. A small number of these devices (5%) induce numbness that lasts for one hour.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-ray-emitter-paralysis",
+    "name": "Ray Emitter (Paralysis)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Allows the user to project a ray of energy up to very long range that paralyzes the target for one minute. A small number of these devices (5%) induce paralysis that lasts for one hour.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-reality-spike",
+    "name": "Reality Spike",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Once activated, the cypher does not move—ever—even if activated in midair. A Might action will dislodge it, but then it is ruined.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-reflex-enhancer",
+    "name": "Reflex Enhancer",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "All tasks involving manual dexterity—such as pickpocketing, lockpicking, juggling, operating on a patient, defusing a bomb, and so on—are eased by two steps for one hour.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-rejuvenator",
+    "name": "Rejuvenator",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Restores a number of points equal to the cypher's level to one random stat Pool.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 395)"
+  },
+  {
+    "id": "cypher-remembering",
+    "name": "Remembering",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "Allows the user to recall any one experience they've ever had. The experience can be no longer than one minute per cypher level, but the recall is perfect, so (for example) if they saw someone dial a phone, they will remember the number.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-remote-viewer",
+    "name": "Remote Viewer",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "For one hour per cypher level, the user can see everything going on in the vicinity of the cypher, regardless of the distance between them.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-repair-unit",
+    "name": "Repair Unit",
+    "type": "fantastic",
+    "level": "1d10",
+    "form": "",
+    "effect": "The cypher becomes a multiarmed sphere that floats. It repairs one designated item (of its own level or lower) that has been damaged but not destroyed. The repair unit can also create spare parts, unless the GM rules that the parts are too specialized or rare (in which case, the unit repairs the device except for the specialized part). Repair time is 1d100 + 20 minutes.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-repeater",
+    "name": "Repeater",
+    "type": "fantastic",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "For the next minute, the user's ranged weapon fires one additional time with ammo fabricated by the cypher. The weapon wielder can aim the free shot at the same target, or at a different target next to the first one.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-repel",
+    "name": "Repel",
+    "type": "subtle",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "One NPC within immediate range who is of a level lower than the cypher decides to leave, using their next five rounds to move away quickly.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-retaliation",
+    "name": "Retaliation",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, anyone striking the user receives a small burst of electricity that inflicts 1 point of damage (2 points if the cypher is level 4 or higher, 3 points if the cypher is level 6 or higher). No action or roll is required by the user.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-secret",
+    "name": "Secret",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The user can ask the GM one question and get a general answer. The GM assigns a level to the question, so the more obscure the answer, the more difficult the task. Generally, knowledge that a PC could find by looking somewhere other than their current location is level 1, and obscure knowledge of the past is level 7. Gaining knowledge of the future is level 10, and such knowledge is always open to interpretation. The cypher cannot provide an answer to a question above its level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-sheen",
+    "name": "Sheen",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For one week, the user's cells are coated with a protective veneer that resists damage (+1 to Armor, or +2 to Armor if the cypher is level 5 or higher) and eases Might defense rolls by two steps. However, healing is more difficult during this time; all recovery rolls suffer a −1 penalty.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-shock-attack",
+    "name": "Shock Attack",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next day, each time the user strikes a solid creature or object, the attack generates a burst of electricity, inflicting 1 additional point of damage (2 points if the cypher is level 4 or higher, 3 points if the cypher is level 6 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-shocker",
+    "name": "Shocker",
+    "type": "manifest",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Delivers a powerful burst of electricity that shocks any creature touched, inflicting damage equal to the cypher's level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 396)"
+  },
+  {
+    "id": "cypher-skill-boost",
+    "name": "Skill Boost",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "Dramatically but temporarily alters the user's mind and body so they can ease one specific kind of physical action by three steps. Once activated, this boost can be used a number of times equal to the cypher's level, but only within a twenty-four-hour period. The boost takes effect each time the action is performed. For example, a level 3 cypher boosts the first three times that action is attempted. Roll a d100 to determine the action.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-slave-maker",
+    "name": "Slave Maker",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "To activate the cypher, the user must succeed on a melee attack against a creature about the size of the user and whose level does not exceed the cypher's level. The cypher bonds to the target, who immediately becomes calm. The target awaits the user's commands and carries out all orders to the best of its ability. The target remains so enslaved for a number of hours equal to the cypher's level minus the target's level. (If the result is 0, the target is enslaved for only one minute.)",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-sleep-inducer",
+    "name": "Sleep Inducer",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "Touch puts the victim to sleep for ten minutes per cypher level or until awoken by a violent action or an extremely loud noise.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-sniper-module",
+    "name": "Sniper Module",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next hour per cypher level, the effective range of the user's ranged weapon increases by one category (immediate to short, short to long, long to very long, very long to 1,000 feet [300 m]). A weapon with a range greater than very long has its range doubled.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-solvent",
+    "name": "Solvent",
+    "type": "manifest",
+    "level": "1d10",
+    "form": "",
+    "effect": "Dissolves 1 cubic foot of material each round. After one round per cypher level, the cypher becomes inert.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-sonic-hole",
+    "name": "Sonic Hole",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Draws all sound within long range into the device for one round per cypher level. Within the affected area, no sound can be heard.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-sound-dampener",
+    "name": "Sound Dampener",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Dampens all sound within immediate range for one minute per cypher level, providing an asset on stealth actions by all creatures in the area.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-spatial-warp",
+    "name": "Spatial Warp",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "When affixed to a device that affects a single target at range, that range is increased to 1 mile (1.5 km) with no penalties. Space is temporarily warped in terms of seeing and reaching the target. If direct line of sight is important to the device's effect, it remains important. The spatial warp lasts 10 minutes per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 397)"
+  },
+  {
+    "id": "cypher-speed-boost",
+    "name": "Speed Boost",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Adds 1 to the user's Speed Edge for one hour (adds 2 if the cypher is level 5 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-spy",
+    "name": "Spy",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Produces a tiny spying object that resists detection as a level 8 creature. The object moves at great speed, mapping and scanning an unknown area. It moves 500 feet (150 m) per level, scanning an area up to 50 feet (15 m) away from it. It identifies basic layout, creatures, and major energy sources. Its movement is blocked by any physical or energy barrier. At the end of its mapping run, it returns to the user and reports. If it discovers a predefined target during its run (such as \"a creature of level 5 or higher,\" \"a locked door,\" \"a major energy source,\" and so on), it detonates instead, dealing damage equal to the cypher's level (half electrical damage, half shrapnel damage) to all creatures and objects in short range.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-stasis-keeper",
+    "name": "Stasis Keeper",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "Puts a subject into stasis for a number of days equal to the cypher's level, or until it is violently disturbed. An object in stasis does not age and comes out of the stasis alive and in the same condition as it went in, with no memory of the period of inactivity.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-stim",
+    "name": "Stim",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "Eases the user's next action taken by three steps.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-strength-boost",
+    "name": "Strength Boost",
+    "type": "subtle",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Adds 1 to Might Edge for one hour (or 2 if the cypher is level 5 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-strength-enhancer",
+    "name": "Strength Enhancer",
+    "type": "subtle",
+    "level": "1d6",
+    "form": "",
+    "effect": "All noncombat tasks involving raw strength—such as breaking down a door, lifting a heavy boulder, forcing open elevator doors, competing in a weightlifting competition, and so on—are eased by two steps for one hour.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-subdual-field",
+    "name": "Subdual Field",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "Two rounds after being activated, the device creates an invisible field that fills a specified area (such as a cube a short distance across) within long range. The field lasts for one minute. It affects the minds of thinking beings within the field, preventing them from taking hostile actions. The effect lasts as long as they remain in the field and for 1d6 rounds after, although an Intellect defense roll is allowed each round to act normally (both in the field and after leaving it).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-telepathy",
+    "name": "Telepathy",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "For one hour, the device enables long-range mental communication with anyone the user can see.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-teleporter-bounder",
+    "name": "Teleporter (Bounder)",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "User teleports up to 100 × the cypher level in feet to a location they can see. They arrive safely with their possessions but cannot take anything else with them.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-teleporter-interstellar",
+    "name": "Teleporter (Interstellar)",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "User teleports anywhere in the galaxy to a location they have previously visited or seen. They arrive safely with their possessions but cannot take anything else with them.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-teleporter-planetary",
+    "name": "Teleporter (Planetary)",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "User teleports anywhere on the planet to a location they have previously visited or seen. They arrive safely with their possessions but cannot take anything else with them.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-teleporter-traveler",
+    "name": "Teleporter (Traveler)",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "User teleports up to 100 × the cypher level in miles to a location they have previously visited or seen. They arrive safely with their possessions but cannot take anything else with them.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 398)"
+  },
+  {
+    "id": "cypher-temporal-viewer",
+    "name": "Temporal Viewer",
+    "type": "fantastic",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Displays moving images and sound, up to ten minutes per cypher level in length, depicting events that occurred at the current location up to one year prior. The user specifies the time period shown by the viewer.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-time-dilation-defensive",
+    "name": "Time Dilation (Defensive)",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next twenty-four hours, when the user is attacked, they move in rapid, seemingly random jumps, a few inches to one side or the other. This is an asset that modifies the user's defense rolls by two steps (three steps if the cypher is level 6 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-time-dilation-offensive",
+    "name": "Time Dilation (Offensive)",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For the next twenty-four hours, when the user makes a melee attack, they move at almost instantaneous speed, easing their attacks by two steps (three steps if the cypher is level 6 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-tissue-regeneration",
+    "name": "Tissue Regeneration",
+    "type": "subtle",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "For the next hour, the user regains 1 point lost to damage per round, up to a total number of points equal to twice the cypher's level. As each point is regained, they choose which Pool to add it to. If all their Pools are at maximum, the regeneration pauses until they take more damage, at which point it begins again (if any time remains in the hour) until the duration expires.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-tracer",
+    "name": "Tracer",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "Fires a microscopic tracer that clings to any surface within short range. For the next twenty-four hours, the launcher shows the distance and direction to the tracer, as long as it is within 1 mile (100 miles if the cypher is level 3 or higher, in the same dimension if the cypher is level 6 or higher).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-trick-embedder",
+    "name": "Trick Embedder",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "A nonintelligent animal immediately and perfectly learns one trick (two tricks if the cypher is level 4 or higher) it is capable of physically performing (roll over, heel, spin, shake, go to an indicated place within long range, and so on). The trick must be designated when the cypher is activated.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-uninterruptible-power-source",
+    "name": "Uninterruptible Power Source",
+    "type": "manifest",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Provides power to another device for up to a day. The device to be powered can be as simple as a light source or as complex as a small starcraft, assuming the cypher's level is equal to the item's power requirements. A desk lamp is a level 1 power requirement, a car engine is a level 5 power requirement, and a starship is a level 10 power requirement.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-vanisher",
+    "name": "Vanisher",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "The user becomes invisible for five minutes per cypher level, during which time they are specialized in stealth and Speed defense tasks. This effect ends if they do something to reveal their presence or position—attacking, using an ability, moving a large object, and so on. If this occurs, they can regain the remaining invisibility effect by taking an action to focus on hiding their position.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-visage-changer",
+    "name": "Visage Changer",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "Changes the appearance of one human-sized creature, providing an asset to disguise tasks (easing them by two steps if the cypher is level 5 or higher). The change takes ten minutes to apply and lasts for twenty-four hours.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-visual-displacement-device",
+    "name": "Visual Displacement Device",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "Projects holographic images of the user to confuse attackers. The images appear around the user, giving them an asset to Speed defense actions for ten minutes per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-vocal-translator",
+    "name": "Vocal Translator",
+    "type": "fantastic",
+    "level": "1d6",
+    "form": "",
+    "effect": "For twenty-four hours per cypher level, translates everything said by the user into a language that anyone can understand.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 399)"
+  },
+  {
+    "id": "cypher-warmth",
+    "name": "Warmth",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "Keeps the user warm and comfortable, even in the harshest cold temperatures, for twenty-four hours. During this time, the user has Armor equal to the cypher's level that protects against cold damage.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 400)"
+  },
+  {
+    "id": "cypher-water-adapter",
+    "name": "Water Adapter",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "The user can breathe underwater and operate at any depth (without facing the debilitating consequences of changing pressure) for four hours per cypher level. This cypher can also be used in the regular atmosphere, allowing the user to ignore ill effects from very low or very high atmospheric pressure. The cypher does not protect against vacuum.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 400)"
+  },
+  {
+    "id": "cypher-weapon-enhancement",
+    "name": "Weapon Enhancement",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "Modifies a weapon's attack in a particular fashion for ten minutes per cypher level. Roll a d100 for the modification.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 400)"
+  },
+  {
+    "id": "cypher-wings",
+    "name": "Wings",
+    "type": "fantastic",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "User can fly at their normal running speed for ten minutes per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 400)"
+  },
+  {
+    "id": "cypher-x-ray-viewer",
+    "name": "X-Ray Viewer",
+    "type": "manifest",
+    "level": "1d6 + 4",
+    "form": "",
+    "effect": "Allows the user to see through up to 2 feet (60 cm) of material of a level lower than the cypher. The effect lasts for one minute per cypher level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 400)"
+  },
+  {
+    "id": "cypher-zero-point-field",
+    "name": "Zero Point Field",
+    "type": "fantastic",
+    "level": "1d6 + 3",
+    "form": "",
+    "effect": "Renders an inanimate object outside the effects of most energy for one minute. This means the object cannot be harmed, moved, or manipulated in any way. It remains in place (even in midair).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 400)"
+  },
+  {
+    "id": "cypher-area-boost",
+    "name": "Area Boost",
+    "type": "manifest",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "This cypher boosts an ability that affects a single target. The ability expands the effect so it includes the immediate area around that target. If the ability normally affects an immediate area, the area becomes short. Short areas are increased to long. Long areas are increased to very long. Abilities with very long areas become 1,000-foot (300 m) areas. All other areas double in radius.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-burst-boost",
+    "name": "Burst Boost",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "This cypher boosts an ability that affects a single target at short range or farther. The range decreases to immediate, but the ability affects all targets within immediate range.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-damage-boost",
+    "name": "Damage Boost",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "This cypher boosts an ability that inflicts points of damage. The ability inflicts additional damage equal to this cypher's level.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-efficacy-boost",
+    "name": "Efficacy Boost",
+    "type": "manifest",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "This cypher boosts an ability that requires a skill roll. The use of the ability is eased (eased by two steps if the cypher is level 5 or higher).",
+    "options": "",
+    "source": "(Claim the Sky, page 157)"
+  },
+  {
+    "id": "cypher-efficacy-boost-major",
+    "name": "Efficacy Boost (Major)",
+    "type": "manifest",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "This cypher boosts an ability that requires a skill roll. The use of the ability is eased by two steps.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-efficacy-boost-minor",
+    "name": "Efficacy Boost (Minor)",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "This cypher boosts an ability that requires a skill roll. The use of the ability is eased.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-energy-boost",
+    "name": "Energy Boost",
+    "type": "manifest",
+    "level": "1d6",
+    "form": "",
+    "effect": "This cypher boosts an ability that has a stat Pool cost. The cost is reduced to 0.",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-range-boost",
+    "name": "Range Boost",
+    "type": "manifest",
+    "level": "1d6 + 1",
+    "form": "",
+    "effect": "This cypher boosts the range of an ability. Something that affects only you can now affect someone you touch. Any other ability increases its range by one category (touch to immediate, immediate to short, short to long, long to very long, very long to 1,000 feet [300 m], or double for any range longer than very long).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-shift-boost",
+    "name": "Shift Boost",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "This cypher boosts one power shift that the user already has, granting them an additional power shift in that category that lasts for one round. For example, if the user has a shift in resilience, they can use this cypher to gain an additional shift in resilience for one round. If the user has more than one kind of power shift (such as dexterity and strength), they choose which kind of power shift to boost.",
+    "options": "",
+    "source": "(Claim the Sky, page 158)"
+  },
+  {
+    "id": "cypher-stunt-boost",
+    "name": "Stunt Boost",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "This cypher eases the user's next difficult, formidable, or impossible power stunt task by four steps (eased by five steps if the cypher is level 7 or higher). It has no effect on power stunts that don't require a successful power stunt task.",
+    "options": "",
+    "source": "(Claim the Sky, page 158)"
+  },
+  {
+    "id": "cypher-target-boost",
+    "name": "Target Boost",
+    "type": "manifest",
+    "level": "1d6 + 2",
+    "form": "",
+    "effect": "This cypher boosts an ability that affects a target at a range greater than touch. It can affect a second target within range (if the ability is an attack, make a separate attack roll for the second creature).",
+    "options": "",
+    "source": "(Cypher System Rulebook, page 401)"
+  },
+  {
+    "id": "cypher-video",
+    "name": "Cyphers Video",
+    "type": "unknown",
+    "level": "",
+    "form": "",
+    "effect": "",
+    "options": "",
+    "source": "(OG-CSRD Editorial Addition)"
+  },
+  {
+    "id": "cypher-shorts-types-physical",
+    "name": "Performing Physical Actions",
+    "type": "unknown",
+    "level": "",
+    "form": "",
+    "effect": "",
+    "options": "",
+    "source": "(Cypher Shorts, page 3)"
+  },
+  {
+    "id": "cypher-shorts-types-sneaking",
+    "name": "Sneaking",
+    "type": "unknown",
+    "level": "",
+    "form": "",
+    "effect": "",
+    "options": "",
+    "source": "(Cypher Shorts, page 4)"
+  },
+  {
+    "id": "cypher-shorts-types-searching",
+    "name": "Searching And Discovering",
+    "type": "unknown",
+    "level": "",
+    "form": "",
+    "effect": "",
+    "options": "",
+    "source": "(Cypher Shorts, page 4)"
+  },
+  {
+    "id": "cypher-shorts-types-talking",
+    "name": "Talking",
+    "type": "unknown",
+    "level": "",
+    "form": "",
+    "effect": "",
+    "options": "",
+    "source": "(Cypher Shorts, page 4)"
+  },
+  {
+    "id": "cypher-shorts-types-supernatural",
+    "name": "Wielding Supernatural Powers",
+    "type": "unknown",
+    "level": "",
+    "form": "",
+    "effect": "",
+    "options": "",
+    "source": "(Cypher Shorts, page 4)"
+  }
+]
