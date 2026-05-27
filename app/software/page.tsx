@@ -1,8 +1,23 @@
 "use client";
 
-import { Box, Container, Typography, Button, Divider } from "@mui/material";
+import { Box, Container, Stack, Typography, Button, Divider } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, Code2 } from "lucide-react";
+
+const projects = [
+  {
+    href: "/software/pcap-analyzer",
+    title: "Verkada Packet Capture Analyzer",
+    description:
+      "Upload a .pcap, .pcapng, or .pcap.zst and get a per-device network health audit for Verkada devices — DHCP, ARP, DNS, cloud reachability, TLS, 802.1X. Runs entirely in the browser; nothing is uploaded.",
+  },
+  {
+    href: "/software/pykada",
+    title: "pykada",
+    description:
+      "Python SDK for the Verkada physical security API — cameras, access control, sensors, and more.",
+  },
+];
 
 export default function SoftwarePage() {
   return (
@@ -29,26 +44,31 @@ export default function SoftwarePage() {
 
         <Divider sx={{ mb: 4 }} />
 
-        <Box
-          component={Link}
-          href="/software/pykada"
-          sx={{
-            display: "block",
-            p: 3,
-            border: "1px solid",
-            borderColor: "divider",
-            borderRadius: 2,
-            textDecoration: "none",
-            "&:hover": { borderColor: "primary.main", backgroundColor: "action.hover" },
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", mb: 0.5 }}>
-            pykada
-          </Typography>
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            Python SDK for the Verkada physical security API — cameras, access control, sensors, and more.
-          </Typography>
-        </Box>
+        <Stack spacing={2}>
+          {projects.map(p => (
+            <Box
+              key={p.href}
+              component={Link}
+              href={p.href}
+              sx={{
+                display: "block",
+                p: 3,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 2,
+                textDecoration: "none",
+                "&:hover": { borderColor: "primary.main", backgroundColor: "action.hover" },
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", mb: 0.5 }}>
+                {p.title}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {p.description}
+              </Typography>
+            </Box>
+          ))}
+        </Stack>
       </Container>
     </Box>
   );

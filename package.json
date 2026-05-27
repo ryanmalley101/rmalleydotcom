@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.4",
     "@mui/material-nextjs": "^7.3.3",
     "aws-amplify": "^6.6.6",
+    "fzstd": "^0.1.1",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.548.0",
     "next": "14.2.10",
