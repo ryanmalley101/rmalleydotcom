@@ -4,8 +4,9 @@ import React from 'react';
 import { TextField, Button, Stack } from '@mui/material';
 import { DiceRoller } from '@dice-roller/rpg-dice-roller';
 import type { Schema } from '@/amplify/data/resource';
-import { calculateDependentStats, scoreToMod, crToXP, getToHit, getMonsterProf } from '@/5eReference/converters';
+import { calculateDependentStats, scoreToMod, crToXP, getToHit, getMonsterProf, skillToAbilityMap } from '@/5eReference/converters';
 import { plusMinus } from '@/5eReference/converters';
+import type { SkillName } from '@/5eReference/converters';
 import { DiceRoll } from '@dice-roller/rpg-dice-roller';
 
 
@@ -71,39 +72,31 @@ const serializeMonsterToMarkdown = (m: MyMonsterStatblock): string => {
 
     const abilitiesTable = `|STR|DEX|CON|INT|WIS|CHA|\n|:--:|:--:|:--:|:--:|:--:|:--:|\n|${m.strength ?? ''} (${fmtMod(mods.strength)})|${m.dexterity ?? ''} (${fmtMod(mods.dexterity)})|${m.constitution ?? ''} (${fmtMod(mods.constitution)})|${m.intelligence ?? ''} (${fmtMod(mods.intelligence)})|${m.wisdom ?? ''} (${fmtMod(mods.wisdom)})|${m.charisma ?? ''} (${fmtMod(mods.charisma)})|\n___\n`;
 
-    // Only show saves where the monster is proficient (in save_proficiencies array)
+    // Show saves where the value is explicitly set (non-null = proficient/listed)
     const saves: string[] = [];
-    const saveProfMap: { [key: string]: string } = {
-        strength: 'strength_save',
-        dexterity: 'dexterity_save',
-        constitution: 'constitution_save',
-        intelligence: 'intelligence_save',
-        wisdom: 'wisdom_save',
-        charisma: 'charisma_save',
-    };
-    if (derived && m.save_proficiencies) {
-        for (const ability of m.save_proficiencies) {
-            const saveKey = saveProfMap[ability];
-            if (saveKey && derived[saveKey]) {
-                const num = Number(derived[saveKey]);
-                const label = ability.charAt(0).toUpperCase() + ability.slice(1);
-                saves.push(`${label} ${num >= 0 ? '+' + num : num}`);
-            }
-        }
+    const saveEntries: [string, number | null | undefined][] = [
+        ['Strength',     m.strength_save],
+        ['Dexterity',    m.dexterity_save],
+        ['Constitution', m.constitution_save],
+        ['Intelligence', m.intelligence_save],
+        ['Wisdom',       m.wisdom_save],
+        ['Charisma',     m.charisma_save],
+    ];
+    for (const [label, val] of saveEntries) {
+        if (val != null) saves.push(`${label} ${val >= 0 ? '+' + val : val}`);
     }
 
-    // Only show skills where the monster is proficient (skill_proficiencies is not null)
+    // Show skills whose bonus differs from the raw ability modifier (i.e., something was applied)
     const skillsArr: string[] = [];
-    if (m.skill_proficiencies && derived && derived.skills) {
-        for (const [skillName, profLevel] of Object.entries(m.skill_proficiencies)) {
-            // Only include if there's a proficiency value (not null)
-            if (profLevel) {
-                const skillMod = derived.skills[skillName];
-                if (skillMod !== undefined) {
-                    const num = Number(skillMod);
-                    const displayName = skillName.replace(/_/g, ' ');
-                    skillsArr.push(`${displayName.charAt(0).toUpperCase() + displayName.slice(1)} ${num >= 0 ? '+' + num : num}`);
-                }
+    if (m.skills) {
+        for (const [skillName, bonus] of Object.entries(m.skills)) {
+            if (bonus == null) continue;
+            const ability = skillToAbilityMap[skillName as SkillName];
+            const baseMod = ability ? scoreToMod(m[ability]) : 0;
+            if (bonus !== baseMod) {
+                const num = Number(bonus);
+                const displayName = skillName.replace(/_/g, ' ');
+                skillsArr.push(`${displayName.charAt(0).toUpperCase() + displayName.slice(1)} ${num >= 0 ? '+' + num : num}`);
             }
         }
     }

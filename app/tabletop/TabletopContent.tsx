@@ -1,30 +1,144 @@
 "use client";
 
-import { Box, Container, Typography, Button, Divider } from "@mui/material";
+import { Box, Container, Typography, Button } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Dices, Sword, BookOpen, Wand2, Gem, Coins, User, ListOrdered, Calculator, ShieldAlert } from "lucide-react";
+import {
+    ArrowLeft, Dices, Sword, BookOpen, Wand2, Gem, Coins, User,
+    ListOrdered, Calculator, ShieldAlert, Globe, ScrollText, Swords, BookMarked,
+} from "lucide-react";
 import type { EncounterTable } from "@/lib/encounterTables";
 
 interface Props {
     encounterTables: Pick<EncounterTable, "name" | "slug" | "entries">[];
 }
 
+// ── Theme ─────────────────────────────────────────────────────────────────────
+
+const T = {
+    crimsonDeep:  "#7f1d1d",
+    crimson:      "#991b1b",
+    crimsonMid:   "#b91c1c",
+    crimsonLight: "#ef4444",
+    goldDeep:     "#78350f",
+    gold:         "#92400e",
+    goldMid:      "#b45309",
+    goldLight:    "#f59e0b",
+};
+
+// ── Featured card ─────────────────────────────────────────────────────────────
+
+function FeaturedCard({ icon: Icon, title, description, href, accent, iconColor, badge }: {
+    icon: React.ElementType;
+    title: string;
+    description: string;
+    href: string;
+    accent: string;
+    iconColor: string;
+    badge?: string;
+}) {
+    return (
+        <Box component={Link} href={href} sx={{
+            flex: "1 1 260px",
+            display: "flex", flexDirection: "column",
+            backgroundColor: "background.paper",
+            border: "1px solid rgba(153,27,27,0.25)",
+            borderTop: `3px solid ${accent}`,
+            borderRadius: "0 0 10px 10px",
+            p: 3,
+            textDecoration: "none",
+            transition: "box-shadow 0.15s, background-color 0.15s",
+            "&:hover": {
+                backgroundColor: `${accent}14`,
+                boxShadow: `0 6px 28px ${accent}40`,
+            },
+        }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                <Icon size={28} color={iconColor} />
+                {badge && (
+                    <Typography sx={{
+                        fontSize: "0.6rem", fontWeight: 700, letterSpacing: 1.5,
+                        color: accent, border: `1px solid ${accent}55`,
+                        borderRadius: 1, px: 0.75, py: 0.25, textTransform: "uppercase",
+                    }}>
+                        {badge}
+                    </Typography>
+                )}
+            </Box>
+            <Typography sx={{ fontWeight: 700, fontSize: "1.1rem", color: "text.primary", mb: 1 }}>
+                {title}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                {description}
+            </Typography>
+        </Box>
+    );
+}
+
+// ── Compact tool card ─────────────────────────────────────────────────────────
+
+function ToolCard({ icon: Icon, title, description, href, accent }: {
+    icon: React.ElementType;
+    title: string;
+    description: string;
+    href: string;
+    accent: string;
+}) {
+    return (
+        <Box component={Link} href={href} sx={{
+            display: "flex", flexDirection: "column",
+            backgroundColor: "background.paper",
+            border: "1px solid rgba(255,255,255,0.06)",
+            borderRadius: 2,
+            p: 2,
+            textDecoration: "none",
+            transition: "border-color 0.15s, box-shadow 0.15s, background-color 0.15s",
+            "&:hover": {
+                borderColor: `${accent}80`,
+                boxShadow: `0 2px 14px ${accent}25`,
+                backgroundColor: `${accent}12`,
+            },
+        }}>
+            <Icon size={18} color={accent} style={{ marginBottom: 8, flexShrink: 0 }} />
+            <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "text.primary", mb: 0.5 }}>
+                {title}
+            </Typography>
+            <Typography variant="caption" sx={{ color: "text.secondary", lineHeight: 1.5 }}>
+                {description}
+            </Typography>
+        </Box>
+    );
+}
+
+// ── Section header ────────────────────────────────────────────────────────────
+
+function SectionHeader({ label, accent }: { label: string; accent: string }) {
+    return (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+            <Typography sx={{
+                fontSize: "0.6rem", fontWeight: 800, letterSpacing: 2.5,
+                color: accent, textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
+            }}>
+                {label}
+            </Typography>
+            <Box sx={{ flex: 1, height: "1px", backgroundColor: `${accent}40` }} />
+        </Box>
+    );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
 export default function TabletopContent({ encounterTables }: Props) {
     return (
         <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
             <Container maxWidth="md">
-                <Button
-                    component={Link}
-                    href="/"
-                    startIcon={<ArrowLeft size={16} />}
-                    sx={{ mb: 4, color: "primary.main" }}
-                >
+                <Button component={Link} href="/" startIcon={<ArrowLeft size={16} />}
+                    sx={{ mb: 4, color: T.goldLight }}>
                     Back
                 </Button>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-                    <Sword size={32} color="#8C5A3A" />
-                    <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "primary.dark" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+                    <Sword size={32} color={T.crimsonLight} />
+                    <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "text.primary" }}>
                         Tabletop
                     </Typography>
                 </Box>
@@ -32,196 +146,86 @@ export default function TabletopContent({ encounterTables }: Props) {
                     Tools for tabletop RPGs and D&amp;D 5e.
                 </Typography>
 
-                <Divider sx={{ mb: 4 }} />
-
-                {/* Initiative Tracker */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <ListOrdered size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/initiative" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Initiative Tracker
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Track turn order, HP, and conditions for every combatant. State persists in your browser.
-                    </Typography>
+                {/* ── Campaign Manager ── */}
+                <SectionHeader label="Campaign Manager" accent={T.crimsonLight} />
+                <Box sx={{ display: "flex", gap: 2.5, flexWrap: "wrap", mb: 6 }}>
+                    <FeaturedCard
+                        icon={Globe}
+                        title="My Worlds"
+                        description="Build and manage D&D worlds with a full wiki — locations, factions, NPCs, lore, maps, and more."
+                        href="/tabletop/worlds"
+                        accent={T.crimsonMid}
+                        iconColor={T.crimsonLight}
+                        badge="Wiki"
+                    />
+                    <FeaturedCard
+                        icon={ScrollText}
+                        title="My Campaigns"
+                        description="Track sessions, prep notes, encounters, and player character sheets across all your campaigns."
+                        href="/tabletop/campaigns"
+                        accent={T.crimson}
+                        iconColor={T.crimsonLight}
+                        badge="Live"
+                    />
                 </Box>
 
-                {/* Encounter Difficulty Calculator */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <Calculator size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/encounter-calc" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Encounter Difficulty
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Calculate Easy / Medium / Hard / Deadly ratings using the XP budget method.
-                    </Typography>
+                {/* ── Combat ── */}
+                <SectionHeader label="Combat" accent={T.crimsonMid} />
+                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5, mb: 5 }}>
+                    <ToolCard icon={ListOrdered} accent={T.crimsonLight}
+                        title="Initiative Tracker"
+                        description="Track turn order, HP, and conditions. State persists in browser."
+                        href="/tabletop/initiative" />
+                    <ToolCard icon={Swords} accent={T.crimsonLight}
+                        title="Encounter Difficulty"
+                        description="Rate encounters Easy / Medium / Hard / Deadly by XP budget."
+                        href="/tabletop/encounter-calc" />
+                    <ToolCard icon={ShieldAlert} accent={T.crimsonLight}
+                        title="Conditions"
+                        description="Quick-reference cards for all D&D 2024 conditions."
+                        href="/tabletop/conditions" />
                 </Box>
 
-                {/* Condition Reference */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <ShieldAlert size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/conditions" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Conditions
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Quick reference cards for all D&amp;D 2024 conditions. Click to expand full rules text.
-                    </Typography>
+                {/* ── Generators ── */}
+                <SectionHeader label="Generators" accent={T.goldMid} />
+                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5, mb: 5 }}>
+                    <ToolCard icon={Gem} accent={T.goldLight}
+                        title="Magic Item"
+                        description="Random magic item filtered by rarity and attunement."
+                        href="/tabletop/magic-item" />
+                    <ToolCard icon={Coins} accent={T.goldLight}
+                        title="Loot Hoard"
+                        description="Generate currency and items for a treasure hoard by CR."
+                        href="/tabletop/loot" />
+                    <ToolCard icon={User} accent={T.goldLight}
+                        title="NPC"
+                        description="Random NPC with species, class, background, and personality."
+                        href="/tabletop/npc" />
+                    <ToolCard icon={Wand2} accent={T.goldLight}
+                        title="Spell Scroll"
+                        description="Random spell scroll filtered by level, school, or class."
+                        href="/tabletop/spell-scroll" />
+                    <ToolCard icon={Dices} accent={T.goldLight}
+                        title="Encounter Tables"
+                        description={`d100 tables for on-the-fly encounters (${encounterTables.length} tables).`}
+                        href="/tabletop/encounters" />
                 </Box>
 
-                {/* Magic Item Generator */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <Gem size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/magic-item" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Magic Item Generator
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Draw a random magic item filtered by rarity and attunement requirement.
-                    </Typography>
-                </Box>
-
-                {/* Loot Hoard Generator */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <Coins size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/loot" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Loot Hoard Generator
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Generate currency and magic items for a treasure hoard by CR range.
-                    </Typography>
-                </Box>
-
-                {/* NPC Generator */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <User size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/npc" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            NPC Generator
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Generate a random NPC with species, class, background, and personality.
-                    </Typography>
-                </Box>
-
-                {/* Spell Scroll Generator */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <Wand2 size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/spell-scroll" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Spell Scroll Generator
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Roll a random spell scroll filtered by level, school, or class.
-                    </Typography>
-                </Box>
-
-                {/* Monster Creator */}
-                <Box sx={{ mb: 5 }}>
-                    <Typography variant="h5" component={Link} href="/create/monster" sx={{
-                        color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                        "&:hover": { textDecoration: "underline" },
-                    }}>
-                        Monster Creator
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
-                        Build and save custom D&amp;D 5e monster statblocks. Supports bulk import from JSON.
-                    </Typography>
-                </Box>
-
-                {/* 5.5e SRD Reference */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <BookOpen size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/srd" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            5.5e SRD Reference
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Searchable D&amp;D 2024 System Reference Document — monsters, spells, magic items, classes, and more.
-                    </Typography>
-                </Box>
-
-                {/* Cypher System SRD */}
-                <Box sx={{ mb: 5 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <BookOpen size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/cypher" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Cypher System SRD
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        Searchable Cypher System Reference Document — abilities, creatures, cyphers, descriptors, foci, and more.
-                    </Typography>
-                </Box>
-
-                {/* Random Encounter Tables */}
-                <Box>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-                        <Dices size={22} color="#8C5A3A" />
-                        <Typography variant="h5" component={Link} href="/tabletop/encounters" sx={{
-                            color: "primary.dark", fontWeight: 600, textDecoration: "none",
-                            "&:hover": { textDecoration: "underline" },
-                        }}>
-                            Random Encounter Tables
-                        </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-                        d100 tables for generating encounters on the fly.
-                    </Typography>
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1, pl: 1 }}>
-                        {encounterTables.map(table => (
-                            <Typography
-                                key={table.slug}
-                                variant="body2"
-                                component={Link}
-                                href={`/tabletop/encounters/${table.slug}`}
-                                sx={{
-                                    color: "primary.main",
-                                    textDecoration: "none",
-                                    "&:hover": { textDecoration: "underline" },
-                                }}
-                            >
-                                {table.name} ({table.entries.length} entries)
-                            </Typography>
-                        ))}
-                    </Box>
+                {/* ── Reference & Creation ── */}
+                <SectionHeader label="Reference & Creation" accent={T.goldMid} />
+                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5 }}>
+                    <ToolCard icon={Sword} accent={T.goldLight}
+                        title="Monster Creator"
+                        description="Build and save custom D&D 5e monster statblocks."
+                        href="/create/monster" />
+                    <ToolCard icon={BookOpen} accent={T.goldLight}
+                        title="5.5e SRD"
+                        description="Searchable D&D 2024 reference — monsters, spells, items, classes."
+                        href="/tabletop/srd" />
+                    <ToolCard icon={BookMarked} accent={T.goldLight}
+                        title="Cypher System SRD"
+                        description="Searchable Cypher System reference — abilities, cyphers, foci, and more."
+                        href="/tabletop/cypher" />
                 </Box>
             </Container>
         </Box>

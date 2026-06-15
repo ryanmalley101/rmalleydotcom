@@ -1,6 +1,8 @@
 "use client";
 
 import { Fragment, useState, useEffect, useMemo } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
     Box, Container, Button, Typography, Select, MenuItem,
     FormControl, InputLabel, Paper, Divider, Chip,
@@ -44,7 +46,8 @@ const RARITY: Array<{ label: string; color: string }> = [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function formatComponents(c: Spell["components"]): string {
+function formatComponents(c: Spell["components"] | null): string {
+    if (!c) return "—";
     const parts: string[] = [];
     if (c.verbal) parts.push("V");
     if (c.somatic) parts.push("S");
@@ -248,7 +251,7 @@ export default function SpellScrollPage() {
                                 {levelDisplay(result.level)}
                                 {" • "}
                                 {result.school}
-                                {result.casting_time.ritual ? " • Ritual" : ""}
+                                {result.casting_time?.ritual ? " • Ritual" : ""}
                             </Typography>
 
                             <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 0.5, mb: 2 }}>
@@ -274,10 +277,10 @@ export default function SpellScrollPage() {
                             {/* Stats */}
                             <Box sx={{ display: "grid", gridTemplateColumns: "auto 1fr", columnGap: 3, rowGap: 0.75, mb: 2 }}>
                                 {[
-                                    ["Casting Time", result.casting_time.raw],
-                                    ["Range",        result.range],
+                                    ["Casting Time", result.casting_time?.raw ?? "—"],
+                                    ["Range",        result.range ?? "—"],
                                     ["Components",   formatComponents(result.components)],
-                                    ["Duration",     result.duration.raw + (result.duration.concentration ? " (Concentration)" : "")],
+                                    ["Duration",     result.duration ? result.duration.raw + (result.duration.concentration ? " (Concentration)" : "") : "—"],
                                 ].map(([label, value]) => (
                                     <Fragment key={label}>
                                         <Typography variant="body2" sx={{ fontWeight: 700, color: "#6B3A1F", whiteSpace: "nowrap" }}>
@@ -293,16 +296,31 @@ export default function SpellScrollPage() {
                             <Divider sx={{ borderColor: "#8C5A3A55", mb: 2 }} />
 
                             {/* Description */}
-                            <Typography variant="body2" sx={{ color: "#3E1F00", lineHeight: 1.75 }}>
-                                {result.description}
-                            </Typography>
+                            <Box sx={{
+                                color: "#3E1F00", lineHeight: 1.75, fontSize: "0.875rem",
+                                "& p": { mb: 1, mt: 0 },
+                                "& strong": { fontWeight: 700 },
+                                "& em": { fontStyle: "italic" },
+                                "& ul, & ol": { pl: 2.5, mb: 1 },
+                                "& li": { mb: 0.25 },
+                            }}>
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {result.description}
+                                </ReactMarkdown>
+                            </Box>
 
                             {result.upcast && (
                                 <>
                                     <Divider sx={{ borderColor: "#8C5A3A55", my: 2 }} />
-                                    <Typography variant="body2" sx={{ color: "#6B3A1F", lineHeight: 1.7, fontStyle: "italic" }}>
-                                        {result.upcast}
-                                    </Typography>
+                                    <Box sx={{
+                                        color: "#6B3A1F", lineHeight: 1.7, fontSize: "0.875rem", fontStyle: "italic",
+                                        "& p": { mb: 1, mt: 0 },
+                                        "& strong": { fontWeight: 700 },
+                                    }}>
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                            {result.upcast}
+                                        </ReactMarkdown>
+                                    </Box>
                                 </>
                             )}
                         </Box>

@@ -55,11 +55,11 @@ function uid() { return Math.random().toString(36).slice(2, 9); }
 interface MonsterEntry { id: string; cr: string; count: number; name: string }
 
 const DIFFICULTIES = [
-    { key: "trivial", label: "Trivial", color: "#90a4ae" },
-    { key: "easy",    label: "Easy",    color: "#43a047" },
-    { key: "medium",  label: "Medium",  color: "#fdd835" },
-    { key: "hard",    label: "Hard",    color: "#ef6c00" },
-    { key: "deadly",  label: "Deadly",  color: "#c62828" },
+    { key: "trivial", label: "Trivial", color: "#90a4ae", textColor: "#546e7a" },
+    { key: "easy",    label: "Easy",    color: "#43a047", textColor: "#1b5e20" },
+    { key: "medium",  label: "Medium",  color: "#fdd835", textColor: "#7a6200" },
+    { key: "hard",    label: "Hard",    color: "#ef6c00", textColor: "#bf360c" },
+    { key: "deadly",  label: "Deadly",  color: "#c62828", textColor: "#7f0000" },
 ] as const;
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -277,7 +277,7 @@ export default function EncounterCalcPage() {
                                     </Typography>
 
                                     <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
-                                        {DIFFICULTIES.slice(1).map(({ key, label, color }, i) => {
+                                        {DIFFICULTIES.slice(1).map(({ key, label, color, textColor }, i) => {
                                             const threshold = thresholds[i];
                                             const isActive = difficulty === key;
                                             return (
@@ -291,10 +291,10 @@ export default function EncounterCalcPage() {
                                                         transition: "all 0.15s",
                                                     }}
                                                 >
-                                                    <Typography variant="body2" sx={{ fontWeight: 700, color: isActive ? "#fff" : color, flex: 1 }}>
+                                                    <Typography variant="body2" sx={{ fontWeight: 700, color: isActive ? "#fff" : textColor, flex: 1 }}>
                                                         {label}
                                                     </Typography>
-                                                    <Typography variant="body2" sx={{ color: isActive ? "#ffffffcc" : color, fontSize: "0.78rem" }}>
+                                                    <Typography variant="body2" sx={{ color: isActive ? "#ffffffcc" : textColor, fontSize: "0.78rem" }}>
                                                         {fmt(threshold)}+ XP
                                                     </Typography>
                                                 </Box>

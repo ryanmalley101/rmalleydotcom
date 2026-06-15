@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
     Box, Container, Button, Typography, Select, MenuItem,
     FormControl, InputLabel, Paper, Divider, Chip,
@@ -155,9 +157,18 @@ export default function MagicItemPage() {
 
                             <Divider sx={{ borderColor: "#8C5A3A55", mb: 2 }} />
 
-                            <Typography variant="body2" sx={{ color: "#3E1F00", lineHeight: 1.75 }}>
-                                {result.description}
-                            </Typography>
+                            <Box sx={{
+                                color: "#3E1F00", lineHeight: 1.75, fontSize: "0.875rem",
+                                "& p": { mb: 1, mt: 0 },
+                                "& strong": { fontWeight: 700 },
+                                "& em": { fontStyle: "italic" },
+                                "& ul, & ol": { pl: 2.5, mb: 1 },
+                                "& li": { mb: 0.25 },
+                            }}>
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {result.description}
+                                </ReactMarkdown>
+                            </Box>
                         </Box>
                     </Paper>
                 )}

@@ -17,7 +17,8 @@ import {
 import Box from '@mui/material/Box';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { calculateDependentStats, crToString, scoreToMod } from "@/5eReference/converters";
+import { calculateDependentStats, crToString, scoreToMod, skillToAbilityMap } from "@/5eReference/converters";
+import type { SkillName } from "@/5eReference/converters";
 import AbilityRow from "@/app/components/creatorComponents/abilityrow";
 import ActionRow from "@/app/components/creatorComponents/actionrow";
 import MonsterSheet from "@/app/components/creatorComponents/monsterSheet";
@@ -61,8 +62,6 @@ const CreateMonsterStatblock = () => {
         speed: newMonsterStats.speed ?? { walk: 0, swim: 0, fly: 0, burrow: 0, climb: 0, hover: false }
     });
 
-    const [selectedSave, setSelectedSave] = useState<string>("strength");
-    const [selectedSkill, setSelectedSkill] = useState<string>("acrobatics");
     const [selectedDamage, setSelectedDamage] = useState<string>("acid");
     const [selectedCondition, setSelectedCondition] = useState<string>("blinded");
 
@@ -94,34 +93,43 @@ const CreateMonsterStatblock = () => {
     };
 
     // --- Saving Throws ---
-    const addSaveProficiency = () => {
+    const handleSaveChange = (ability: string, value: string) => {
+        const key = `${ability}_save` as keyof MyMonsterStatblock;
+        const num = value === '' ? null : parseInt(value, 10);
+        setMonsterStatblock(prev => ({ ...prev, [key]: isNaN(num as number) ? null : num }));
+    };
+
+    const setSaveProf = (ability: string) => {
         setMonsterStatblock(prev => {
-            const current = prev.save_proficiencies ?? [];
-            if (current.includes(selectedSave)) return prev;
-            const newSaves = [...current, selectedSave];
-            return { ...prev, save_proficiencies: newSaves, ...calculateDependentStats({ ...prev, save_proficiencies: newSaves }) };
+            const mod = scoreToMod(prev[ability as keyof MyMonsterStatblock] as number);
+            const prof = Math.max(Math.floor((prev.cr - 1) / 4), 0) + 2;
+            return { ...prev, [`${ability}_save`]: mod + prof };
         });
     };
 
-    const removeSaveProficiency = (saveToRemove: string) => {
-        setMonsterStatblock(prev => {
-            const newSaves = (prev.save_proficiencies ?? []).filter(s => s !== saveToRemove);
-            return { ...prev, save_proficiencies: newSaves, ...calculateDependentStats({ ...prev, save_proficiencies: newSaves }) };
-        });
+    const clearSave = (ability: string) => {
+        setMonsterStatblock(prev => ({ ...prev, [`${ability}_save`]: null }));
     };
 
     // --- Skills ---
-    const addSkillProficiency = (proficiency: string | null) => {
+    const handleSkillChange = (skill: string, value: string) => {
+        const num = value === '' ? null : parseInt(value, 10);
         setMonsterStatblock(prev => {
-            const newSkills = { ...(prev.skill_proficiencies ?? {}), [selectedSkill]: proficiency };
-            return { ...prev, skill_proficiencies: newSkills, ...calculateDependentStats({ ...prev, skill_proficiencies: newSkills }) };
+            const newSkills = { ...(prev.skills ?? {}), [skill]: isNaN(num as number) ? null : num };
+            const perception = skill === 'perception' && num != null ? 10 + num : prev.perception;
+            return { ...prev, skills: newSkills, perception };
         });
     };
 
-    const removeSkillProficiency = (skillToRemove: string) => {
+    const setSkillProf = (skill: string, expertise = false) => {
         setMonsterStatblock(prev => {
-            const newSkills = { ...(prev.skill_proficiencies ?? {}), [skillToRemove]: null };
-            return { ...prev, skill_proficiencies: newSkills, ...calculateDependentStats({ ...prev, skill_proficiencies: newSkills }) };
+            const abilityKey = skillToAbilityMap[skill as SkillName];
+            const mod = abilityKey ? scoreToMod(prev[abilityKey as keyof MyMonsterStatblock] as number) : 0;
+            const prof = Math.max(Math.floor((prev.cr - 1) / 4), 0) + 2;
+            const bonus = mod + prof * (expertise ? 2 : 1);
+            const newSkills = { ...(prev.skills ?? {}), [skill]: bonus };
+            const perception = skill === 'perception' ? 10 + bonus : prev.perception;
+            return { ...prev, skills: newSkills, perception };
         });
     };
 
@@ -521,56 +529,54 @@ const CreateMonsterStatblock = () => {
 
                         {/* Skills / Saves / Conditions */}
                         <Grid container spacing={2} marginY={rowSpacing}>
-                            <Stack spacing={1}>
-                                <Stack direction="row" spacing={1}>
-                                    <FormControl>
-                                        <InputLabel id="skill-label">Skills</InputLabel>
-                                        <Select labelId="skill-label" value={selectedSkill} label="Skills"
-                                            onChange={(e) => setSelectedSkill(e.target.value)} style={{ width: 157 }}>
-                                            {["acrobatics","animal_handling","arcana","athletics","deception","history","insight","intimidation","investigation","medicine","nature","perception","performance","persuasion","religion","sleight_of_hand","stealth","survival"].map(s => (
-                                                <MenuItem key={s} value={s}>{s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                    <ButtonGroup>
-                                        <Button type="button" variant="outlined" onClick={() => addSkillProficiency("proficient")}>Proficient</Button>
-                                        <Button type="button" variant="outlined" onClick={() => addSkillProficiency("expertise")}>Expertise</Button>
-                                    </ButtonGroup>
-                                </Stack>
-                                {Object.entries(monsterStatblock.skill_proficiencies ?? {}).map(([key, val]) => {
-                                    if (!val) return null;
-                                    return (
-                                        <div key={key + val}>
-                                            <Button name={key} onClick={() => removeSkillProficiency(key)} variant="outlined">
-                                                {key} ({val})&nbsp;<BsFillTrashFill />
-                                            </Button>
-                                        </div>
-                                    );
-                                })}
-                            </Stack>
-                            <Grid>
-                                <Stack spacing={1}>
-                                    <Stack direction="row" spacing={1}>
-                                        <FormControl>
-                                            <InputLabel id="save-label">Saving Throws</InputLabel>
-                                            <Select labelId="save-label" value={selectedSave} label="Saving Throws"
-                                                onChange={(e) => setSelectedSave(e.target.value)} style={{ width: 157 }}>
-                                                {["strength","dexterity","constitution","intelligence","wisdom","charisma"].map(s => (
-                                                    <MenuItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                        <ButtonGroup>
-                                            <Button type="button" variant="outlined" onClick={addSaveProficiency}>Proficient</Button>
-                                        </ButtonGroup>
-                                    </Stack>
-                                    {(monsterStatblock.save_proficiencies ?? []).map((save, i) => (
-                                        <div key={save + i}>
-                                            <Button name={save} onClick={() => removeSaveProficiency(save)} variant="outlined">
-                                                {save}&nbsp;<BsFillTrashFill />
-                                            </Button>
-                                        </div>
+                            {/* Skills */}
+                            <Grid size={5}>
+                                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Skills</Typography>
+                                <Stack spacing={0.5}>
+                                    {(["acrobatics","animal_handling","arcana","athletics","deception","history","insight","intimidation","investigation","medicine","nature","perception","performance","persuasion","religion","sleight_of_hand","stealth","survival"] as SkillName[]).map(skill => (
+                                        <Stack key={skill} direction="row" spacing={0.5} alignItems="center">
+                                            <TextField
+                                                size="small"
+                                                label={skill.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                                                type="number"
+                                                value={monsterStatblock.skills?.[skill] ?? ''}
+                                                onChange={e => handleSkillChange(skill, e.target.value)}
+                                                sx={{ width: 160 }}
+                                                inputProps={{ style: { padding: '4px 8px' } }}
+                                            />
+                                            <ButtonGroup size="small">
+                                                <Button variant="outlined" onClick={() => setSkillProf(skill, false)} title="Set to Proficient">P</Button>
+                                                <Button variant="outlined" onClick={() => setSkillProf(skill, true)} title="Set to Expertise">E</Button>
+                                            </ButtonGroup>
+                                        </Stack>
                                     ))}
+                                </Stack>
+                            </Grid>
+                            {/* Saves */}
+                            <Grid size={4}>
+                                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Saving Throws</Typography>
+                                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1 }}>
+                                    Leave blank to hide from statblock
+                                </Typography>
+                                <Stack spacing={0.5}>
+                                    {(["strength","dexterity","constitution","intelligence","wisdom","charisma"] as const).map(ability => {
+                                        const saveKey = `${ability}_save` as keyof MyMonsterStatblock;
+                                        return (
+                                            <Stack key={ability} direction="row" spacing={0.5} alignItems="center">
+                                                <TextField
+                                                    size="small"
+                                                    label={ability.charAt(0).toUpperCase() + ability.slice(1)}
+                                                    type="number"
+                                                    value={monsterStatblock[saveKey] ?? ''}
+                                                    onChange={e => handleSaveChange(ability, e.target.value)}
+                                                    sx={{ width: 130 }}
+                                                    inputProps={{ style: { padding: '4px 8px' } }}
+                                                />
+                                                <Button size="small" variant="outlined" onClick={() => setSaveProf(ability)} title="Set to Proficient">P</Button>
+                                                <Button size="small" variant="outlined" color="error" onClick={() => clearSave(ability)} title="Clear">×</Button>
+                                            </Stack>
+                                        );
+                                    })}
                                 </Stack>
                             </Grid>
                             <Grid>

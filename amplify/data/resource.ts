@@ -36,26 +36,6 @@ const SkillMods = a.customType({
   survival: a.integer(),
 });
 
-const SkillProfs = a.customType({
-  acrobatics: a.string(),
-  animal_handling: a.string(),
-  arcana: a.string(),
-  athletics: a.string(),
-  deception: a.string(),
-  history: a.string(),
-  insight: a.string(),
-  intimidation: a.string(),
-  investigation: a.string(),
-  medicine: a.string(),
-  nature: a.string(),
-  perception: a.string(),
-  performance: a.string(),
-  persuasion: a.string(),
-  religion: a.string(),
-  sleight_of_hand: a.string(),
-  stealth: a.string(),
-  survival: a.string(),
-});
 
 const MonsterAbility = a.customType({
   name: a.string().required(),
@@ -75,15 +55,253 @@ const MonsterAttack = a.customType({
   targets: a.string(),
 });
 
+// ── World / Campaign tracker models ──────────────────────────────────────────
+
+// WorldMap: stores a map image (via S3 key) and a JSON-serialised array of pins.
+// Pins are stored as JSON rather than a custom type array for schema flexibility.
+const WorldMap = a.model({
+  worldId:  a.string().required(),
+  name:     a.string().required(),
+  imageKey: a.string().required(), // Amplify Storage key
+  pinsJson: a.string(),            // JSON: MapPin[]
+}).authorization(allow => [allow.owner()]);
+
+const Encounter = a.model({
+  campaignId:      a.string().required(),
+  name:            a.string().required(),
+  description:     a.string(),
+  monstersJson:    a.string(), // JSON: EncounterEntry[]
+  status:          a.string(), // 'planned' | 'active' | 'completed'
+  combatStateJson: a.string(), // JSON: live combat state for real-time sync
+  settingsJson:    a.string(), // JSON: Partial<CombatSettings> — encounter-level overrides
+}).authorization(allow => [allow.owner()]);
+
+const DnDWorld = a.model({
+  name:        a.string().required(),
+  description: a.string(),
+  genre:       a.string(),
+}).authorization(allow => [allow.owner()]);
+
+const DnDCampaign = a.model({
+  name:         a.string().required(),
+  description:  a.string(),
+  worldIds:     a.string().array(),
+  status:       a.string(),
+  system:       a.string(),
+  settingsJson: a.string(), // JSON: Partial<CombatSettings> — campaign-level defaults
+}).authorization(allow => [allow.owner()]);
+
+const WikiArticle = a.model({
+  worldId:       a.string().required(),
+  title:         a.string().required(),
+  content:       a.string(),
+  category:      a.string(),
+  tags:          a.string().array(),
+  excerpt:       a.string(),
+  coverImageUrl: a.string(),
+  coverImageKey: a.string(), // Amplify Storage S3 key (preferred over coverImageUrl)
+  status:        a.string(), // 'published' | 'draft' | 'stub'
+  articleType:   a.string(),
+  parentTitle:   a.string(),
+}).authorization(allow => [allow.owner()]);
+
+const CampaignSession = a.model({
+  campaignId:    a.string().required(),
+  sessionNumber: a.integer(),
+  title:         a.string(),
+  date:          a.string(),
+  prepNotes:     a.string(),
+  sessionNotes:  a.string(),
+  playerSummary: a.string(), // player-facing recap visible to all members
+  articleIds:    a.string().array(),
+}).authorization(allow => [allow.owner()]);
+
+const PlayerCharacter = a.model({
+  // Core identity
+  campaignId:     a.string().required(),
+  characterName:  a.string().required(),
+  playerName:     a.string(),
+  race:           a.string(),
+  background:     a.string(),
+  alignment:      a.string(),
+  xp:             a.integer(),
+  // Multiclassing: JSON [{class, level, subclass?, hitDie?}]
+  classesJson:    a.string(),
+  // Legacy single-class fields kept for backward compat
+  characterClass: a.string(),
+  subclass:       a.string(),
+  level:          a.integer(),
+  // Ability scores
+  strength:       a.integer(),
+  dexterity:      a.integer(),
+  constitution:   a.integer(),
+  intelligence:   a.integer(),
+  wisdom:         a.integer(),
+  charisma:       a.integer(),
+  // Proficiencies: JSON string[] and JSON {[skill]: 'proficient'|'expert'}
+  saveProficienciesJson:  a.string(),
+  skillProficienciesJson: a.string(),
+  // HP & combat
+  maxHp:              a.integer(),
+  currentHp:          a.integer(),
+  tempHp:             a.integer(),
+  armorClass:         a.integer(),
+  speed:              a.integer(),
+  initiative:         a.integer(),
+  hitDice:            a.string(),
+  deathSaveSuccesses: a.integer(),
+  deathSaveFailures:  a.integer(),
+  inspiration:        a.boolean(),
+  exhaustion:         a.integer(),
+  // Attacks JSON [{name, bonus, damage, damageType, properties?, description?}]
+  attacksJson:    a.string(),
+  // Inventory JSON [{name, type, quantity, weight?, equipped?, attuned?, description?}]
+  inventoryJson:  a.string(),
+  // Currency
+  copper:         a.integer(),
+  silver:         a.integer(),
+  electrum:       a.integer(),
+  gold:           a.integer(),
+  platinum:       a.integer(),
+  // Spellcasting
+  spellcastingAbility: a.string(),
+  spellSlotsJson:      a.string(), // JSON {[level]: {max, used}}
+  spellsJson:          a.string(), // JSON [{name, level, school?, castingTime?, range?, components?, duration?, description?, prepared?}]
+  // Features JSON [{name, source?, description, uses?, maxUses?, recharge?}]
+  featuresJson:   a.string(),
+  // Personality & background
+  personality:    a.string(),
+  ideals:         a.string(),
+  bonds:          a.string(),
+  flaws:          a.string(),
+  backstory:      a.string(),
+  notes:          a.string(),
+  allies:         a.string(),
+  // Physical traits
+  gender:         a.string(),
+  age:            a.string(),
+  height:         a.string(),
+  weight:         a.string(),
+  eyes:           a.string(),
+  skin:           a.string(),
+  hair:           a.string(),
+  // Other proficiency text
+  languages:      a.string(),
+  proficiencies:  a.string(),
+  // Storage keys (Amplify S3)
+  pdfKey:         a.string(),
+  portraitKey:    a.string(),
+  // Legacy text fields kept for backward compat
+  savingThrows:   a.string(),
+  skillProfs:     a.string(),
+  equipment:      a.string(),
+  features:       a.string(),
+  spells:         a.string(),
+}).authorization(allow => [allow.authenticated()]);
+
+// Companion/pet — linked to a PC, visible to all authenticated users (GM can see)
+const Companion = a.model({
+  characterId:        a.string().required(), // owning PlayerCharacter
+  campaignId:         a.string().required(), // for GM list queries
+  name:               a.string().required(),
+  species:            a.string(),
+  companionType:      a.string(), // 'familiar'|'ranger companion'|'mount'|'summoned'|'other'
+  maxHp:              a.integer(),
+  currentHp:          a.integer(),
+  tempHp:             a.integer(),
+  armorClass:         a.integer(),
+  speed:              a.integer(),
+  strength:           a.integer(),
+  dexterity:          a.integer(),
+  constitution:       a.integer(),
+  intelligence:       a.integer(),
+  wisdom:             a.integer(),
+  charisma:           a.integer(),
+  monsterStatblockId: a.string(), // optional link to a statblock template
+  notes:              a.string(),
+  statsJson:          a.string(), // JSON for saves, skills, actions, etc.
+  portraitKey:        a.string(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// ── NPC / Quest / Faction trackers ───────────────────────────────────────────
+
+const NPC = a.model({
+  campaignId:   a.string().required(),
+  name:         a.string().required(),
+  role:         a.string(),
+  location:     a.string(),
+  description:  a.string(),
+  motivation:   a.string(),
+  relationship: a.string(),
+  notes:        a.string(),
+  isAlive:      a.boolean(),
+  tags:         a.string().array(),
+}).authorization(allow => [allow.owner()]);
+
+const Quest = a.model({
+  campaignId:     a.string().required(),
+  title:          a.string().required(),
+  description:    a.string(),
+  status:         a.string(), // 'active' | 'completed' | 'failed' | 'on_hold'
+  questGiver:     a.string(),
+  reward:         a.string(),
+  objectivesJson: a.string(), // JSON: [{text, done}]
+  notes:          a.string(),
+}).authorization(allow => [allow.owner()]);
+
+const Faction = a.model({
+  campaignId:  a.string().required(),
+  name:        a.string().required(),
+  description: a.string(),
+  reputation:  a.integer(), // -5 (Hostile) to +5 (Revered)
+  notes:       a.string(),
+}).authorization(allow => [allow.owner()]);
+
+const TodoItem = a.model({
+  title:       a.string().required(),
+  description: a.string(),
+  completed:   a.boolean(),
+  priority:    a.string(), // 'low' | 'medium' | 'high'
+  dueDate:     a.string(),
+}).authorization(allow => [allow.owner()]);
+
+// Campaign membership (created by player on join)
+const CampaignMember = a.model({
+  campaignId: a.string().required(),
+  role:       a.string().required(), // 'gm' | 'player'
+  playerName: a.string(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// Invite records — record ID is the invite code
+const CampaignInvite = a.model({
+  campaignId: a.string().required(),
+  role:       a.string().required(), // 'gm' | 'player'
+  expiresAt:  a.string(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
 const schema = a.schema({
   DamageDice,
   MovementSpeed,
   SkillMods,
-  SkillProfs,
   MonsterAbility,
   MonsterAttack,
+  Encounter,
+  DnDWorld,
+  DnDCampaign,
+  WikiArticle,
+  WorldMap,
+  CampaignSession,
+  PlayerCharacter,
+  CampaignMember,
+  CampaignInvite,
+  NPC,
+  Quest,
+  Faction,
+  Companion,
+  TodoItem,
   MonsterStatblock: a.model({
     id: a.id().required(),
+    slug: a.string(),            // open5e slug, used for deduplication on import
     publisher: a.string().required(),
     name: a.string().required(),
     createdAt: a.datetime(),
@@ -113,10 +331,8 @@ const schema = a.schema({
     intelligence_save: a.integer(),
     wisdom_save: a.integer(),
     charisma_save: a.integer(),
-    save_proficiencies: a.string().required().array(),
     perception: a.integer(),
     skills: a.ref('SkillMods'),
-    skill_proficiencies: a.ref('SkillProfs'),
     damage_vulnerabilities: a.string(),
     damage_vulnerability_list: a.string().required().array(),
     damage_resistances: a.string(),

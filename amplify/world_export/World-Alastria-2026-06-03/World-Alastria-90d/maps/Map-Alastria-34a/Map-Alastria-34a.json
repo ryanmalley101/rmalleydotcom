@@ -1,0 +1,52 @@
+{
+    "id": "48c4e34a-14bb-42f8-83e7-e092e9c051a1",
+    "title": "Alastria",
+    "slug": null,
+    "state": "public",
+    "isWip": null,
+    "isDraft": null,
+    "entityClass": "Map",
+    "icon": "fa-solid fa-compass",
+    "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/map/48c4e34a-14bb-42f8-83e7-e092e9c051a1",
+    "subscribergroups": [],
+    "folderId": "-1",
+    "tags": "",
+    "updateDate": {
+        "date": "2026-04-12 19:49:38.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "author": {
+        "id": "0c9d9100-5fd8-431c-a576-cb016d3fa010",
+        "title": "ryanmalley101",
+        "slug": null,
+        "state": null,
+        "isWip": null,
+        "isDraft": null,
+        "entityClass": "User",
+        "icon": "fa-solid fa-user",
+        "url": "https://www.worldanvil.com/author/ryanmalley101",
+        "subscribergroups": [],
+        "folderId": null,
+        "tags": null,
+        "updateDate": null
+    },
+    "description": null,
+    "legend": null,
+    "creationDate": {
+        "date": "2021-11-25 05:18:09.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "isDeleted": null,
+    "displayOnHomepage": true,
+    "views": null,
+    "position": null,
+    "zoomOriginal": 0,
+    "zoomMin": -2,
+    "zoomMax": 0,
+    "centerX": null,
+    "centerY": null,
+    "isEditable": true,
+    "success": true
+}

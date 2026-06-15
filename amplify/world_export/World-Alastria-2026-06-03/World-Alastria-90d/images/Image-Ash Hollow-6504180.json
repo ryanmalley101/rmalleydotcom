@@ -1,0 +1,43 @@
+{
+    "id": 6504180,
+    "title": "Ash Hollow",
+    "slug": null,
+    "state": "public",
+    "isWip": null,
+    "isDraft": null,
+    "entityClass": "Image",
+    "icon": "fa-solid fa-image",
+    "url": "https://wa-cdn.nyc3.cdn.digitaloceanspaces.com/user-data/production/0c9d9100-5fd8-431c-a576-cb016d3fa010/uploads/images/8c06569cef22d1d34749f2211d92c461.png",
+    "subscribergroups": [],
+    "folderId": "-1",
+    "tags": null,
+    "updateDate": {
+        "date": "2025-03-27 04:10:38.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "filename": "8c06569cef22d1d34749f2211d92c461.png",
+    "path": "https://wa-cdn.nyc3.cdn.digitaloceanspaces.com/user-data/production/0c9d9100-5fd8-431c-a576-cb016d3fa010/uploads/images",
+    "size": 2231734,
+    "width": 1536,
+    "height": 1024,
+    "extension": "png",
+    "description": null,
+    "alt": null,
+    "creditArtistName": null,
+    "creditArtistWebsite": null,
+    "creditArtTitle": null,
+    "creditArtUrl": null,
+    "creationDate": {
+        "date": "2025-03-27 04:10:05.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "views": null,
+    "likes": null,
+    "isFeatured": false,
+    "linkUrl": "",
+    "pageUrl": "https://www.worldanvil.com/i/6504180",
+    "isEditable": true,
+    "success": true
+}

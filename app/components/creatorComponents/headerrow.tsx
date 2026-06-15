@@ -110,11 +110,31 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
         return () => clearTimeout(timer);
     }, [monster]);
 
+    const READONLY_PUBLISHERS = ['wotc-srd', 'homebrew-imported'];
+    const isImported = !!(monster.id) && monster.publisher !== 'homebrew';
+
+    const duplicateAsHomebrew = async () => {
+        const { id, createdAt, updatedAt, slug, __typename, ...rest } = monster as any;
+        const input = { ...rest, publisher: 'homebrew', name: `${monster.name} (Copy)`, slug: undefined };
+        try {
+            const { data, errors } = await client.models.MonsterStatblock.create(input);
+            if (errors?.length) throw new Error(errors[0].message);
+            if (!data) throw new Error('No data returned');
+            skipNextSaveRef.current = true;
+            setMonster(cleanMonster(data));
+            setSelectedOption(data.name);
+            setSaveStatus('saved');
+        } catch (e: any) {
+            setSaveError(e?.message ?? 'Failed to duplicate monster.');
+            setSaveStatus('error');
+        }
+    };
+
     const saveMonster = async (monsterToSave: MyMonsterStatblock) => {
         const { __typename, ...input } = monsterToSave as any;
 
-        if (input.publisher === 'wotc-srd') {
-            setSaveError("Can't overwrite official SRD monsters.");
+        if (input.publisher !== 'homebrew') {
+            setSaveError(`"${input.publisher}" monsters are read-only. Use "Duplicate as Homebrew" to create an editable copy.`);
             setSaveStatus('error');
             return;
         }
@@ -181,7 +201,13 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
             const { data: existing, errors } = await client.models.MonsterStatblock.get({ id: pendingLoadId });
             if (errors?.length) throw new Error(errors[0].message);
             skipNextSaveRef.current = true;
-            setMonster(cleanMonster({ ...existing, ...calculateDependentStats(existing as MyMonsterStatblock) }));
+            // Only recalculate dependent stats for homebrew monsters.
+            // Imported monsters already have correct API values; recalculating
+            // would overwrite them using the (guessed) proficiency labels.
+            const loaded = existing?.publisher === 'homebrew'
+                ? cleanMonster({ ...existing, ...calculateDependentStats(existing as MyMonsterStatblock) })
+                : cleanMonster(existing);
+            setMonster(loaded);
         } catch (e: any) {
             setSaveError(e?.message ?? 'Failed to load monster.');
             setSaveStatus('error');
@@ -214,10 +240,16 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
                             <MdOutlineMenu />
                         </IconButton>
                         <Button variant="contained" sx={{ mr: 1 }} onClick={() => setNewMonsterDialogOpen(true)} color="secondary">New</Button>
-                        <Button variant="contained" sx={{ mr: 1 }} onClick={() => saveMonster(monster)} color="secondary">Save</Button>
+                        {isImported ? (
+                            <Button variant="contained" sx={{ mr: 1 }} onClick={duplicateAsHomebrew} color="secondary">
+                                Duplicate as Homebrew
+                            </Button>
+                        ) : (
+                            <Button variant="contained" sx={{ mr: 1 }} onClick={() => saveMonster(monster)} color="secondary">Save</Button>
+                        )}
                         <Button variant="contained" sx={{ mr: 1 }} onClick={() => exportJSON(monster.name)} color="secondary">Export JSON</Button>
                         <Button variant="contained" sx={{ mr: 1 }} onClick={downloadFile} color="secondary">Download PNG</Button>
-                        {isDirty && (
+                        {isDirty && !isImported && (
                             <Typography variant="caption" sx={{ mr: 2, color: 'warning.light', fontStyle: 'italic' }}>
                                 Unsaved changes
                             </Typography>
