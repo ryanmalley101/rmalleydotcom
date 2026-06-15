@@ -3,6 +3,10 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Cinzel } from "next/font/google";
+import { Amplify } from "aws-amplify";
+import outputs from "@/amplify_outputs.json";
+
+Amplify.configure(outputs, { ssr: true });
 
 // Cinzel — classical Roman letterforms, D&D / fantasy feel
 const cinzel = Cinzel({

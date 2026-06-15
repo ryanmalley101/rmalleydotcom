@@ -1,0 +1,200 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+    Box, Container, Typography, Button, TextField,
+    MenuItem, Select, FormControl, InputLabel, CircularProgress, Divider, IconButton,
+} from "@mui/material";
+import Link from "next/link";
+import { ArrowLeft, BookOpen, Upload, X } from "lucide-react";
+import { generateClient } from "aws-amplify/data";
+import { uploadData, getUrl } from "aws-amplify/storage";
+import type { Schema } from "@/amplify/data/resource";
+
+const client = generateClient<Schema>();
+
+const CATEGORIES    = ["Location", "Person", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
+const ARTICLE_TYPES = ["Settlement", "Location", "Landmark", "Person", "Organization", "Lore", "Event", "Deity", "Faction", "Other"];
+const STATUS_OPTIONS = ["published", "draft", "stub"] as const;
+type ArticleStatus = typeof STATUS_OPTIONS[number];
+const STATUS_COLOR: Record<ArticleStatus, string> = { published: "#2e7d32", draft: "#f57c00", stub: "#546e7a" };
+const STATUS_LABEL: Record<ArticleStatus, string> = { published: "Published", draft: "Draft", stub: "Stub" };
+
+export default function NewArticlePage() {
+    const { worldId } = useParams<{ worldId: string }>();
+    const router = useRouter();
+
+    const [title, setTitle]             = useState("");
+    const [category, setCategory]       = useState("Other");
+    const [articleType, setArticleType] = useState("");
+    const [status, setStatus]           = useState<ArticleStatus>("published");
+    const [excerpt, setExcerpt]         = useState("");
+    const [coverImageUrl, setCover]     = useState("");
+    const [coverPreview, setCoverPreview] = useState("");
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
+    const [parentTitle, setParentTitle] = useState("");
+    const [content, setContent]         = useState("");
+    const [saving, setSaving]           = useState(false);
+    const coverInputRef = useRef<HTMLInputElement>(null);
+
+    function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setPendingFile(file);
+        setCoverPreview(URL.createObjectURL(file));
+        setCover("");
+    }
+
+    async function save() {
+        if (!title.trim()) return;
+        setSaving(true);
+        const { data } = await client.models.WikiArticle.create({
+            worldId,
+            title:         title.trim(),
+            category,
+            articleType:   articleType || undefined,
+            status,
+            excerpt:       excerpt.trim() || undefined,
+            coverImageUrl: coverImageUrl.trim() || undefined,
+            parentTitle:   parentTitle.trim() || undefined,
+            content,
+        });
+        // Upload cover image if a file was selected
+        if (data && pendingFile) {
+            const ext = pendingFile.name.split(".").pop() ?? "jpg";
+            const key = `wiki-covers/${worldId}/${data.id}.${ext}`;
+            try {
+                await uploadData({ path: key, data: pendingFile, options: { contentType: pendingFile.type } }).result;
+                await client.models.WikiArticle.update({ id: data.id, coverImageKey: key, coverImageUrl: undefined });
+            } catch { /* cover upload failed — article still created */ }
+        }
+        setSaving(false);
+        if (data) router.push(`/tabletop/worlds/${worldId}/wiki/${data.id}`);
+    }
+
+    return (
+        <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
+            <Container maxWidth="md">
+                <Button component={Link} href={`/tabletop/worlds/${worldId}`}
+                    startIcon={<ArrowLeft size={16} />} sx={{ mb: 4, color: "primary.main" }}>
+                    Back to World
+                </Button>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+                    <BookOpen size={28} color="#8C5A3A" />
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: "primary.dark" }}>
+                        New Article
+                    </Typography>
+                </Box>
+
+                <Divider sx={{ mb: 4 }} />
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    <TextField
+                        label="Title" required fullWidth
+                        value={title} onChange={e => setTitle(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) save(); }}
+                    />
+
+                    <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                        <FormControl sx={{ minWidth: 160 }}>
+                            <InputLabel>Category</InputLabel>
+                            <Select label="Category" value={category}
+                                onChange={e => setCategory(e.target.value)}>
+                                {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 160 }}>
+                            <InputLabel>Article Type</InputLabel>
+                            <Select label="Article Type" value={articleType}
+                                onChange={e => setArticleType(e.target.value)}>
+                                <MenuItem value=""><em>None</em></MenuItem>
+                                {ARTICLE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 140 }}>
+                            <InputLabel>Status</InputLabel>
+                            <Select label="Status" value={status}
+                                onChange={e => setStatus(e.target.value as ArticleStatus)}>
+                                {STATUS_OPTIONS.map(s => (
+                                    <MenuItem key={s} value={s}>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: STATUS_COLOR[s] }} />
+                                            {STATUS_LABEL[s]}
+                                        </Box>
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
+
+                    <TextField label="Excerpt" fullWidth multiline minRows={2}
+                        placeholder="Short one-paragraph summary shown in article lists."
+                        value={excerpt} onChange={e => setExcerpt(e.target.value)} />
+
+                    {/* Cover image */}
+                    <Box>
+                        <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.75 }}>
+                            Cover Image
+                        </Typography>
+                        <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", flexWrap: "wrap" }}>
+                            {coverPreview && (
+                                <Box sx={{ position: "relative" }}>
+                                    <Box component="img" src={coverPreview} alt="Cover preview"
+                                        sx={{ width: 80, height: 52, objectFit: "cover", borderRadius: 1, display: "block" }} />
+                                    <IconButton size="small"
+                                        onClick={() => { setPendingFile(null); setCoverPreview(""); setCover(""); }}
+                                        sx={{ position: "absolute", top: -6, right: -6, p: 0.25,
+                                            backgroundColor: "error.main", color: "#fff",
+                                            "&:hover": { backgroundColor: "error.dark" }, width: 18, height: 18 }}>
+                                        <X size={10} />
+                                    </IconButton>
+                                </Box>
+                            )}
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75, flex: 1, minWidth: 200 }}>
+                                <Button size="small" variant="outlined" startIcon={<Upload size={14} />}
+                                    onClick={() => coverInputRef.current?.click()}
+                                    sx={{ alignSelf: "flex-start", borderColor: "primary.main", color: "primary.main", fontSize: "0.75rem" }}>
+                                    Upload image
+                                </Button>
+                                <input ref={coverInputRef} type="file" accept="image/*" hidden onChange={handleFileSelect} />
+                                {!pendingFile && (
+                                    <TextField size="small" label="Or paste URL" fullWidth
+                                        placeholder="https://…"
+                                        value={coverImageUrl}
+                                        onChange={e => { setCover(e.target.value); setCoverPreview(e.target.value); }}
+                                        sx={{ "& input": { fontSize: "0.8rem" } }} />
+                                )}
+                            </Box>
+                        </Box>
+                    </Box>
+
+                    <TextField label="Parent Article Title" fullWidth
+                        placeholder="e.g. Ash Peak (exact title of parent article)"
+                        value={parentTitle} onChange={e => setParentTitle(e.target.value)} />
+
+                    <TextField
+                        label="Content" multiline minRows={16} fullWidth
+                        placeholder={"Write your article here. Use [[Article Title]] to link to other wiki articles."}
+                        value={content}
+                        onChange={e => setContent(e.target.value)}
+                        sx={{ "& textarea": { fontFamily: "monospace", fontSize: "0.9rem" } }}
+                    />
+
+                    <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                        Tip: Write <strong>[[Article Title]]</strong> anywhere in your content to create a clickable link to another article in this world.
+                    </Typography>
+
+                    <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+                        <Button component={Link} href={`/tabletop/worlds/${worldId}`}>Cancel</Button>
+                        <Button variant="contained" onClick={save} disabled={saving || !title.trim()}
+                            sx={{ backgroundColor: "primary.main" }}>
+                            {saving ? <CircularProgress size={18} /> : "Create Article"}
+                        </Button>
+                    </Box>
+                </Box>
+            </Container>
+        </Box>
+    );
+}

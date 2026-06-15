@@ -25,8 +25,7 @@ export const replaceDamageTags = (tagString: string, monsterData: MyMonsterStatb
 export const cleanMonster = (m: any) => {
   delete m.__typename;
   delete m.speed.__typename;
-  delete m.skills.__typename;
-  delete m.skill_proficiencies.__typename;
+  if (m.skills) delete m.skills.__typename;
   m.special_abilities = m.special_abilities.map((ability: any) => { delete ability.__typename; return ability; });
   m.actions = m.actions.map((action: any) => { delete action.__typename; return action; });
   m.reactions = m.reactions.map((ability: any) => { delete ability.__typename; return ability; });

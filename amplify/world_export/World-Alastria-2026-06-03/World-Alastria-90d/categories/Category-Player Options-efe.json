@@ -1,0 +1,247 @@
+{
+    "id": "4f6b8efe-ba2c-4090-a1b0-cb3d6687f3f9",
+    "title": "Player Options",
+    "slug": "player-options-category",
+    "state": "public",
+    "isWip": null,
+    "isDraft": null,
+    "entityClass": "Category",
+    "icon": null,
+    "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/player-options-category",
+    "subscribergroups": [],
+    "folderId": null,
+    "tags": null,
+    "updateDate": {
+        "date": "2025-06-24 08:59:19.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "description": "Information that your players will need to create their characters",
+    "excerpt": null,
+    "isBook": false,
+    "displayBookTitle": true,
+    "isCollapsed": false,
+    "position": 200,
+    "creationDate": {
+        "date": "2021-10-25 04:55:22.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "views": null,
+    "editor": null,
+    "custom1": null,
+    "custom2": null,
+    "custom3": null,
+    "custom4": null,
+    "custom5": null,
+    "cssClasses": null,
+    "systemMeta": "{\"order\":\"manual\",\"catCol1\":[\"custom1\"],\"catCol2\":[\"custom2\",\"toc\"],\"catCol3\":[\"custom3\",\"articleBlocks\",\"featuresArticles\"],\"catCol4\":[\"custom4\",\"maps\",\"timelines\"],\"catCol5\":[\"custom5\"]}",
+    "pagecover": null,
+    "bookcover": null,
+    "defaultarticlecover": null,
+    "parent": {
+        "id": "e319a576-9143-4aa4-b69b-977afca51eda",
+        "title": "Player Handbook",
+        "slug": "player-handbook-category",
+        "state": "public",
+        "isWip": null,
+        "isDraft": null,
+        "entityClass": "Category",
+        "icon": null,
+        "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/player-handbook-category",
+        "subscribergroups": [],
+        "folderId": null,
+        "tags": null,
+        "updateDate": {
+            "date": "2025-06-24 08:59:19.000000",
+            "timezone_type": 3,
+            "timezone": "Europe/London"
+        }
+    },
+    "world": {
+        "id": "2d76490d-bd46-48b4-97e2-eeaeabfb07d0",
+        "title": "Alastria",
+        "slug": "alastria-ryanmalley101",
+        "state": "public",
+        "isWip": null,
+        "isDraft": null,
+        "entityClass": "World",
+        "icon": "fa-solid fa-globe-stand",
+        "url": "https://www.worldanvil.com/w/alastria-ryanmalley101",
+        "subscribergroups": [
+            {
+                "id": "b7123f5d-4ed2-446c-88e7-5552ed9580e1",
+                "title": "Adventurers of Baeter 9 Party",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            },
+            {
+                "id": "f27c87fe-3759-4f47-8ce2-5e1fd7316aee",
+                "title": "Adventurers of Test World Please Ignore Party",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            },
+            {
+                "id": "558f5353-174b-46dc-be2e-ae2596befbce",
+                "title": "Baeter 9 Players",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            },
+            {
+                "id": "5a26aa1f-b2fd-4c68-b20d-4ea30181b6e9",
+                "title": "Test World Please Ignore Players",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            }
+        ],
+        "folderId": "-1",
+        "tags": "",
+        "updateDate": {
+            "date": "2026-04-12 03:39:09.000000",
+            "timezone_type": 3,
+            "timezone": "Europe/London"
+        }
+    },
+    "articleRedirect": null,
+    "children": [
+        {
+            "id": "bbda386c-8a15-4cfe-abf3-aea43782d1d4",
+            "title": "Playable Races",
+            "slug": "playable-races-category",
+            "state": "public",
+            "isWip": null,
+            "isDraft": null,
+            "entityClass": "Category",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/playable-races-category",
+            "subscribergroups": [],
+            "folderId": null,
+            "tags": null,
+            "updateDate": {
+                "date": "2025-06-24 08:59:19.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "de03f637-96ed-4083-bb31-2566810c6654",
+            "title": "Classes",
+            "slug": "classes-category",
+            "state": "public",
+            "isWip": null,
+            "isDraft": null,
+            "entityClass": "Category",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/classes-category",
+            "subscribergroups": [],
+            "folderId": null,
+            "tags": null,
+            "updateDate": {
+                "date": "2025-06-24 08:59:19.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "c1925881-e258-412a-8564-002f35139ef4",
+            "title": "Feats & Traits",
+            "slug": "feats-26-traits-category",
+            "state": "public",
+            "isWip": null,
+            "isDraft": null,
+            "entityClass": "Category",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/feats-26-traits-category",
+            "subscribergroups": [],
+            "folderId": null,
+            "tags": null,
+            "updateDate": {
+                "date": "2025-06-24 08:59:19.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "3e9cfd76-ce7d-4207-b453-4defdf629c1f",
+            "title": "Backgrounds & Professions",
+            "slug": "backgrounds-26-professions-category",
+            "state": "public",
+            "isWip": null,
+            "isDraft": null,
+            "entityClass": "Category",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/backgrounds-26-professions-category",
+            "subscribergroups": [],
+            "folderId": null,
+            "tags": null,
+            "updateDate": {
+                "date": "2025-06-24 08:59:19.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "199b3f07-c966-4f96-8506-7eff3b6a3efc",
+            "title": "Spells",
+            "slug": "spells-category",
+            "state": "public",
+            "isWip": null,
+            "isDraft": null,
+            "entityClass": "Category",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/spells-category",
+            "subscribergroups": [],
+            "folderId": null,
+            "tags": null,
+            "updateDate": {
+                "date": "2025-06-24 08:59:19.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "32a7f2c7-e355-4a75-9797-17770f9348e0",
+            "title": "Equipment",
+            "slug": "equipment-category",
+            "state": "public",
+            "isWip": null,
+            "isDraft": null,
+            "entityClass": "Category",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/equipment-category",
+            "subscribergroups": [],
+            "folderId": null,
+            "tags": null,
+            "updateDate": {
+                "date": "2025-06-24 08:59:19.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        }
+    ],
+    "editURL": "https://www.worldanvil.com/world/category/4f6b8efe-ba2c-4090-a1b0-cb3d6687f3f9/edit",
+    "parsedDescription": "Information that your players will need to create their characters",
+    "parsedCustom1": "",
+    "parsedCustom2": "",
+    "parsedCustom3": "",
+    "parsedCustom4": "",
+    "parsedCustom5": "",
+    "isEditable": true,
+    "success": true
+}

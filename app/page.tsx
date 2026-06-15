@@ -2,7 +2,7 @@
 
 import { Box, Container, Typography } from "@mui/material";
 import Link from "next/link";
-import { Code2, Cpu, Sword } from "lucide-react";
+import { Code2, Cpu, Sword, ListTodo } from "lucide-react";
 
 const categories = [
   {
@@ -29,6 +29,14 @@ const categories = [
     href: "/tabletop",
     accent: "#f59e0b",
   },
+  {
+    title: "Personal",
+    meta: "todos · planning · utilities",
+    description: "Personal task tracking, planning tools, and home utilities.",
+    icon: ListTodo,
+    href: "/personal",
+    accent: "#10b981",
+  },
 ];
 
 export default function HomePage() {
@@ -44,24 +52,6 @@ export default function HomePage() {
     >
       <Container maxWidth="md">
         {/* Available badge */}
-        <Box
-          sx={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 1,
-            mb: 4,
-            px: 1.5,
-            py: 0.5,
-            borderRadius: 10,
-            border: "1px solid rgba(99,102,241,0.25)",
-            backgroundColor: "rgba(99,102,241,0.08)",
-          }}
-        >
-          <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "#22c55e", flexShrink: 0 }} />
-          <Typography sx={{ fontSize: "0.75rem", color: "#a5b4fc", letterSpacing: 0.5 }}>
-            Open to contract work
-          </Typography>
-        </Box>
 
         {/* Name */}
         <Typography

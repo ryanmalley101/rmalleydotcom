@@ -1,0 +1,514 @@
+{
+    "id": "72d6e8e5-f839-40e9-babd-13b047108d28",
+    "title": "World Atlas",
+    "slug": "world-atlas-category",
+    "state": "public",
+    "isWip": null,
+    "isDraft": null,
+    "entityClass": "Category",
+    "icon": null,
+    "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/c/world-atlas-category",
+    "subscribergroups": [],
+    "folderId": null,
+    "tags": null,
+    "updateDate": {
+        "date": "2025-06-24 08:59:19.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "description": "The lands of this world. Mountains, Rivers, Valleys, Cities and Landmarks.",
+    "excerpt": null,
+    "isBook": false,
+    "displayBookTitle": true,
+    "isCollapsed": false,
+    "position": 400,
+    "creationDate": {
+        "date": "2021-10-25 04:55:22.000000",
+        "timezone_type": 3,
+        "timezone": "Europe/London"
+    },
+    "views": 4,
+    "editor": null,
+    "custom1": null,
+    "custom2": null,
+    "custom3": null,
+    "custom4": null,
+    "custom5": null,
+    "cssClasses": null,
+    "systemMeta": "{\"order\":\"manual\",\"catCol1\":[\"custom1\"],\"catCol2\":[\"custom2\",\"toc\"],\"catCol3\":[\"custom3\",\"articleBlocks\",\"featuresArticles\"],\"catCol4\":[\"custom4\",\"maps\",\"timelines\"],\"catCol5\":[\"custom5\"]}",
+    "pagecover": null,
+    "bookcover": null,
+    "defaultarticlecover": null,
+    "parent": null,
+    "world": {
+        "id": "2d76490d-bd46-48b4-97e2-eeaeabfb07d0",
+        "title": "Alastria",
+        "slug": "alastria-ryanmalley101",
+        "state": "public",
+        "isWip": null,
+        "isDraft": null,
+        "entityClass": "World",
+        "icon": "fa-solid fa-globe-stand",
+        "url": "https://www.worldanvil.com/w/alastria-ryanmalley101",
+        "subscribergroups": [
+            {
+                "id": "b7123f5d-4ed2-446c-88e7-5552ed9580e1",
+                "title": "Adventurers of Baeter 9 Party",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            },
+            {
+                "id": "f27c87fe-3759-4f47-8ce2-5e1fd7316aee",
+                "title": "Adventurers of Test World Please Ignore Party",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            },
+            {
+                "id": "558f5353-174b-46dc-be2e-ae2596befbce",
+                "title": "Baeter 9 Players",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            },
+            {
+                "id": "5a26aa1f-b2fd-4c68-b20d-4ea30181b6e9",
+                "title": "Test World Please Ignore Players",
+                "slug": null,
+                "state": null,
+                "entityClass": "SubscriberGroup",
+                "icon": null,
+                "url": null,
+                "subscribergroups": []
+            }
+        ],
+        "folderId": "-1",
+        "tags": "",
+        "updateDate": {
+            "date": "2026-04-12 03:39:09.000000",
+            "timezone_type": 3,
+            "timezone": "Europe/London"
+        }
+    },
+    "articleRedirect": null,
+    "articles": [
+        {
+            "id": "0b8ba1c5-4686-4ca6-a5a5-a076fe83535d",
+            "title": "Aerilon",
+            "slug": "aerilon-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/aerilon-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 19:00:51.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "8f9240ed-2eec-47d8-9d6c-de88f4a14e80",
+            "title": "Ambersea Keep",
+            "slug": "ambersea-keep-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/ambersea-keep-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 19:02:24.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "8d8d0371-d6ed-4a89-937e-db2a8f128e0e",
+            "title": "Avalan",
+            "slug": "avalan-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/avalan-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:55:40.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "d60c8cdf-548b-45bc-8cf2-07ba757f75a5",
+            "title": "Balinpost",
+            "slug": "balinpost-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/balinpost-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:51:06.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "99b6d89c-bc79-4f1d-a0cf-c7d99f1aac73",
+            "title": "Balinpost",
+            "slug": "balinpost-settlement-1",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/balinpost-settlement-1",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:51:06.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "e79954b1-a649-4c93-bd3b-0772e81373a9",
+            "title": "Chillblind Harbor",
+            "slug": "chillblind-harbor-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/chillblind-harbor-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:56:05.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "2405fbdd-9716-4660-b80a-e8cdb306b06c",
+            "title": "Drifthollow",
+            "slug": "drifthollow-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/drifthollow-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:56:32.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "ae94ae71-37f9-4181-8d6a-7bde433f6da0",
+            "title": "Emermack Isle",
+            "slug": "emermack-isle-location",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Location",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/emermack-isle-location",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 19:03:52.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "48ac344e-0212-4e56-bb40-935fd59a0b7d",
+            "title": "Glisshorn",
+            "slug": "glisshorn-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/glisshorn-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:54:54.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "d9285e48-8ce4-4fff-8c7b-0bf6c37ace92",
+            "title": "Hrim Garrison",
+            "slug": "hrim-garrison-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/hrim-garrison-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:57:12.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "4797f70a-d29e-477e-bffc-ae0e9de0f70f",
+            "title": "Idovale",
+            "slug": "idovale-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/idovale-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:51:29.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "30029c70-d1f7-41af-a5cd-7b755904187c",
+            "title": "Introduction to the Atlas",
+            "slug": "introduction-to-the-atlas-article",
+            "state": "public",
+            "isWip": true,
+            "isDraft": false,
+            "entityClass": "Article",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/introduction-to-the-atlas-article",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-10-25 04:55:22.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "6ac32f0b-fb0a-4d03-883a-cffd011be50e",
+            "title": "Jagged Peaks",
+            "slug": "jagged-peaks-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/jagged-peaks-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 19:04:25.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "e86a02ca-b130-4362-b06b-65f1fbd2df99",
+            "title": "Kernboldir",
+            "slug": "kernboldir-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/kernboldir-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:58:20.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "6d7e07d1-c729-4247-b1da-8c59866100ae",
+            "title": "Mediola's Wood",
+            "slug": "mediola-s-wood-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/mediola-s-wood-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:59:03.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "806565e5-8d65-4e01-84dd-3eec2cf61ca1",
+            "title": "Old Ironhaven",
+            "slug": "old-ironhaven-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/old-ironhaven-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:54:32.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "76e4be0f-1365-4571-adbb-c65f4db34eab",
+            "title": "Onding",
+            "slug": "onding-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/onding-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:55:11.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "d16dd3bf-1cd5-4401-96c3-ba428fcaf73c",
+            "title": "Raenthaes",
+            "slug": "raenthaes-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/raenthaes-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:57:48.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "e47dfc6a-f1c6-4837-ac3d-371111bfff43",
+            "title": "Riverbend",
+            "slug": "riverbend-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/riverbend-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:53:58.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "d256d3b6-7a45-4b4e-937d-ce7d0da2b152",
+            "title": "Sagmer Tundra",
+            "slug": "sagmer-tundra-location",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Location",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/sagmer-tundra-location",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 19:04:52.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        },
+        {
+            "id": "11b0edcc-3965-4310-b51d-4242c89bffe1",
+            "title": "Threeshore",
+            "slug": "threeshore-settlement",
+            "state": "public",
+            "isWip": true,
+            "isDraft": true,
+            "entityClass": "Settlement",
+            "icon": null,
+            "url": "https://www.worldanvil.com/w/alastria-ryanmalley101/a/threeshore-settlement",
+            "subscribergroups": [],
+            "folderId": "72d6e8e5-f839-40e9-babd-13b047108d28",
+            "tags": null,
+            "updateDate": {
+                "date": "2021-11-25 18:53:32.000000",
+                "timezone_type": 3,
+                "timezone": "Europe/London"
+            }
+        }
+    ],
+    "editURL": "https://www.worldanvil.com/world/category/72d6e8e5-f839-40e9-babd-13b047108d28/edit",
+    "parsedDescription": "The lands of this world. Mountains, Rivers, Valleys, Cities and Landmarks.",
+    "parsedCustom1": "",
+    "parsedCustom2": "",
+    "parsedCustom3": "",
+    "parsedCustom4": "",
+    "parsedCustom5": "",
+    "isEditable": true,
+    "success": true
+}

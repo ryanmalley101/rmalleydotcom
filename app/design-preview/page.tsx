@@ -117,7 +117,7 @@ function DarkVariant() {
                 px: 8, py: 5,
                 display: "flex", flexDirection: "column", justifyContent: "center",
             }}>
-                {/* Badge */}
+                {/* Badge
                 <Box sx={{
                     display: "inline-flex", alignItems: "center", gap: 0.75, mb: 4,
                     bgcolor: "#6366f115", border: "1px solid #6366f133",
@@ -127,7 +127,7 @@ function DarkVariant() {
                     <Typography sx={{ fontSize: 11, color: "#a5b4fc", letterSpacing: 0.5 }}>
                         Open to contract work
                     </Typography>
-                </Box>
+                </Box> */}
 
                 {/* Hero */}
                 <Typography sx={{ fontSize: 40, fontWeight: 800, color: "#f1f5f9", letterSpacing: "-0.03em", lineHeight: 1.1, mb: 1 }}>

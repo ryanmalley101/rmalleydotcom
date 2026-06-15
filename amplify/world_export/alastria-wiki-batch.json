@@ -1,0 +1,602 @@
+{
+  "format": "wiki-batch",
+  "version": 1,
+  "articles": [
+
+    {
+      "title": "Ash Hollow",
+      "articleType": "Settlement",
+      "category": "Location",
+      "excerpt": "A small farming settlement renowned for its annual Harvest Festival. The site of Igenvar's resurrection on Day 1 of Reventa.",
+      "content": "A quiet farming community known chiefly for hosting the Harvest Festival at the turn of the month of Reventa. The festival on Day 1 was disrupted by the catastrophic resurrection of [[Igenvar, the Ash Tyrant]], an event that sent shockwaves across the region.\n\nThe town's mayor was killed during the chaos surrounding Igenvar's return. The party later informed his sister, who lives in [[Daermill]], of his death.\n\nOn Day 5 of Reventa, the party returned to Ash Hollow and were attacked by a wyvern, which they successfully drove off. The town lies within traveling distance of the [[Jagged Peaks]] to the north.",
+      "tags": ["festival", "igenvar", "resurrection"]
+    },
+
+    {
+      "title": "Daermill",
+      "articleType": "Settlement",
+      "category": "Location",
+      "excerpt": "A mid-sized town that fell under the sinister influence of the spirit naga Explicitica Defilus. Now freed by the party.",
+      "content": "A mid-sized town that was infiltrated and dominated by [[Explicitica Defilus]], a spirit naga who placed the local leadership under her charm. The town's cleric, [[High Priestess Misha Devi]], and innkeeper [[Derek]] were both charmed and led an ambush against the party at [[The Golden Grain]] inn on Day 7 of Reventa.\n\nSuspecting supernatural influence, [[Archdeacon Warvyn]] of [[St. Rina's Cathedral]] in [[Druzar]] hired the party to investigate. On Day 13, after freeing Misha from the naga's control, the party descended into caverns beneath the town alongside [[Mindein]] and [[Ornwend]] and confronted [[Explicitica Defilus]]. Mindein lost his life in the battle, but the naga was slain and the town was freed.\n\nPoints of interest:\n- [[The Golden Grain]]: The town inn, formerly run by the now-deceased [[Derek]].\n\nThe Ash Hollow mayor's sister resides in Daermill and was informed of her brother's death by the party.",
+      "tags": ["naga", "freed", "daermill"]
+    },
+
+    {
+      "title": "The Golden Grain",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Daermill",
+      "excerpt": "The primary inn of Daermill, formerly run by the charmed innkeeper Derek.",
+      "content": "The primary inn and tavern of [[Daermill]], formerly operated by [[Derek]], who had fallen under the charm of [[Explicitica Defilus]]. On Day 7 of Reventa, Derek, [[High Priestess Misha Devi]], and a group of troglodytes ambushed the party in the inn. Derek was slain in the ensuing fight. The party escaped into the wilderness.\n\nThe inn's current management is unknown following Derek's death."
+    },
+
+    {
+      "title": "Druzar",
+      "articleType": "Settlement",
+      "category": "Location",
+      "excerpt": "A major city with a significant refugee population, home to St. Rina's Cathedral and the shadow broker Deso.",
+      "content": "A major regional city and seat of spiritual and political power, presided over by Duke Elijah Curnow and Duchess Lorelei Curnow. The city is home to [[St. Rina's Cathedral]], a major seat of the [[Church of Reventa]], and a sprawling [[Refugee Slums|refugee slum]] outside its walls.\n\nBeneath its respectable surface, the Rakshasa [[Deso]] operates an extensive intelligence network using awakened cats as informants. The party aligned with Deso as a patron, gaining the reputation action \"I know a cat.\"\n\nThe Curnows are concerned about rising tensions between city residents and the refugee population, and suspect Deso of agitating those tensions.\n\n**Establishments:**\n- [[St. Rina's Cathedral]] — Temple of [[Reventa]], overseen by [[Archdeacon Warvyn]]\n- [[The Vermillion Minotaur]] — Upscale inn, Royal Ward\n- [[The Rusty Cauldron]] — Less reputable inn, Royal Ward, run by [[Larek]]\n- [[Marge's Place]] — Makeshift inn in the [[Refugee Slums]], run by [[Marge]]\n- [[The Velvet Shrine]] — Brothel\n- [[Go Figure]] — Clothing store\n- [[The Agreeable Ghost]] — Apothecary\n- [[Illuminations]] — Magic item shop",
+      "tags": ["major-city", "church", "refugees", "patron"]
+    },
+
+    {
+      "title": "St. Rina's Cathedral",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "The primary seat of the Church of Reventa in Druzar, overseen by Archdeacon Warvyn.",
+      "content": "The primary temple of the [[Church of Reventa]] in [[Druzar]] and one of the most influential religious sites in the southeast. Overseen by [[Archdeacon Warvyn]], the cathedral serves as the political and spiritual headquarters of the regional church hierarchy. [[Sister Rayne]] oversees the Mortal Alms collection from this location.\n\nThe party came here on Day 10 to report [[Igenvar, the Ash Tyrant|Igenvar's]] resurrection to Archdeacon Warvyn, who then hired them to deal with [[Daermill]]."
+    },
+
+    {
+      "title": "The Vermillion Minotaur",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "A fine inn in the Royal Ward of Druzar, catering to wealthy travelers.",
+      "content": "A high-quality inn located in the Royal Ward of [[Druzar]], favored by wealthy merchants, minor nobles, and adventurers with coin to spare."
+    },
+
+    {
+      "title": "The Rusty Cauldron",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "A rougher tavern and inn in Druzar's Royal Ward, run by the orc Larek.",
+      "content": "A less reputable tavern and inn in the Royal Ward of [[Druzar]], run by [[Larek]], a gruff orc tavernkeeper. Favored by those who want cheap drink and minimal scrutiny."
+    },
+
+    {
+      "title": "Marge's Place",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "A makeshift inn in Druzar's refugee slums, run by the elderly Marge.",
+      "content": "A makeshift inn operated out of [[Marge]]'s home in the [[Refugee Slums]] of [[Druzar]]. Rates are low and the hospitality is genuine, making it a popular option for refugees and travelers without means."
+    },
+
+    {
+      "title": "The Velvet Shrine",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "A brothel in Druzar.",
+      "content": "A brothel operating within [[Druzar]]."
+    },
+
+    {
+      "title": "Go Figure",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "A clothing store in Druzar.",
+      "content": "A clothing store in [[Druzar]]."
+    },
+
+    {
+      "title": "The Agreeable Ghost",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "An apothecary in Druzar.",
+      "content": "An apothecary in [[Druzar]] dealing in herbal remedies, tinctures, and mundane medicines."
+    },
+
+    {
+      "title": "Illuminations",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "A magic item shop in Druzar.",
+      "content": "A magic item shop in [[Druzar]] selling enchanted goods and curiosities. The party purchased potions and scrolls here on Day 18 before departing for [[Oakisle]]."
+    },
+
+    {
+      "title": "Refugee Slums",
+      "articleType": "Location",
+      "category": "Location",
+      "parentTitle": "Druzar",
+      "excerpt": "A sprawling makeshift settlement outside Druzar's walls, home to thousands of displaced people.",
+      "content": "A large network of makeshift shelters constructed outside the official walls of [[Druzar]] by refugees displaced by recent conflicts. The population is a source of growing concern for Duke Elijah Curnow and Duchess Lorelei Curnow, as tensions between slum residents and city inhabitants continue to rise.\n\n[[Marge's Place]] is one of the few genuine inns serving the slum population. The shadow broker [[Deso]] is suspected of agitating tensions within the slums for his own purposes."
+    },
+
+    {
+      "title": "Garrig's Post",
+      "articleType": "Settlement",
+      "category": "Location",
+      "excerpt": "A commercial waypoint town with several notable shops. The party accepted a package delivery quest from its Wayfarers chapter.",
+      "content": "A well-trafficked commercial waypoint with a handful of notable shops. The party arrived on Day 3 of Reventa, visiting [[Bargain Basement]] and purchasing magic items from [[Fabled Findings]]. They also accepted a package delivery quest from the local [[Wayfarers]] chapter, tasked with bringing a parcel to Captain [[Fernley Talon]] in [[Oakisle]].\n\n**Establishments:**\n- [[Bargain Basement]] — General store\n- [[Fabled Findings]] — Magic item shop"
+    },
+
+    {
+      "title": "Bargain Basement",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Garrig's Post",
+      "excerpt": "A general store in Garrig's Post.",
+      "content": "A general store in [[Garrig's Post]] offering a broad selection of mundane supplies and traveling gear."
+    },
+
+    {
+      "title": "Fabled Findings",
+      "articleType": "Landmark",
+      "category": "Location",
+      "parentTitle": "Garrig's Post",
+      "excerpt": "A magic item shop in Garrig's Post where the party bought supplies.",
+      "content": "A magic item shop in [[Garrig's Post]]. The party purchased magical equipment here on Day 3 of Reventa before departing toward [[Ash Hollow]]."
+    },
+
+    {
+      "title": "Jagged Peaks",
+      "articleType": "Location",
+      "category": "Location",
+      "excerpt": "A forbidding mountain range and home of Hasgrum the Immovable.",
+      "content": "A rugged mountain range to the north of [[Ash Hollow]] and the surrounding settlements. The peaks are home to [[Hasgrum the Immovable]], a reclusive former hero of the Cold Iron Pact, who retreated here after becoming a paranoid survivalist. Finding Hasgrum was one of the party's early primary objectives."
+    },
+
+    {
+      "title": "Oakisle",
+      "articleType": "Settlement",
+      "category": "Location",
+      "excerpt": "A rough port town and haven for smugglers and pirates, recently devastated by a kraken controlled by the warlock Karil Daxos.",
+      "content": "A rough-and-tumble port town far from major trade hubs and the capital, with a well-earned reputation as a haven for smugglers, thieves, and pirates. Its proximity to the Eversquall — a perpetual storm system off the western coast — provides cover for those fleeing the law. Captain [[Fernley Talon]], nicknamed \"Gethvitsker\" (roughly \"insane\"), is renowned as one of the few sailors to reliably navigate the Eversquall.\n\nThe city was recently struck by a devastating crisis orchestrated by the warlock Karil Daxos, who employed [[Silas Finnigan]] to control an infant kraken. The infant's blood was being harvested and sold as a drug that caused residents to develop fish-like features and strange behavior near the waterfront. The parent kraken fought Daxos's control and attacked the city at night searching for its child, destroying large sections of the city. The populace was unaware of the true cause.\n\nThe party arrived on Day 24, investigated the source of the attacks, and on Day 26 confronted [[Silas Finnigan]] in his warehouse. The infant kraken was released and its mother killed Silas while destroying the warehouse. The party was subsequently identified by wanted posters and forced to flee aboard the Marilith.\n\n[[Orsella Brynn]] serves as Oathbearer of the [[Wayfarers]] chapter here. [[Father Rayak]] leads a temple of [[Maris]] near the docks.",
+      "tags": ["port", "kraken", "smugglers", "wayfarers"]
+    },
+
+    {
+      "title": "Aerdale",
+      "articleType": "Settlement",
+      "category": "Location",
+      "excerpt": "A town where the party investigated the poisoning of Lord Edrin Vallis during his own wedding. The murderer was his cousin Veyra, a warlock of Nevrutath.",
+      "content": "A town encountered by the party on Day 20, during which a wedding between Lord [[Lord Edrin Vallis]] and [[Selra Dain]] was underway — all travelers were invited. The groom was poisoned during the ceremony.\n\nThe party was hired to investigate. Suspicion initially fell on [[Lady Corvina Maeth]], Lord Edrin's scorned former fiancée, before the investigation uncovered a secret altar to [[Nevrutath]] in the home of [[Veyra Vallis]], Lord Edrin's cousin, who stood to inherit his estate. Veyra arranged for the party's arrest, fireballed the precinct, killed [[Selra Dain]], and was slain by the party as they fled the town on Day 21.",
+      "tags": ["murder", "nevrutath", "aerdale"]
+    },
+
+    {
+      "title": "Overlook",
+      "articleType": "Settlement",
+      "category": "Location",
+      "excerpt": "A city home to a cult of the archdevil Nevrutath. The party's sentient abracadabracus is bound for a recipient here.",
+      "content": "A city notable as the base of a cult dedicated to [[Nevrutath]], Archdevil of Greed — a connection that became apparent after the events in [[Aerdale]] revealed [[Veyra Vallis]]'s devotion to the same archdevil.\n\n[[Bodomri Graniteriver]] serves as the Windrunner of the local [[Wayfarers]] chapter. The sentient abracadabracus entrusted to the party by [[Orsella Brynn]] in [[Oakisle]] is destined for a recipient in Overlook.",
+      "tags": ["nevrutath", "cult", "wayfarers"]
+    },
+
+    {
+      "title": "Gravenpar Isle",
+      "articleType": "Location",
+      "category": "Location",
+      "excerpt": "A remote island where the party was pulled into an eight-day hallucinatory dreamscape containing visions tied to each member's personal history.",
+      "content": "A remote island visited by the party aboard the Marilith on Day 33 of the campaign. Shortly after disembarking, the party was drawn into a prolonged hallucinatory dreamscape lasting eight days (Days 34–41).\n\n**Octavia's Dreamscape:** She revisited her childhood home, where her father [[Duke Leopold Deavus]] had arranged to give her hand to a suitor of his choosing. A vision resembling Igenvar's son pursued them as they escaped.\n\n**Torvir's Dreamscape:** Torvir relived time with his family before a hunt for a purple worm went catastrophically wrong. He was confronted by [[Ahm]], Archdevil of Conquest and War, and agreed to make a pact with the devil to save his friends.\n\n**Isla's Dreamscape:** The party was transformed into woodland creatures and tasked with delivering a message to Isla's elvish parents on a fey island. The parents revealed that darkness is spreading over the elven isles, and gave Isla a poem to unlock the truth from them in the real world.\n\n**Fernley's Dreamscape:** A Silent Hill-style nightmare in which [[Fernley Talon]] was tormented by visions of his dead wife. The party helped him confront his guilt, facilitated by [[Eldritha]] the Dusk Hag, a servant of [[Iris]], who carries out the wishes of the dead. Fernley's wife appeared at the end to confirm she would wait for him on the other side.",
+      "tags": ["dreamscape", "gravenpar", "fernley", "torvir", "octavia", "isla"]
+    },
+
+    {
+      "title": "The Eversquall",
+      "articleType": "Location",
+      "category": "Location",
+      "excerpt": "A perpetual storm system off the western coast, used by pirates and smugglers as cover from the law.",
+      "content": "A permanent storm system located off the western coast, notorious for destroying ships that attempt to hide within it. Despite this, the Eversquall has become a haven for pirates and smugglers fleeing legal pursuit.\n\nCaptain [[Fernley Talon]], known as \"Gethvitsker\" (roughly \"insane\"), is one of the only sailors known to reliably navigate and survive the Eversquall, giving him an enormous tactical advantage over pursuers.",
+      "tags": ["sea", "pirates", "fernley"]
+    },
+
+    {
+      "title": "Archdeacon Warvyn",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "The Archdeacon of the Church of Reventa in Druzar, based at St. Rina's Cathedral. A senior figure who hired the party to deal with Daermill.",
+      "content": "The Archdeacon of the [[Church of Reventa]] in [[Druzar]], operating from [[St. Rina's Cathedral]]. A pragmatic and senior figure in the regional church hierarchy.\n\nWhen the party arrived on Day 10 and reported the resurrection of [[Igenvar, the Ash Tyrant]], Warvyn recognized the threat immediately. In exchange for assistance, he tasked the party with freeing [[Daermill]] from what he suspected was a spirit naga. The party's success in slaying [[Explicitica Defilus]] opened the door to a longer-term relationship between the party and the Church as fixers and scholars.\n\nOn Day 17, an imposter (revealed to be [[Roger Truegust]]) was publicly tarnishing Torvir's name in [[Druzar]]. Warvyn's chapter also reported the party's work positively to the broader church hierarchy.",
+      "tags": ["church", "reventa", "druzar", "patron"]
+    },
+
+    {
+      "title": "Hasgrum the Immovable",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A former hero of the Cold Iron Pact, now a paranoid doomsday prepper living in isolation in the Jagged Peaks.",
+      "content": "A legendary former hero of the Cold Iron Pact who has since retreated from civilization and taken up residence in the [[Jagged Peaks]], where he lives as a deeply paranoid survivalist and doomsday prepper. He has severed ties with the wider world.\n\nFinding Hasgrum was one of the party's primary early objectives, likely in connection with the threat posed by [[Igenvar, the Ash Tyrant]].",
+      "tags": ["hero", "cold-iron-pact", "jagged-peaks"]
+    },
+
+    {
+      "title": "High Priestess Misha Devi",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "The High Priestess of Reventa in Daermill, charmed by the spirit naga Explicitica Defilus and later freed by the party.",
+      "content": "The High Priestess of [[Reventa]] in [[Daermill]]. Misha was placed under the charm of [[Explicitica Defilus]] and participated in an ambush against the party at [[The Golden Grain]] inn on Day 7 of Reventa.\n\nOn Day 13, the party successfully freed Misha from the naga's influence. She then accompanied them into the caverns beneath [[Daermill]] to confront [[Explicitica Defilus]], where the naga was slain. Misha's current status in Daermill is uncertain following these events.",
+      "tags": ["cleric", "daermill", "charmed", "reventa"]
+    },
+
+    {
+      "title": "Derek",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "The now-deceased innkeeper of The Golden Grain in Daermill. He ambushed the party under the influence of Explicitica Defilus.",
+      "content": "The former innkeeper of [[The Golden Grain]] in [[Daermill]], who had fallen under the charm of [[Explicitica Defilus]]. On Day 7 of Reventa, Derek led an ambush against the party alongside [[High Priestess Misha Devi]] and a group of troglodytes. Derek was killed during the fight. The party escaped into the wilderness.",
+      "tags": ["daermill", "deceased", "ambush"]
+    },
+
+    {
+      "title": "Deso",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A Rakshasa disguised as a white lion Tabaxi shadow broker in Druzar. Operates an intelligence network using awakened cats. Patron of the party.",
+      "content": "A Rakshasa disguised as a white lion Tabaxi, operating in [[Druzar]] as a shadow broker. Deso maintains a vast intelligence network using a legion of awakened cats as informants distributed throughout the city and beyond.\n\nThe party first heard rumors of cats delivering missions to children in [[Druzar]] and tracked down Deso as the source. They subsequently aligned with him as a patron, gaining the reputation action \"I know a cat.\"\n\nDeso is suspected by Duke Elijah Curnow of agitating tensions in the [[Refugee Slums]] for his own purposes, though his true long-term agenda remains unclear. He lists himself as running an \"Inquisitive Agency\" and seeks agents to act as his eyes and ears outside of [[Druzar]].",
+      "tags": ["rakshasa", "patron", "spy", "druzar", "cats"]
+    },
+
+    {
+      "title": "Roger Truegust",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A 35-year-old male doppelganger and fortune teller actively impersonating Torvir and defaming him in Druzar.",
+      "content": "A 35-year-old male doppelganger operating as a fortune teller, who is impersonating the party member Torvir and actively defaming him. Roger confronted and publicly humiliated the real Torvir in [[Druzar]] on Day 17.\n\nA rumor circulating in town holds that Roger broke a string while performing at the Gilded Riff and threw an angry tantrum when the staff offered to help — behavior entirely inconsistent with the real Torvir's character.\n\nRoger's whereabouts and motives remain unknown. Dealing with him is an active unresolved quest.",
+      "tags": ["doppelganger", "impersonation", "torvir"]
+    },
+
+    {
+      "title": "Mindein",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A Dwarven Cleric of Barros, God of Law and Order. He gave his life fighting Explicitica Defilus beneath Daermill.",
+      "content": "A Dwarven Cleric of [[Barros]], God of Law and Order, encountered by the party on Day 11 as they traveled back toward [[Daermill]]. Mindein and his companion [[Ornwend]] joined the party in descending into the caverns beneath [[Daermill]] to confront [[Explicitica Defilus]] on Day 13. Mindein died in the battle, giving his life in service to the law he had sworn to uphold.",
+      "tags": ["cleric", "barros", "dwarf", "deceased"]
+    },
+
+    {
+      "title": "Ornwend",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "An Orc Paladin of Barros who accompanied the party into the caverns beneath Daermill.",
+      "content": "An Orc Paladin of [[Barros]], God of Law and Order, and companion to [[Mindein]]. Ornwend traveled with the party toward [[Daermill]] on Day 11 and joined them in confronting [[Explicitica Defilus]] in the caverns below the town. His fate and current whereabouts following the battle are unrecorded.",
+      "tags": ["paladin", "barros", "orc"]
+    },
+
+    {
+      "title": "Explicitica Defilus",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A spirit naga who had infiltrated Daermill, charming its leadership to do her bidding. Slain by the party on Day 13.",
+      "content": "A spirit naga who infiltrated [[Daermill]] and established a lair in the caverns beneath the town. She placed the town's cleric [[High Priestess Misha Devi]], innkeeper [[Derek]], and others under her charm, effectively controlling the settlement's leadership.\n\n[[Archdeacon Warvyn]] suspected a spirit naga was responsible for Daermill's malaise and hired the party to deal with it. On Day 13 of Reventa, the party and their allies [[Mindein]] and [[Ornwend]] descended into the caverns and confronted Explicitica Defilus. She was slain, though Mindein did not survive the battle.",
+      "tags": ["naga", "villain", "daermill", "deceased"]
+    },
+
+    {
+      "title": "Duke Leopold Deavus",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "Octavia's controlling father, who arranged her marriage without consent. Encountered in her Gravenpar Isle dreamscape.",
+      "content": "Octavia's father, a nobleman who attempted to arrange her marriage without her consent to a suitor of his own choosing. The [[Twilight Brigade]] was hired by Duke Leopold to retrieve Octavia and bring her home.\n\nIn the dreamscape of [[Gravenpar Isle]], a vision of Duke Leopold appeared in Octavia's childhood home, having taken her hand both metaphorically and literally to give to his chosen suitor. The vision of [[Igenvar, the Ash Tyrant|Igenvar's]] son pursued them as they escaped.",
+      "tags": ["noble", "octavia"]
+    },
+
+    {
+      "title": "Lord Edrin Vallis",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "The former lord of Aerdale, poisoned during his wedding ceremony by his cousin Veyra Vallis.",
+      "content": "The former lord of [[Aerdale]], who was poisoned during his wedding ceremony to [[Selra Dain]] on Day 20 of Reventa. Lord Edrin's murder was orchestrated by his cousin [[Veyra Vallis]], who stood to inherit his estate. He had previously been engaged to [[Lady Corvina Maeth]] before choosing to marry Selra.",
+      "tags": ["noble", "aerdale", "deceased", "murder"]
+    },
+
+    {
+      "title": "Selra Dain",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "The bride of Lord Edrin Vallis, framed for his murder and later killed by Veyra Vallis.",
+      "content": "The bride of [[Lord Edrin Vallis]], present at the wedding in [[Aerdale]] that turned tragic when the groom was poisoned. Selra was framed for the murder by [[Veyra Vallis]]. The party was investigating to exonerate her when [[Veyra Vallis]] killed her to prevent the truth from coming out.",
+      "tags": ["aerdale", "deceased", "framed"]
+    },
+
+    {
+      "title": "Veyra Vallis",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A warlock of Nevrutath and cousin of Lord Edrin Vallis. She poisoned Edrin, framed Selra, had the party arrested, and was slain fleeing Aerdale.",
+      "content": "Cousin of [[Lord Edrin Vallis]] and a warlock whose patron is [[Nevrutath]], Archdevil of Greed. Veyra poisoned Lord Edrin during his wedding to [[Selra Dain]] to inherit his estate, then framed Selra for the crime.\n\nWhen the party uncovered her secret altar to [[Nevrutath]], she arranged their arrest. After the party escaped the precinct, Veyra fireballed the building, killed [[Selra Dain]], and fled. She was slain by the party as they escaped [[Aerdale]] on Day 21.\n\nHer devotion to [[Nevrutath]] connects her to the cult operating in [[Overlook]].",
+      "tags": ["warlock", "nevrutath", "aerdale", "deceased", "villain"]
+    },
+
+    {
+      "title": "Lady Corvina Maeth",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "Lord Edrin Vallis's scorned former fiancée, passed over for Selra Dain. Initially drew suspicion during the murder investigation.",
+      "content": "The former fiancée of [[Lord Edrin Vallis]], who was passed over when he chose to marry [[Selra Dain]] instead. Bitter over her rejection, Lady Corvina initially drew suspicion during the party's murder investigation in [[Aerdale]] — she even attacked a child during the investigation and had to be subdued. The true murderer, however, proved to be [[Veyra Vallis]].",
+      "tags": ["aerdale", "noble"]
+    },
+
+    {
+      "title": "Orsella Brynn",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "High elven Oathbearer of the Wayfarers chapter in Oakisle. Entrusted the party with a sentient abracadabracus bound for Overlook.",
+      "content": "A high elven Oathbearer of the [[Wayfarers]] guild chapter in [[Oakisle]]. After the resolution of the kraken crisis, Orsella entrusted the party with a sentient abracadabracus, informing them it is destined for a recipient in [[Overlook]].",
+      "tags": ["wayfarers", "oakisle", "elf"]
+    },
+
+    {
+      "title": "Father Rayak",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "Dwarven Priest of Maris in Oakisle. Pointed the party toward Silas Finnigan's warehouse.",
+      "content": "A Dwarven Priest of [[Maris]] stationed at a temple near the docks in [[Oakisle]]. On Day 25, Father Rayak provided the party with crucial information about the plot of [[Silas Finnigan]], directing them toward Silas's warehouse near the docks as the source of the Skum and Seafolk plaguing the city.",
+      "tags": ["priest", "maris", "oakisle", "dwarf"]
+    },
+
+    {
+      "title": "Fernley Talon",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "Captain of the Marilith. A notorious pirate known as 'Gethvitsker' (insane) for his mastery of the Eversquall. Haunted by his wife's death.",
+      "content": "Captain of the Marilith and a notorious pirate known by the nickname \"Gethvitsker\" — roughly translating to \"insane\" — earned for his legendary ability to navigate the [[The Eversquall|Eversquall]], a feat that has killed countless other sailors.\n\nThe party was first tasked with delivering a [[Wayfarers]] package to Captain Talon in [[Oakisle]]. He subsequently became their ship's captain, ferrying them across the seas.\n\nFernley carries profound guilt over the death of his wife. In the dreamscape of [[Gravenpar Isle]], he was tormented by nightmarish visions of her. With the party's help and the mediation of [[Eldritha]] the Dusk Hag — a servant of [[Iris]] — Fernley was able to confront his guilt and begin to forgive himself. His wife appeared at the end of the dreamscape to confirm she will be waiting for him.",
+      "tags": ["captain", "pirate", "marilith", "eversquall"]
+    },
+
+    {
+      "title": "Silas Finnigan",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A down-on-his-luck smuggler who controlled an infant kraken in Oakisle on behalf of the warlock Karil Daxos. Killed when the parent kraken destroyed his warehouse.",
+      "content": "A struggling smuggler who was brought into the employ of [[Karil Daxos]], a Great Old One warlock who had acquired an infant kraken. Silas maintained control of the creature and oversaw the harvesting of its blood, which was being processed and sold as a drug. The drug gradually transformed consumers into fish-like beings with violent aquatic tendencies.\n\nThe parent kraken fought against Daxos's control and began attacking [[Oakisle]] at night, searching for its child. On Day 26, the party discovered the infant kraken aboard a ship in Silas's warehouse. When the infant was released and returned to the sea, its mother attacked the warehouse, killing Silas and destroying the building.",
+      "tags": ["smuggler", "kraken", "oakisle", "deceased", "villain"]
+    },
+
+    {
+      "title": "Karil Daxos",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A Great Old One warlock and the true orchestrator of the Oakisle kraken crisis. Employed Silas Finnigan to control and harvest an infant kraken.",
+      "content": "A Great Old One warlock and the true mastermind behind the kraken crisis in [[Oakisle]]. Karil Daxos acquired an infant kraken and tasked [[Silas Finnigan]] with maintaining its control and harvesting its blood. The blood was processed into a drug that corrupted its users, causing fish-like physical changes and obsessive behavior near water.\n\nDaxos's current whereabouts and status are unknown. The kraken crisis was resolved without directly confronting him.",
+      "tags": ["warlock", "great-old-one", "kraken", "villain"]
+    },
+
+    {
+      "title": "Abramo",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A cleric in Daermill capable of creating zones of silence. He attacked the party in the street.",
+      "content": "A cleric encountered in [[Daermill]] on Day 7 of Reventa, notable for his ability to create zones of silence. He attacked the party in the street, using his zone of silence to prevent them from calling for help. The party escaped the ambush. His connection to [[Explicitica Defilus]] and his current status are unknown.",
+      "tags": ["cleric", "daermill"]
+    },
+
+    {
+      "title": "Larek",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "The gruff orc tavernkeeper of The Rusty Cauldron in Druzar.",
+      "content": "A gruff orc tavernkeeper who operates [[The Rusty Cauldron]] in [[Druzar]]. Known for his blunt manner and no-nonsense attitude toward patrons.",
+      "tags": ["innkeeper", "orc", "druzar"]
+    },
+
+    {
+      "title": "Marge",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "An elderly woman who runs a makeshift inn out of her home in Druzar's refugee slums.",
+      "content": "An elderly woman living in the [[Refugee Slums]] of [[Druzar]] who has opened her home as a makeshift inn, [[Marge's Place]], offering affordable lodging to refugees and travelers of limited means.",
+      "tags": ["innkeeper", "druzar", "slums"]
+    },
+
+    {
+      "title": "Sister Rayne",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A nun at St. Rina's Cathedral in Druzar who oversees the Mortal Alms collection for the Church of Reventa.",
+      "content": "A nun stationed at [[St. Rina's Cathedral]] in [[Druzar]], responsible for overseeing the Mortal Alms collection on behalf of the [[Church of Reventa]].",
+      "tags": ["nun", "reventa", "druzar"]
+    },
+
+    {
+      "title": "Bodomri Graniteriver",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "Windrunner of the Wayfarers chapter in Overlook.",
+      "content": "The Windrunner of the [[Wayfarers]] guild chapter in [[Overlook]]. The party will need to contact him when they arrive to deliver the sentient abracadabracus entrusted to them by [[Orsella Brynn]].",
+      "tags": ["wayfarers", "overlook"]
+    },
+
+    {
+      "title": "Dorian and Llywilan",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A pair of elvish monster hunters who had been staking out Daermill for two months.",
+      "content": "A duo of elvish monster hunters who had been investigating the strange occurrences in [[Daermill]] for two months before the party's arrival. Their parallel investigation may have contributed to building the case against [[Explicitica Defilus]].",
+      "tags": ["elf", "hunter", "daermill"]
+    },
+
+    {
+      "title": "Charles",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A potato farmer from Druzar.",
+      "content": "A potato farmer hailing from [[Druzar]].",
+      "tags": ["druzar", "farmer"]
+    },
+
+    {
+      "title": "Duncan",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A merchant who is in the party's debt.",
+      "content": "A merchant who owes a debt to the party following events of the campaign. The nature of this debt and the circumstances under which it was incurred are to be determined.",
+      "tags": ["merchant", "debt"]
+    },
+
+    {
+      "title": "Marquess Burbrook",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "The Sideburn noble that Octavia was arranged to marry by her father, Duke Leopold Deavus.",
+      "content": "A Sideburn nobleman whom Octavia's father, [[Duke Leopold Deavus]], arranged for her to marry without her consent. The [[Twilight Brigade]] was hired to bring Octavia back home, presumably to proceed with this arrangement.",
+      "tags": ["noble", "octavia", "sideburn"]
+    },
+
+    {
+      "title": "Eldritha",
+      "articleType": "Person",
+      "category": "Person",
+      "excerpt": "A Dusk Hag and servant of Iris, Goddess of Death. She facilitated Fernley Talon's reckoning with his guilt in the Gravenpar Isle dreamscape.",
+      "content": "A Dusk Hag and servant of [[Iris]], Goddess of Death, who carries out the wishes of the deceased. The party encountered Eldritha within [[Fernley Talon]]'s section of the dreamscape on [[Gravenpar Isle]].\n\nEldritha arranged for the party to impersonate Fernley and show him that he must forgive himself for the circumstances of his wife's death. They fought ghostly images of his wife before ultimately convincing him to move on. Fernley's wife appeared in person at the end to confirm that she forgives him and will wait for him.",
+      "tags": ["hag", "iris", "death", "dreamscape", "gravenpar"]
+    },
+
+    {
+      "title": "Felethriel",
+      "articleType": "Person",
+      "category": "Person",
+      "parentTitle": "Twilight Brigade",
+      "excerpt": "Wood Elf Warlock of the Fiend and member of the Twilight Brigade. Attempted to enchant Octavia.",
+      "content": "A Wood Elf Warlock of the Fiend and member of the [[Twilight Brigade]]. The Brigade joined the party on the road to [[Oakisle]] on Day 18, concealing their true mission — to retrieve Octavia on behalf of [[Duke Leopold Deavus]].\n\nOn Day 20, Felethriel attempted to enchant Octavia during the events in [[Aerdale]]. She broke the enchantment and politely but firmly turned him away.",
+      "tags": ["warlock", "elf", "twilight-brigade"]
+    },
+
+    {
+      "title": "Maxwell",
+      "articleType": "Person",
+      "category": "Person",
+      "parentTitle": "Twilight Brigade",
+      "excerpt": "Human Fighter (Bandit Chief) and member of the Twilight Brigade.",
+      "content": "A human Fighter operating as a Bandit Chief and member of the [[Twilight Brigade]], a group hired by [[Duke Leopold Deavus]] to return Octavia home.",
+      "tags": ["fighter", "human", "twilight-brigade"]
+    },
+
+    {
+      "title": "Carmy Battleborn",
+      "articleType": "Person",
+      "category": "Person",
+      "parentTitle": "Twilight Brigade",
+      "excerpt": "Dwarven Druid and member of the Twilight Brigade. Gave the party a rundown on the Battleborn clan.",
+      "content": "A Dwarven Druid and member of the [[Twilight Brigade]], hired by [[Duke Leopold Deavus]] to retrieve Octavia. On Day 18, while traveling with the party toward [[Oakisle]], Carmy gave them a rundown on the history and culture of the Battleborn clan.",
+      "tags": ["druid", "dwarf", "twilight-brigade"]
+    },
+
+    {
+      "title": "Church of Reventa",
+      "articleType": "Organization",
+      "category": "Organization",
+      "excerpt": "The dominant religious order in the southeast, worshipping the God of the Harvest. Centered at St. Rina's Cathedral in Druzar.",
+      "content": "The dominant religious institution of the southeastern region, devoted to [[Reventa]], the God of the Harvest. The Church wields significant political and spiritual influence throughout the area.\n\nThe primary seat of power is [[St. Rina's Cathedral]] in [[Druzar]], overseen by [[Archdeacon Warvyn]]. [[Sister Rayne]] handles Mortal Alms collection at the cathedral.\n\nThe Church has a vested interest in the threat posed by [[Igenvar, the Ash Tyrant]], whose resurrection occurred during the Harvest Festival sacred to Reventa. [[Archdeacon Warvyn]] views the party as potential long-term partners as fixers and scholars.",
+      "tags": ["religion", "reventa", "druzar"]
+    },
+
+    {
+      "title": "Twilight Brigade",
+      "articleType": "Faction",
+      "category": "Organization",
+      "excerpt": "A mercenary group of bounty hunters willing to take any quarry for the right price. Hired by Duke Leopold Deavus to retrieve Octavia.",
+      "content": "A group of mercenary bounty hunters who will pursue any target for the right price. The Brigade was hired by [[Duke Leopold Deavus]] to retrieve his daughter Octavia and joined the party on the road to [[Oakisle]] on Day 18, concealing their true mission while charming the party with tales of adventure.\n\n**Members:**\n- [[Felethriel]] — Wood Elf, Warlock of the Fiend\n- [[Maxwell]] — Human Fighter (Bandit Chief)\n- [[Carmy Battleborn]] — Dwarf Druid\n\nFelethriel's attempt to enchant Octavia on Day 20 revealed the Brigade's true colors.",
+      "tags": ["mercenary", "bounty-hunters", "octavia"]
+    },
+
+    {
+      "title": "Wayfarers",
+      "articleType": "Organization",
+      "category": "Organization",
+      "excerpt": "A courier and transport guild with chapters across the region. The party has worked for them and holds positive standing.",
+      "content": "A courier and transport guild with chapters in multiple cities across the region. The party first came into contact with the Wayfarers in [[Garrig's Post]], where they accepted a package delivery quest bound for [[Oakisle]] (addressed to Captain [[Fernley Talon]]).\n\n**Guild Ranks (lowest to highest):**\n- Page\n- Courier\n- Windrunner\n- Oathbearer\n- Postmaster\n\n**Known members:**\n- [[Orsella Brynn]] — Oathbearer, [[Oakisle]]\n- [[Bodomri Graniteriver]] — Windrunner, [[Overlook]]\n\nThe party is in good standing with the Wayfarers and has been entrusted with delivering a sentient abracadabracus to a recipient in [[Overlook]].",
+      "tags": ["guild", "courier", "transport"]
+    },
+
+    {
+      "title": "Reventa",
+      "articleType": "Deity",
+      "category": "Deity",
+      "excerpt": "God of the Harvest. The dominant deity of the region, worshipped through the Church of Reventa.",
+      "content": "The God of the Harvest and the primary deity of the southeastern region. Reventa is worshipped through the [[Church of Reventa]], whose seat of power is [[St. Rina's Cathedral]] in [[Druzar]], overseen by [[Archdeacon Warvyn]].\n\nThe Harvest Festival held annually in [[Ash Hollow]] on Day 1 of Reventa's month was the site of the catastrophic resurrection of [[Igenvar, the Ash Tyrant]] — a desecration of one of the faith's most sacred celebrations.",
+      "tags": ["god", "harvest", "church"]
+    },
+
+    {
+      "title": "Barros",
+      "articleType": "Deity",
+      "category": "Deity",
+      "excerpt": "God of Law and Order. Patron deity of Mindein and Ornwend.",
+      "content": "The God of Law and Order. Worshipped by the Dwarven Cleric [[Mindein]] and the Orc Paladin [[Ornwend]], both of whom joined the party in the assault on [[Explicitica Defilus]] beneath [[Daermill]]. [[Mindein]] gave his life in the battle, dying in service to the principles of his god.",
+      "tags": ["god", "law", "order"]
+    },
+
+    {
+      "title": "Maris",
+      "articleType": "Deity",
+      "category": "Deity",
+      "excerpt": "God of the Sea, Storms, and Freedom. Worshipped by sailors and travelers of the open water.",
+      "content": "The God of the Sea, Storms, and Freedom. Maris is widely revered by sailors, fishermen, and those who live their lives on the open water. [[Father Rayak]], a Dwarven Priest of Maris, operates a temple near the docks in [[Oakisle]].\n\nThe Eversquall storm system could be interpreted as a manifestation of Maris's domain — dangerous but ultimately navigable by the worthy.",
+      "tags": ["god", "sea", "storms", "freedom"]
+    },
+
+    {
+      "title": "Iris",
+      "articleType": "Deity",
+      "category": "Deity",
+      "excerpt": "Goddess of Death and the patron of transitioning souls, particularly for elves. Eldritha the Dusk Hag serves her.",
+      "content": "The Goddess of Death and the patron deity of transitioning souls, with a particular significance for elves. [[Eldritha]] the Dusk Hag is a servant of Iris who carries out the wishes of the dead.\n\nIris's influence was felt strongly in the dreamscape of [[Gravenpar Isle]], where Eldritha mediated [[Fernley Talon]]'s reckoning with his guilt over his wife's death.",
+      "tags": ["goddess", "death", "elves", "transition"]
+    },
+
+    {
+      "title": "Nevrutath",
+      "articleType": "Deity",
+      "category": "Deity",
+      "excerpt": "Archdevil of Greed and Lord of Avarice. Symbol: a Baha'i star with an eye in the center. Patron of Veyra Vallis.",
+      "content": "An Archdevil of Greed, known as the Lord of Avarice. Symbol: a Baha'i star with an eye in the center.\n\n[[Veyra Vallis]] was a warlock who drew her power from Nevrutath, using her patron's influence to fuel her ambition in [[Aerdale]]. A cult devoted to Nevrutath also operates in [[Overlook]], suggesting the archdevil's reach extends broadly across the region.",
+      "tags": ["archdevil", "greed", "avarice", "warlock-patron"]
+    },
+
+    {
+      "title": "Ahm",
+      "articleType": "Deity",
+      "category": "Deity",
+      "excerpt": "Archdevil of Conquest and War. Symbol: a crown. Made a pact with Torvir in the Gravenpar Isle dreamscape.",
+      "content": "An Archdevil of Conquest and War. Symbol: a crown.\n\nIn the dreamscape of [[Gravenpar Isle]], Torvir experienced a vision in which his brother's hunting party was killed and he was confronted by Ahm. He agreed to make a pact with the archdevil to save his friends. The implications of this pact for Torvir's soul and future choices remain to be seen.",
+      "tags": ["archdevil", "conquest", "war", "torvir", "pact"]
+    },
+
+    {
+      "title": "Campaign Timeline: Month of Reventa",
+      "articleType": "Lore",
+      "category": "Lore",
+      "excerpt": "A day-by-day record of the party's travels through Alastria, beginning on Day 1 of the Month of Reventa.",
+      "content": "A chronicle of events as experienced by the party, beginning on the first day of the month of Reventa.\n\n**Day 1:** The party attends the [[Ash Hollow]] Harvest Festival. They witness the Resurrection of [[Igenvar, the Ash Tyrant]].\n\n**Day 2:** The party travels towards [[Garrig's Post]].\n\n**Day 3:** The party arrives in [[Garrig's Post]]. They visit the [[Bargain Basement]] and purchase magic items from [[Fabled Findings]]. They accept a package delivery quest from the [[Wayfarers]], bound for [[Oakisle]]. The recipient is Captain [[Fernley Talon]].\n\n**Day 4:** The party leaves [[Garrig's Post]], heading back towards [[Ash Hollow]] with the ultimate goal of reaching [[Hasgrum the Immovable]] in the [[Jagged Peaks]].\n\n**Day 5:** The party arrives in [[Ash Hollow]] in the evening. They are attacked by a wyvern but successfully chase it off.\n\n**Day 6:** The party leaves [[Ash Hollow]], bound for [[Daermill]].\n\n**Day 7:** The party arrives in [[Daermill]] in the evening. They check into [[The Golden Grain]] inn and meet the innkeeper, [[Derek]]. They inform the [[Ash Hollow]] mayor's sister of her brother's death. She speaks of odd occurrences in town. They meet the town Cleric, [[High Priestess Misha Devi]], who verifies the strangeness. They are attacked by [[Abramo]] in a zone of silence but escape. At the inn, they are ambushed by [[Derek]], [[High Priestess Misha Devi]], and a group of troglodytes. They kill [[Derek]] and two troglodytes before escaping [[High Priestess Misha Devi]]. That night in the wilderness, they encounter a Satyr, a giant mushroom man, and a deer drinking ale. They awaken with Boons.\n\n**Day 8:** The party travels towards [[Druzar]].\n\n**Day 9:** The party continues traveling to [[Druzar]].\n\n**Day 10:** The party arrives in [[Druzar]]. They navigate the [[Refugee Slums]] and go to [[St. Rina's Cathedral]]. They meet [[Archdeacon Warvyn]] and inform him of [[Igenvar, the Ash Tyrant|Igenvar's]] return. Warvyn asks the party to free [[Daermill]] from a suspected spirit naga in exchange for his help. They investigate rumors of cats giving missions to children and meet [[Deso]], a tabaxi shadow broker. They align with him as a patron.\n\n**Day 11:** The party leaves [[Druzar]], heading back to [[Daermill]]. They meet [[Mindein]] (Dwarven Cleric) and [[Ornwend]] (Orc Paladin), two holy men of [[Barros]], God of Law and Order.\n\n**Day 12:** The party continues towards [[Daermill]]. They are accosted by a group of lizardfolk at night.\n\n**Day 13:** The party frees [[High Priestess Misha Devi]] from [[Explicitica Defilus|the Naga's]] charm. They descend into the caverns underneath the town with [[Mindein]] and [[Ornwend]] in tow. The party confronts [[Explicitica Defilus]], and though [[Mindein]] loses his life, they emerge successful.\n\n**Day 14:** The party leaves [[Daermill]].\n\n**Day 15-16:** The party travels towards [[Druzar]].\n\n**Day 17:** The party arrives in [[Druzar]]. They report back to [[Archdeacon Warvyn]] and receive their rewards. An imposter, revealed to be [[Roger Truegust]], is tarnishing Torvir's name. Roger confronts and humiliates Torvir.\n\n**Day 18:** The party purchases potions and scrolls from [[Illuminations]]. They leave for [[Oakisle]] (with [[Aerdale]] on the way). On the way, they meet the [[Twilight Brigade]], another group of adventurers travelling to [[Oakisle]]. In reality the Brigade has been hired by [[Duke Leopold Deavus]] to bring Octavia back home. [[Carmy Battleborn]] gives the party a rundown on the Battleborn clan.\n\n**Day 19:** The party travels to [[Aerdale]].\n\n**Day 20:** The party arrives in [[Aerdale]]. A wedding is underway and all travellers are invited. The Groom, [[Lord Edrin Vallis]], is poisoned and the Bride, [[Selra Dain]], is accused of the murder. The party offers to investigate. After checking with the Bride's father and the Groom's ex-fiancée [[Lady Corvina Maeth]], suspicion points towards [[Veyra Vallis]], the Groom's cousin, who is set to inherit his estate. That evening, [[Felethriel]] of the [[Twilight Brigade]] attempts to enchant Octavia, though she breaks the enchantment and turns him away.\n\n**Day 21:** The party investigates the murder further, entering [[Veyra Vallis|Veyra's]] house and discovering her secret altar to [[Nevrutath]]. The party is arrested as they leave. [[Veyra Vallis]] fireballs the precinct; the party slays her and flees the town.\n\n**Day 22:** The party flees [[Aerdale]] and hits the road to [[Oakisle]].\n\n**Day 23:** The party is attacked at night by fish people led by a translucent, jelly-like creature with a human skeleton. Torvir is injured but the party fights them off.\n\n**Day 24:** The party arrives in [[Oakisle]]. They meet [[Orsella Brynn]], Oathbearer of the [[Wayfarers]] guild. They hear about the destruction of the city and lost packages.\n\n**Day 25:** The party recovers some packages (most importantly a sentient abracadabracus). They visit [[Father Rayak]]'s temple of [[Maris]] near the docks, learning about the plot of [[Silas Finnigan]]. They interview an accused murderer who points them toward Silas's warehouse. The kraken destroys the prison; the characters escape.\n\n**Day 26:** The party investigates the warehouse, discovering an infant kraken held aboard a ship above the wet dock. [[Silas Finnigan]] reveals himself. The party nearly dies, but the kraken is brought back into the sea — its mother arrives and destroys the warehouse along with Silas. [[Orsella Brynn]] entrusts the party with the abracadabracus and tells them it is bound for a recipient in [[Overlook]]. The party is accosted by guards bearing wanted posters. The Marilith crew throw the guards overboard and take the party to sea. Rough weather from the kraken damages the vessel.\n\n**Day 27:** The Marilith's navigator spots a large group of wrecked ships a day's travel away.\n\n**Day 28:** The Marilith arrives at the wreckage but is lured by sirens. The party slays the sirens, but Sparky, the Marilith's gunner, dies in the process. The ship is repaired and sets sail following [[Fernley Talon|Fernley's]] wife's missive.\n\n**Day 29 (1st of Maris) — Day 32:** Travel to [[Gravenpar Isle]].\n\n**Day 33:** Arrival at [[Gravenpar Isle]]. [[Fernley Talon|Burska, Fernley]], and the Gilded Riff disembark. The party comes across a campsite and beds down for the evening.\n\n**Days 34–41:** The party is pulled into a hallucinatory dreamscape. See [[Gravenpar Isle]] for full details.",
+      "tags": ["timeline", "chronicle", "reventa", "campaign-log"]
+    },
+
+    {
+      "title": "Calendar System",
+      "articleType": "Lore",
+      "category": "Lore",
+      "excerpt": "Alastria uses a 13-month calendar with 28 days per month and 7 days per week.",
+      "content": "The calendar system of Alastria divides the year as follows:\n\n- **Months per year:** 13\n- **Days per month:** 28\n- **Days per week:** 7\n\nKnown months include the Month of Reventa (during which the campaign begins) and the Month of Maris. The months appear to be named after the deities of the realm — [[Reventa]], [[Maris]], and presumably others.\n\nDay 29 of the in-game calendar corresponds to the 1st of Maris, indicating that the month of Reventa has 28 days.",
+      "tags": ["calendar", "time", "lore"]
+    },
+
+    {
+      "title": "Renown & Reputation System",
+      "articleType": "Lore",
+      "category": "Lore",
+      "excerpt": "A system tracking the party's fame and standing in the southeast. Currently at 'Noted' standing.",
+      "content": "The party's fame and standing in the southeastern region is tracked through a Renown and Reputation system.\n\n**Current standing:** Noted (Southeast)\n\n**Renown levels (with thresholds):**\n1. Unsung\n2. Noted (10)\n3. Prominent (15)\n4. Celebrated (20)\n5. Acclaimed (25)\n6. Revered (30)\n\n**Reputation modifiers:**\n- Hype\n- Did a good deed\n- Did a bad deed\n- Competition\n\n**Reputation rewards (unlockable actions):**\n- I know a guy\n- I've got it in the back\n- Draw a crowd\n- Rumor mill (start or retrieve a rumor)\n- Do you know who I am? (free advantage on a Charisma check)\n- I know a cat (gained from aligning with [[Deso]])\n\n**Active rumors:**\n- [[Roger Truegust]] broke a string while performing at the Gilded Riff, then threw a tantrum when staff tried to help — causing locals to question the real Torvir's reputation.\n- Torvir's grandfather was a general who slew the fire giant Sumay for terrorizing the people and killing their livestock.",
+      "tags": ["mechanics", "renown", "reputation", "fame"]
+    }
+
+  ]
+}

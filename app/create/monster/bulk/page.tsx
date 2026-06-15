@@ -43,10 +43,6 @@ interface SkillMods {
     [key: string]: number | undefined; // Flexible skill modifiers
 }
 
-interface SkillProfs {
-    [key: string]: string | undefined; // Flexible skill proficiencies ('proficient', 'expertise', etc.)
-}
-
 // The exact structure expected by client.models.MonsterStatblock.create()
 interface MonsterStatblockInput {
   id: string;
@@ -79,10 +75,8 @@ interface MonsterStatblockInput {
   intelligence_save?: number | null;
   wisdom_save?: number | null;
   charisma_save?: number | null;
-  save_proficiencies: string[];
   perception?: number | null;
   skills?: SkillMods | null;
-  skill_proficiencies?: SkillProfs | null;
   damage_vulnerabilities?: string | null;
   damage_vulnerability_list: string[];
   damage_resistances?: string | null;
@@ -203,7 +197,6 @@ const mapMonster = (raw: RawMonsterData): MonsterStatblockInput => {
   }
 
   const skills: SkillMods = (raw.skills && typeof raw.skills === 'object') ? raw.skills : {};
-  const skill_proficiencies: SkillProfs = (raw.skill_proficiencies && typeof raw.skill_proficiencies === 'object') ? raw.skill_proficiencies : {};
 
 
   return {
@@ -225,7 +218,6 @@ const mapMonster = (raw: RawMonsterData): MonsterStatblockInput => {
     cr: cr,
 
     // Array Fields (Ensure Array)
-    save_proficiencies: ensureStringArray(raw.save_proficiencies || raw.saving_throws_list),
     damage_vulnerability_list: ensureStringArray(raw.damage_vulnerability_list || raw.damage_vulnerabilities),
     damage_resistance_list: ensureStringArray(raw.damage_resistance_list || raw.damage_resistances),
     damage_immunity_list: ensureStringArray(raw.damage_immunity_list || raw.damage_immunities),
@@ -233,7 +225,6 @@ const mapMonster = (raw: RawMonsterData): MonsterStatblockInput => {
 
     // Custom Types / Nested Objects
     skills: skills,
-    skill_proficiencies: skill_proficiencies,
     special_abilities: mapAbilities(raw.special_abilities),
     actions: mapAttacks(raw.actions),
     bonus_actions: mapAbilities(raw.bonus_actions),

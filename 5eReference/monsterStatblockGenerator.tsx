@@ -53,23 +53,21 @@ export function createDefaultKnightStatblock(name: string, publisher: string): S
         wisdom: 11,
         charisma: 15,
         
-        // Saving Throws: CON +4, WIS +2 (based on base stat + Prof. Bonus of +2)
-        strength_save: 3, 
-        dexterity_save: 0, 
-        constitution_save: 4, 
-        intelligence_save: 0, 
-        wisdom_save: 2, 
-        charisma_save: 2, 
-        save_proficiencies: ['CON', 'WIS'],
-        
+        // Saving Throws: STR/DEX/CON/INT/WIS/CHA — store null for non-proficient (not displayed)
+        strength_save:     null,
+        dexterity_save:    null,
+        constitution_save: 4,    // CON +2 (mod) + 2 (prof)
+        intelligence_save: null,
+        wisdom_save:       2,    // WIS +0 (mod) + 2 (prof)
+        charisma_save:     null,
+
         // --- Senses/Skills/Languages ---
         perception: 10,
         senses: 'passive Perception 10',
         languages: 'any one language (usually Common)',
-        
+
         // Initialize other custom types to empty objects/arrays as per schema
         skills: {},
-        skill_proficiencies: {},
         damage_vulnerability_list: [],
         damage_resistance_list: [],
         damage_immunity_list: [],
