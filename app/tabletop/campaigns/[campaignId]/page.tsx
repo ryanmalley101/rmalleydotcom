@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "./combatSettings";
 import Link from "next/link";
-import { ArrowLeft, Plus, ScrollText, Users, BookOpen, Trash2, CalendarDays, Swords, UserPlus, Copy, Shield, Pencil, Settings, PawPrint } from "lucide-react";
+import { ArrowLeft, Plus, ScrollText, Users, BookOpen, Trash2, CalendarDays, Swords, UserPlus, Copy, Shield, Pencil, Settings, PawPrint, LayoutGrid } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 
@@ -317,6 +317,19 @@ export default function CampaignPage() {
                         ))}
                     </Box>
                 )}
+
+                <Box sx={{ display: "flex", gap: 1, ml: 6, mb: 3 }}>
+                    <Button
+                        component={Link}
+                        href={`/tabletop/campaigns/${campaignId}/vtt`}
+                        variant="outlined"
+                        size="small"
+                        startIcon={<LayoutGrid size={14} />}
+                        sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
+                    >
+                        Virtual Table
+                    </Button>
+                </Box>
 
                 <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"
                     sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}>

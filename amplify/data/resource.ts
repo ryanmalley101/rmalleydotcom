@@ -191,6 +191,9 @@ const PlayerCharacter = a.model({
   // Storage keys (Amplify S3)
   pdfKey:         a.string(),
   portraitKey:    a.string(),
+  // RPG system fields
+  system:         a.string(), // e.g. 'D&D 5e', 'Cypher System'
+  systemDataJson: a.string(), // JSON: system-specific character data
   // Legacy text fields kept for backward compat
   savingThrows:   a.string(),
   skillProfs:     a.string(),
@@ -266,6 +269,15 @@ const TodoItem = a.model({
 }).authorization(allow => [allow.owner()]);
 
 // Campaign membership (created by player on join)
+// VTT (Virtual Tabletop) — one board per scene, real-time token positions
+const VttBoard = a.model({
+  campaignId:  a.string().required(),
+  name:        a.string().required(),
+  gridCols:    a.integer(),  // default 30
+  gridRows:    a.integer(),  // default 20
+  tokensJson:  a.string(),   // JSON: VttToken[]
+}).authorization(allow => [allow.authenticated()]);
+
 const CampaignMember = a.model({
   campaignId: a.string().required(),
   role:       a.string().required(), // 'gm' | 'player'
@@ -292,6 +304,7 @@ const schema = a.schema({
   WorldMap,
   CampaignSession,
   PlayerCharacter,
+  VttBoard,
   CampaignMember,
   CampaignInvite,
   NPC,

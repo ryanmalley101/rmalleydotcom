@@ -61,11 +61,15 @@
       "Bash(Select-Object -First 1)",
       "Bash(Get-Content \".\\\\5eReference\\\\converters.tsx\")",
       "Read(//c/Users/ryanm/Downloads/**)",
-      "Bash(Select-String -Pattern \"\\(error|Error|warning|Warning|Compiled|Linting|✓|✗|failed|Failed\\)\")"
+      "Bash(Select-String -Pattern \"\\(error|Error|warning|Warning|Compiled|Linting|✓|✗|failed|Failed\\)\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\ryanm\\\\Workspace\\\\rmalleydotcom\\\\rmalleydotcom\\\\app\\\\tabletop\\\\campaigns\\\\[campaignId]\\\\vtt\\\\[boardId]\")",
+      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/vtt/[boardId]\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
-      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\encounters\\[encounterId]"
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\encounters\\[encounterId]",
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt",
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt\\[boardId]"
     ]
   }
 }
