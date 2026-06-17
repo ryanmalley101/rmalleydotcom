@@ -18,6 +18,7 @@ import {
 import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
+import CypherSheet from "./CypherSheet";
 
 const client = generateClient<Schema>();
 type PC         = Schema["PlayerCharacter"]["type"];
@@ -614,6 +615,10 @@ export default function CharacterPage() {
             <Button component={Link} href={`/tabletop/campaigns/${campaignId}`} sx={{ mt: 2 }}>Back to Campaign</Button>
         </Box>
     );
+
+    if (pc.system === "Cypher System") {
+        return <CypherSheet pc={pc} campaignId={campaignId} />;
+    }
 
     const classLabel = classes.length > 0
         ? classes.map(c => `${c.class} ${c.level}${c.subclass ? ` (${c.subclass})` : ""}`).join(" / ")
