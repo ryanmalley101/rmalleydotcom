@@ -9,10 +9,11 @@ import {
     IconButton, Tooltip, Tabs, Tab, Alert, LinearProgress,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Plus, BookOpen, ScrollText, Trash2, Globe, Upload, Link2, AlertTriangle, Map as MapIcon } from "lucide-react";
+import { ArrowLeft, Plus, BookOpen, ScrollText, Trash2, Globe, Upload, Link2, AlertTriangle, Map as MapIcon, Wand2 } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
+import { hasBBCode, convertBBCodeToMarkdown } from "@/lib/bbcodeConverter";
 
 const client = generateClient<Schema>();
 type World    = Schema["DnDWorld"]["type"];
@@ -53,6 +54,11 @@ export default function WorldPage() {
     const [catFilter, setCatFilter] = useState("All");
     const [search, setSearch]       = useState("");
     const [deleteId, setDeleteId]   = useState<string | null>(null);
+
+    // BBCode cleanup state
+    const [fixDialog, setFixDialog]   = useState(false);
+    const [fixing, setFixing]         = useState(false);
+    const [fixProgress, setFixProgress] = useState({ done: 0, total: 0 });
 
     // Map upload state
     const [mapName, setMapName]         = useState("");
@@ -179,6 +185,30 @@ export default function WorldPage() {
         return true;
     }), [articles, catFilter, search]);
 
+    // ── Articles still containing raw BBCode (e.g. imported before the converter existed) ──
+    const bbcodeArticles = useMemo(
+        () => articles.filter(a => a.content && hasBBCode(a.content)),
+        [articles]
+    );
+
+    async function fixFormatting() {
+        setFixing(true);
+        setFixProgress({ done: 0, total: bbcodeArticles.length });
+        for (let i = 0; i < bbcodeArticles.length; i++) {
+            const a = bbcodeArticles[i];
+            try {
+                await client.models.WikiArticle.update({
+                    id: a.id,
+                    content: convertBBCodeToMarkdown(a.content!.replace(/\r\n/g, "\n").trim()),
+                });
+            } catch { /* skip and continue */ }
+            setFixProgress({ done: i + 1, total: bbcodeArticles.length });
+        }
+        setFixing(false);
+        setFixDialog(false);
+        load();
+    }
+
     // ── Broken links ──
     const titleToId = useMemo(() => {
         const map = new Map<string, string>();
@@ -285,6 +315,13 @@ export default function WorldPage() {
                                 sx={{ borderColor: "primary.main", color: "primary.main", whiteSpace: "nowrap" }}>
                                 Import
                             </Button>
+                            {bbcodeArticles.length > 0 && (
+                                <Button variant="outlined" color="warning" startIcon={<Wand2 size={16} />}
+                                    onClick={() => setFixDialog(true)}
+                                    sx={{ whiteSpace: "nowrap" }}>
+                                    Fix Formatting ({bbcodeArticles.length})
+                                </Button>
+                            )}
                             <Button variant="outlined" startIcon={<Link2 size={16} />}
                                 component={Link} href={`/tabletop/worlds/${worldId}/autolink`}
                                 sx={{ borderColor: "primary.main", color: "primary.main", whiteSpace: "nowrap" }}>
@@ -575,6 +612,39 @@ export default function WorldPage() {
                         )}
                     </>
                 )}
+
+                {/* Fix formatting confirmation / progress */}
+                <Dialog open={fixDialog} onClose={() => !fixing && setFixDialog(false)} maxWidth="xs" fullWidth>
+                    <DialogTitle>Fix Formatting?</DialogTitle>
+                    <DialogContent>
+                        {!fixing ? (
+                            <Typography>
+                                {bbcodeArticles.length} article{bbcodeArticles.length !== 1 ? "s" : ""} still
+                                {" "}contain{bbcodeArticles.length === 1 ? "s" : ""} raw BBCode tags (e.g. <code>[p]</code>, <code>[b]</code>)
+                                from an older import. This will convert them to Markdown in place.
+                            </Typography>
+                        ) : (
+                            <Box sx={{ pt: 1 }}>
+                                <Typography sx={{ mb: 1.5 }}>
+                                    Fixing… {fixProgress.done} / {fixProgress.total}
+                                </Typography>
+                                <LinearProgress
+                                    variant="determinate"
+                                    value={fixProgress.total ? (fixProgress.done / fixProgress.total) * 100 : 0}
+                                    sx={{ height: 6, borderRadius: 3,
+                                          "& .MuiLinearProgress-bar": { backgroundColor: "primary.main" } }}
+                                />
+                            </Box>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setFixDialog(false)} disabled={fixing}>Cancel</Button>
+                        <Button variant="contained" onClick={fixFormatting} disabled={fixing}
+                            sx={{ backgroundColor: "primary.main" }}>
+                            {fixing ? <CircularProgress size={18} /> : "Fix Now"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
                 {/* Delete article confirmation */}
                 <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
