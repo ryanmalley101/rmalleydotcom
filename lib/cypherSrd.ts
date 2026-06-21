@@ -52,10 +52,19 @@ export interface ArcSrd {
     source?: string;
 }
 
+export interface FocusSrd {
+    id: string;
+    name: string;
+    description?: string;
+    gm_intrusion?: string;
+    source?: string;
+}
+
 let creaturesCache: Promise<CreatureSrd[]> | null = null;
 let cyphersCache: Promise<CypherSrd[]> | null = null;
 let abilitiesCache: Promise<AbilitySrd[]> | null = null;
 let arcsCache: Promise<ArcSrd[]> | null = null;
+let fociCache: Promise<FocusSrd[]> | null = null;
 
 async function fetchJson<T>(path: string): Promise<T[]> {
     try {
@@ -104,17 +113,33 @@ export function loadArcs(): Promise<ArcSrd[]> {
     return arcsCache;
 }
 
-export function searchSrd<T extends { name: string; description?: string; effect?: string }>(
+export function loadFoci(): Promise<FocusSrd[]> {
+    if (!fociCache) {
+        fociCache = fetchJson<FocusSrd>("/Cypher_SRD/foci.json")
+            .then(list => list.sort((a, b) => a.name.localeCompare(b.name)));
+    }
+    return fociCache;
+}
+
+// Exact match first (case-insensitive), falling back to "focus name appears
+// somewhere in the character's Focus text" since players sometimes type the
+// full sentence (e.g. "Focus" field holding "Howls at the Moon" exactly, or
+// embedded in a longer custom phrase).
+export function findFocusMatch(foci: FocusSrd[], focusText: string): FocusSrd | null {
+    const q = focusText.trim().toLowerCase();
+    if (!q) return null;
+    const exact = foci.find(f => f.name.trim().toLowerCase() === q);
+    if (exact) return exact;
+    return foci.find(f => q.includes(f.name.trim().toLowerCase())) ?? null;
+}
+
+export function searchSrd<T extends { name: string }>(
     items: T[], query: string, limit = 50
 ): T[] {
     const q = query.trim().toLowerCase();
     if (!q) return items.slice(0, limit);
     return items
-        .filter(i =>
-            i.name.toLowerCase().includes(q) ||
-            (i.description ?? "").toLowerCase().includes(q) ||
-            (i.effect ?? "").toLowerCase().includes(q)
-        )
+        .filter(i => i.name.toLowerCase().includes(q))
         .slice(0, limit);
 }
 

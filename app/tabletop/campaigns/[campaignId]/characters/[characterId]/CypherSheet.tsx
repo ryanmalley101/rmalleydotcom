@@ -1,22 +1,23 @@
 "use client";
 
-import { useState, useCallback, type KeyboardEvent } from "react";
+import { useState, useEffect, useMemo, useCallback, type KeyboardEvent } from "react";
 import {
     Box, Container, Typography, Button, TextField, Paper,
     Chip, Divider, CircularProgress, MenuItem, Select,
     FormControl, InputLabel, IconButton, Tooltip, Dialog,
-    DialogTitle, DialogContent, DialogActions,
+    DialogTitle, DialogContent, DialogActions, Collapse,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Save, X, Trash2, Plus, RotateCcw, Search, Dices } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Trash2, Plus, RotateCcw, Search, Dices, ChevronDown, ChevronRight, Sparkles } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { useRouter } from "next/navigation";
 import type { Schema } from "@/amplify/data/resource";
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import { SrdPickerDialog } from "../../SrdPickerDialog";
+import { CommonIntrusionsDialog } from "../../CommonIntrusionsDialog";
 import {
-    loadAbilities, loadCyphers, loadArcs, searchSrd, formatArcSteps,
-    type AbilitySrd, type CypherSrd, type ArcSrd,
+    loadAbilities, loadCyphers, loadArcs, loadFoci, findFocusMatch, searchSrd, formatArcSteps,
+    type AbilitySrd, type CypherSrd, type ArcSrd, type FocusSrd,
 } from "@/lib/cypherSrd";
 import { DAMAGE_TRACK_INFO, DEFAULT_CYPHER_LIMIT } from "@/lib/cypherRules";
 
@@ -25,11 +26,14 @@ type PC = Schema["PlayerCharacter"]["type"];
 
 // ── Data types ────────────────────────────────────────────────────────────────
 
-interface SkillEntry    { name: string; level: "trained" | "specialized" | "inability" }
-interface AbilityEntry  { name: string; cost?: string; description: string }
-interface CypherEntry   { name: string; level: string; form?: string; effect: string }
-interface ArtifactEntry { name: string; level?: number; form?: string; effect: string; depletion?: string }
-interface EquipmentEntry{ name: string; quantity?: number }
+// `roll20Id` (optional, never shown in the UI) lets the browser-extension
+// bridge find-and-update the same entry on re-edits instead of duplicating
+// it — set only on entries imported from a Roll20 sheet, absent otherwise.
+interface SkillEntry    { name: string; level: "trained" | "specialized" | "inability"; roll20Id?: string }
+interface AbilityEntry  { name: string; cost?: string; description: string; roll20Id?: string }
+interface CypherEntry   { name: string; level: string; form?: string; effect: string; roll20Id?: string }
+interface ArtifactEntry { name: string; level?: number; form?: string; effect: string; depletion?: string; roll20Id?: string }
+interface EquipmentEntry{ name: string; quantity?: number; roll20Id?: string }
 interface ArcEntry      { name: string; description: string; status: "active" | "completed"; notes: string }
 
 interface CypherData {
@@ -76,6 +80,28 @@ const SKILL_COLORS: Record<string, string> = {
 
 function rollableLevel(level: string): boolean {
     return /\d*d\d+/i.test(level.trim());
+}
+
+// Tracks which entries (by array index) have their description collapsed —
+// defaults to all expanded, matching the sheet's previous always-shown behavior.
+function useCollapsedSet() {
+    const [collapsed, setCollapsed] = useState<Set<number>>(new Set());
+    function toggle(i: number) {
+        setCollapsed(prev => {
+            const next = new Set(prev);
+            if (next.has(i)) next.delete(i); else next.add(i);
+            return next;
+        });
+    }
+    return [collapsed, toggle] as const;
+}
+
+function CollapseToggle({ collapsed, onClick }: { collapsed: boolean; onClick: () => void }) {
+    return (
+        <IconButton size="small" sx={{ p: 0.25 }} onClick={onClick}>
+            {collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+        </IconButton>
+    );
 }
 
 // ── Inline-editable number (click to edit, commits on blur/Enter) ────────────
@@ -167,6 +193,12 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
     const [tier,       setTier]       = useState(pc.level ?? 1);
     const [xp,         setXp]         = useState(pc.xp ?? 0);
 
+    // GM Intrusions reference — matched against this character's Focus
+    const [foci, setFoci] = useState<FocusSrd[]>([]);
+    const [commonIntrusionsOpen, setCommonIntrusionsOpen] = useState(false);
+    useEffect(() => { loadFoci().then(setFoci); }, []);
+    const matchedFocus = useMemo(() => findFocusMatch(foci, focus), [foci, focus]);
+
     // Inline list editors
     const [newSkill,    setNewSkill]    = useState<SkillEntry>({ name: "", level: "trained" });
     const [newAbility,  setNewAbility]  = useState<AbilityEntry>({ name: "", cost: "", description: "" });
@@ -177,6 +209,12 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
 
     // SRD pickers
     const [picker, setPicker] = useState<null | "ability" | "cypher" | "arc">(null);
+
+    // Collapsible descriptions, tracked per list by entry index
+    const [collapsedAbilities, toggleAbility]   = useCollapsedSet();
+    const [collapsedCyphers,   toggleCypher]    = useCollapsedSet();
+    const [collapsedArtifacts, toggleArtifact]  = useCollapsedSet();
+    const [collapsedArcs,      toggleArc]       = useCollapsedSet();
 
     const upd = useCallback((patch: Partial<CypherData>) => setData(d => ({ ...d, ...patch })), []);
 
@@ -474,6 +512,7 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                         {data.abilities.map((ab, i) => (
                             <Box key={i} sx={{ borderLeft: "3px solid", borderColor: "primary.light", pl: 1.5, py: 0.5 }}>
                                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                    <CollapseToggle collapsed={collapsedAbilities.has(i)} onClick={() => toggleAbility(i)} />
                                     <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>{ab.name}</Typography>
                                     {ab.cost && <Chip label={ab.cost} size="small" sx={{ fontSize: "0.65rem", height: 18 }} />}
                                     <IconButton size="small" sx={{ ml: "auto", p: 0.25 }}
@@ -481,7 +520,9 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                                         <X size={10} />
                                     </IconButton>
                                 </Box>
-                                <Typography variant="caption" sx={{ color: "text.secondary" }}>{ab.description}</Typography>
+                                <Collapse in={!collapsedAbilities.has(i)}>
+                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block", pl: 3.5 }}>{ab.description}</Typography>
+                                </Collapse>
                             </Box>
                         ))}
                     </Box>
@@ -532,6 +573,7 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                         {data.cyphers.map((cy, i) => (
                             <Box key={i} sx={{ borderLeft: "3px solid #6a1b9a", pl: 1.5, py: 0.5 }}>
                                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                    <CollapseToggle collapsed={collapsedCyphers.has(i)} onClick={() => toggleCypher(i)} />
                                     <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>{cy.name}</Typography>
                                     <Chip label={`Level ${cy.level}`} size="small"
                                         sx={{ backgroundColor: "#6a1b9a", color: "#fff", fontSize: "0.65rem", height: 18 }} />
@@ -541,7 +583,9 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                                         <X size={10} />
                                     </IconButton>
                                 </Box>
-                                <Typography variant="caption" sx={{ color: "text.secondary" }}>{cy.effect}</Typography>
+                                <Collapse in={!collapsedCyphers.has(i)}>
+                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block", pl: 3.5 }}>{cy.effect}</Typography>
+                                </Collapse>
                             </Box>
                         ))}
                     </Box>
@@ -597,6 +641,7 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                         {data.artifacts.map((ar, i) => (
                             <Box key={i} sx={{ borderLeft: "3px solid #e65100", pl: 1.5, py: 0.5 }}>
                                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                    <CollapseToggle collapsed={collapsedArtifacts.has(i)} onClick={() => toggleArtifact(i)} />
                                     <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>{ar.name}</Typography>
                                     {ar.level != null && (
                                         <Chip label={`Level ${ar.level}`} size="small"
@@ -610,7 +655,9 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                                         <X size={10} />
                                     </IconButton>
                                 </Box>
-                                <Typography variant="caption" sx={{ color: "text.secondary" }}>{ar.effect}</Typography>
+                                <Collapse in={!collapsedArtifacts.has(i)}>
+                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block", pl: 3.5 }}>{ar.effect}</Typography>
+                                </Collapse>
                             </Box>
                         ))}
                     </Box>
@@ -653,6 +700,7 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                         {data.arcs.map((arc, i) => (
                             <Box key={i} sx={{ borderLeft: "3px solid #00695c", pl: 1.5, py: 0.5 }}>
                                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                    <CollapseToggle collapsed={collapsedArcs.has(i)} onClick={() => toggleArc(i)} />
                                     <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>{arc.name}</Typography>
                                     <Chip label={arc.status === "active" ? "Active" : "Completed"} size="small"
                                         onClick={() => quickSave({
@@ -669,12 +717,14 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                                         <X size={10} />
                                     </IconButton>
                                 </Box>
-                                <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>{arc.description}</Typography>
-                                {arc.notes && (
-                                    <Typography variant="caption" sx={{ color: "text.disabled", whiteSpace: "pre-wrap", display: "block", mt: 0.5 }}>
-                                        {arc.notes}
-                                    </Typography>
-                                )}
+                                <Collapse in={!collapsedArcs.has(i)}>
+                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block", pl: 3.5 }}>{arc.description}</Typography>
+                                    {arc.notes && (
+                                        <Typography variant="caption" sx={{ color: "text.disabled", whiteSpace: "pre-wrap", display: "block", mt: 0.5, pl: 3.5 }}>
+                                            {arc.notes}
+                                        </Typography>
+                                    )}
+                                </Collapse>
                             </Box>
                         ))}
                     </Box>
@@ -746,6 +796,31 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                         <InlineNumber value={data.shins} onCommit={v => quickSave({ shins: Math.max(0, v) })}
                             width={70} fontSize="0.9rem" fontWeight={700} min={0} />
                     </Box>
+                </Paper>
+
+                {/* GM Intrusions */}
+                <SectionHeader label="GM Intrusions" />
+                <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
+                    {matchedFocus?.gm_intrusion ? (
+                        <Box sx={{ borderLeft: "3px solid #7c3aed", pl: 1.5, py: 0.5, mb: 1.5 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>
+                                {matchedFocus.name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                                {matchedFocus.gm_intrusion}
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <Typography variant="body2" sx={{ color: "text.disabled", mb: 1.5 }}>
+                            {focus.trim()
+                                ? `No specific GM intrusion on file for "${focus}". Browse general ideas below.`
+                                : "Set a Focus to see its specific GM intrusion suggestion here, if the SRD has one on file."}
+                        </Typography>
+                    )}
+                    <Button size="small" variant="outlined" startIcon={<Sparkles size={12} />}
+                        onClick={() => setCommonIntrusionsOpen(true)}>
+                        Browse Common Intrusions
+                    </Button>
                 </Paper>
 
                 {/* Notes */}
@@ -830,6 +905,11 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                         setNewArc({ name: a.name, description: a.description, status: "active", notes: formatArcSteps(a) });
                         setPicker(null);
                     }}
+                />
+
+                <CommonIntrusionsDialog
+                    open={commonIntrusionsOpen}
+                    onClose={() => setCommonIntrusionsOpen(false)}
                 />
             </Container>
         </Box>

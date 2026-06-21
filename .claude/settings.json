@@ -71,14 +71,32 @@
       "Bash(curl -s \"https://raw.githubusercontent.com/Roll20/roll20-character-sheets/master/CypherSystem/CypherSystem.htm\" -o /tmp/cypher_sheet.htm)",
       "Read(//tmp/**)",
       "Bash(npm audit *)",
-      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('manifest.json'\\)\\); console.log\\('manifest.json OK'\\)\")"
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('manifest.json'\\)\\); console.log\\('manifest.json OK'\\)\")",
+      "Bash(curl -sf http://localhost:3000)",
+      "Bash(break)",
+      "Bash(curl -sf http://localhost:3001/tabletop/campaigns -o /tmp/campaigns_page.html -w \"HTTP %{http_code}\\\\n\")",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(pkill -f \"next-server\")",
+      "Bash(curl -sL \"https://rmalley.com/\" -o /tmp/rmalley_home.html -w \"HTTP %{http_code}\\\\n\")",
+      "Bash(node --check roll20-bridge/background.js)",
+      "Bash(node --check roll20-bridge/content.js)",
+      "Bash(curl -s \"https://api.github.com/repos/Roll20/roll20-character-sheets/contents/Cypher%20Systems%20by%20Roll20\")",
+      "Bash(curl -s -w \"\\\\nHTTP_STATUS:%{http_code}\\\\n\" \"https://api.github.com/repos/Roll20/roll20-character-sheets/contents/Cypher%20Systems%20by%20Roll20\")",
+      "Bash(curl -s \"https://api.github.com/repos/Roll20/roll20-character-sheets/git/trees/master\")",
+      "Bash(curl -s \"https://api.github.com/repos/Roll20/roll20-character-sheets/contents/Cypher%20Systems%20Official\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/Roll20/roll20-character-sheets/master/Cypher%20Systems%20Official/cypher_systems_by_roll20.html\" -o /tmp/cypher_roll20_sheet.htm)",
+      "Bash(curl -sf http://localhost:3001 -o /dev/null)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 11212 //F)",
+      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/gm-dashboard/player-view\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\encounters\\[encounterId]",
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt",
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt\\[boardId]",
-      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]"
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]",
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\gm-dashboard"
     ]
   }
 }

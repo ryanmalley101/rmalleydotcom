@@ -56,3 +56,13 @@ export const STEP_MODIFIERS: { label: string; effect: string }[] = [
 // Default cypher carry limit before "too many cyphers" risk applies (most
 // characters; some foci/abilities raise this).
 export const DEFAULT_CYPHER_LIMIT = 2;
+
+// Reference only — the standard tier-advancement benefit menu (spend 4 XP,
+// pick one). Deliberately not wired to update a character automatically.
+export const TIER_ADVANCEMENT_OPTIONS: { label: string; detail: string }[] = [
+    { label: "Increase a Pool", detail: "Add 4 points to one stat Pool (or split across Pools, GM's discretion)." },
+    { label: "Increase Effort", detail: "Add 1 to your Effort score." },
+    { label: "Increase an Edge", detail: "Add 1 to one Edge." },
+    { label: "Train a skill", detail: "Become trained in a skill you aren't already trained in, or specialized in one you're trained in." },
+    { label: "Gain a Tier ability", detail: "Take one of the abilities your Type or Focus offers at the new tier." },
+];
