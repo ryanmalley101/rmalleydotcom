@@ -12,7 +12,7 @@ import type { Schema } from "@/amplify/data/resource";
 const client = generateClient<Schema>();
 type World = Schema["DnDWorld"]["type"];
 
-const CATEGORIES = ["Location", "Person", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
+const CATEGORIES = ["Location", "Person", "Species", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
 
 interface QuickWikiDialogProps {
     open: boolean;

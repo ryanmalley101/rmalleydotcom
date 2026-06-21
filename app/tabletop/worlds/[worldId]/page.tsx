@@ -9,7 +9,7 @@ import {
     IconButton, Tooltip, Tabs, Tab, Alert, LinearProgress,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Plus, BookOpen, ScrollText, Trash2, Globe, Upload, Link2, AlertTriangle, Map as MapIcon, Wand2 } from "lucide-react";
+import { ArrowLeft, Plus, BookOpen, ScrollText, Trash2, Globe, Upload, Link2, AlertTriangle, Map as MapIcon, Wand2, EyeOff } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
@@ -384,6 +384,10 @@ export default function WorldPage() {
                                                             <Chip label={STATUS_LABEL[a.status] ?? a.status} size="small"
                                                                 sx={{ height: 18, fontSize: "0.6rem",
                                                                     backgroundColor: STATUS_COLOR[a.status] ?? "#555", color: "#fff" }} />
+                                                        )}
+                                                        {a.visibleToPlayers === false && (
+                                                            <Chip icon={<EyeOff size={11} />} label="GM Only" size="small"
+                                                                sx={{ height: 18, fontSize: "0.6rem", backgroundColor: "#6a1b9a", color: "#fff" }} />
                                                         )}
                                                         {(a.tags ?? []).slice(0, 3).map(tag => (
                                                             <Chip key={tag} label={tag} size="small" variant="outlined"
