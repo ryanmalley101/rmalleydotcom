@@ -12,6 +12,7 @@ import { ArrowLeft, Plus, Minus, X, Swords, Search, Play, Users, Shield, Heart, 
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "../../combatSettings";
+import CypherEncounterBuilder from "./CypherEncounterBuilder";
 
 const client = generateClient<Schema>();
 type EncounterRecord  = Schema["Encounter"]["type"];
@@ -61,7 +62,26 @@ const DIFF_COLOR: Record<string, string> = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+// Branches by campaign system — Cypher campaigns get a creature/NPC-based
+// builder instead of the D&D CR/XP-budget one.
 export default function EncounterBuilderPage() {
+    const { campaignId } = useParams<{ campaignId: string }>();
+    const [system, setSystem] = useState<string | null | undefined>(undefined);
+
+    useEffect(() => {
+        client.models.DnDCampaign.get({ id: campaignId }).then(({ data }) => setSystem(data?.system ?? null));
+    }, [campaignId]);
+
+    if (system === undefined) return (
+        <Box sx={{ display: "flex", justifyContent: "center", pt: 12 }}>
+            <CircularProgress sx={{ color: "primary.main" }} />
+        </Box>
+    );
+    if (system === "Cypher System") return <CypherEncounterBuilder />;
+    return <DnDEncounterBuilder />;
+}
+
+function DnDEncounterBuilder() {
     const { campaignId, encounterId } = useParams<{ campaignId: string; encounterId: string }>();
     const router = useRouter();
 

@@ -12,5 +12,8 @@ export const storage = defineStorage({
         'wiki-covers/*': [
             allow.authenticated.to(['read', 'write', 'delete']),
         ],
+        'wiki-gallery/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
     }),
 });

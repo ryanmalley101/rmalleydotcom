@@ -6,15 +6,19 @@ import {
     Box, Container, Typography, Button, TextField, Chip,
     Divider, CircularProgress, MenuItem, Select, FormControl,
     InputLabel, IconButton, Tooltip, Dialog, DialogTitle,
-    DialogContent, DialogActions, Tabs, Tab,
+    DialogContent, DialogActions, Tabs, Tab, Autocomplete, Switch,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2, Save, X, ChevronUp, BookOpen, ScrollText, Upload, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Save, X, ChevronUp, BookOpen, ScrollText, Upload, Image as ImageIcon, ImagePlus } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useWikiLinkInsert } from "../useWikiLinkInsert";
+import { useFileDrop } from "../useFileDrop";
+import { Lightbox } from "../Lightbox";
+import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
 
 const client = generateClient<Schema>();
 type Article = Schema["WikiArticle"]["type"];
@@ -156,7 +160,29 @@ export default function ArticlePage() {
     const [parentTitle, setParentTitle] = useState("");
     const [tags, setTags]               = useState<string[]>([]);
     const [tagInput, setTagInput]       = useState("");
+    const [galleryKeys, setGalleryKeys] = useState<string[]>([]);
+    const [galleryUrls, setGalleryUrls] = useState<Record<string, string>>({});
+    const [galleryUploading, setGalleryUploading] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const coverInputRef = useRef<HTMLInputElement>(null);
+    const galleryInputRef = useRef<HTMLInputElement>(null);
+
+    // Unsaved-changes tracking + leave confirmation
+    const [discardAction, setDiscardAction] = useState<null | { type: "nav"; href: string } | { type: "cancelEdit" }>(null);
+
+    // Autosave
+    const { autosaveDefault, autosaveDefaultLoaded, setAutosaveDefault } = useAutosaveDefault();
+    const [autosaveEnabled, setAutosaveEnabled] = useState(true);
+    const [autosaving, setAutosaving]   = useState(false);
+    const [lastAutosaved, setLastAutosaved] = useState<Date | null>(null);
+    const autosaveSeededRef = useRef(false);
+
+    useEffect(() => {
+        if (autosaveDefaultLoaded && !autosaveSeededRef.current) {
+            setAutosaveEnabled(autosaveDefault);
+            autosaveSeededRef.current = true;
+        }
+    }, [autosaveDefaultLoaded, autosaveDefault]);
 
     async function load() {
         const [aRes, allRes, campRes] = await Promise.all([
@@ -178,6 +204,8 @@ export default function ArticlePage() {
             setStatus((a.status as ArticleStatus | null) ?? "published");
             setParentTitle(a.parentTitle ?? "");
             setTags((a.tags ?? []).filter((t): t is string => t != null));
+            const keys = (a.galleryImageKeys ?? []).filter((k): k is string => k != null);
+            setGalleryKeys(keys);
 
             // Resolve cover image: S3 key takes priority over URL
             if (a.coverImageKey) {
@@ -187,6 +215,20 @@ export default function ArticlePage() {
                 } catch { setResolvedCoverUrl(a.coverImageUrl ?? ""); }
             } else {
                 setResolvedCoverUrl(a.coverImageUrl ?? "");
+            }
+
+            // Resolve gallery image URLs
+            if (keys.length) {
+                const resolved: Record<string, string> = {};
+                await Promise.all(keys.map(async key => {
+                    try {
+                        const { url } = await getUrl({ path: key, options: { expiresIn: 3600 } });
+                        resolved[key] = url.toString();
+                    } catch { /* skip unresolvable key */ }
+                }));
+                setGalleryUrls(resolved);
+            } else {
+                setGalleryUrls({});
             }
 
             // Find sessions that pin this article
@@ -217,6 +259,51 @@ export default function ArticlePage() {
         return map;
     }, [allArticles]);
 
+    const parentOptions = useMemo(() =>
+        allArticles.filter(a => a.id !== articleId).map(a => a.title).sort(),
+    [allArticles, articleId]);
+
+    const { textareaRef: linkTextareaRef, handleKeyDown: handleLinkKeyDown, dialog: linkDialog } =
+        useWikiLinkInsert({ content, setContent, articleTitles: parentOptions });
+
+    const isDirty = useMemo(() => {
+        if (!article || !editing) return false;
+        const articleTags = (article.tags ?? []).filter((t): t is string => t != null);
+        const articleGallery = (article.galleryImageKeys ?? []).filter((k): k is string => k != null);
+        return (
+            title !== article.title ||
+            category !== (article.category ?? "Other") ||
+            articleType !== (article.articleType ?? "") ||
+            content !== (article.content ?? "") ||
+            excerpt !== (article.excerpt ?? "") ||
+            coverImageUrl !== (article.coverImageUrl ?? "") ||
+            coverImageKey !== (article.coverImageKey ?? "") ||
+            status !== ((article.status as ArticleStatus | null) ?? "published") ||
+            parentTitle !== (article.parentTitle ?? "") ||
+            JSON.stringify(tags) !== JSON.stringify(articleTags) ||
+            JSON.stringify(galleryKeys) !== JSON.stringify(articleGallery)
+        );
+    }, [article, editing, title, category, articleType, content, excerpt,
+        coverImageUrl, coverImageKey, status, parentTitle, tags, galleryKeys]);
+
+    // Warn on browser-level exits (refresh, close tab, type a new URL) while dirty.
+    useEffect(() => {
+        function handler(e: BeforeUnloadEvent) {
+            if (isDirty) { e.preventDefault(); e.returnValue = ""; }
+        }
+        window.addEventListener("beforeunload", handler);
+        return () => window.removeEventListener("beforeunload", handler);
+    }, [isDirty]);
+
+    // Debounced autosave while editing.
+    useEffect(() => {
+        if (!editing || !autosaveEnabled || !isDirty) return;
+        const timer = setTimeout(() => { silentSave(); }, 4000);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editing, autosaveEnabled, isDirty, title, category, articleType, content,
+        excerpt, coverImageUrl, coverImageKey, status, parentTitle, tags, galleryKeys]);
+
     async function uploadCover(file: File) {
         setCoverUploading(true);
         const ext = file.name.split(".").pop() ?? "jpg";
@@ -231,12 +318,42 @@ export default function ArticlePage() {
             setCoverUploading(false);
         }
     }
+    const coverDrop = useFileDrop(files => { if (files[0]) uploadCover(files[0]); });
 
-    async function save() {
-        if (!title.trim() || !article) return;
-        setSaving(true);
-        await client.models.WikiArticle.update({
-            id: article.id,
+    async function uploadGalleryFiles(files: File[]) {
+        setGalleryUploading(true);
+        try {
+            const newKeys: string[] = [];
+            const newUrls: Record<string, string> = {};
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const ext = file.name.split(".").pop() ?? "jpg";
+                const key = `wiki-gallery/${worldId}/${articleId}/${Date.now()}-${i}.${ext}`;
+                try {
+                    await uploadData({ path: key, data: file, options: { contentType: file.type } }).result;
+                    const { url } = await getUrl({ path: key, options: { expiresIn: 3600 } });
+                    newKeys.push(key);
+                    newUrls[key] = url.toString();
+                } catch { /* skip failed upload */ }
+            }
+            setGalleryKeys(prev => [...prev, ...newKeys]);
+            setGalleryUrls(prev => ({ ...prev, ...newUrls }));
+        } finally {
+            setGalleryUploading(false);
+        }
+    }
+    function removeGalleryImage(key: string) {
+        setGalleryKeys(prev => prev.filter(k => k !== key));
+    }
+    const galleryDrop = useFileDrop(uploadGalleryFiles);
+    function handleGalleryFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+        const files = Array.from(e.target.files ?? []);
+        if (files.length) uploadGalleryFiles(files);
+        e.target.value = "";
+    }
+
+    function buildUpdatePayload() {
+        return {
             title: title.trim(),
             category,
             articleType: articleType || undefined,
@@ -247,10 +364,41 @@ export default function ArticlePage() {
             status,
             parentTitle: parentTitle.trim() || undefined,
             tags: tags.length > 0 ? tags : undefined,
-        });
+            galleryImageKeys: galleryKeys.length > 0 ? galleryKeys : undefined,
+        };
+    }
+
+    async function save() {
+        if (!title.trim() || !article) return;
+        setSaving(true);
+        await client.models.WikiArticle.update({ id: article.id, ...buildUpdatePayload() });
         setSaving(false);
         setEditing(false);
         load();
+    }
+
+    // Saves quietly without leaving edit mode or re-fetching (avoids cursor jumps).
+    async function silentSave() {
+        if (!title.trim() || !article) return;
+        setAutosaving(true);
+        const payload = buildUpdatePayload();
+        await client.models.WikiArticle.update({ id: article.id, ...payload });
+        setArticle(prev => prev ? {
+            ...prev,
+            title: payload.title,
+            category: payload.category ?? null,
+            articleType: payload.articleType ?? null,
+            content: payload.content ?? null,
+            excerpt: payload.excerpt ?? null,
+            coverImageUrl: payload.coverImageUrl ?? null,
+            coverImageKey: payload.coverImageKey ?? null,
+            status: payload.status,
+            parentTitle: payload.parentTitle ?? null,
+            tags: payload.tags ?? null,
+            galleryImageKeys: payload.galleryImageKeys ?? null,
+        } : prev);
+        setAutosaving(false);
+        setLastAutosaved(new Date());
     }
 
     async function deleteArticle() {
@@ -271,10 +419,29 @@ export default function ArticlePage() {
             setStatus((article.status as ArticleStatus | null) ?? "published");
             setParentTitle(article.parentTitle ?? "");
             setTags((article.tags ?? []).filter((t): t is string => t != null));
+            setGalleryKeys((article.galleryImageKeys ?? []).filter((k): k is string => k != null));
         }
         setEditing(false);
         setEditTab(0);
         setTagInput("");
+    }
+
+    function requestCancelEdit() {
+        if (isDirty) setDiscardAction({ type: "cancelEdit" });
+        else cancelEdit();
+    }
+
+    function requestNav(href: string) {
+        if (isDirty) setDiscardAction({ type: "nav", href });
+        else router.push(href);
+    }
+
+    function confirmDiscard() {
+        const action = discardAction;
+        setDiscardAction(null);
+        if (!action) return;
+        if (action.type === "nav") router.push(action.href);
+        else cancelEdit();
     }
 
     const childArticles = useMemo(() =>
@@ -290,6 +457,11 @@ export default function ArticlePage() {
             a.content?.includes(`[[${article.title}]]`)
         ) : [],
     [allArticles, article]);
+
+    const viewGalleryUrls = useMemo(() =>
+        ((article?.galleryImageKeys ?? []).filter((k): k is string => k != null))
+            .map(k => galleryUrls[k]).filter((u): u is string => !!u),
+    [article, galleryUrls]);
 
     if (loading) return (
         <Box sx={{ display: "flex", justifyContent: "center", pt: 12 }}>
@@ -309,7 +481,7 @@ export default function ArticlePage() {
     return (
         <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
             <Container maxWidth="md">
-                <Button component={Link} href={`/tabletop/worlds/${worldId}`}
+                <Button onClick={() => requestNav(`/tabletop/worlds/${worldId}`)}
                     startIcon={<ArrowLeft size={16} />} sx={{ mb: 4, color: "primary.main" }}>
                     Back to World
                 </Button>
@@ -359,7 +531,15 @@ export default function ArticlePage() {
                             <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.75 }}>
                                 Cover Image
                             </Typography>
-                            <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", flexWrap: "wrap" }}>
+                            <Box {...coverDrop.dropHandlers}
+                                sx={{
+                                    display: "flex", gap: 1.5, alignItems: "flex-start", flexWrap: "wrap",
+                                    p: 1.5, border: "2px dashed",
+                                    borderColor: coverDrop.isDragging ? "primary.main" : "divider",
+                                    borderRadius: 2,
+                                    backgroundColor: coverDrop.isDragging ? "rgba(154,52,18,0.06)" : "transparent",
+                                    transition: "border-color 0.15s, background-color 0.15s",
+                                }}>
                                 {resolvedCoverUrl && (
                                     <Box sx={{ position: "relative" }}>
                                         <Box component="img" src={resolvedCoverUrl} alt="Cover"
@@ -382,6 +562,9 @@ export default function ArticlePage() {
                                     </Button>
                                     <input ref={coverInputRef} type="file" accept="image/*" hidden
                                         onChange={e => { const f = e.target.files?.[0]; if (f) uploadCover(f); }} />
+                                    <Typography variant="caption" sx={{ color: "text.disabled", fontSize: "0.7rem" }}>
+                                        or drag and drop an image
+                                    </Typography>
                                     {!coverImageKey && (
                                         <TextField size="small" label="Or paste URL" fullWidth
                                             placeholder="https://…"
@@ -398,9 +581,70 @@ export default function ArticlePage() {
                             </Box>
                         </Box>
 
-                        <TextField label="Parent Article Title" fullWidth
-                            placeholder="e.g. Ash Peak (exact title of parent article)"
-                            value={parentTitle} onChange={e => setParentTitle(e.target.value)} />
+                        {/* Gallery — supplemental images */}
+                        <Box>
+                            <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.75 }}>
+                                Gallery
+                            </Typography>
+                            <Box {...galleryDrop.dropHandlers}
+                                sx={{
+                                    display: "flex", flexWrap: "wrap", gap: 1.5, p: 1.5,
+                                    border: "2px dashed",
+                                    borderColor: galleryDrop.isDragging ? "primary.main" : "divider",
+                                    borderRadius: 2,
+                                    backgroundColor: galleryDrop.isDragging ? "rgba(154,52,18,0.06)" : "transparent",
+                                    transition: "border-color 0.15s, background-color 0.15s",
+                                }}>
+                                {galleryKeys.map(key => (
+                                    <Box key={key} sx={{ position: "relative" }}>
+                                        {galleryUrls[key] ? (
+                                            <Box component="img" src={galleryUrls[key]} alt=""
+                                                sx={{ width: 72, height: 72, objectFit: "cover", borderRadius: 1, display: "block" }} />
+                                        ) : (
+                                            <Box sx={{ width: 72, height: 72, borderRadius: 1,
+                                                backgroundColor: "rgba(0,0,0,0.06)", display: "flex",
+                                                alignItems: "center", justifyContent: "center" }}>
+                                                <CircularProgress size={16} />
+                                            </Box>
+                                        )}
+                                        <IconButton size="small" onClick={() => removeGalleryImage(key)}
+                                            sx={{ position: "absolute", top: -6, right: -6, p: 0.25,
+                                                backgroundColor: "error.main", color: "#fff",
+                                                "&:hover": { backgroundColor: "error.dark" }, width: 18, height: 18 }}>
+                                            <X size={10} />
+                                        </IconButton>
+                                    </Box>
+                                ))}
+                                <Box onClick={() => galleryInputRef.current?.click()}
+                                    sx={{
+                                        width: 72, height: 72, display: "flex", flexDirection: "column",
+                                        alignItems: "center", justifyContent: "center", gap: 0.5,
+                                        border: "1px dashed", borderColor: "primary.light", borderRadius: 1,
+                                        cursor: "pointer", color: "primary.main",
+                                        "&:hover": { backgroundColor: "rgba(154,52,18,0.04)" },
+                                    }}>
+                                    {galleryUploading ? <CircularProgress size={16} /> : <ImagePlus size={18} />}
+                                    <Typography sx={{ fontSize: "0.6rem" }}>Add</Typography>
+                                </Box>
+                                <input ref={galleryInputRef} type="file" accept="image/*" multiple hidden
+                                    onChange={handleGalleryFileSelect} />
+                            </Box>
+                            <Typography variant="caption" sx={{ color: "text.disabled", fontSize: "0.7rem", display: "block", mt: 0.5 }}>
+                                Supplemental images — alternate forms, reference art, etc. Drag and drop or click Add.
+                            </Typography>
+                        </Box>
+
+                        <Autocomplete
+                            freeSolo
+                            fullWidth
+                            options={parentOptions}
+                            inputValue={parentTitle}
+                            onInputChange={(_, newValue) => setParentTitle(newValue)}
+                            renderInput={params => (
+                                <TextField {...params} label="Parent Article"
+                                    placeholder="Search for an article…" />
+                            )}
+                        />
 
                         {/* Tags */}
                         <Box>
@@ -438,8 +682,9 @@ export default function ArticlePage() {
                             </Tabs>
                             {editTab === 0 ? (
                                 <TextField label="Content" multiline minRows={20} fullWidth
-                                    placeholder="Use [[Article Title]] to link. Markdown supported: **bold**, # headings, - lists, > quotes, | tables."
+                                    placeholder="Use [[Article Title]] to link, or select text and press Ctrl+K. Markdown supported: **bold**, # headings, - lists, > quotes, | tables."
                                     value={content} onChange={e => setContent(e.target.value)}
+                                    inputRef={linkTextareaRef} onKeyDown={handleLinkKeyDown}
                                     sx={{ "& textarea": { fontFamily: "monospace", fontSize: "0.9rem" } }}
                                 />
                             ) : (
@@ -459,16 +704,37 @@ export default function ArticlePage() {
                         </Box>
 
                         <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                            <strong>[[Article Title]]</strong> creates a wiki link. Markdown formatting is supported.
+                            <strong>[[Article Title]]</strong> creates a wiki link, or select text and press{" "}
+                            <strong>Ctrl+K</strong> to search for an article. Markdown formatting is supported.
                             Unresolved links appear in orange.
                         </Typography>
-                        <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
-                            <Button startIcon={<X size={16} />} onClick={cancelEdit}>Cancel</Button>
-                            <Button variant="contained" startIcon={<Save size={16} />}
-                                onClick={save} disabled={saving || !title.trim()}
-                                sx={{ backgroundColor: "primary.main" }}>
-                                {saving ? <CircularProgress size={18} /> : "Save"}
-                            </Button>
+                        <Box sx={{ display: "flex", gap: 2, justifyContent: "space-between", alignItems: "center" }}>
+                            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                                <Switch size="small" checked={autosaveEnabled}
+                                    onChange={e => setAutosaveEnabled(e.target.checked)} />
+                                <Typography variant="caption" sx={{ color: "text.secondary" }}>Autosave</Typography>
+                                {autosaveDefaultLoaded && autosaveEnabled !== autosaveDefault && (
+                                    <Button size="small" onClick={() => setAutosaveDefault(autosaveEnabled)}
+                                        sx={{ fontSize: "0.65rem", minWidth: 0, p: 0, textTransform: "none", color: "primary.main" }}>
+                                        Set as default
+                                    </Button>
+                                )}
+                                {autosaving ? (
+                                    <Typography variant="caption" sx={{ color: "text.disabled" }}>Saving…</Typography>
+                                ) : lastAutosaved ? (
+                                    <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                                        Autosaved {lastAutosaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                    </Typography>
+                                ) : null}
+                            </Box>
+                            <Box sx={{ display: "flex", gap: 2 }}>
+                                <Button startIcon={<X size={16} />} onClick={requestCancelEdit}>Cancel</Button>
+                                <Button variant="contained" startIcon={<Save size={16} />}
+                                    onClick={save} disabled={saving || !title.trim()}
+                                    sx={{ backgroundColor: "primary.main" }}>
+                                    {saving ? <CircularProgress size={18} /> : "Save"}
+                                </Button>
+                            </Box>
                         </Box>
                     </Box>
                 ) : (
@@ -561,6 +827,24 @@ export default function ArticlePage() {
                             </Box>
                         )}
 
+                        {/* Gallery */}
+                        {viewGalleryUrls.length > 0 && (
+                            <Box sx={{ mt: 4 }}>
+                                <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+                                    Gallery:
+                                </Typography>
+                                <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                                    {viewGalleryUrls.map((url, i) => (
+                                        <Box key={url} component="img" src={url} alt=""
+                                            onClick={() => setLightboxIndex(i)}
+                                            sx={{ width: 96, height: 96, objectFit: "cover", borderRadius: 1,
+                                                cursor: "pointer", display: "block",
+                                                "&:hover": { opacity: 0.85 } }} />
+                                    ))}
+                                </Box>
+                            </Box>
+                        )}
+
                         {/* Child articles */}
                         {childArticles.length > 0 && (
                             <Box sx={{ mt: 6 }}>
@@ -630,6 +914,22 @@ export default function ArticlePage() {
                         <Button color="error" variant="contained" onClick={deleteArticle}>Delete</Button>
                     </DialogActions>
                 </Dialog>
+
+                <Dialog open={!!discardAction} onClose={() => setDiscardAction(null)}>
+                    <DialogTitle>Discard unsaved changes?</DialogTitle>
+                    <DialogContent>
+                        <Typography>You have unsaved edits to this article. Leaving now will discard them.</Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setDiscardAction(null)}>Keep editing</Button>
+                        <Button color="error" variant="contained" onClick={confirmDiscard}>Discard</Button>
+                    </DialogActions>
+                </Dialog>
+
+                <Lightbox images={viewGalleryUrls} index={lightboxIndex}
+                    onClose={() => setLightboxIndex(null)} onIndexChange={setLightboxIndex} />
+
+                {linkDialog}
             </Container>
         </Box>
     );

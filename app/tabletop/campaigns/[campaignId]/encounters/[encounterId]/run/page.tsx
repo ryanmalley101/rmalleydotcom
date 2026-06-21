@@ -19,6 +19,7 @@ import { scoreToMod } from "@/5eReference/converters";
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import type { EncounterEntry } from "../page";
 import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "../../../combatSettings";
+import CypherEncounterRun from "./CypherEncounterRun";
 
 const client = generateClient<Schema>();
 type MonsterStatblock = Schema["MonsterStatblock"]["type"];
@@ -695,7 +696,25 @@ function PCStatblockPanel({ pc }: { pc: PlayerCharacter }) {
 
 // ── Main Run Page ─────────────────────────────────────────────────────────────
 
+// Branches by campaign system — Cypher campaigns get the pools/level-based runner.
 export default function RunEncounterPage() {
+    const { campaignId } = useParams<{ campaignId: string }>();
+    const [system, setSystem] = useState<string | null | undefined>(undefined);
+
+    useEffect(() => {
+        client.models.DnDCampaign.get({ id: campaignId }).then(({ data }) => setSystem(data?.system ?? null));
+    }, [campaignId]);
+
+    if (system === undefined) return (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "background.default" }}>
+            <CircularProgress sx={{ color: "primary.main" }} />
+        </Box>
+    );
+    if (system === "Cypher System") return <CypherEncounterRun />;
+    return <DnDRunEncounterPage />;
+}
+
+function DnDRunEncounterPage() {
     const { campaignId, encounterId } = useParams<{ campaignId: string; encounterId: string }>();
     const theme = useTheme();
     const isWide = useMediaQuery(theme.breakpoints.up("md"));

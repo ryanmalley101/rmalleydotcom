@@ -100,6 +100,7 @@ const WikiArticle = a.model({
   excerpt:       a.string(),
   coverImageUrl: a.string(),
   coverImageKey: a.string(), // Amplify Storage S3 key (preferred over coverImageUrl)
+  galleryImageKeys: a.string().array(), // Amplify Storage S3 keys — supplemental gallery images
   status:        a.string(), // 'published' | 'draft' | 'stub'
   articleType:   a.string(),
   parentTitle:   a.string(),
@@ -291,6 +292,11 @@ const CampaignInvite = a.model({
   expiresAt:  a.string(),
 }).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
+// Per-user app preferences (one row per Cognito user, created lazily on first use)
+const UserPreference = a.model({
+  autosaveEnabled: a.boolean(),
+}).authorization(allow => [allow.owner()]);
+
 const schema = a.schema({
   DamageDice,
   MovementSpeed,
@@ -312,6 +318,7 @@ const schema = a.schema({
   Faction,
   Companion,
   TodoItem,
+  UserPreference,
   MonsterStatblock: a.model({
     id: a.id().required(),
     slug: a.string(),            // open5e slug, used for deduplication on import
