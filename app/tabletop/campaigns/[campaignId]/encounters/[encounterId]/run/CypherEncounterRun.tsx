@@ -176,7 +176,7 @@ function CombatantRow(props: RowProps) {
     function applyDelta(sign: 1 | -1) {
         const n = parseInt(dmgAmt, 10);
         if (isNaN(n) || n <= 0) return;
-        if (c.type === "pc" && c.pools) props.onAdjustPool(c.id, pool, sign * -n);
+        if (c.type === "pc" && c.pools) props.onAdjustPool(c.id, pool, sign * n);
         else props.onAdjustHealth(c.id, sign * n);
         setDmgAmt("");
     }

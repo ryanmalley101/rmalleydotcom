@@ -13,22 +13,36 @@ const CONFIG = {
 };
 
 const DEBOUNCE_MS = 600;
-const pending = new Map(); // characterName -> { attrs: {}, timer }
+const pending = new Map(); // characterName -> { attrs: {}, rows: Map<"section|rowId", {section,rowId,row}>, timer }
 let characterCache = null; // { campaignId, fetchedAt, byNameLower: Map<string,string> }
 
 chrome.runtime.onMessage.addListener((msg) => {
     if (msg?.type === "ATTR_CHANGE") {
         queueChange(msg.characterName, msg.attr, msg.value);
+    } else if (msg?.type === "REPEATING_ROW") {
+        queueRepeatingRow(msg.characterName, msg.section, msg.rowId, msg.row);
     }
 });
 
-function queueChange(characterName, attr, value) {
+function getPendingEntry(characterName) {
     let entry = pending.get(characterName);
     if (!entry) {
-        entry = { attrs: {}, timer: null };
+        entry = { attrs: {}, rows: new Map(), timer: null };
         pending.set(characterName, entry);
     }
+    return entry;
+}
+
+function queueChange(characterName, attr, value) {
+    const entry = getPendingEntry(characterName);
     entry.attrs[attr] = value;
+    clearTimeout(entry.timer);
+    entry.timer = setTimeout(() => flush(characterName), DEBOUNCE_MS);
+}
+
+function queueRepeatingRow(characterName, section, rowId, row) {
+    const entry = getPendingEntry(characterName);
+    entry.rows.set(`${section}|${rowId}`, { section, rowId, row });
     clearTimeout(entry.timer);
     entry.timer = setTimeout(() => flush(characterName), DEBOUNCE_MS);
 }
@@ -38,7 +52,7 @@ async function flush(characterName) {
     if (!entry) return;
     pending.delete(characterName);
     try {
-        await applyChanges(characterName, entry.attrs);
+        await applyChanges(characterName, entry.attrs, entry.rows);
     } catch (err) {
         console.error("[Roll20 Bridge] sync failed for", characterName, err);
     }
@@ -59,31 +73,143 @@ function mapDamageTrack(v) {
     }
 }
 
-async function applyChanges(characterName, attrs) {
+// Splits incoming sheet attributes into fields that live inside the JSON blob
+// (systemDataJson, requiring a read-merge-write) vs. fields that are direct
+// top-level columns on PlayerCharacter (no read needed, just an overwrite).
+function mapAttrsToPatch(attrs) {
+    const dataPatch = {};
+    const topLevelPatch = {};
+
+    if ("attr_might" in attrs) dataPatch.currentMight = num(attrs.attr_might);
+    if ("attr_might_max" in attrs) dataPatch.mightPool = num(attrs.attr_might_max);
+    if ("attr_might_edge" in attrs) dataPatch.mightEdge = num(attrs.attr_might_edge);
+    if ("attr_speed" in attrs) dataPatch.currentSpeed = num(attrs.attr_speed);
+    if ("attr_speed_max" in attrs) dataPatch.speedPool = num(attrs.attr_speed_max);
+    if ("attr_speed_edge" in attrs) dataPatch.speedEdge = num(attrs.attr_speed_edge);
+    if ("attr_intellect" in attrs) dataPatch.currentIntellect = num(attrs.attr_intellect);
+    if ("attr_intellect_max" in attrs) dataPatch.intellectPool = num(attrs.attr_intellect_max);
+    if ("attr_intellect_edge" in attrs) dataPatch.intellectEdge = num(attrs.attr_intellect_edge);
+    if ("attr_damage-track" in attrs) dataPatch.damageTrack = mapDamageTrack(attrs["attr_damage-track"]);
+    if ("attr_effort" in attrs) dataPatch.effort = num(attrs.attr_effort);
+    if ("attr_background" in attrs) dataPatch.backstory = attrs.attr_background;
+    if ("attr_shins" in attrs) dataPatch.shins = num(attrs.attr_shins);
+
+    if ("attr_descriptor" in attrs) topLevelPatch.race = attrs.attr_descriptor;
+    if ("attr_type" in attrs) topLevelPatch.characterClass = attrs.attr_type;
+    if ("attr_focus" in attrs) topLevelPatch.subclass = attrs.attr_focus;
+    if ("attr_tier" in attrs) topLevelPatch.level = num(attrs.attr_tier);
+    if ("attr_xp" in attrs) topLevelPatch.xp = num(attrs.attr_xp);
+
+    return { dataPatch, topLevelPatch };
+}
+
+// Mirrors content.js's REPEATING_SECTIONS — section name -> which CypherData
+// array it feeds. (Duplicated rather than shared: these run in separate
+// extension contexts with no build step wiring them together.)
+const REPEATING_SECTIONS = {
+    "skills":         { listKey: "skills" },
+    "abilities":      { listKey: "abilities" },
+    "cypher-list":    { listKey: "cyphers" },
+    "artifact-list":  { listKey: "artifacts" },
+    "equipment-list": { listKey: "equipment" },
+};
+
+function mapSkillLevel(v) {
+    switch (String(v)) {
+        case "1": return "trained";
+        case "2": return "specialized";
+        case "-1": return "inability";
+        default: return null; // 0 (untrained) or unset — nothing worth recording
+    }
+}
+
+// Builds the app-shaped entry for one repeating-section row, or null if the
+// row doesn't have enough filled in yet to be worth importing (e.g. a fresh
+// blank row Roll20 added when the user clicked "+").
+function buildEntryFromRow(section, rowId, row) {
+    switch (section) {
+        case "skills": {
+            const name = (row["skillname"] || "").trim();
+            if (!name) return null;
+            const level = mapSkillLevel(row["skilllvl"]);
+            if (!level) return null;
+            return { roll20Id: rowId, name, level };
+        }
+        case "abilities": {
+            const name = (row["abilityname"] || "").trim();
+            if (!name) return null;
+            const entry = { roll20Id: rowId, name, description: row["abilitydesc"] || "" };
+            if (row["abilitycost"] && num(row["abilitycost"]) > 0) entry.cost = row["abilitycost"];
+            return entry;
+        }
+        case "cypher-list": {
+            const name = (row["cypher-name"] || "").trim();
+            if (!name) return null;
+            return { roll20Id: rowId, name, level: row["cypher-level"] || "1", effect: row["cypher-description"] || "" };
+        }
+        case "artifact-list": {
+            const name = (row["artifact-name"] || "").trim();
+            if (!name) return null;
+            const entry = { roll20Id: rowId, name, effect: row["artifact-description"] || "" };
+            if (row["artifact-level"]) entry.level = num(row["artifact-level"]);
+            const threshold = row["artdepthreshold"];
+            const dice = row["artdepdice"];
+            if (threshold && dice && dice !== "100") {
+                entry.depletion = `${threshold} in ${dice === "0" ? "automatic" : dice}`;
+            }
+            return entry;
+        }
+        case "equipment-list": {
+            const name = (row["equipment-name"] || "").trim();
+            if (!name) return null;
+            return { roll20Id: rowId, name, quantity: row["equipment-qty"] ? num(row["equipment-qty"]) : 1 };
+        }
+        default:
+            return null;
+    }
+}
+
+// Upserts one row into the right CypherData array, matched by roll20Id.
+function applyRowToSnapshot(snap, section, rowId, row) {
+    const def = REPEATING_SECTIONS[section];
+    if (!def) return;
+    const entry = buildEntryFromRow(section, rowId, row);
+    if (!entry) return; // blank/incomplete row — leave whatever's already there alone
+    const list = Array.isArray(snap[def.listKey]) ? snap[def.listKey].slice() : [];
+    const idx = list.findIndex(e => e && e.roll20Id === rowId);
+    if (idx >= 0) list[idx] = entry; else list.push(entry);
+    snap[def.listKey] = list;
+}
+
+async function applyChanges(characterName, attrs, rows) {
     const pcId = await resolveCharacterId(characterName);
     if (!pcId) {
         console.warn(`[Roll20 Bridge] no character named "${characterName}" found in the configured campaign`);
         return;
     }
 
-    const patch = {};
-    if ("attr_might" in attrs) patch.currentMight = num(attrs.attr_might);
-    if ("attr_might_max" in attrs) patch.mightPool = num(attrs.attr_might_max);
-    if ("attr_mightedge" in attrs) patch.mightEdge = num(attrs.attr_mightedge);
-    if ("attr_speed" in attrs) patch.currentSpeed = num(attrs.attr_speed);
-    if ("attr_speed_max" in attrs) patch.speedPool = num(attrs.attr_speed_max);
-    if ("attr_speededge" in attrs) patch.speedEdge = num(attrs.attr_speededge);
-    if ("attr_intellect" in attrs) patch.currentIntellect = num(attrs.attr_intellect);
-    if ("attr_intellect_max" in attrs) patch.intellectPool = num(attrs.attr_intellect_max);
-    if ("attr_intellectedge" in attrs) patch.intellectEdge = num(attrs.attr_intellectedge);
-    if ("attr_damage-track" in attrs) patch.damageTrack = mapDamageTrack(attrs["attr_damage-track"]);
+    const { dataPatch, topLevelPatch } = mapAttrsToPatch(attrs);
+    const hasRows = rows && rows.size > 0;
 
-    const pc = await getPlayerCharacter(pcId);
-    let snap = {};
-    try { snap = pc.systemDataJson ? JSON.parse(pc.systemDataJson) : {}; } catch { /* start fresh */ }
-    const merged = { ...snap, ...patch };
-    await updatePlayerCharacter(pcId, JSON.stringify(merged));
-    console.log(`[Roll20 Bridge] synced ${characterName}:`, patch);
+    const patch = { ...topLevelPatch };
+    if (Object.keys(dataPatch).length > 0 || hasRows) {
+        const pc = await getPlayerCharacter(pcId);
+        let snap = {};
+        try { snap = pc.systemDataJson ? JSON.parse(pc.systemDataJson) : {}; } catch { /* start fresh */ }
+        Object.assign(snap, dataPatch);
+        if (hasRows) {
+            for (const { section, rowId, row } of rows.values()) {
+                applyRowToSnapshot(snap, section, rowId, row);
+            }
+        }
+        patch.systemDataJson = JSON.stringify(snap);
+    }
+
+    await updatePlayerCharacter(pcId, patch);
+    console.log(`[Roll20 Bridge] synced ${characterName}:`, {
+        ...dataPatch, ...topLevelPatch,
+        rows: hasRows ? [...rows.values()] : undefined,
+    });
 }
 
 // ── Character name → PlayerCharacter id, cached for 5 minutes ────────────────
@@ -126,10 +252,32 @@ async function getPlayerCharacter(id) {
     return data.getPlayerCharacter;
 }
 
-async function updatePlayerCharacter(id, systemDataJson) {
+// Every scalar field on PlayerCharacter. Confirmed empirically: AppSync's
+// subscription broadcast here only resolves to a non-null payload when the
+// mutation's own selection set is the *complete* field list — the same full
+// set the Amplify-generated client always requests by default. Selecting
+// only the fields this extension cares about (id/campaignId/systemDataJson)
+// made every live subscriber (incl. the GM dashboard) receive a null payload
+// instead of the update.
+const PLAYER_CHARACTER_FIELDS = `
+    id campaignId characterName playerName race background alignment xp
+    classesJson characterClass subclass level strength dexterity constitution
+    intelligence wisdom charisma saveProficienciesJson skillProficienciesJson
+    maxHp currentHp tempHp armorClass speed initiative hitDice
+    deathSaveSuccesses deathSaveFailures inspiration exhaustion attacksJson
+    inventoryJson copper silver electrum gold platinum spellcastingAbility
+    spellSlotsJson spellsJson featuresJson personality ideals bonds flaws
+    backstory notes allies gender age height weight eyes skin hair languages
+    proficiencies pdfKey portraitKey system systemDataJson savingThrows
+    skillProfs equipment features spells createdAt updatedAt
+`;
+
+async function updatePlayerCharacter(id, patch) {
     await gqlRequest(
-        `mutation Upd($input: UpdatePlayerCharacterInput!) { updatePlayerCharacter(input: $input) { id } }`,
-        { input: { id, systemDataJson } },
+        `mutation Upd($input: UpdatePlayerCharacterInput!) {
+            updatePlayerCharacter(input: $input) { ${PLAYER_CHARACTER_FIELDS} }
+        }`,
+        { input: { id, ...patch } },
     );
 }
 

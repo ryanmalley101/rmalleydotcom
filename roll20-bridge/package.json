@@ -4,7 +4,7 @@
     "private": true,
     "description": "Browser extension: mirrors the official Roll20 Cypher System sheet into the tabletop app.",
     "scripts": {
-        "build": "esbuild options-src.js --bundle --outfile=options.bundle.js --target=chrome110"
+        "build": "esbuild options-src.js --bundle --outfile=options.bundle.js --target=chrome110 --define:global=globalThis"
     },
     "devDependencies": {
         "esbuild": "^0.23.1"

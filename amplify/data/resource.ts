@@ -296,6 +296,7 @@ const CampaignInvite = a.model({
 // Per-user app preferences (one row per Cognito user, created lazily on first use)
 const UserPreference = a.model({
   autosaveEnabled: a.boolean(),
+  gmDashboardLayoutJson: a.string(), // JSON: { collapsedSections: string[], tableMode: boolean }
 }).authorization(allow => [allow.owner()]);
 
 const schema = a.schema({

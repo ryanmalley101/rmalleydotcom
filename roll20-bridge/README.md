@@ -1,21 +1,50 @@
 # Cypher Sheet → Tabletop Bridge
 
-A Chrome extension that mirrors the official Roll20 Cypher System sheet
-(Might/Speed/Intellect pools, edges, damage track) into this app's
+A Chrome extension that mirrors the **"Cypher Systems Official"** Roll20 sheet
+(internally `CypherSystemByRoll20.js` — not the Monte Cook Games sheet, a
+different template with different field names) into this app's
 `PlayerCharacter` records. **One-directional only** (Roll20 → app) and
 **GM-side**: it watches whatever character sheets are open in *your* browser.
 
 ## What it syncs
 
-From the official Roll20 Cypher System sheet (`attr_might`, `attr_speed`,
-`attr_intellect` and their `_max`/`edge` variants, plus `attr_damage-track`):
-current/max pools, edges, and damage track (Hale/Impaired/Debilitated — Roll20's
-"Dead" state folds into Debilitated, since the app has no separate dead state).
+From the sheet:
 
-**Not synced**: XP, cyphers, abilities, arcs, recovery rolls. Recovery rolls
-were left out deliberately — the Roll20 sheet models that field as "which
-roll am I about to use," not "which have I used today," so it doesn't map
-cleanly onto the app's four independent checkboxes.
+- Might/Speed/Intellect — current, max, and edge
+- Damage track (Hale/Impaired/Debilitated — Roll20's "Dead" state folds into
+  Debilitated, since the app has no separate dead state)
+- Descriptor, Type, Focus, Tier, XP, Effort
+- Background → the app's Backstory field
+- Shins
+
+This covers every *flat* field on the sheet, plus these repeating-section
+lists (Roll20's dynamically-added rows):
+
+- **Skills** — this sheet uses one unified skills list with a Might/Speed/
+  Intellect dropdown per row (rather than three separate lists). Roll20's four
+  levels (Inability / Untrained / Trained / Specialized) become three —
+  Untrained rows are skipped, same as an unfilled row.
+- **Abilities** — name, description, and cost (this sheet has a dedicated
+  cost field per ability).
+- **Cyphers**, **Equipment** — map close to 1:1.
+- **Artifacts** — Roll20 splits depletion into a die + a threshold number;
+  these get combined into the app's one depletion text field (e.g. "1 in 1d20").
+
+Each imported row is tagged internally with the Roll20 row's ID so editing it
+again updates the same entry instead of creating a duplicate. It also does a
+one-time read of whatever's already filled in when a sheet first loads, not
+just future edits — both for the flat fields and these lists.
+
+**Not synced**:
+- **Attacks** — Roll20 has repeating sections for these, but the app's Cypher
+  sheet has no attacks/weapons list to import them into.
+- **Deletions.** Removing a row in Roll20 doesn't fire a `change` event, so a
+  deleted cypher/ability/etc. stays in the app until removed there by hand.
+- **Recovery rolls** — deliberately skipped. The Roll20 sheet models that
+  field as "which roll am I about to use," not "which have I used today," so
+  it doesn't map onto the app's four independent checkboxes.
+- **Cypher "used" checkbox** — this sheet tracks whether a cypher has been
+  depleted; the app's cypher entries have no equivalent field yet.
 
 ## Setup
 
@@ -45,15 +74,32 @@ cleanly onto the app's four independent checkboxes.
   exact). That's how a sheet gets matched to a `PlayerCharacter` record —
   there's no separate mapping UI in this first version.
 - Change a pool value or the damage track on a sheet; after a short debounce
-  (~600ms) it should land in the app. Check `chrome://extensions` → this
-  extension → "service worker" → Inspect, for `[Roll20 Bridge]` log lines if
-  something doesn't seem to be syncing.
+  (~600ms) it should land in the app. Two places to check if something doesn't
+  seem to be syncing:
+  - The **Roll20 page's own console** (F12 on the Roll20 tab) — `content.js`
+    logs every tracked/repeating-section change it detects there.
+  - The **extension's service worker console** (`chrome://extensions` → this
+    extension → "service worker" → Inspect) — `background.js` logs
+    `[Roll20 Bridge] synced ...` or `sync failed for ...` there.
 
 ## Known limitations
 
-- **Brittle to sheet changes.** If Roll20 or the official sheet template
-  changes its field names, this silently stops working. Attribute names were
-  verified against the [official sheet source](https://github.com/Roll20/roll20-character-sheets/blob/master/CypherSystem/CypherSystem.htm)
-  at the time this was built.
+- **Brittle to sheet changes, and sheet-specific.** This only targets the
+  "Cypher Systems Official" sheet's field names, verified against its
+  [source](https://github.com/Roll20/roll20-character-sheets/blob/master/Cypher%20Systems%20Official/cypher_systems_by_roll20.html)
+  at the time this was built. A different Cypher sheet template (e.g. the
+  Monte Cook Games one) uses different field names entirely and would need
+  re-deriving `TRACKED_ATTRS`/`REPEATING_SECTIONS` in both `content.js` and
+  `background.js` from scratch.
+- **Repeating-section row identity isn't in the `name` attribute.** Worth
+  knowing if this ever needs debugging again: Roll20's sheet-worker JS API
+  refers to repeating-row fields as `repeating_<section>_<rowid>_<field>`,
+  but that's *not* what's rendered. In the live DOM, every row reuses the
+  same bare `name="attr_<field>"` — the row's actual ID lives on the
+  ancestor `<div class="repitem" data-reprowid="...">`, and the section name
+  on the ancestor `<div class="repcontainer" data-groupname="repeating_...">`.
+  `content.js` walks up from the changed element to find both rather than
+  parsing the name string. This is general Roll20 platform behavior, not
+  specific to this sheet.
 - **Exact name matching only.** No fuzzy matching, no manual override table yet.
 - **One-directional.** Edits made in the app don't push back to Roll20.
