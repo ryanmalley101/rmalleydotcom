@@ -7,6 +7,7 @@ import {
     IconButton, Tooltip, CircularProgress, Checkbox,
     Accordion, AccordionSummary, AccordionDetails, Switch, FormControlLabel, Alert,
 } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 import {
     ArrowLeft, Shield, ChevronDown, ChevronRight, Plus, Trash2,
@@ -19,6 +20,7 @@ import {
     EXHAUSTION_REFERENCE, RESTING_REFERENCE,
 } from "@/lib/dndRules";
 import { useGmDashboardLayout } from "@/lib/useGmDashboardLayout";
+import { TABLE_MODE_PALETTE } from "@/lib/tableModeTheme";
 import { PartyCard, snapshot, type PartySnapshot } from "./PartyCard";
 import { MonsterLookup } from "./MonsterLookup";
 import { SessionPrepCard, loadLatestSession } from "../_dashboard-shared/SessionPrepCard";
@@ -237,14 +239,11 @@ export default function DndDashboardPage() {
     );
 
     return (
+        <ThemeProvider theme={(outer) => layout.tableMode ? createTheme(outer, { palette: TABLE_MODE_PALETTE }) : outer}>
         <Box sx={{
             minHeight: "100vh", py: 6,
-            backgroundColor: layout.tableMode ? "#0f0f1a" : "background.default",
-            color: layout.tableMode ? "#e0d8cc" : "inherit",
-            ...(layout.tableMode ? {
-                "& .MuiPaper-root": { backgroundColor: "#1a1a2e", color: "#e0d8cc" },
-                "& .MuiTypography-root": { color: "inherit" },
-            } : {}),
+            backgroundColor: "background.default",
+            color: "text.primary",
             "@media print": { backgroundColor: "#fff", color: "#000" },
         }}>
             <Container maxWidth="xl" className="no-print">
@@ -514,5 +513,6 @@ export default function DndDashboardPage() {
 
             <QuickWikiDialog open={wikiOpen} onClose={() => setWikiOpen(false)} worldIds={worldIds} />
         </Box>
+        </ThemeProvider>
     );
 }

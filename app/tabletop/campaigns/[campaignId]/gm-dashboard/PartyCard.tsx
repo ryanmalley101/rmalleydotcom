@@ -25,7 +25,7 @@ export interface PartySnapshot {
 export function snapshot(pc: PlayerCharacter): PartySnapshot {
     let snap: Record<string, unknown> = {};
     try { snap = pc.systemDataJson ? JSON.parse(pc.systemDataJson) : {}; } catch { /* ignore */ }
-    const cyphers = Array.isArray(snap.cyphers) ? snap.cyphers as unknown[] : [];
+    const cyphers = Array.isArray(snap.cyphers) ? snap.cyphers as { used?: boolean }[] : [];
     const arcs = Array.isArray(snap.arcs) ? snap.arcs as { name?: string; status?: string }[] : [];
     return {
         tier: pc.level ?? 1,
@@ -36,7 +36,8 @@ export function snapshot(pc: PlayerCharacter): PartySnapshot {
             intellect: { current: Number(snap.currentIntellect ?? 10), max: Number(snap.intellectPool ?? 10) },
         },
         damageTrack: (snap.damageTrack as DamageTrack) ?? "hale",
-        cypherCount: cyphers.length,
+        // Used cyphers are consumed — they no longer count toward the carry limit.
+        cypherCount: cyphers.filter(c => !c.used).length,
         activeArcs: arcs.filter(a => a.status === "active").map(a => a.name ?? "").filter(Boolean),
     };
 }
@@ -133,7 +134,7 @@ export function PartyCard({ pc, isSpotlight, onAwardXp, onAdjustPool }: PartyCar
                 {(["might", "speed", "intellect"] as const).map(p => {
                     const ps = snap.pools[p];
                     const pct = ps.max > 0 ? (ps.current / ps.max) * 100 : 0;
-                    const barColor = pct > 50 ? "#2e7d32" : pct > 25 ? "#f57c00" : "#c62828";
+                    const barColor = pct > 50 ? "success.main" : pct > 25 ? "warning.main" : "error.main";
                     return (
                         <Box key={p} sx={{ minWidth: 80 }}>
                             <Typography variant="caption" sx={{ color: "text.secondary", textTransform: "capitalize" }}>{p}</Typography>

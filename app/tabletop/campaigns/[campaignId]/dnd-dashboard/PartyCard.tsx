@@ -56,7 +56,7 @@ export function PartyCard({ pc, isSpotlight, onUpdate }: PartyCardProps) {
     const [concDC, setConcDC] = useState<number | null>(null);
     const snap = snapshot(pc);
     const hpPct = snap.hp.max > 0 ? (snap.hp.current / snap.hp.max) * 100 : 0;
-    const hpColor = hpPct > 50 ? "#2e7d32" : hpPct > 25 ? "#f57c00" : "#c62828";
+    const hpColor = hpPct > 50 ? "success.main" : hpPct > 25 ? "warning.main" : "error.main";
 
     function applyDamage(n: number) {
         const tempHp = pc.tempHp ?? 0;
