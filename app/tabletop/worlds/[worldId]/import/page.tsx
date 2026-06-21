@@ -18,6 +18,14 @@ const client = generateClient<Schema>();
 
 // ── Field mapping ─────────────────────────────────────────────────────────────
 
+// Maps a WorldAnvil article's `templateType` to this app's wiki Category.
+// The first six entries are confirmed working against real exports. The
+// rest are added from World Anvil's own template guide
+// (worldanvil.com/learn/article-guides/article-templates) using the slugs
+// in that page's own URLs — `material` is a guess (the guide's link for it
+// was a bug, pointing at the Military Unit template instead), and none of
+// these newer ones have been confirmed against a real export's actual
+// `templateType` value yet. Anything unmapped still falls through to "Lore".
 const CATEGORY_MAP: Record<string, string> = {
     settlement:   "Location",
     location:     "Location",
@@ -25,6 +33,33 @@ const CATEGORY_MAP: Record<string, string> = {
     person:       "Person",
     organization: "Organization",
     article:      "Lore",
+
+    character:            "Person",
+    condition:            "Other",
+    document:             "Lore",
+    ethnicity:            "Species",
+    "military-formation": "Organization",
+    item:                 "Item",
+    language:             "Lore",
+    material:             "Item",
+    conflict:             "Event",
+    myth:                 "Lore",
+    building:             "Location",
+    geography:            "Location",
+    law:                  "Lore",
+    proze:                "Lore",
+    prose:                "Lore",
+    profession:           "Other",
+    plot:                 "Event",
+    title:                "Other",
+    report:               "Other",
+    species:              "Species",
+    spell:                "Lore",
+    technology:           "Item",
+    tradition:            "Lore",
+    ritual:               "Lore",
+    vehicle:              "Item",
+    generic:              "Lore",
 };
 
 const WA_BOILERPLATE_KEYWORDS = ["world anvil", "worldanvil", "read me first"];

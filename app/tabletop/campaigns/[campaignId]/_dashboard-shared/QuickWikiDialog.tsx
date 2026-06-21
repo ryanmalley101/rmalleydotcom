@@ -18,13 +18,15 @@ interface QuickWikiDialogProps {
     open: boolean;
     onClose: () => void;
     worldIds: string[];
+    defaultCategory?: string;
+    onCreated?: (articleId: string, worldId: string) => void;
 }
 
-export function QuickWikiDialog({ open, onClose, worldIds }: QuickWikiDialogProps) {
+export function QuickWikiDialog({ open, onClose, worldIds, defaultCategory, onCreated }: QuickWikiDialogProps) {
     const [worlds, setWorlds] = useState<World[]>([]);
     const [worldId, setWorldId] = useState("");
     const [title, setTitle] = useState("");
-    const [category, setCategory] = useState("Other");
+    const [category, setCategory] = useState(defaultCategory ?? "Other");
     const [content, setContent] = useState("");
     const [saving, setSaving] = useState(false);
     const [createdId, setCreatedId] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export function QuickWikiDialog({ open, onClose, worldIds }: QuickWikiDialogProp
     }, [open, worldIds]);
 
     function reset() {
-        setTitle(""); setCategory("Other"); setContent(""); setCreatedId(null);
+        setTitle(""); setCategory(defaultCategory ?? "Other"); setContent(""); setCreatedId(null);
     }
 
     async function save() {
@@ -49,7 +51,10 @@ export function QuickWikiDialog({ open, onClose, worldIds }: QuickWikiDialogProp
             worldId, title: title.trim(), category, content: content || undefined,
         });
         setSaving(false);
-        if (data) setCreatedId(data.id);
+        if (data) {
+            setCreatedId(data.id);
+            onCreated?.(data.id, worldId);
+        }
     }
 
     function handleClose() {
