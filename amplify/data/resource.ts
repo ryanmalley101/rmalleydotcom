@@ -105,6 +105,17 @@ const WikiArticle = a.model({
   status:        a.string(), // 'published' | 'draft' | 'stub'
   articleType:   a.string(),
   parentTitle:   a.string(),
+  visibleToPlayers: a.boolean(), // defaults to true client-side when unset
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// Content snapshots for WikiArticle, taken before each save (throttled — see
+// lib/wikiRevisions.ts) so edits can be reviewed or rolled back.
+const WikiArticleRevision = a.model({
+  articleId: a.string().required(),
+  title:     a.string(),
+  content:   a.string(),
+  excerpt:   a.string(),
+  savedAt:   a.datetime(),
 }).authorization(allow => [allow.owner()]);
 
 const CampaignSession = a.model({
@@ -155,6 +166,8 @@ const PlayerCharacter = a.model({
   deathSaveFailures:  a.integer(),
   inspiration:        a.boolean(),
   exhaustion:         a.integer(),
+  conditionsJson:     a.string(), // JSON: string[] of active condition names
+  concentratingOn:    a.string(), // name of the spell/effect currently being concentrated on
   // Attacks JSON [{name, bonus, damage, damageType, properties?, description?}]
   attacksJson:    a.string(),
   // Inventory JSON [{name, type, quantity, weight?, equipped?, attuned?, description?}]
@@ -309,6 +322,7 @@ const schema = a.schema({
   DnDWorld,
   Campaign,
   WikiArticle,
+  WikiArticleRevision,
   WorldMap,
   CampaignSession,
   PlayerCharacter,

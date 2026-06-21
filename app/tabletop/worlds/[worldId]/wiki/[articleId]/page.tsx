@@ -7,9 +7,10 @@ import {
     Divider, CircularProgress, MenuItem, Select, FormControl,
     InputLabel, IconButton, Tooltip, Dialog, DialogTitle,
     DialogContent, DialogActions, Tabs, Tab, Autocomplete, Switch,
+    FormControlLabel,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2, Save, X, ChevronUp, BookOpen, ScrollText, Upload, Image as ImageIcon, ImagePlus } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Save, X, ChevronUp, BookOpen, ScrollText, Upload, Image as ImageIcon, ImagePlus, History, EyeOff } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
@@ -19,12 +20,14 @@ import { useWikiLinkInsert } from "../useWikiLinkInsert";
 import { useFileDrop } from "../useFileDrop";
 import { Lightbox } from "../Lightbox";
 import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
+import { snapshotRevision } from "@/lib/wikiRevisions";
+import { RevisionHistoryDialog } from "./RevisionHistoryDialog";
 
 const client = generateClient<Schema>();
 type Article = Schema["WikiArticle"]["type"];
 type Session = Schema["CampaignSession"]["type"];
 
-const CATEGORIES    = ["Location", "Person", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
+const CATEGORIES    = ["Location", "Person", "Species", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
 const ARTICLE_TYPES = ["Settlement", "Location", "Landmark", "Person", "Organization", "Lore", "Event", "Deity", "Faction", "Other"];
 const STATUS_OPTIONS = ["published", "draft", "stub"] as const;
 type ArticleStatus = typeof STATUS_OPTIONS[number];
@@ -157,6 +160,8 @@ export default function ArticlePage() {
     const [resolvedCoverUrl, setResolvedCoverUrl] = useState("");
     const [coverUploading, setCoverUploading] = useState(false);
     const [status, setStatus]           = useState<ArticleStatus>("published");
+    const [visibleToPlayers, setVisibleToPlayers] = useState(true);
+    const [historyOpen, setHistoryOpen] = useState(false);
     const [parentTitle, setParentTitle] = useState("");
     const [tags, setTags]               = useState<string[]>([]);
     const [tagInput, setTagInput]       = useState("");
@@ -202,6 +207,7 @@ export default function ArticlePage() {
             setCover(a.coverImageUrl ?? "");
             setCoverKey(a.coverImageKey ?? "");
             setStatus((a.status as ArticleStatus | null) ?? "published");
+            setVisibleToPlayers(a.visibleToPlayers ?? true);
             setParentTitle(a.parentTitle ?? "");
             setTags((a.tags ?? []).filter((t): t is string => t != null));
             const keys = (a.galleryImageKeys ?? []).filter((k): k is string => k != null);
@@ -279,12 +285,13 @@ export default function ArticlePage() {
             coverImageUrl !== (article.coverImageUrl ?? "") ||
             coverImageKey !== (article.coverImageKey ?? "") ||
             status !== ((article.status as ArticleStatus | null) ?? "published") ||
+            visibleToPlayers !== (article.visibleToPlayers ?? true) ||
             parentTitle !== (article.parentTitle ?? "") ||
             JSON.stringify(tags) !== JSON.stringify(articleTags) ||
             JSON.stringify(galleryKeys) !== JSON.stringify(articleGallery)
         );
     }, [article, editing, title, category, articleType, content, excerpt,
-        coverImageUrl, coverImageKey, status, parentTitle, tags, galleryKeys]);
+        coverImageUrl, coverImageKey, status, visibleToPlayers, parentTitle, tags, galleryKeys]);
 
     // Warn on browser-level exits (refresh, close tab, type a new URL) while dirty.
     useEffect(() => {
@@ -302,7 +309,7 @@ export default function ArticlePage() {
         return () => clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editing, autosaveEnabled, isDirty, title, category, articleType, content,
-        excerpt, coverImageUrl, coverImageKey, status, parentTitle, tags, galleryKeys]);
+        excerpt, coverImageUrl, coverImageKey, status, visibleToPlayers, parentTitle, tags, galleryKeys]);
 
     async function uploadCover(file: File) {
         setCoverUploading(true);
@@ -362,6 +369,7 @@ export default function ArticlePage() {
             coverImageUrl: coverImageUrl.trim() || undefined,
             coverImageKey: coverImageKey || undefined,
             status,
+            visibleToPlayers,
             parentTitle: parentTitle.trim() || undefined,
             tags: tags.length > 0 ? tags : undefined,
             galleryImageKeys: galleryKeys.length > 0 ? galleryKeys : undefined,
@@ -371,6 +379,7 @@ export default function ArticlePage() {
     async function save() {
         if (!title.trim() || !article) return;
         setSaving(true);
+        await snapshotRevision(article);
         await client.models.WikiArticle.update({ id: article.id, ...buildUpdatePayload() });
         setSaving(false);
         setEditing(false);
@@ -381,6 +390,7 @@ export default function ArticlePage() {
     async function silentSave() {
         if (!title.trim() || !article) return;
         setAutosaving(true);
+        await snapshotRevision(article);
         const payload = buildUpdatePayload();
         await client.models.WikiArticle.update({ id: article.id, ...payload });
         setArticle(prev => prev ? {
@@ -393,6 +403,7 @@ export default function ArticlePage() {
             coverImageUrl: payload.coverImageUrl ?? null,
             coverImageKey: payload.coverImageKey ?? null,
             status: payload.status,
+            visibleToPlayers: payload.visibleToPlayers,
             parentTitle: payload.parentTitle ?? null,
             tags: payload.tags ?? null,
             galleryImageKeys: payload.galleryImageKeys ?? null,
@@ -417,6 +428,7 @@ export default function ArticlePage() {
             setCover(article.coverImageUrl ?? "");
             setCoverKey(article.coverImageKey ?? "");
             setStatus((article.status as ArticleStatus | null) ?? "published");
+            setVisibleToPlayers(article.visibleToPlayers ?? true);
             setParentTitle(article.parentTitle ?? "");
             setTags((article.tags ?? []).filter((t): t is string => t != null));
             setGalleryKeys((article.galleryImageKeys ?? []).filter((k): k is string => k != null));
@@ -521,6 +533,9 @@ export default function ArticlePage() {
                                     ))}
                                 </Select>
                             </FormControl>
+                            <FormControlLabel sx={{ ml: 0.5 }}
+                                control={<Switch checked={visibleToPlayers} onChange={e => setVisibleToPlayers(e.target.checked)} />}
+                                label={<Typography variant="body2">Visible to players</Typography>} />
                         </Box>
                         <TextField label="Excerpt" fullWidth multiline minRows={2}
                             placeholder="Short one-paragraph summary shown in article lists."
@@ -780,6 +795,10 @@ export default function ArticlePage() {
                                             sx={{ backgroundColor: STATUS_COLOR[article.status as ArticleStatus] ?? "#555",
                                                 color: "#fff", fontSize: "0.6rem", height: 18 }} />
                                     )}
+                                    {article.visibleToPlayers === false && (
+                                        <Chip icon={<EyeOff size={11} />} label="GM Only" size="small"
+                                            sx={{ backgroundColor: "#6a1b9a", color: "#fff", fontSize: "0.6rem", height: 18 }} />
+                                    )}
                                     {(article.tags ?? []).map(tag => (
                                         <Chip key={tag} label={tag} size="small" variant="outlined"
                                             sx={{ fontSize: "0.65rem", height: 20 }} />
@@ -787,6 +806,11 @@ export default function ArticlePage() {
                                 </Box>
                             </Box>
                             <Box sx={{ display: "flex", gap: 0.5, ml: 2 }}>
+                                <Tooltip title="Revision history">
+                                    <IconButton onClick={() => setHistoryOpen(true)} size="small">
+                                        <History size={18} />
+                                    </IconButton>
+                                </Tooltip>
                                 <Tooltip title="Edit article">
                                     <IconButton onClick={() => setEditing(true)} size="small">
                                         <Pencil size={18} />
@@ -928,6 +952,9 @@ export default function ArticlePage() {
 
                 <Lightbox images={viewGalleryUrls} index={lightboxIndex}
                     onClose={() => setLightboxIndex(null)} onIndexChange={setLightboxIndex} />
+
+                <RevisionHistoryDialog open={historyOpen} onClose={() => setHistoryOpen(false)}
+                    article={article} onRestored={load} />
 
                 {linkDialog}
             </Container>

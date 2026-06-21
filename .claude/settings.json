@@ -88,7 +88,15 @@
       "Bash(curl -sf http://localhost:3001 -o /dev/null)",
       "Bash(netstat -ano)",
       "Bash(taskkill //PID 11212 //F)",
-      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/gm-dashboard/player-view\")"
+      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/gm-dashboard/player-view\")",
+      "Bash(mkdir -p \"app/tabletop/campaigns/[campaignId]/_dashboard-shared\")",
+      "Bash(git mv *)",
+      "Bash(mv __TRACKED_VAR__/gm-dashboard/SessionPrepCard.tsx __TRACKED_VAR__/_dashboard-shared/SessionPrepCard.tsx)",
+      "Bash(mv __TRACKED_VAR__/gm-dashboard/SpotlightNpcs.tsx __TRACKED_VAR__/_dashboard-shared/SpotlightNpcs.tsx)",
+      "Bash(mv __TRACKED_VAR__/gm-dashboard/QuestProgress.tsx __TRACKED_VAR__/_dashboard-shared/QuestProgress.tsx)",
+      "Bash(mv __TRACKED_VAR__/gm-dashboard/WikiSearchPin.tsx __TRACKED_VAR__/_dashboard-shared/WikiSearchPin.tsx)",
+      "Bash(grep -n 'SessionPrepCard\\\\|SpotlightNpcs\\\\|QuestProgress\\\\|WikiSearchPin' __TRACKED_VAR__/gm-dashboard/page.tsx __TRACKED_VAR__/gm-dashboard/player-view/page.tsx)",
+      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/dnd-dashboard/player-view\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
@@ -96,7 +104,8 @@
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt",
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt\\[boardId]",
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]",
-      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\gm-dashboard"
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\gm-dashboard",
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\dnd-dashboard"
     ]
   }
 }

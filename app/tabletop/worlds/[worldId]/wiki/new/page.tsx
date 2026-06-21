@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
     Box, Container, Typography, Button, TextField,
     MenuItem, Select, FormControl, InputLabel, CircularProgress, Divider, IconButton,
-    Autocomplete,
+    Autocomplete, Switch, FormControlLabel,
 } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Upload, X, ImagePlus } from "lucide-react";
@@ -17,7 +17,7 @@ import { useFileDrop } from "../useFileDrop";
 
 const client = generateClient<Schema>();
 
-const CATEGORIES    = ["Location", "Person", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
+const CATEGORIES    = ["Location", "Person", "Species", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
 const ARTICLE_TYPES = ["Settlement", "Location", "Landmark", "Person", "Organization", "Lore", "Event", "Deity", "Faction", "Other"];
 const STATUS_OPTIONS = ["published", "draft", "stub"] as const;
 type ArticleStatus = typeof STATUS_OPTIONS[number];
@@ -32,6 +32,7 @@ export default function NewArticlePage() {
     const [category, setCategory]       = useState("Other");
     const [articleType, setArticleType] = useState("");
     const [status, setStatus]           = useState<ArticleStatus>("published");
+    const [visibleToPlayers, setVisibleToPlayers] = useState(true);
     const [excerpt, setExcerpt]         = useState("");
     const [coverImageUrl, setCover]     = useState("");
     const [coverPreview, setCoverPreview] = useState("");
@@ -90,6 +91,7 @@ export default function NewArticlePage() {
             category,
             articleType:   articleType || undefined,
             status,
+            visibleToPlayers,
             excerpt:       excerpt.trim() || undefined,
             coverImageUrl: coverImageUrl.trim() || undefined,
             parentTitle:   parentTitle.trim() || undefined,
@@ -176,6 +178,9 @@ export default function NewArticlePage() {
                                 ))}
                             </Select>
                         </FormControl>
+                        <FormControlLabel sx={{ ml: 0.5 }}
+                            control={<Switch checked={visibleToPlayers} onChange={e => setVisibleToPlayers(e.target.checked)} />}
+                            label={<Typography variant="body2">Visible to players</Typography>} />
                     </Box>
 
                     <TextField label="Excerpt" fullWidth multiline minRows={2}

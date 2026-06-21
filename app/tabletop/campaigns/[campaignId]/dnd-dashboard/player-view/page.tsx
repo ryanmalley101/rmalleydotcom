@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Box, Container, Typography, Paper, Chip, CircularProgress } from "@mui/material";
-import { Shield } from "lucide-react";
+import { Shield, Star } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
-import { DAMAGE_TRACK_INFO } from "@/lib/cypherRules";
+import { CONDITION_COLOR } from "@/lib/dndConditions";
 import { snapshot } from "../PartyCard";
 import { QuestProgress } from "../../_dashboard-shared/QuestProgress";
 import { PinnedArticlesView } from "../../_dashboard-shared/PinnedArticlesView";
@@ -77,27 +77,28 @@ export default function PlayerViewPage() {
                     <Box sx={{ mb: 4 }}>
                         {chars.map(pc => {
                             const snap = snapshot(pc);
-                            const dmg = DAMAGE_TRACK_INFO[snap.damageTrack];
+                            const hpPct = snap.hp.max > 0 ? (snap.hp.current / snap.hp.max) * 100 : 0;
+                            const hpColor = hpPct > 50 ? "#2e7d32" : hpPct > 25 ? "#f57c00" : "#c62828";
                             return (
-                                <Paper key={pc.id} elevation={1} sx={{ p: 2, mb: 1.5, borderLeft: "4px solid", borderLeftColor: dmg.color }}>
+                                <Paper key={pc.id} elevation={1} sx={{ p: 2, mb: 1.5, borderLeft: "4px solid", borderLeftColor: hpColor }}>
                                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
                                         <Typography variant="h6" sx={{ fontWeight: 700, color: "primary.dark", flex: 1, minWidth: 100 }}>
                                             {pc.characterName}
                                         </Typography>
-                                        <Chip label={`Tier ${snap.tier}`} size="small" sx={{ backgroundColor: "primary.dark", color: "#fff" }} />
-                                        <Chip label={dmg.label} size="small" sx={{ backgroundColor: dmg.color, color: "#fff" }} />
+                                        {pc.inspiration && <Star size={18} fill="#f9a825" color="#f9a825" />}
+                                        <Chip label={`AC ${snap.ac}`} size="small" variant="outlined" />
                                     </Box>
-                                    <Box sx={{ display: "flex", gap: 3, mt: 1.5, flexWrap: "wrap" }}>
-                                        {(["might", "speed", "intellect"] as const).map(p => {
-                                            const ps = snap.pools[p];
-                                            return (
-                                                <Box key={p}>
-                                                    <Typography variant="caption" sx={{ color: "text.secondary", textTransform: "capitalize", display: "block" }}>{p}</Typography>
-                                                    <Typography variant="h6" sx={{ fontWeight: 700 }}>{ps.current}/{ps.max}</Typography>
-                                                </Box>
-                                            );
-                                        })}
-                                    </Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 700, color: hpColor, mt: 1 }}>
+                                        {snap.hp.current}/{snap.hp.max} HP{snap.hp.temp > 0 && ` (+${snap.hp.temp} temp)`}
+                                    </Typography>
+                                    {snap.conditions.length > 0 && (
+                                        <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", mt: 1 }}>
+                                            {snap.conditions.map(c => (
+                                                <Chip key={c} label={c} size="small"
+                                                    sx={{ backgroundColor: CONDITION_COLOR[c] ?? "#607d8b", color: "#fff" }} />
+                                            ))}
+                                        </Box>
+                                    )}
                                 </Paper>
                             );
                         })}

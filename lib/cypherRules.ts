@@ -66,3 +66,19 @@ export const TIER_ADVANCEMENT_OPTIONS: { label: string; detail: string }[] = [
     { label: "Train a skill", detail: "Become trained in a skill you aren't already trained in, or specialized in one you're trained in." },
     { label: "Gain a Tier ability", detail: "Take one of the abilities your Type or Focus offers at the new tier." },
 ];
+
+// Other ways players spend XP, beyond tier advancement — sourced from the
+// Cypher System Rulebook (Experience Points, p.11; Player Intrusions, p.412),
+// except where noted as a common house rule rather than core text.
+export const XP_USES: { label: string; detail: string; core: boolean }[] = [
+    { label: "Reroll", core: true,
+      detail: "Spend 1 XP to reroll any die roll you just made and take the better of the two results." },
+    { label: "Refuse a GM Intrusion", core: true,
+      detail: "Spend 1 XP to refuse a GM intrusion instead of accepting the 2 XP it offers. If you have no XP, you can't refuse." },
+    { label: "Player Intrusion", core: true,
+      detail: "Spend 1 XP to introduce a small narrative twist of your own — limited in scope to a single object, feature, or NPC (never as big as a GM intrusion, and never enough to end an encounter outright). The GM can always overrule or adjust it." },
+    { label: "Advance a Tier", core: true,
+      detail: "Spend 4 XP — see Tier Advancement above for the benefit menu." },
+    { label: "Temporary training (house rule)", core: false,
+      detail: "Not core RAW — some tables let a player spend 1 XP for situational training in a skill for the rest of the current scene or session, GM's call." },
+];

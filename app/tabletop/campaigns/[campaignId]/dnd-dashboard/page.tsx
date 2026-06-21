@@ -10,23 +10,22 @@ import {
 import Link from "next/link";
 import {
     ArrowLeft, Shield, ChevronDown, ChevronRight, Plus, Trash2,
-    Search, Sparkles, Eye, Printer, BookOpen,
+    Search, Eye, Printer, BookOpen, Moon, Swords, Calculator, Gem, Sparkles as Wand,
 } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import {
-    DAMAGE_TRACK_INFO, DIFFICULTY_TABLE, EFFORT_COST_TABLE, STEP_MODIFIERS,
-    TIER_ADVANCEMENT_OPTIONS, XP_USES, type DamageTrack,
-} from "@/lib/cypherRules";
+    DEATH_SAVES_REFERENCE, CONCENTRATION_REFERENCE, COVER_REFERENCE,
+    EXHAUSTION_REFERENCE, RESTING_REFERENCE,
+} from "@/lib/dndRules";
 import { useGmDashboardLayout } from "@/lib/useGmDashboardLayout";
-import { CommonIntrusionsDialog } from "../CommonIntrusionsDialog";
 import { PartyCard, snapshot, type PartySnapshot } from "./PartyCard";
+import { MonsterLookup } from "./MonsterLookup";
 import { SessionPrepCard, loadLatestSession } from "../_dashboard-shared/SessionPrepCard";
 import { SpotlightNpcs } from "../_dashboard-shared/SpotlightNpcs";
 import { QuestProgress } from "../_dashboard-shared/QuestProgress";
 import { QuickWikiDialog } from "../_dashboard-shared/QuickWikiDialog";
 import { WikiSearchPin } from "../_dashboard-shared/WikiSearchPin";
-import { CreatureLookup } from "./CreatureLookup";
 
 const client = generateClient<Schema>();
 type PlayerCharacter = Schema["PlayerCharacter"]["type"];
@@ -34,15 +33,15 @@ type CampaignSession = Schema["CampaignSession"]["type"];
 
 // ── GM screen scratch data ────────────────────────────────────────────────────
 
-interface IntrusionIdea { id: string; text: string; used: boolean }
+interface IdeaItem { id: string; text: string; used: boolean }
 interface GmScreenData {
-    intrusionIdeas: IntrusionIdea[];
+    inspirationIdeas: IdeaItem[];
     pinnedNpcIds: string[];
     pinnedArticleIds: string[];
-    pinnedCreatureIds: string[];
+    pinnedMonsterIds: string[];
 }
 const DEFAULT_GM_SCREEN: GmScreenData = {
-    intrusionIdeas: [], pinnedNpcIds: [], pinnedArticleIds: [], pinnedCreatureIds: [],
+    inspirationIdeas: [], pinnedNpcIds: [], pinnedArticleIds: [], pinnedMonsterIds: [],
 };
 
 function parseGmScreen(json: string | null | undefined): GmScreenData {
@@ -52,8 +51,6 @@ function parseGmScreen(json: string | null | undefined): GmScreenData {
 }
 
 function uid() { return Math.random().toString(36).slice(2, 9); }
-
-const DAMAGE_SEVERITY: Record<DamageTrack, number> = { hale: 0, impaired: 1, debilitated: 2 };
 
 // ── Collapsible section wrapper ───────────────────────────────────────────────
 
@@ -76,7 +73,7 @@ function SectionHeader({ label, sectionKey, collapsed, onToggle, action }: {
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
-export default function GmDashboardPage() {
+export default function DndDashboardPage() {
     const { campaignId } = useParams<{ campaignId: string }>();
 
     const [chars, setChars] = useState<PlayerCharacter[]>([]);
@@ -89,12 +86,11 @@ export default function GmDashboardPage() {
     const [savingIdeas, setSavingIdeas] = useState(false);
     const saveTimer = useRef<ReturnType<typeof setTimeout>>();
 
-    const [commonOpen, setCommonOpen] = useState(false);
     const [wikiOpen, setWikiOpen] = useState(false);
-    const [creatureSearchOpen, setCreatureSearchOpen] = useState(false);
+    const [monsterSearchOpen, setMonsterSearchOpen] = useState(false);
 
     const [spotlightId, setSpotlightId] = useState<string | null>(null);
-    const [worsenedAlert, setWorsenedAlert] = useState<{ name: string; track: DamageTrack } | null>(null);
+    const [downedAlert, setDownedAlert] = useState<string | null>(null);
     const prevSnapshotsRef = useRef<Map<string, PartySnapshot>>(new Map());
 
     const { layout, toggleSection, setTableMode } = useGmDashboardLayout();
@@ -112,19 +108,15 @@ export default function GmDashboardPage() {
     function checkForChange(pc: PlayerCharacter) {
         const prev = prevSnapshotsRef.current.get(pc.id);
         const next = snapshot(pc);
-        if (prev && DAMAGE_SEVERITY[next.damageTrack] > DAMAGE_SEVERITY[prev.damageTrack]) {
-            setWorsenedAlert({ name: pc.characterName, track: next.damageTrack });
+        if (prev && !prev.downed && next.downed) {
+            setDownedAlert(`${pc.characterName} has dropped to 0 HP!`);
         }
         prevSnapshotsRef.current.set(pc.id, next);
         setSpotlightId(pc.id);
     }
 
-    // Deliberately not observeQuery(): its internal merge helper
-    // (findIndexByFields) doesn't null-check the incoming subscription
-    // payload, and AppSync can legitimately deliver a null item on some
-    // update events — that throws inside Amplify's own code, before it
-    // ever reaches a try/catch here. Doing the list + merge ourselves lets
-    // us just ignore null payloads instead of crashing the page on them.
+    // See the Cypher GM Dashboard for why this avoids observeQuery() — same
+    // null-payload crash risk applies here since it's the same model.
     useEffect(() => {
         let cancelled = false;
         const filter = { campaignId: { eq: campaignId } };
@@ -136,16 +128,13 @@ export default function GmDashboardPage() {
             setChars(list);
         });
 
-        // No server-side `filter` here — kept from troubleshooting a null-payload
-        // issue (root cause turned out to be an incomplete selection set on a
-        // mutation elsewhere, not the filter itself, but this still works fine).
         const onCreate = client.models.PlayerCharacter.onCreate().subscribe({
             next: (item) => {
                 if (!item || item.campaignId !== campaignId) return;
                 prevSnapshotsRef.current.set(item.id, snapshot(item));
                 setChars(prev => prev.some(c => c.id === item.id) ? prev : [...prev, item]);
             },
-            error: (err) => console.error("[GM Dashboard] onCreate subscription error", err),
+            error: (err) => console.error("[D&D Dashboard] onCreate subscription error", err),
         });
         const onUpdate = client.models.PlayerCharacter.onUpdate().subscribe({
             next: (item) => {
@@ -153,14 +142,14 @@ export default function GmDashboardPage() {
                 checkForChange(item);
                 setChars(prev => prev.map(c => c.id === item.id ? { ...c, ...item } : c));
             },
-            error: (err) => console.error("[GM Dashboard] onUpdate subscription error", err),
+            error: (err) => console.error("[D&D Dashboard] onUpdate subscription error", err),
         });
         const onDelete = client.models.PlayerCharacter.onDelete().subscribe({
             next: (item) => {
                 if (!item || item.campaignId !== campaignId) return;
                 setChars(prev => prev.filter(c => c.id !== item.id));
             },
-            error: (err) => console.error("[GM Dashboard] onDelete subscription error", err),
+            error: (err) => console.error("[D&D Dashboard] onDelete subscription error", err),
         });
 
         return () => {
@@ -184,13 +173,13 @@ export default function GmDashboardPage() {
 
     function addIdea(text: string) {
         if (!text.trim()) return;
-        saveGmScreen({ ...gmScreen, intrusionIdeas: [...gmScreen.intrusionIdeas, { id: uid(), text: text.trim(), used: false }] });
+        saveGmScreen({ ...gmScreen, inspirationIdeas: [...gmScreen.inspirationIdeas, { id: uid(), text: text.trim(), used: false }] });
     }
     function toggleIdea(id: string) {
-        saveGmScreen({ ...gmScreen, intrusionIdeas: gmScreen.intrusionIdeas.map(i => i.id === id ? { ...i, used: !i.used } : i) });
+        saveGmScreen({ ...gmScreen, inspirationIdeas: gmScreen.inspirationIdeas.map(i => i.id === id ? { ...i, used: !i.used } : i) });
     }
     function removeIdea(id: string) {
-        saveGmScreen({ ...gmScreen, intrusionIdeas: gmScreen.intrusionIdeas.filter(i => i.id !== id) });
+        saveGmScreen({ ...gmScreen, inspirationIdeas: gmScreen.inspirationIdeas.filter(i => i.id !== id) });
     }
     function toggleNpcPin(npcId: string) {
         const pinned = gmScreen.pinnedNpcIds.includes(npcId)
@@ -204,50 +193,39 @@ export default function GmDashboardPage() {
             : [...gmScreen.pinnedArticleIds, articleId];
         saveGmScreen({ ...gmScreen, pinnedArticleIds: pinned });
     }
-    function toggleCreaturePin(creatureId: string) {
-        const pinned = gmScreen.pinnedCreatureIds.includes(creatureId)
-            ? gmScreen.pinnedCreatureIds.filter(id => id !== creatureId)
-            : [...gmScreen.pinnedCreatureIds, creatureId];
-        saveGmScreen({ ...gmScreen, pinnedCreatureIds: pinned });
+    function toggleMonsterPin(monsterId: string) {
+        const pinned = gmScreen.pinnedMonsterIds.includes(monsterId)
+            ? gmScreen.pinnedMonsterIds.filter(id => id !== monsterId)
+            : [...gmScreen.pinnedMonsterIds, monsterId];
+        saveGmScreen({ ...gmScreen, pinnedMonsterIds: pinned });
     }
 
-    async function awardXp(pcId: string, amount: number) {
-        const pc = chars.find(c => c.id === pcId);
-        if (!pc) return;
-        const newXp = (pc.xp ?? 0) + amount;
-        setChars(prev => prev.map(c => c.id === pcId ? { ...c, xp: newXp } : c));
-        await client.models.PlayerCharacter.update({ id: pcId, xp: newXp });
+    async function updatePc(pcId: string, patch: Partial<PlayerCharacter>) {
+        setChars(prev => prev.map(c => c.id === pcId ? { ...c, ...patch } : c));
+        await client.models.PlayerCharacter.update({ id: pcId, ...patch });
     }
 
-    async function adjustPcPool(pcId: string, pool: "might" | "speed" | "intellect", delta: number) {
-        const pc = chars.find(c => c.id === pcId);
-        if (!pc) return;
-        let snap: Record<string, unknown> = {};
-        try { snap = pc.systemDataJson ? JSON.parse(pc.systemDataJson) : {}; } catch { /* start fresh */ }
-        const currentKey = `current${pool.charAt(0).toUpperCase()}${pool.slice(1)}`;
-        const maxKey = `${pool}Pool`;
-        const current = Number(snap[currentKey] ?? 10);
-        const max = Number(snap[maxKey] ?? 10);
-        const raw = current + delta;
-        const next = Math.max(0, Math.min(max, raw));
-        const merged: Record<string, unknown> = { ...snap, [currentKey]: next };
-        if (delta < 0 && raw < 0) {
-            const order: DamageTrack[] = ["hale", "impaired", "debilitated"];
-            const idx = order.indexOf((snap.damageTrack as DamageTrack) ?? "hale");
-            if (idx < order.length - 1) merged.damageTrack = order[idx + 1];
+    async function applyLongRestToAll() {
+        for (const pc of chars) {
+            const patch: Partial<PlayerCharacter> = {
+                currentHp: pc.maxHp ?? pc.currentHp ?? 0,
+                exhaustion: Math.max(0, (pc.exhaustion ?? 0) - 1),
+            };
+            if (pc.spellSlotsJson) {
+                try {
+                    const slots = JSON.parse(pc.spellSlotsJson) as Record<string, { max: number; used: number }>;
+                    for (const lvl of Object.keys(slots)) slots[lvl].used = 0;
+                    patch.spellSlotsJson = JSON.stringify(slots);
+                } catch { /* leave as-is if unparseable */ }
+            }
+            await updatePc(pc.id, patch);
         }
-        const systemDataJson = JSON.stringify(merged);
-        setChars(prev => prev.map(c => c.id === pcId ? { ...c, systemDataJson } : c));
-        await client.models.PlayerCharacter.update({ id: pcId, systemDataJson });
     }
 
-    const lowPoolChars = useMemo(() => {
+    const lowHpChars = useMemo(() => {
         return chars
             .map(pc => ({ pc, snap: snapshot(pc) }))
-            .filter(({ snap }) => (["might", "speed", "intellect"] as const).some(p => {
-                const ps = snap.pools[p];
-                return ps.max > 0 && ps.current / ps.max <= 0.25;
-            }));
+            .filter(({ snap }) => !snap.downed && snap.hp.max > 0 && snap.hp.current / snap.hp.max <= 0.25);
     }, [chars]);
 
     const collapsed = (key: string) => layout.collapsedSections.includes(key);
@@ -279,14 +257,14 @@ export default function GmDashboardPage() {
                     <Shield size={28} color="#8C5A3A" />
                     <Box sx={{ flex: 1 }}>
                         <Typography variant="h4" sx={{ fontWeight: 700, color: "primary.dark" }}>GM Dashboard</Typography>
-                        <Typography variant="body2" sx={{ color: "text.secondary" }}>{campaignName} · Cypher System</Typography>
+                        <Typography variant="body2" sx={{ color: "text.secondary" }}>{campaignName} · D&amp;D 5e</Typography>
                     </Box>
                     <FormControlLabel
                         control={<Switch size="small" checked={layout.tableMode} onChange={e => setTableMode(e.target.checked)} />}
                         label={<Typography variant="caption">Table Mode</Typography>} />
                     <Tooltip title="Open a read-only player-facing view in a new tab">
                         <Button size="small" variant="outlined" startIcon={<Eye size={14} />}
-                            onClick={() => window.open(`/tabletop/campaigns/${campaignId}/gm-dashboard/player-view`, "_blank")}>
+                            onClick={() => window.open(`/tabletop/campaigns/${campaignId}/dnd-dashboard/player-view`, "_blank")}>
                             Player View
                         </Button>
                     </Tooltip>
@@ -298,27 +276,24 @@ export default function GmDashboardPage() {
                 </Box>
 
                 {/* Alerts */}
-                {worsenedAlert && (
-                    <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setWorsenedAlert(null)}>
-                        {worsenedAlert.name} moved to <strong>{DAMAGE_TRACK_INFO[worsenedAlert.track].label}</strong>.
-                    </Alert>
+                {downedAlert && (
+                    <Alert severity="error" sx={{ mb: 2 }} onClose={() => setDownedAlert(null)}>{downedAlert}</Alert>
                 )}
-                {lowPoolChars.length > 0 && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                        Low pool: {lowPoolChars.map(({ pc }) => pc.characterName).join(", ")}
+                {lowHpChars.length > 0 && (
+                    <Alert severity="warning" sx={{ mb: 2 }}>
+                        Low HP: {lowHpChars.map(({ pc }) => pc.characterName).join(", ")}
                     </Alert>
                 )}
 
-                {/* Two-column layout: live session tools on the left, prep/reference on the right */}
                 <Box sx={{ display: "flex", gap: 3, alignItems: "flex-start", flexWrap: "wrap" }}>
                     {/* Main column */}
                     <Box sx={{ flex: "2 1 560px", minWidth: 0 }}>
                         <SectionHeader label="Party" sectionKey="party" collapsed={collapsed("party")} onToggle={toggleSection}
                             action={
-                                <Tooltip title="Search the SRD for a creature or NPC">
-                                    <Button size="small" startIcon={<Search size={12} />} onClick={() => setCreatureSearchOpen(o => !o)}
+                                <Tooltip title="Search your saved monsters">
+                                    <Button size="small" startIcon={<Search size={12} />} onClick={() => setMonsterSearchOpen(o => !o)}
                                         sx={{ fontSize: "0.65rem" }}>
-                                        Creature Lookup
+                                        Monster Lookup
                                     </Button>
                                 </Tooltip>
                             } />
@@ -328,16 +303,15 @@ export default function GmDashboardPage() {
                             ) : (
                                 <Box sx={{ mb: 3 }}>
                                     {chars.map(pc => (
-                                        <PartyCard key={pc.id} pc={pc} isSpotlight={pc.id === spotlightId}
-                                            onAwardXp={awardXp} onAdjustPool={adjustPcPool} />
+                                        <PartyCard key={pc.id} pc={pc} isSpotlight={pc.id === spotlightId} onUpdate={updatePc} />
                                     ))}
                                 </Box>
                             )
                         )}
 
-                        {creatureSearchOpen && (
-                            <CreatureLookup pinnedIds={gmScreen.pinnedCreatureIds} onTogglePin={toggleCreaturePin}
-                                onClose={() => setCreatureSearchOpen(false)} />
+                        {monsterSearchOpen && (
+                            <MonsterLookup pinnedIds={gmScreen.pinnedMonsterIds} onTogglePin={toggleMonsterPin}
+                                onClose={() => setMonsterSearchOpen(false)} />
                         )}
 
                         <SectionHeader label="Active Quests" sectionKey="quests" collapsed={collapsed("quests")} onToggle={toggleSection} />
@@ -364,21 +338,31 @@ export default function GmDashboardPage() {
                             <SpotlightNpcs campaignId={campaignId} pinnedIds={gmScreen.pinnedNpcIds} onTogglePin={toggleNpcPin} />
                         )}
 
-                        <SectionHeader label="GM Intrusion Ideas" sectionKey="intrusions" collapsed={collapsed("intrusions")} onToggle={toggleSection}
-                            action={
-                                <Button size="small" startIcon={<Sparkles size={12} />} onClick={() => setCommonOpen(true)} sx={{ fontSize: "0.65rem" }}>
-                                    Common Ideas
-                                </Button>
-                            } />
-                        {!collapsed("intrusions") && (
+                        <SectionHeader label="Resting" sectionKey="rest" collapsed={collapsed("rest")} onToggle={toggleSection} />
+                        {!collapsed("rest") && (
                             <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
-                                {gmScreen.intrusionIdeas.length === 0 ? (
+                                <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+                                    Short rests are resolved by each player (spend Hit Dice) — nothing to apply here.
+                                </Typography>
+                                <Button size="small" variant="outlined" startIcon={<Moon size={14} />} onClick={applyLongRestToAll}>
+                                    Apply Long Rest to Party
+                                </Button>
+                                <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mt: 1 }}>
+                                    Restores full HP, all spell slots, and 1 Exhaustion level for everyone. Hit Dice recovery and class feature recharges aren't tracked here — check those manually.
+                                </Typography>
+                            </Paper>
+                        )}
+
+                        <SectionHeader label="Inspiration Ideas" sectionKey="inspiration" collapsed={collapsed("inspiration")} onToggle={toggleSection} />
+                        {!collapsed("inspiration") && (
+                            <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
+                                {gmScreen.inspirationIdeas.length === 0 ? (
                                     <Typography variant="body2" sx={{ color: "text.disabled", mb: 1.5 }}>
-                                        No ideas jotted yet. Prep a few intrusions before the session and check them off as you use them.
+                                        Jot down moments worth rewarding with Inspiration — great roleplay, a clever plan, someone covering for a teammate.
                                     </Typography>
                                 ) : (
                                     <Box sx={{ mb: 1.5 }}>
-                                        {gmScreen.intrusionIdeas.map(idea => (
+                                        {gmScreen.inspirationIdeas.map(idea => (
                                             <Box key={idea.id} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                                                 <Checkbox size="small" checked={idea.used} onChange={() => toggleIdea(idea.id)} />
                                                 <Typography variant="body2" sx={{
@@ -395,7 +379,7 @@ export default function GmDashboardPage() {
                                     </Box>
                                 )}
                                 <Box sx={{ display: "flex", gap: 1 }}>
-                                    <TextField size="small" placeholder="A patrol notices the smoke from their fire…" fullWidth
+                                    <TextField size="small" placeholder="Anyone who finds the hidden lever…" fullWidth
                                         value={ideaInput} onChange={e => setIdeaInput(e.target.value)}
                                         onKeyDown={e => { if (e.key === "Enter") { addIdea(ideaInput); setIdeaInput(""); } }} />
                                     <Button variant="outlined" startIcon={<Plus size={14} />}
@@ -407,78 +391,58 @@ export default function GmDashboardPage() {
                             </Paper>
                         )}
 
+                        <SectionHeader label="Quick Tools" sectionKey="tools" collapsed={collapsed("tools")} onToggle={toggleSection} />
+                        {!collapsed("tools") && (
+                            <Paper elevation={1} sx={{ p: 2, mb: 3, display: "flex", flexDirection: "column", gap: 1 }}>
+                                <Button size="small" variant="outlined" startIcon={<Swords size={14} />}
+                                    onClick={() => window.open("/tabletop/initiative", "_blank")}>
+                                    Initiative Tracker
+                                </Button>
+                                <Button size="small" variant="outlined" startIcon={<Calculator size={14} />}
+                                    onClick={() => window.open("/tabletop/encounter-calc", "_blank")}>
+                                    Encounter Calculator
+                                </Button>
+                                <Button size="small" variant="outlined" startIcon={<Gem size={14} />}
+                                    onClick={() => window.open("/tabletop/loot", "_blank")}>
+                                    Loot Generator
+                                </Button>
+                                <Button size="small" variant="outlined" startIcon={<Wand size={14} />}
+                                    onClick={() => window.open("/tabletop/magic-item", "_blank")}>
+                                    Magic Item Generator
+                                </Button>
+                            </Paper>
+                        )}
+
                         <SectionHeader label="Rules Quick Reference" sectionKey="rules" collapsed={collapsed("rules")} onToggle={toggleSection} />
                         {!collapsed("rules") && (
                             <>
                                 <Accordion>
                                     <AccordionSummary expandIcon={<ChevronDown size={16} />}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Difficulty &amp; Target Numbers</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Death Saves &amp; Dying</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                                            {DIFFICULTY_TABLE.map(d => (
-                                                <Box key={d.level} sx={{ minWidth: 90, textAlign: "center", border: "1px solid", borderColor: "divider", borderRadius: 1, p: 0.75 }}>
-                                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>Lvl {d.level}</Typography>
-                                                    <Typography variant="body2" sx={{ fontWeight: 700 }}>{d.name}</Typography>
-                                                    <Typography variant="caption" sx={{ color: "primary.main" }}>TN {d.targetNumber}</Typography>
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                        <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mt: 1.5 }}>
-                                            Target number is always the creature/task level × 3. Roll a d20 and meet or beat it.
+                                        <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+                                            {DEATH_SAVES_REFERENCE.intro}
                                         </Typography>
+                                        <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                                            {DEATH_SAVES_REFERENCE.bullets.map(b => (
+                                                <Typography key={b} component="li" variant="caption" sx={{ color: "text.secondary", mb: 0.5 }}>{b}</Typography>
+                                            ))}
+                                        </Box>
                                     </AccordionDetails>
                                 </Accordion>
 
                                 <Accordion>
                                     <AccordionSummary expandIcon={<ChevronDown size={16} />}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Effort Costs</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Concentration</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                                            {EFFORT_COST_TABLE.map(e => (
-                                                <Box key={e.level} sx={{ minWidth: 80, textAlign: "center", border: "1px solid", borderColor: "divider", borderRadius: 1, p: 0.75 }}>
-                                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>Effort {e.level}</Typography>
-                                                    <Typography variant="body2" sx={{ fontWeight: 700 }}>{e.cumulativeCost} pts</Typography>
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                        <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mt: 1.5 }}>
-                                            Cumulative cost from the relevant Pool. Subtract the matching Edge from the total (minimum 0) each time Effort is used.
+                                        <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+                                            {CONCENTRATION_REFERENCE.intro}
                                         </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-
-                                <Accordion>
-                                    <AccordionSummary expandIcon={<ChevronDown size={16} />}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Damage Track</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                                            {(["hale", "impaired", "debilitated"] as const).map(track => {
-                                                const info = DAMAGE_TRACK_INFO[track];
-                                                return (
-                                                    <Box key={track} sx={{ borderLeft: "3px solid", borderColor: info.color, pl: 1.5, py: 0.5 }}>
-                                                        <Typography variant="body2" sx={{ fontWeight: 700, color: info.color }}>{info.label}</Typography>
-                                                        <Typography variant="caption" sx={{ color: "text.secondary" }}>{info.effect}</Typography>
-                                                    </Box>
-                                                );
-                                            })}
-                                        </Box>
-                                    </AccordionDetails>
-                                </Accordion>
-
-                                <Accordion>
-                                    <AccordionSummary expandIcon={<ChevronDown size={16} />}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Assets, Skills &amp; Hindrances</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                                            {STEP_MODIFIERS.map(m => (
-                                                <Box key={m.label}>
-                                                    <Typography variant="body2" sx={{ fontWeight: 700 }}>{m.label}</Typography>
-                                                    <Typography variant="caption" sx={{ color: "text.secondary" }}>{m.effect}</Typography>
-                                                </Box>
+                                        <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                                            {CONCENTRATION_REFERENCE.bullets.map(b => (
+                                                <Typography key={b} component="li" variant="caption" sx={{ color: "text.secondary", mb: 0.5 }}>{b}</Typography>
                                             ))}
                                         </Box>
                                     </AccordionDetails>
@@ -486,38 +450,43 @@ export default function GmDashboardPage() {
 
                                 <Accordion>
                                     <AccordionSummary expandIcon={<ChevronDown size={16} />}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Tier Advancement (4 XP)</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Cover</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mb: 1 }}>
-                                            Reference only — pick one benefit per tier. Nothing here updates a character automatically.
+                                        <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+                                            {COVER_REFERENCE.intro}
                                         </Typography>
-                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                                            {TIER_ADVANCEMENT_OPTIONS.map(opt => (
-                                                <Box key={opt.label}>
-                                                    <Typography variant="body2" sx={{ fontWeight: 700 }}>{opt.label}</Typography>
-                                                    <Typography variant="caption" sx={{ color: "text.secondary" }}>{opt.detail}</Typography>
-                                                </Box>
+                                        <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                                            {COVER_REFERENCE.bullets.map(b => (
+                                                <Typography key={b} component="li" variant="caption" sx={{ color: "text.secondary", mb: 0.5 }}>{b}</Typography>
                                             ))}
                                         </Box>
+                                    </AccordionDetails>
+                                </Accordion>
+
+                                <Accordion>
+                                    <AccordionSummary expandIcon={<ChevronDown size={16} />}>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Exhaustion</Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
+                                            {EXHAUSTION_REFERENCE.intro2024}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: "text.disabled", display: "block" }}>
+                                            {EXHAUSTION_REFERENCE.intro2014}
+                                        </Typography>
                                     </AccordionDetails>
                                 </Accordion>
 
                                 <Accordion sx={{ mb: 3 }}>
                                     <AccordionSummary expandIcon={<ChevronDown size={16} />}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Other Ways to Spend XP</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Resting</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                                            {XP_USES.map(u => (
-                                                <Box key={u.label}>
-                                                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                                                        {u.label}{!u.core && <Typography component="span" variant="caption" sx={{ color: "warning.main", ml: 0.75 }}>(house rule)</Typography>}
-                                                    </Typography>
-                                                    <Typography variant="caption" sx={{ color: "text.secondary" }}>{u.detail}</Typography>
-                                                </Box>
-                                            ))}
-                                        </Box>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Short Rest</Typography>
+                                        <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>{RESTING_REFERENCE.shortRest}</Typography>
+                                        <Typography variant="body2" sx={{ fontWeight: 700 }}>Long Rest</Typography>
+                                        <Typography variant="caption" sx={{ color: "text.secondary" }}>{RESTING_REFERENCE.longRest}</Typography>
                                     </AccordionDetails>
                                 </Accordion>
                             </>
@@ -533,20 +502,16 @@ export default function GmDashboardPage() {
                     const snap = snapshot(pc);
                     return (
                         <Box key={pc.id} sx={{ mb: 3, pageBreakInside: "avoid" }}>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{pc.characterName} — Tier {snap.tier}</Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{pc.characterName} — {snap.classLabel}</Typography>
                             <Typography variant="body1">
-                                Might {snap.pools.might.current}/{snap.pools.might.max} ·{" "}
-                                Speed {snap.pools.speed.current}/{snap.pools.speed.max} ·{" "}
-                                Intellect {snap.pools.intellect.current}/{snap.pools.intellect.max}
+                                HP {snap.hp.current}/{snap.hp.max} · AC {snap.ac}
+                                {snap.conditions.length > 0 && ` · ${snap.conditions.join(", ")}`}
                             </Typography>
-                            <Typography variant="body1">Damage Track: {DAMAGE_TRACK_INFO[snap.damageTrack].label}</Typography>
                         </Box>
                     );
                 })}
             </Box>
 
-            <CommonIntrusionsDialog open={commonOpen} onClose={() => setCommonOpen(false)}
-                onPick={text => { addIdea(text); setCommonOpen(false); }} />
             <QuickWikiDialog open={wikiOpen} onClose={() => setWikiOpen(false)} worldIds={worldIds} />
         </Box>
     );

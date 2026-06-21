@@ -341,6 +341,18 @@ export default function CampaignPage() {
                             GM Dashboard
                         </Button>
                     )}
+                    {(campaign.system === "D&D 5e" || campaign.system === "D&D 5.5e (2024)") && (
+                        <Button
+                            component={Link}
+                            href={`/tabletop/campaigns/${campaignId}/dnd-dashboard`}
+                            variant="outlined"
+                            size="small"
+                            startIcon={<Shield size={14} />}
+                            sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
+                        >
+                            GM Dashboard
+                        </Button>
+                    )}
                 </Box>
 
                 <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"
