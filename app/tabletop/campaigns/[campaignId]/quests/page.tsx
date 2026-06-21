@@ -137,15 +137,18 @@ export default function QuestsPage() {
     const [statusFilter, setStatusFilter] = useState<QuestStatus | "all">("all");
 
     async function load() {
-        const [questRes, npcRes] = await Promise.all([
+        const [questRes, npcRes, articleRes] = await Promise.all([
             client.models.Quest.list(),
             client.models.NPC.list(),
+            client.models.WikiArticle.list(),
         ]);
         setQuests((questRes.data ?? []).filter(q => q.campaignId === campaignId));
+        const articleTitleById = new Map((articleRes.data ?? []).map(a => [a.id, a.title]));
         setNpcNames(
             (npcRes.data ?? [])
-                .filter(n => n.campaignId === campaignId && n.name)
-                .map(n => n.name)
+                .filter(n => n.campaignId === campaignId)
+                .map(n => articleTitleById.get(n.articleId))
+                .filter((t): t is string => !!t)
                 .sort()
         );
         setLoading(false);

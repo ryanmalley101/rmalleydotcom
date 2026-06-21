@@ -334,7 +334,7 @@ export default function DndDashboardPage() {
 
                         <SectionHeader label="Spotlight NPCs" sectionKey="npcs" collapsed={collapsed("npcs")} onToggle={toggleSection} />
                         {!collapsed("npcs") && (
-                            <SpotlightNpcs campaignId={campaignId} pinnedIds={gmScreen.pinnedNpcIds} onTogglePin={toggleNpcPin} />
+                            <SpotlightNpcs campaignId={campaignId} worldIds={worldIds} pinnedIds={gmScreen.pinnedNpcIds} onTogglePin={toggleNpcPin} />
                         )}
 
                         <SectionHeader label="Resting" sectionKey="rest" collapsed={collapsed("rest")} onToggle={toggleSection} />

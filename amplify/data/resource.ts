@@ -243,17 +243,17 @@ const Companion = a.model({
 
 // ── NPC / Quest / Faction trackers ───────────────────────────────────────────
 
+// An NPC is a WikiArticle (category "Person") plus campaign-specific tracking
+// state. Name/description/role/etc. all live on the linked article — this
+// model only holds state that's specific to *this* campaign's playthrough,
+// not a fact about the world (which could differ across campaigns sharing
+// the same world/article).
 const NPC = a.model({
   campaignId:   a.string().required(),
-  name:         a.string().required(),
-  role:         a.string(),
-  location:     a.string(),
-  description:  a.string(),
-  motivation:   a.string(),
-  relationship: a.string(),
-  notes:        a.string(),
+  articleId:    a.string().required(), // the linked WikiArticle
   isAlive:      a.boolean(),
-  tags:         a.string().array(),
+  relationship: a.string(), // this NPC's relationship to the party, GM's framing
+  notes:        a.string(), // campaign-specific GM tracking notes
 }).authorization(allow => [allow.owner()]);
 
 const Quest = a.model({

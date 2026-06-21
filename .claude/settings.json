@@ -106,7 +106,10 @@
       "Bash(find . -maxdepth 1 -iname \"amplify.yml\" -o -maxdepth 1 -iname \"amplify_outputs*\")",
       "Bash(curl -s \"https://raw.githubusercontent.com/Roll20/roll20-character-sheets/master/Cypher%20Systems%20Official/cypher_systems_by_roll20.html\" -o /tmp/cypher_sheet.html)",
       "Bash(xargs grep -l \"cypher\")",
-      "Bash(node --check content.js)"
+      "Bash(node --check content.js)",
+      "Read(//c/Users/ryanm/AppData/Local/Temp/claude/c--Users-rraymalleydotcom-rmalleydotcom/40312342-42ef-4a6d-ad99-00d6ed59336f/tasks/**)",
+      "WebFetch(domain:www.worldanvil.com)",
+      "Bash(curl -sL -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/124.0.0.0 Safari/537.36\" \"https://www.worldanvil.com/learn/article-guides/article-templates\" -o /tmp/wa_templates.html -w \"HTTP_STATUS:%{http_code}\\\\n\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
