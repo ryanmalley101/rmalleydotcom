@@ -82,13 +82,14 @@ const DnDWorld = a.model({
   genre:       a.string(),
 }).authorization(allow => [allow.owner()]);
 
-const DnDCampaign = a.model({
+const Campaign = a.model({
   name:         a.string().required(),
   description:  a.string(),
   worldIds:     a.string().array(),
   status:       a.string(),
   system:       a.string(),
   settingsJson: a.string(), // JSON: Partial<CombatSettings> — campaign-level defaults
+  gmScreenJson: a.string(), // JSON: GM dashboard scratch data (e.g. intrusion ideas)
 }).authorization(allow => [allow.owner()]);
 
 const WikiArticle = a.model({
@@ -305,7 +306,7 @@ const schema = a.schema({
   MonsterAttack,
   Encounter,
   DnDWorld,
-  DnDCampaign,
+  Campaign,
   WikiArticle,
   WorldMap,
   CampaignSession,

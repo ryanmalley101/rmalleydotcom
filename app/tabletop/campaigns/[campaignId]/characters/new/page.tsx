@@ -296,7 +296,7 @@ export default function NewCharacterPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        client.models.DnDCampaign.get({ id: campaignId })
+        client.models.Campaign.get({ id: campaignId })
             .then(res => {
                 setSystem(res.data?.system ?? "D&D 5e");
                 setLoading(false);

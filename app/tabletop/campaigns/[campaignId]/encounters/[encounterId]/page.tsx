@@ -18,7 +18,7 @@ const client = generateClient<Schema>();
 type EncounterRecord  = Schema["Encounter"]["type"];
 type MonsterStatblock = Schema["MonsterStatblock"]["type"];
 type PlayerCharacter  = Schema["PlayerCharacter"]["type"];
-type DnDCampaign      = Schema["DnDCampaign"]["type"];
+type Campaign      = Schema["Campaign"]["type"];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -69,7 +69,7 @@ export default function EncounterBuilderPage() {
     const [system, setSystem] = useState<string | null | undefined>(undefined);
 
     useEffect(() => {
-        client.models.DnDCampaign.get({ id: campaignId }).then(({ data }) => setSystem(data?.system ?? null));
+        client.models.Campaign.get({ id: campaignId }).then(({ data }) => setSystem(data?.system ?? null));
     }, [campaignId]);
 
     if (system === undefined) return (
@@ -109,7 +109,7 @@ function DnDEncounterBuilder() {
             client.models.Encounter.get({ id: encounterId }),
             client.models.PlayerCharacter.list(),
             client.models.MonsterStatblock.list({ limit: 1000 }),
-            client.models.DnDCampaign.get({ id: campaignId }),
+            client.models.Campaign.get({ id: campaignId }),
         ]);
         const enc = encRes.data;
         if (!enc) { router.push(`/tabletop/campaigns/${campaignId}`); return; }

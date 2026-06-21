@@ -18,7 +18,7 @@ import { hasBBCode, convertBBCodeToMarkdown } from "@/lib/bbcodeConverter";
 const client = generateClient<Schema>();
 type World    = Schema["DnDWorld"]["type"];
 type Article  = Schema["WikiArticle"]["type"];
-type Campaign = Schema["DnDCampaign"]["type"];
+type Campaign = Schema["Campaign"]["type"];
 type WorldMap = Schema["WorldMap"]["type"];
 
 const ARTICLE_TYPE_COLORS: Record<string, string> = {
@@ -73,7 +73,7 @@ export default function WorldPage() {
         const [wRes, aRes, cRes, mRes] = await Promise.all([
             client.models.DnDWorld.get({ id: worldId }),
             client.models.WikiArticle.list(),
-            client.models.DnDCampaign.list(),
+            client.models.Campaign.list(),
             client.models.WorldMap.list(),
         ]);
         setWorld(wRes.data);

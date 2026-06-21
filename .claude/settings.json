@@ -63,13 +63,22 @@
       "Read(//c/Users/ryanm/Downloads/**)",
       "Bash(Select-String -Pattern \"\\(error|Error|warning|Warning|Compiled|Linting|✓|✗|failed|Failed\\)\")",
       "Bash(mkdir -p \"c:\\\\Users\\\\ryanm\\\\Workspace\\\\rmalleydotcom\\\\rmalleydotcom\\\\app\\\\tabletop\\\\campaigns\\\\[campaignId]\\\\vtt\\\\[boardId]\")",
-      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/vtt/[boardId]\")"
+      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/vtt/[boardId]\")",
+      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/gm-dashboard\")",
+      "WebSearch",
+      "Bash(gh api *)",
+      "Bash(curl -s \"https://api.github.com/repos/Roll20/roll20-character-sheets/contents/CypherSystem\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/Roll20/roll20-character-sheets/master/CypherSystem/CypherSystem.htm\" -o /tmp/cypher_sheet.htm)",
+      "Read(//tmp/**)",
+      "Bash(npm audit *)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('manifest.json'\\)\\); console.log\\('manifest.json OK'\\)\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\encounters\\[encounterId]",
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt",
-      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt\\[boardId]"
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]\\vtt\\[boardId]",
+      "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\campaigns\\[campaignId]"
     ]
   }
 }

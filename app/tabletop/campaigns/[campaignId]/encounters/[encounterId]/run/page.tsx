@@ -702,7 +702,7 @@ export default function RunEncounterPage() {
     const [system, setSystem] = useState<string | null | undefined>(undefined);
 
     useEffect(() => {
-        client.models.DnDCampaign.get({ id: campaignId }).then(({ data }) => setSystem(data?.system ?? null));
+        client.models.Campaign.get({ id: campaignId }).then(({ data }) => setSystem(data?.system ?? null));
     }, [campaignId]);
 
     if (system === undefined) return (
@@ -800,7 +800,7 @@ function DnDRunEncounterPage() {
     async function initFromDB() {
         const [encRes, campRes] = await Promise.all([
             client.models.Encounter.get({ id: encounterId }),
-            client.models.DnDCampaign.get({ id: campaignId }),
+            client.models.Campaign.get({ id: campaignId }),
         ]);
         const enc = encRes.data;
         if (!enc) return;
