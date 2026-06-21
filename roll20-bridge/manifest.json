@@ -1,13 +1,13 @@
 {
     "manifest_version": 3,
     "name": "Cypher Sheet → Tabletop Bridge",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Mirrors Might/Speed/Intellect pools and damage track from Roll20's official Cypher System sheet into your tabletop app. GM-side, one-directional.",
     "permissions": ["storage"],
     "host_permissions": [
         "https://app.roll20.net/*",
-        "https://*.appsync-api.us-west-1.amazonaws.com/*",
-        "https://cognito-idp.us-west-1.amazonaws.com/*"
+        "https://*.appsync-api.*.amazonaws.com/*",
+        "https://cognito-idp.*.amazonaws.com/*"
     ],
     "background": {
         "service_worker": "background.js"

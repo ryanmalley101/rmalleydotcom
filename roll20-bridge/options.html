@@ -17,6 +17,10 @@
     #status.err { background: #fce8e6; color: #6e1c14; }
     #status.idle { background: #f1f1f1; color: #555; }
     .hint { font-size: 12px; color: #777; margin-top: 4px; }
+    select { width: 100%; box-sizing: border-box; padding: 7px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
+    #env-banner { margin-top: 10px; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; text-align: center; letter-spacing: 0.5px; }
+    .banner-sandbox { background: #e3f2fd; color: #0d47a1; }
+    .banner-prod { background: #fde0dc; color: #8c1c0f; }
 </style>
 </head>
 <body>
@@ -25,6 +29,15 @@
         Mirrors Might/Speed/Intellect pools and the damage track from Roll20's official
         Cypher System sheet into your tabletop app. One-directional, GM-side only.
     </p>
+
+    <h2>0. Environment</h2>
+    <p class="hint">Which backend this extension talks to. Sign-in, campaign ID, and tokens are kept separate per environment.</p>
+    <label for="environment">Environment</label>
+    <select id="environment">
+        <option value="sandbox">Sandbox (ampx sandbox)</option>
+        <option value="production">Production (rmalley.com)</option>
+    </select>
+    <div id="env-banner" class="banner-sandbox">TEST — sandbox</div>
 
     <h2>1. Sign in</h2>
     <p class="hint">Use the same account you use on the tabletop app itself.</p>

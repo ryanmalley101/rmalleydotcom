@@ -78,7 +78,7 @@ export default function PlayerViewPage() {
                         {chars.map(pc => {
                             const snap = snapshot(pc);
                             const hpPct = snap.hp.max > 0 ? (snap.hp.current / snap.hp.max) * 100 : 0;
-                            const hpColor = hpPct > 50 ? "#2e7d32" : hpPct > 25 ? "#f57c00" : "#c62828";
+                            const hpColor = hpPct > 50 ? "success.main" : hpPct > 25 ? "warning.main" : "error.main";
                             return (
                                 <Paper key={pc.id} elevation={1} sx={{ p: 2, mb: 1.5, borderLeft: "4px solid", borderLeftColor: hpColor }}>
                                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>

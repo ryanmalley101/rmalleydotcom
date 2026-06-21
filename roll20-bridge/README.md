@@ -26,7 +26,8 @@ lists (Roll20's dynamically-added rows):
   Untrained rows are skipped, same as an unfilled row.
 - **Abilities** — name, description, and cost (this sheet has a dedicated
   cost field per ability).
-- **Cyphers**, **Equipment** — map close to 1:1.
+- **Cyphers**, **Equipment** — map close to 1:1. Cyphers also sync their
+  "used" checkbox (see below).
 - **Artifacts** — Roll20 splits depletion into a die + a threshold number;
   these get combined into the app's one depletion text field (e.g. "1 in 1d20").
 
@@ -34,6 +35,12 @@ Each imported row is tagged internally with the Roll20 row's ID so editing it
 again updates the same entry instead of creating a duplicate. It also does a
 one-time read of whatever's already filled in when a sheet first loads, not
 just future edits — both for the flat fields and these lists.
+
+A used cypher is consumed — checking "used" on the Roll20 sheet (or marking
+it used directly in the app) removes it from the app's main cypher list and
+the carry-limit count, without deleting the underlying data. It moves to a
+collapsed "Used" list on the character sheet, where it can be restored or
+deleted by hand.
 
 **Not synced**:
 - **Attacks** — Roll20 has repeating sections for these, but the app's Cypher
@@ -43,8 +50,6 @@ just future edits — both for the flat fields and these lists.
 - **Recovery rolls** — deliberately skipped. The Roll20 sheet models that
   field as "which roll am I about to use," not "which have I used today," so
   it doesn't map onto the app's four independent checkboxes.
-- **Cypher "used" checkbox** — this sheet tracks whether a cypher has been
-  depleted; the app's cypher entries have no equivalent field yet.
 
 ## Setup
 
@@ -57,12 +62,45 @@ just future edits — both for the flat fields and these lists.
 2. **Load the extension in Chrome**: go to `chrome://extensions`, enable
    "Developer mode" (top right), click "Load unpacked", and select this
    `roll20-bridge` folder.
-3. **Sign in**: click "Details" on the extension → "Extension options" (or
-   right-click the extension icon → Options). Sign in with the **same
-   account** you use on the tabletop app.
-4. **Set the campaign**: open the campaign in the app and copy the ID out of
-   the URL bar (`/tabletop/campaigns/<this part>`), paste it into the options
-   page, click Save.
+3. **Pick an environment**: click "Details" on the extension → "Extension
+   options" (or right-click the extension icon → Options). Choose Sandbox or
+   Production from the dropdown at the top — see "Environments" below.
+4. **Sign in**: with that environment selected, sign in with the **same
+   account** you use on the tabletop app there.
+5. **Set the campaign**: open the campaign in that environment's app and
+   copy the ID out of the URL bar (`/tabletop/campaigns/<this part>`), paste
+   it into the options page, click Save.
+
+## Environments
+
+This is one extension install, but it can talk to two completely separate
+Amplify backends — each with its own Cognito User Pool, AppSync API, and
+DynamoDB tables:
+
+- **Sandbox** — an `ampx sandbox` (local dev backend).
+- **Production** — the deployed app at rmalley.com.
+
+The dropdown at the top of the options page picks which one is active. Sign-
+in tokens and the configured campaign ID are stored **separately per
+environment** (`auth_sandbox` / `auth_production`, etc. in
+`chrome.storage.local`), so switching the dropdown doesn't sign you out of
+the other one or lose its campaign ID — each environment remembers its own
+state independently. `background.js` always reads whichever environment is
+currently selected before making a request, so there's no separate "active"
+state to keep in sync beyond that one stored value.
+
+The actual endpoint/pool values for each environment live in the
+`ENVIRONMENTS` object — duplicated in both `background.js` and
+`options-src.js` (see the comment there for why). **Production's values are
+placeholders** (`PASTE_PROD_..._HERE`) until you fill them in from that
+branch's own `amplify_outputs.json` (region, User Pool ID, App Client ID,
+and the AppSync GraphQL URL). Until then, selecting Production will fail at
+sign-in/request time with an obvious error rather than silently hitting the
+wrong backend.
+
+If production ever runs in a different AWS region than sandbox, no manifest
+change is needed — `host_permissions` already uses region wildcards
+(`https://*.appsync-api.*.amazonaws.com/*`, `https://cognito-idp.*.amazonaws.com/*`).
 
 ## Using it
 

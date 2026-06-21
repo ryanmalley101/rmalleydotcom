@@ -27,7 +27,7 @@ const TRACKED_ATTRS = [
 const REPEATING_SECTIONS = {
     "skills":         ["skillname", "skillstat", "skilllvl"],
     "abilities":      ["abilityname", "abilitycost", "abilitydesc"],
-    "cypher-list":    ["cypher-name", "cypher-level", "cypher-description"],
+    "cypher-list":    ["cypher-name", "cypher-level", "cypher-description", "cypher-used"],
     "artifact-list":  ["artifact-name", "artifact-level", "artifact-description", "artdepthreshold", "artdepdice"],
     "equipment-list": ["equipment-name", "equipment-qty"],
 };
@@ -54,9 +54,17 @@ function sendAttrChange(characterName, attr, value) {
 // editable control) — same name on both. A plain `[name=...]` query matches
 // the span first, and a span has no .value at all, so the description always
 // read as empty. Restricting to actual form-control tags fixes that.
+//
+// Checkboxes (e.g. cypher-used) need special handling too: a checkbox's
+// `.value` is always its static `value="1"` attribute regardless of checked
+// state — the actual on/off state is `.checked`. This sheet also renders the
+// same checkbox name twice (a hidden mirror plus the visible labeled one);
+// Roll20's sheet sandbox keeps every element sharing a name in sync, so
+// reading whichever one matches first is fine.
 function readFieldValue(scopeEl, field) {
     const matches = scopeEl.querySelectorAll(`[name="attr_${field}"]`);
     for (const el of matches) {
+        if (el.tagName === "INPUT" && el.type === "checkbox") return el.checked;
         if (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT") {
             return el.value;
         }

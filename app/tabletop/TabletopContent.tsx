@@ -4,7 +4,7 @@ import { Box, Container, Typography, Button } from "@mui/material";
 import Link from "next/link";
 import {
     ArrowLeft, Dices, Sword, BookOpen, Wand2, Gem, Coins, User,
-    ListOrdered, Calculator, ShieldAlert, Globe, ScrollText, Swords, BookMarked,
+    ListOrdered, Calculator, ShieldAlert, Globe, ScrollText, Swords, BookMarked, Atom,
 } from "lucide-react";
 import type { EncounterTable } from "@/lib/encounterTables";
 
@@ -125,6 +125,22 @@ function SectionHeader({ label, accent }: { label: string; accent: string }) {
     );
 }
 
+// ── Game-system banner — groups everything specific to one ruleset ───────────
+
+function SystemHeader({ icon: Icon, label, accent }: { icon: React.ElementType; label: string; accent: string }) {
+    return (
+        <Box sx={{
+            display: "flex", alignItems: "center", gap: 1.5, mt: 7, mb: 3,
+            pb: 1.5, borderBottom: `2px solid ${accent}55`,
+        }}>
+            <Icon size={24} color={accent} />
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary" }}>
+                {label}
+            </Typography>
+        </Box>
+    );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function TabletopContent({ encounterTables }: Props) {
@@ -169,7 +185,9 @@ export default function TabletopContent({ encounterTables }: Props) {
                     />
                 </Box>
 
-                {/* ── Combat ── */}
+                {/* ════════════════════════ D&D 5e ════════════════════════ */}
+                <SystemHeader icon={Sword} label="D&D 5e" accent={T.crimsonLight} />
+
                 <SectionHeader label="Combat" accent={T.crimsonMid} />
                 <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5, mb: 5 }}>
                     <ToolCard icon={ListOrdered} accent={T.crimsonLight}
@@ -186,7 +204,6 @@ export default function TabletopContent({ encounterTables }: Props) {
                         href="/tabletop/conditions" />
                 </Box>
 
-                {/* ── Generators ── */}
                 <SectionHeader label="Generators" accent={T.goldMid} />
                 <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5, mb: 5 }}>
                     <ToolCard icon={Gem} accent={T.goldLight}
@@ -211,7 +228,6 @@ export default function TabletopContent({ encounterTables }: Props) {
                         href="/tabletop/encounters" />
                 </Box>
 
-                {/* ── Reference & Creation ── */}
                 <SectionHeader label="Reference & Creation" accent={T.goldMid} />
                 <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5 }}>
                     <ToolCard icon={Sword} accent={T.goldLight}
@@ -222,6 +238,12 @@ export default function TabletopContent({ encounterTables }: Props) {
                         title="5.5e SRD"
                         description="Searchable D&D 2024 reference — monsters, spells, items, classes."
                         href="/tabletop/srd" />
+                </Box>
+
+                {/* ════════════════════ Cypher System ════════════════════ */}
+                <SystemHeader icon={Atom} label="Cypher System" accent={T.goldLight} />
+
+                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5 }}>
                     <ToolCard icon={BookMarked} accent={T.goldLight}
                         title="Cypher System SRD"
                         description="Searchable Cypher System reference — abilities, cyphers, foci, and more."

@@ -96,7 +96,17 @@
       "Bash(mv __TRACKED_VAR__/gm-dashboard/QuestProgress.tsx __TRACKED_VAR__/_dashboard-shared/QuestProgress.tsx)",
       "Bash(mv __TRACKED_VAR__/gm-dashboard/WikiSearchPin.tsx __TRACKED_VAR__/_dashboard-shared/WikiSearchPin.tsx)",
       "Bash(grep -n 'SessionPrepCard\\\\|SpotlightNpcs\\\\|QuestProgress\\\\|WikiSearchPin' __TRACKED_VAR__/gm-dashboard/page.tsx __TRACKED_VAR__/gm-dashboard/player-view/page.tsx)",
-      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/dnd-dashboard/player-view\")"
+      "Bash(mkdir -p \"c:/Users/ryanm/Workspace/rmalleydotcom/rmalleydotcom/app/tabletop/campaigns/[campaignId]/dnd-dashboard/player-view\")",
+      "Bash(dir /b)",
+      "Bash(git check-ignore *)",
+      "Bash(node --check background.js)",
+      "Bash(ls *.md)",
+      "Bash(find . -maxdepth 1 -iname \"*.md\")",
+      "Bash(ls -la amplify.yml)",
+      "Bash(find . -maxdepth 1 -iname \"amplify.yml\" -o -maxdepth 1 -iname \"amplify_outputs*\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/Roll20/roll20-character-sheets/master/Cypher%20Systems%20Official/cypher_systems_by_roll20.html\" -o /tmp/cypher_sheet.html)",
+      "Bash(xargs grep -l \"cypher\")",
+      "Bash(node --check content.js)"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",

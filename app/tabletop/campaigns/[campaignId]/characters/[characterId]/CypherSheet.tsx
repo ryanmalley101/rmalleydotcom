@@ -8,7 +8,7 @@ import {
     DialogTitle, DialogContent, DialogActions, Collapse,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Save, X, Trash2, Plus, RotateCcw, Search, Dices, ChevronDown, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Trash2, Plus, RotateCcw, Search, Dices, ChevronDown, ChevronRight, Sparkles, Check } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { useRouter } from "next/navigation";
 import type { Schema } from "@/amplify/data/resource";
@@ -31,7 +31,7 @@ type PC = Schema["PlayerCharacter"]["type"];
 // it — set only on entries imported from a Roll20 sheet, absent otherwise.
 interface SkillEntry    { name: string; level: "trained" | "specialized" | "inability"; roll20Id?: string }
 interface AbilityEntry  { name: string; cost?: string; description: string; roll20Id?: string }
-interface CypherEntry   { name: string; level: string; form?: string; effect: string; roll20Id?: string }
+interface CypherEntry   { name: string; level: string; form?: string; effect: string; used?: boolean; roll20Id?: string }
 interface ArtifactEntry { name: string; level?: number; form?: string; effect: string; depletion?: string; roll20Id?: string }
 interface EquipmentEntry{ name: string; quantity?: number; roll20Id?: string }
 interface ArcEntry      { name: string; description: string; status: "active" | "completed"; notes: string }
@@ -553,42 +553,81 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                     </Box>
                 </Paper>
 
-                {/* Cyphers */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Box sx={{ flex: 1 }}>
-                        <SectionHeader label={`Cyphers (${data.cyphers.length})`} />
-                    </Box>
-                    {data.cyphers.length > DEFAULT_CYPHER_LIMIT && (
-                        <Tooltip title={`Carrying more than ${DEFAULT_CYPHER_LIMIT} cyphers risks a cypher mishap — check your character's actual limit.`}>
-                            <Chip label={`Over limit (${DEFAULT_CYPHER_LIMIT})`} size="small" color="warning"
-                                sx={{ fontSize: "0.6rem", height: 18, mb: 1 }} />
-                        </Tooltip>
-                    )}
-                </Box>
-                <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
-                    {data.cyphers.length === 0 && (
-                        <Typography variant="body2" sx={{ color: "text.disabled", mb: 1 }}>No cyphers.</Typography>
-                    )}
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}>
-                        {data.cyphers.map((cy, i) => (
-                            <Box key={i} sx={{ borderLeft: "3px solid #6a1b9a", pl: 1.5, py: 0.5 }}>
-                                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                    <CollapseToggle collapsed={collapsedCyphers.has(i)} onClick={() => toggleCypher(i)} />
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>{cy.name}</Typography>
-                                    <Chip label={`Level ${cy.level}`} size="small"
-                                        sx={{ backgroundColor: "#6a1b9a", color: "#fff", fontSize: "0.65rem", height: 18 }} />
-                                    {cy.form && <Typography variant="caption" sx={{ color: "text.secondary", fontStyle: "italic" }}>{cy.form}</Typography>}
-                                    <IconButton size="small" sx={{ ml: "auto", p: 0.25 }}
-                                        onClick={() => quickSave({ cyphers: data.cyphers.filter((_, j) => j !== i) })}>
-                                        <X size={10} />
-                                    </IconButton>
+                {/* Cyphers — used ones (marked either here or via the Roll20 bridge) are
+                    excluded from the main list and the carry-limit count, since a used
+                    cypher is consumed and no longer part of the character's inventory. */}
+                {(() => {
+                    const unusedCyphers = data.cyphers.filter(cy => !cy.used);
+                    const usedCyphers = data.cyphers.filter(cy => cy.used);
+                    return (
+                        <>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <Box sx={{ flex: 1 }}>
+                                    <SectionHeader label={`Cyphers (${unusedCyphers.length})`} />
                                 </Box>
-                                <Collapse in={!collapsedCyphers.has(i)}>
-                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block", pl: 3.5 }}>{cy.effect}</Typography>
-                                </Collapse>
+                                {unusedCyphers.length > DEFAULT_CYPHER_LIMIT && (
+                                    <Tooltip title={`Carrying more than ${DEFAULT_CYPHER_LIMIT} cyphers risks a cypher mishap — check your character's actual limit.`}>
+                                        <Chip label={`Over limit (${DEFAULT_CYPHER_LIMIT})`} size="small" color="warning"
+                                            sx={{ fontSize: "0.6rem", height: 18, mb: 1 }} />
+                                    </Tooltip>
+                                )}
                             </Box>
-                        ))}
-                    </Box>
+                            <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
+                                {unusedCyphers.length === 0 && (
+                                    <Typography variant="body2" sx={{ color: "text.disabled", mb: 1 }}>No cyphers.</Typography>
+                                )}
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}>
+                                    {unusedCyphers.map((cy, i) => (
+                                        <Box key={i} sx={{ borderLeft: "3px solid #6a1b9a", pl: 1.5, py: 0.5 }}>
+                                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                                <CollapseToggle collapsed={collapsedCyphers.has(i)} onClick={() => toggleCypher(i)} />
+                                                <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>{cy.name}</Typography>
+                                                <Chip label={`Level ${cy.level}`} size="small"
+                                                    sx={{ backgroundColor: "#6a1b9a", color: "#fff", fontSize: "0.65rem", height: 18 }} />
+                                                {cy.form && <Typography variant="caption" sx={{ color: "text.secondary", fontStyle: "italic" }}>{cy.form}</Typography>}
+                                                <Tooltip title="Mark used">
+                                                    <IconButton size="small" sx={{ ml: "auto", p: 0.25 }}
+                                                        onClick={() => quickSave({ cyphers: data.cyphers.map(c => c === cy ? { ...c, used: true } : c) })}>
+                                                        <Check size={12} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <IconButton size="small" sx={{ p: 0.25 }}
+                                                    onClick={() => quickSave({ cyphers: data.cyphers.filter(c => c !== cy) })}>
+                                                    <X size={10} />
+                                                </IconButton>
+                                            </Box>
+                                            <Collapse in={!collapsedCyphers.has(i)}>
+                                                <Typography variant="caption" sx={{ color: "text.secondary", display: "block", pl: 3.5 }}>{cy.effect}</Typography>
+                                            </Collapse>
+                                        </Box>
+                                    ))}
+                                </Box>
+                                {usedCyphers.length > 0 && (
+                                    <Box sx={{ mb: 2 }}>
+                                        <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mb: 0.75 }}>
+                                            Used ({usedCyphers.length})
+                                        </Typography>
+                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                                            {usedCyphers.map((cy, i) => (
+                                                <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 1, pl: 1.5 }}>
+                                                    <Typography variant="caption" sx={{ color: "text.disabled", textDecoration: "line-through", flex: 1 }}>
+                                                        {cy.name} (Level {cy.level})
+                                                    </Typography>
+                                                    <Tooltip title="Restore (mark unused)">
+                                                        <IconButton size="small" sx={{ p: 0.25 }}
+                                                            onClick={() => quickSave({ cyphers: data.cyphers.map(c => c === cy ? { ...c, used: false } : c) })}>
+                                                            <RotateCcw size={11} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <IconButton size="small" sx={{ p: 0.25 }}
+                                                        onClick={() => quickSave({ cyphers: data.cyphers.filter(c => c !== cy) })}>
+                                                        <X size={10} />
+                                                    </IconButton>
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                )}
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                         <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
                             <Button size="small" variant="outlined" startIcon={<Search size={12} />}
@@ -629,7 +668,10 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                             </Button>
                         </Box>
                     </Box>
-                </Paper>
+                            </Paper>
+                        </>
+                    );
+                })()}
 
                 {/* Artifacts */}
                 <SectionHeader label={`Artifacts (${data.artifacts.length})`} />

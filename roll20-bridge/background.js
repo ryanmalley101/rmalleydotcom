@@ -6,11 +6,37 @@
 // happens once in options.html (which has a real DOM); after that, this
 // worker only needs the REFRESH_TOKEN_AUTH flow, which is a plain REST call.
 
-const CONFIG = {
-    region: "us-west-1",
-    clientId: "1gmqdtr2ldb0ldk3v6s5iclg1b",
-    appsyncUrl: "https://jrw674z5g5h3xkhxsxu75g3q5u.appsync-api.us-west-1.amazonaws.com/graphql",
+// Each environment is a separate Amplify backend — its own Cognito User
+// Pool, AppSync API, and DynamoDB tables. "sandbox" is `ampx sandbox` (local
+// dev); "production" is the deployed app at rmalley.com. Duplicated in
+// options-src.js rather than shared, same reasoning as REPEATING_SECTIONS
+// below — these run in separate extension contexts with no build step
+// wiring them together.
+const ENVIRONMENTS = {
+    sandbox: {
+        label: "Sandbox (ampx sandbox)",
+        region: "us-west-1",
+        clientId: "1gmqdtr2ldb0ldk3v6s5iclg1b",
+        appsyncUrl: "https://jrw674z5g5h3xkhxsxu75g3q5u.appsync-api.us-west-1.amazonaws.com/graphql",
+    },
+    production: {
+        label: "Production (rmalley.com)",
+        // TODO: fill these in from the deployed branch's own amplify_outputs.json.
+        region: "us-west-1",
+        clientId: "1cfni3urd1s2kr6eno3hgta1i8",
+        appsyncUrl: "https://xustopicsreizdrzfxbnmzqdya.appsync-api.us-west-1.amazonaws.com/graphql",
+    },
 };
+const DEFAULT_ENVIRONMENT = "sandbox";
+
+async function getActiveEnvironment() {
+    const { environment } = await chrome.storage.local.get("environment");
+    return environment && ENVIRONMENTS[environment] ? environment : DEFAULT_ENVIRONMENT;
+}
+
+function envKey(base, env) {
+    return `${base}_${env}`;
+}
 
 const DEBOUNCE_MS = 600;
 const pending = new Map(); // characterName -> { attrs: {}, rows: Map<"section|rowId", {section,rowId,row}>, timer }
@@ -145,7 +171,10 @@ function buildEntryFromRow(section, rowId, row) {
         case "cypher-list": {
             const name = (row["cypher-name"] || "").trim();
             if (!name) return null;
-            return { roll20Id: rowId, name, level: row["cypher-level"] || "1", effect: row["cypher-description"] || "" };
+            return {
+                roll20Id: rowId, name, level: row["cypher-level"] || "1", effect: row["cypher-description"] || "",
+                used: Boolean(row["cypher-used"]),
+            };
         }
         case "artifact-list": {
             const name = (row["artifact-name"] || "").trim();
@@ -215,17 +244,18 @@ async function applyChanges(characterName, attrs, rows) {
 // ── Character name → PlayerCharacter id, cached for 5 minutes ────────────────
 
 async function resolveCharacterId(characterName) {
-    const { campaignId } = await chrome.storage.local.get("campaignId");
+    const env = await getActiveEnvironment();
+    const { [envKey("campaignId", env)]: campaignId } = await chrome.storage.local.get(envKey("campaignId", env));
     if (!campaignId) {
-        console.warn("[Roll20 Bridge] no campaign configured — open the extension options page.");
+        console.warn(`[Roll20 Bridge] no campaign configured for the ${env} environment — open the extension options page.`);
         return null;
     }
-    const fresh = characterCache && characterCache.campaignId === campaignId
+    const fresh = characterCache && characterCache.env === env && characterCache.campaignId === campaignId
         && (Date.now() - characterCache.fetchedAt) < 5 * 60 * 1000;
     if (!fresh) {
         const items = await listCampaignCharacters(campaignId);
         const byNameLower = new Map(items.map(c => [c.characterName.trim().toLowerCase(), c.id]));
-        characterCache = { campaignId, fetchedAt: Date.now(), byNameLower };
+        characterCache = { env, campaignId, fetchedAt: Date.now(), byNameLower };
     }
     return characterCache.byNameLower.get(characterName.trim().toLowerCase()) ?? null;
 }
@@ -233,8 +263,9 @@ async function resolveCharacterId(characterName) {
 // ── AppSync GraphQL ───────────────────────────────────────────────────────────
 
 async function gqlRequest(query, variables) {
-    const token = await getValidIdToken();
-    const res = await fetch(CONFIG.appsyncUrl, {
+    const env = await getActiveEnvironment();
+    const token = await getValidIdToken(env);
+    const res = await fetch(ENVIRONMENTS[env].appsyncUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: token },
         body: JSON.stringify({ query, variables }),
@@ -295,17 +326,18 @@ async function listCampaignCharacters(campaignId) {
 // Initial sign-in (SRP) happens in options.html. From then on this worker
 // only needs REFRESH_TOKEN_AUTH, which is a plain unauthenticated REST call.
 
-async function getValidIdToken() {
-    const { auth } = await chrome.storage.local.get("auth");
+async function getValidIdToken(env) {
+    const key = envKey("auth", env);
+    const { [key]: auth } = await chrome.storage.local.get(key);
     if (!auth?.refreshToken) {
-        throw new Error("Not signed in — open the extension options page and sign in.");
+        throw new Error(`Not signed in to the ${env} environment — open the extension options page and sign in.`);
     }
     if (Date.now() < auth.expiresAt - 60_000) return auth.idToken;
-    return refreshIdToken(auth.refreshToken);
+    return refreshIdToken(env, auth.refreshToken);
 }
 
-async function refreshIdToken(refreshToken) {
-    const res = await fetch(`https://cognito-idp.${CONFIG.region}.amazonaws.com/`, {
+async function refreshIdToken(env, refreshToken) {
+    const res = await fetch(`https://cognito-idp.${ENVIRONMENTS[env].region}.amazonaws.com/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-amz-json-1.1",
@@ -313,7 +345,7 @@ async function refreshIdToken(refreshToken) {
         },
         body: JSON.stringify({
             AuthFlow: "REFRESH_TOKEN_AUTH",
-            ClientId: CONFIG.clientId,
+            ClientId: ENVIRONMENTS[env].clientId,
             AuthParameters: { REFRESH_TOKEN: refreshToken },
         }),
     });
@@ -322,8 +354,9 @@ async function refreshIdToken(refreshToken) {
 
     const idToken = json.AuthenticationResult.IdToken;
     const expiresAt = Date.now() + json.AuthenticationResult.ExpiresIn * 1000;
-    const { auth } = await chrome.storage.local.get("auth");
+    const key = envKey("auth", env);
+    const { [key]: auth } = await chrome.storage.local.get(key);
     const updated = { ...auth, idToken, expiresAt };
-    await chrome.storage.local.set({ auth: updated });
+    await chrome.storage.local.set({ [key]: updated });
     return idToken;
 }
