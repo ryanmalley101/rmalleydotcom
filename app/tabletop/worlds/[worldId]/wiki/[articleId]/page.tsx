@@ -188,7 +188,7 @@ export default function ArticlePage() {
         const [aRes, allRes, campRes] = await Promise.all([
             client.models.WikiArticle.get({ id: articleId }),
             client.models.WikiArticle.list(),
-            client.models.DnDCampaign.list(),
+            client.models.Campaign.list(),
         ]);
         const a = aRes.data;
         setArticle(a);

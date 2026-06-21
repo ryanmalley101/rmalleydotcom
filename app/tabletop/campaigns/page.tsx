@@ -14,7 +14,7 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 
 const client = generateClient<Schema>();
-type Campaign = Schema["DnDCampaign"]["type"];
+type Campaign = Schema["Campaign"]["type"];
 type World    = Schema["DnDWorld"]["type"];
 
 const STATUSES = ["Active", "Paused", "Completed", "Planning"];
@@ -34,7 +34,7 @@ export default function CampaignsPage() {
 
     async function load() {
         const [cRes, wRes] = await Promise.all([
-            client.models.DnDCampaign.list(),
+            client.models.Campaign.list(),
             client.models.DnDWorld.list(),
         ]);
         setCampaigns((cRes.data ?? []).sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? "")));
@@ -66,9 +66,9 @@ export default function CampaignsPage() {
         if (!form.name.trim()) return;
         setSaving(true);
         if (editing) {
-            await client.models.DnDCampaign.update({ id: editing.id, ...form });
+            await client.models.Campaign.update({ id: editing.id, ...form });
         } else {
-            await client.models.DnDCampaign.create(form);
+            await client.models.Campaign.create(form);
         }
         setSaving(false);
         setDialog(false);
@@ -77,7 +77,7 @@ export default function CampaignsPage() {
 
     async function confirmDelete() {
         if (!deleteId) return;
-        await client.models.DnDCampaign.delete({ id: deleteId });
+        await client.models.Campaign.delete({ id: deleteId });
         setDeleteId(null);
         load();
     }

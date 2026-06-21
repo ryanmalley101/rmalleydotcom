@@ -55,7 +55,7 @@ export default function SessionPage() {
             setPlayerSummary(s.playerSummary ?? "");
 
             // Load campaign → worldIds → articles
-            const { data: campaign } = await client.models.DnDCampaign.get({ id: campaignId });
+            const { data: campaign } = await client.models.Campaign.get({ id: campaignId });
             if (campaign?.worldIds?.length) {
                 const { data: articles } = await client.models.WikiArticle.list();
                 const worldArticles = (articles ?? []).filter(a =>

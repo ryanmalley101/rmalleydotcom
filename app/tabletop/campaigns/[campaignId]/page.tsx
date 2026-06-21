@@ -16,7 +16,7 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 
 const client = generateClient<Schema>();
-type Campaign        = Schema["DnDCampaign"]["type"];
+type Campaign        = Schema["Campaign"]["type"];
 type Session         = Schema["CampaignSession"]["type"];
 type PlayerCharacter = Schema["PlayerCharacter"]["type"];
 type World           = Schema["DnDWorld"]["type"];
@@ -126,7 +126,7 @@ export default function CampaignPage() {
 
     async function load() {
         const [cRes, sRes, pcRes, wRes, encRes, memRes, compRes] = await Promise.all([
-            client.models.DnDCampaign.get({ id: campaignId }),
+            client.models.Campaign.get({ id: campaignId }),
             client.models.CampaignSession.list(),
             client.models.PlayerCharacter.list(),
             client.models.DnDWorld.list(),
@@ -216,7 +216,7 @@ export default function CampaignPage() {
 
     async function saveCampaignEdit() {
         if (!editName.trim()) return;
-        await client.models.DnDCampaign.update({
+        await client.models.Campaign.update({
             id: campaignId,
             name: editName.trim(),
             description: editDesc || undefined,
@@ -235,7 +235,7 @@ export default function CampaignPage() {
 
     async function saveSettings(s: CombatSettings) {
         setCombatSettings(s);
-        await client.models.DnDCampaign.update({ id: campaignId, settingsJson: JSON.stringify(s) });
+        await client.models.Campaign.update({ id: campaignId, settingsJson: JSON.stringify(s) });
         setSettingsOpen(false);
     }
 
@@ -329,6 +329,18 @@ export default function CampaignPage() {
                     >
                         Virtual Table
                     </Button>
+                    {campaign.system === "Cypher System" && (
+                        <Button
+                            component={Link}
+                            href={`/tabletop/campaigns/${campaignId}/gm-dashboard`}
+                            variant="outlined"
+                            size="small"
+                            startIcon={<Shield size={14} />}
+                            sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
+                        >
+                            GM Dashboard
+                        </Button>
+                    )}
                 </Box>
 
                 <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"

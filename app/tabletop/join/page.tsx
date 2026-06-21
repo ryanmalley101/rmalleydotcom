@@ -20,7 +20,7 @@ function JoinCampaignContent() {
     const code = searchParams.get("code") ?? "";
     const [playerName, setPlayerName] = useState("");
     const [invite, setInvite]         = useState<Schema["CampaignInvite"]["type"] | null>(null);
-    const [campaign, setCampaign]     = useState<Schema["DnDCampaign"]["type"] | null>(null);
+    const [campaign, setCampaign]     = useState<Schema["Campaign"]["type"] | null>(null);
     const [loading, setLoading]       = useState(true);
     const [joining, setJoining]       = useState(false);
     const [error, setError]           = useState("");
@@ -35,7 +35,7 @@ function JoinCampaignContent() {
                 setError("This invite link has expired."); setLoading(false); return;
             }
             setInvite(inv);
-            const { data: camp } = await client.models.DnDCampaign.get({ id: inv.campaignId });
+            const { data: camp } = await client.models.Campaign.get({ id: inv.campaignId });
             setCampaign(camp);
             setLoading(false);
         }

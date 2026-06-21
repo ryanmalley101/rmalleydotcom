@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Cypher Sheet Bridge — Settings</title>
+<style>
+    body { font-family: -apple-system, Segoe UI, Arial, sans-serif; max-width: 480px; margin: 32px auto; color: #222; }
+    h1 { font-size: 18px; }
+    h2 { font-size: 14px; color: #555; margin-top: 28px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin: 12px 0 4px; }
+    input { width: 100%; box-sizing: border-box; padding: 7px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
+    button { margin-top: 14px; padding: 8px 16px; font-size: 13px; border: none; border-radius: 4px; background: #9a3412; color: #fff; cursor: pointer; }
+    button:hover { background: #7c2d12; }
+    button.secondary { background: #888; }
+    #status { margin-top: 14px; font-size: 13px; padding: 8px; border-radius: 4px; }
+    #status.ok { background: #e6f4ea; color: #1e4620; }
+    #status.err { background: #fce8e6; color: #6e1c14; }
+    #status.idle { background: #f1f1f1; color: #555; }
+    .hint { font-size: 12px; color: #777; margin-top: 4px; }
+</style>
+</head>
+<body>
+    <h1>Cypher Sheet → Tabletop Bridge</h1>
+    <p class="hint">
+        Mirrors Might/Speed/Intellect pools and the damage track from Roll20's official
+        Cypher System sheet into your tabletop app. One-directional, GM-side only.
+    </p>
+
+    <h2>1. Sign in</h2>
+    <p class="hint">Use the same account you use on the tabletop app itself.</p>
+    <form id="signin-form">
+        <label for="email">Email</label>
+        <input id="email" type="email" required />
+        <label for="password">Password</label>
+        <input id="password" type="password" required />
+        <button type="submit">Sign in</button>
+        <button type="button" id="signout-btn" class="secondary">Sign out</button>
+    </form>
+
+    <h2>2. Campaign</h2>
+    <p class="hint">
+        Copy the campaign ID from the app's URL bar — e.g.
+        <code>/tabletop/campaigns/&lt;this part&gt;</code>.
+    </p>
+    <label for="campaign-id">Campaign ID</label>
+    <input id="campaign-id" type="text" placeholder="00000000-0000-0000-0000-000000000000" />
+    <button type="button" id="save-campaign-btn">Save</button>
+
+    <h2>Status</h2>
+    <div id="status" class="idle">Not signed in.</div>
+
+    <script src="options.bundle.js"></script>
+</body>
+</html>

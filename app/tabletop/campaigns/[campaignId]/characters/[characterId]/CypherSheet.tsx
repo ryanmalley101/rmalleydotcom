@@ -18,6 +18,7 @@ import {
     loadAbilities, loadCyphers, loadArcs, searchSrd, formatArcSteps,
     type AbilitySrd, type CypherSrd, type ArcSrd,
 } from "@/lib/cypherSrd";
+import { DAMAGE_TRACK_INFO, DEFAULT_CYPHER_LIMIT } from "@/lib/cypherRules";
 
 const client = generateClient<Schema>();
 type PC = Schema["PlayerCharacter"]["type"];
@@ -66,23 +67,6 @@ function parseData(json: string | null | undefined): CypherData {
     try { return { ...DEFAULT_DATA, ...JSON.parse(json) }; }
     catch { return { ...DEFAULT_DATA }; }
 }
-
-// ── Damage track rule reminders ───────────────────────────────────────────────
-
-const DAMAGE_TRACK_INFO: Record<CypherData["damageTrack"], { label: string; color: string; effect: string }> = {
-    hale: {
-        label: "Hale", color: "#2e7d32",
-        effect: "No penalties. You're functioning at full capacity.",
-    },
-    impaired: {
-        label: "Impaired", color: "#f57c00",
-        effect: "You can't apply Effort to any task, and all of your tasks are one step harder than normal.",
-    },
-    debilitated: {
-        label: "Debilitated", color: "#c62828",
-        effect: "You can't move or take physical actions. You can still think and talk, but mental actions are one step harder, and you still can't apply Effort. Reaching 0 in a Pool while already debilitated means death.",
-    },
-};
 
 const SKILL_COLORS: Record<string, string> = {
     trained:      "#1565c0",
@@ -529,7 +513,17 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                 </Paper>
 
                 {/* Cyphers */}
-                <SectionHeader label={`Cyphers (${data.cyphers.length})`} />
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box sx={{ flex: 1 }}>
+                        <SectionHeader label={`Cyphers (${data.cyphers.length})`} />
+                    </Box>
+                    {data.cyphers.length > DEFAULT_CYPHER_LIMIT && (
+                        <Tooltip title={`Carrying more than ${DEFAULT_CYPHER_LIMIT} cyphers risks a cypher mishap — check your character's actual limit.`}>
+                            <Chip label={`Over limit (${DEFAULT_CYPHER_LIMIT})`} size="small" color="warning"
+                                sx={{ fontSize: "0.6rem", height: 18, mb: 1 }} />
+                        </Tooltip>
+                    )}
+                </Box>
                 <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
                     {data.cyphers.length === 0 && (
                         <Typography variant="body2" sx={{ color: "text.disabled", mb: 1 }}>No cyphers.</Typography>
