@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
     Box, Container, Typography, Button, TextField,
     MenuItem, Select, FormControl, InputLabel, CircularProgress, Divider, IconButton,
+    Autocomplete,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Upload, X } from "lucide-react";
+import { ArrowLeft, BookOpen, Upload, X, ImagePlus } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
+import { useWikiLinkInsert } from "../useWikiLinkInsert";
+import { useFileDrop } from "../useFileDrop";
 
 const client = generateClient<Schema>();
 
@@ -36,15 +39,47 @@ export default function NewArticlePage() {
     const [parentTitle, setParentTitle] = useState("");
     const [content, setContent]         = useState("");
     const [saving, setSaving]           = useState(false);
+    const [articleTitles, setArticleTitles] = useState<string[]>([]);
+    const [galleryFiles, setGalleryFiles]       = useState<File[]>([]);
+    const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
     const coverInputRef = useRef<HTMLInputElement>(null);
+    const galleryInputRef = useRef<HTMLInputElement>(null);
 
-    function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    useEffect(() => {
+        client.models.WikiArticle.list().then(({ data }) => {
+            setArticleTitles((data ?? []).filter(a => a.worldId === worldId)
+                .map(a => a.title).sort());
+        });
+    }, [worldId]);
+
+    const { textareaRef: linkTextareaRef, handleKeyDown: handleLinkKeyDown, dialog: linkDialog } =
+        useWikiLinkInsert({ content, setContent, articleTitles });
+
+    function setCoverFile(file: File) {
         setPendingFile(file);
         setCoverPreview(URL.createObjectURL(file));
         setCover("");
     }
+    function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (file) setCoverFile(file);
+    }
+    const coverDrop = useFileDrop(files => { if (files[0]) setCoverFile(files[0]); });
+
+    function addGalleryFiles(files: File[]) {
+        setGalleryFiles(prev => [...prev, ...files]);
+        setGalleryPreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
+    }
+    function handleGalleryFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+        const files = Array.from(e.target.files ?? []);
+        if (files.length) addGalleryFiles(files);
+        e.target.value = "";
+    }
+    function removeGalleryFile(index: number) {
+        setGalleryFiles(prev => prev.filter((_, i) => i !== index));
+        setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
+    }
+    const galleryDrop = useFileDrop(addGalleryFiles);
 
     async function save() {
         if (!title.trim()) return;
@@ -68,6 +103,20 @@ export default function NewArticlePage() {
                 await uploadData({ path: key, data: pendingFile, options: { contentType: pendingFile.type } }).result;
                 await client.models.WikiArticle.update({ id: data.id, coverImageKey: key, coverImageUrl: undefined });
             } catch { /* cover upload failed — article still created */ }
+        }
+        // Upload any staged gallery images
+        if (data && galleryFiles.length) {
+            const keys: string[] = [];
+            for (let i = 0; i < galleryFiles.length; i++) {
+                const file = galleryFiles[i];
+                const ext = file.name.split(".").pop() ?? "jpg";
+                const key = `wiki-gallery/${worldId}/${data.id}/${Date.now()}-${i}.${ext}`;
+                try {
+                    await uploadData({ path: key, data: file, options: { contentType: file.type } }).result;
+                    keys.push(key);
+                } catch { /* skip failed upload */ }
+            }
+            if (keys.length) await client.models.WikiArticle.update({ id: data.id, galleryImageKeys: keys });
         }
         setSaving(false);
         if (data) router.push(`/tabletop/worlds/${worldId}/wiki/${data.id}`);
@@ -138,7 +187,15 @@ export default function NewArticlePage() {
                         <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.75 }}>
                             Cover Image
                         </Typography>
-                        <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", flexWrap: "wrap" }}>
+                        <Box {...coverDrop.dropHandlers}
+                            sx={{
+                                display: "flex", gap: 1.5, alignItems: "flex-start", flexWrap: "wrap",
+                                p: 1.5, border: "2px dashed",
+                                borderColor: coverDrop.isDragging ? "primary.main" : "divider",
+                                borderRadius: 2,
+                                backgroundColor: coverDrop.isDragging ? "rgba(154,52,18,0.06)" : "transparent",
+                                transition: "border-color 0.15s, background-color 0.15s",
+                            }}>
                             {coverPreview && (
                                 <Box sx={{ position: "relative" }}>
                                     <Box component="img" src={coverPreview} alt="Cover preview"
@@ -159,6 +216,9 @@ export default function NewArticlePage() {
                                     Upload image
                                 </Button>
                                 <input ref={coverInputRef} type="file" accept="image/*" hidden onChange={handleFileSelect} />
+                                <Typography variant="caption" sx={{ color: "text.disabled", fontSize: "0.7rem" }}>
+                                    or drag and drop an image
+                                </Typography>
                                 {!pendingFile && (
                                     <TextField size="small" label="Or paste URL" fullWidth
                                         placeholder="https://…"
@@ -170,20 +230,74 @@ export default function NewArticlePage() {
                         </Box>
                     </Box>
 
-                    <TextField label="Parent Article Title" fullWidth
-                        placeholder="e.g. Ash Peak (exact title of parent article)"
-                        value={parentTitle} onChange={e => setParentTitle(e.target.value)} />
+                    {/* Gallery — supplemental images */}
+                    <Box>
+                        <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.75 }}>
+                            Gallery
+                        </Typography>
+                        <Box {...galleryDrop.dropHandlers}
+                            sx={{
+                                display: "flex", flexWrap: "wrap", gap: 1.5, p: 1.5,
+                                border: "2px dashed",
+                                borderColor: galleryDrop.isDragging ? "primary.main" : "divider",
+                                borderRadius: 2,
+                                backgroundColor: galleryDrop.isDragging ? "rgba(154,52,18,0.06)" : "transparent",
+                                transition: "border-color 0.15s, background-color 0.15s",
+                            }}>
+                            {galleryPreviews.map((src, i) => (
+                                <Box key={i} sx={{ position: "relative" }}>
+                                    <Box component="img" src={src} alt=""
+                                        sx={{ width: 72, height: 72, objectFit: "cover", borderRadius: 1, display: "block" }} />
+                                    <IconButton size="small" onClick={() => removeGalleryFile(i)}
+                                        sx={{ position: "absolute", top: -6, right: -6, p: 0.25,
+                                            backgroundColor: "error.main", color: "#fff",
+                                            "&:hover": { backgroundColor: "error.dark" }, width: 18, height: 18 }}>
+                                        <X size={10} />
+                                    </IconButton>
+                                </Box>
+                            ))}
+                            <Box onClick={() => galleryInputRef.current?.click()}
+                                sx={{
+                                    width: 72, height: 72, display: "flex", flexDirection: "column",
+                                    alignItems: "center", justifyContent: "center", gap: 0.5,
+                                    border: "1px dashed", borderColor: "primary.light", borderRadius: 1,
+                                    cursor: "pointer", color: "primary.main",
+                                    "&:hover": { backgroundColor: "rgba(154,52,18,0.04)" },
+                                }}>
+                                <ImagePlus size={18} />
+                                <Typography sx={{ fontSize: "0.6rem" }}>Add</Typography>
+                            </Box>
+                            <input ref={galleryInputRef} type="file" accept="image/*" multiple hidden
+                                onChange={handleGalleryFileSelect} />
+                        </Box>
+                        <Typography variant="caption" sx={{ color: "text.disabled", fontSize: "0.7rem", display: "block", mt: 0.5 }}>
+                            Supplemental images — alternate forms, reference art, etc. Drag and drop or click Add.
+                        </Typography>
+                    </Box>
+
+                    <Autocomplete
+                        freeSolo
+                        fullWidth
+                        options={articleTitles}
+                        inputValue={parentTitle}
+                        onInputChange={(_, newValue) => setParentTitle(newValue)}
+                        renderInput={params => (
+                            <TextField {...params} label="Parent Article"
+                                placeholder="Search for an article…" />
+                        )}
+                    />
 
                     <TextField
                         label="Content" multiline minRows={16} fullWidth
-                        placeholder={"Write your article here. Use [[Article Title]] to link to other wiki articles."}
+                        placeholder={"Write your article here. Use [[Article Title]] to link, or select text and press Ctrl+K."}
                         value={content}
                         onChange={e => setContent(e.target.value)}
+                        inputRef={linkTextareaRef} onKeyDown={handleLinkKeyDown}
                         sx={{ "& textarea": { fontFamily: "monospace", fontSize: "0.9rem" } }}
                     />
 
                     <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                        Tip: Write <strong>[[Article Title]]</strong> anywhere in your content to create a clickable link to another article in this world.
+                        Tip: Write <strong>[[Article Title]]</strong> anywhere in your content to create a clickable link, or select text and press <strong>Ctrl+K</strong> to search for an article.
                     </Typography>
 
                     <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
@@ -194,6 +308,8 @@ export default function NewArticlePage() {
                         </Button>
                     </Box>
                 </Box>
+
+                {linkDialog}
             </Container>
         </Box>
     );
