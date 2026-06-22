@@ -18,8 +18,8 @@ interface SpotlightNpcsProps {
     onTogglePin: (npcId: string) => void;
 }
 
-// An NPC is a WikiArticle (category "Person") plus this campaign's tracking
-// state (alive/dead, relationship, notes) — see lib/npcLinks.ts.
+// An NPC is a WikiArticle (articleType "Character") plus this campaign's
+// tracking state (alive/dead, relationship, notes) — see lib/npcLinks.ts.
 export function SpotlightNpcs({ campaignId, worldIds, pinnedIds, onTogglePin }: SpotlightNpcsProps) {
     const [npcs, setNpcs] = useState<NPC[]>([]);
     const [articles, setArticles] = useState<WikiArticle[]>([]);
@@ -35,7 +35,7 @@ export function SpotlightNpcs({ campaignId, worldIds, pinnedIds, onTogglePin }: 
     useEffect(() => {
         if (worldIds.length === 0) return;
         client.models.WikiArticle.list().then(({ data }) => {
-            setArticles((data ?? []).filter(a => worldIds.includes(a.worldId) && a.category === "Person"));
+            setArticles((data ?? []).filter(a => worldIds.includes(a.worldId) && a.articleType === "Character"));
         });
     }, [worldIds]);
 
@@ -98,7 +98,7 @@ export function SpotlightNpcs({ campaignId, worldIds, pinnedIds, onTogglePin }: 
                     })}
                 </Box>
             )}
-            <TextField size="small" fullWidth placeholder="Search NPCs (Person wiki articles) to pin…" value={search}
+            <TextField size="small" fullWidth placeholder="Search NPCs (Character wiki articles) to pin…" value={search}
                 onChange={e => setSearch(e.target.value)}
                 InputProps={{ startAdornment: <InputAdornment position="start"><Search size={14} /></InputAdornment> }} />
             {results.length > 0 && (
@@ -113,7 +113,7 @@ export function SpotlightNpcs({ campaignId, worldIds, pinnedIds, onTogglePin }: 
             )}
             {search.trim() && results.length === 0 && (
                 <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mt: 1 }}>
-                    No matching "Person" wiki articles. Create one from the Wiki section above, then it'll show up here.
+                    No matching "Character" wiki articles. Create one from the Wiki section above, then it'll show up here.
                 </Typography>
             )}
         </Paper>

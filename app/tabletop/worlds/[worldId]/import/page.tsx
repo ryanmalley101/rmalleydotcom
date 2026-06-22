@@ -13,53 +13,60 @@ import { ArrowLeft, Upload, CheckSquare, Square, AlertTriangle, Image as ImageIc
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { maybeConvert } from "@/lib/bbcodeConverter";
+import { DEFAULT_ARTICLE_TYPE, ARTICLE_TYPE_COLORS } from "@/lib/wikiArticleTypes";
 
 const client = generateClient<Schema>();
 
 // ── Field mapping ─────────────────────────────────────────────────────────────
 
-// Maps a WorldAnvil article's `templateType` to this app's wiki Category.
-// The first six entries are confirmed working against real exports. The
-// rest are added from World Anvil's own template guide
-// (worldanvil.com/learn/article-guides/article-templates) using the slugs
-// in that page's own URLs — `material` is a guess (the guide's link for it
-// was a bug, pointing at the Military Unit template instead), and none of
-// these newer ones have been confirmed against a real export's actual
-// `templateType` value yet. Anything unmapped still falls through to "Lore".
-const CATEGORY_MAP: Record<string, string> = {
+// Maps a WorldAnvil article's `templateType` to this app's single
+// `articleType` field (Category and Article Type used to be separate
+// fields here — squashed into one). Most of these now mirror World Anvil's
+// own template names directly (worldanvil.com/learn/article-guides/article-
+// templates) using the slugs from that page's URLs — `material` is a guess
+// (the guide's link for it was a bug, pointing at the Military Unit
+// template instead), and none of these have been confirmed against a real
+// export's actual `templateType` value yet. Anything unmapped falls
+// through to the default.
+//
+// Templates with no direct equivalent in this app's list: Language and
+// Session Report → Document (closest "written reference" bucket); Title →
+// Profession (rank/job-adjacent); Technology → Natural Law (an abstract
+// "how things work" description, same spirit as a magic system's rules).
+const ARTICLE_TYPE_MAP: Record<string, string> = {
     settlement:   "Location",
     location:     "Location",
     landmark:     "Location",
-    person:       "Person",
+    person:       "Character",
     organization: "Organization",
-    article:      "Lore",
+    article:      DEFAULT_ARTICLE_TYPE,
 
-    character:            "Person",
-    condition:            "Other",
-    document:             "Lore",
-    ethnicity:            "Species",
+    character:            "Character",
+    condition:            "Condition",
+    document:             "Document",
+    ethnicity:            "Race/Ethnicity",
     "military-formation": "Organization",
     item:                 "Item",
-    language:             "Lore",
-    material:             "Item",
+    language:             "Document",
+    material:             "Material",
     conflict:             "Event",
-    myth:                 "Lore",
+    myth:                 "Myth",
     building:             "Location",
     geography:            "Location",
-    law:                  "Lore",
-    proze:                "Lore",
-    prose:                "Lore",
-    profession:           "Other",
-    plot:                 "Event",
-    title:                "Other",
-    report:               "Other",
+    law:                  "Natural Law",
+    proze:                "Prose",
+    prose:                "Prose",
+    profession:           "Profession",
+    plot:                 "Plot",
+    title:                "Profession",
+    report:               "Document",
     species:              "Species",
-    spell:                "Lore",
-    technology:           "Item",
-    tradition:            "Lore",
-    ritual:               "Lore",
+    spell:                "Spell",
+    technology:           "Natural Law",
+    tradition:            "Tradition",
+    ritual:               "Tradition",
     vehicle:              "Item",
-    generic:              "Lore",
+    generic:              DEFAULT_ARTICLE_TYPE,
 };
 
 const WA_BOILERPLATE_KEYWORDS = ["world anvil", "worldanvil", "read me first"];
@@ -87,7 +94,6 @@ interface ParsedArticle {
     excerpt:      string | null;
     templateType: string;
     articleType:  string;
-    category:     string;
     tags:         string[];
     coverImageUrl: string | null;
     parentTitle:  string | null;
@@ -101,8 +107,7 @@ function parseBatchArticle(raw: Record<string, unknown>, fileName: string): Pars
     const title = raw.title as string;
     const content = maybeConvert((raw.content as string) || "");
     const words = content ? content.split(/\s+/).length : 0;
-    const articleType = (raw.articleType as string) || "Lore";
-    const templateType = articleType.toLowerCase();
+    const templateType = ((raw.articleType as string) || "article").toLowerCase();
 
     return {
         waId:          `batch-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40)}`,
@@ -110,8 +115,7 @@ function parseBatchArticle(raw: Record<string, unknown>, fileName: string): Pars
         content,
         excerpt:       (raw.excerpt as string | null) || null,
         templateType,
-        articleType,
-        category:      (raw.category as string) || CATEGORY_MAP[templateType] || "Lore",
+        articleType:   (raw.articleType as string) || ARTICLE_TYPE_MAP[templateType] || DEFAULT_ARTICLE_TYPE,
         tags:          Array.isArray(raw.tags) ? (raw.tags as string[]) : [],
         coverImageUrl: (raw.coverImageUrl as string | null) || null,
         parentTitle:   (raw.parentTitle as string | null) || null,
@@ -143,8 +147,7 @@ function parseWAFile(raw: Record<string, unknown>, fileName: string): ParsedArti
         content:       maybeConvert((raw.content as string) || ""),
         excerpt:       (raw.excerpt as string | null) || null,
         templateType,
-        articleType:   templateType.charAt(0).toUpperCase() + templateType.slice(1),
-        category:      CATEGORY_MAP[templateType] ?? "Lore",
+        articleType:   ARTICLE_TYPE_MAP[templateType] ?? DEFAULT_ARTICLE_TYPE,
         tags:          tagsStr ? tagsStr.split(",").map(t => t.trim()).filter(Boolean) : [],
         coverImageUrl: coverUrl ?? null,
         parentTitle:   articleParent?.title ?? null,
@@ -261,7 +264,6 @@ export default function ImportPage() {
                     content:       a.content || undefined,
                     excerpt:       a.excerpt || undefined,
                     articleType:   a.articleType,
-                    category:      a.category,
                     tags:          a.tags.length ? a.tags : undefined,
                     coverImageUrl: a.coverImageUrl || undefined,
                     parentTitle:   a.parentTitle || undefined,
@@ -275,13 +277,6 @@ export default function ImportPage() {
 
         setPhase("done");
     }
-
-    // ── Type color ──────────────────────────────────────────────────────────
-
-    const typeColor: Record<string, string> = {
-        Settlement: "#0e7490", Location: "#92400e", Landmark: "#7e22ce",
-        Person: "#1d4ed8", Organization: "#15803d", Lore: "#374151",
-    };
 
     const selectedCount = Object.values(selected).filter(Boolean).length;
     const dupeCount     = articles.filter(a => !selected[a.waId] && !a.isBoilerplate && a.wordcount > 0).length;
@@ -410,7 +405,7 @@ export default function ImportPage() {
                                                     <Chip
                                                         label={a.articleType} size="small"
                                                         sx={{
-                                                            backgroundColor: typeColor[a.articleType] ?? "#555",
+                                                            backgroundColor: ARTICLE_TYPE_COLORS[a.articleType] ?? "#555",
                                                             color: "#fff", fontSize: "0.65rem", height: 18,
                                                         }}
                                                     />
