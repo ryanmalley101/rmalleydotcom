@@ -165,3 +165,112 @@ function syncCurrentSheet() {
 // Roll20's sheet worker can finish populating values slightly after the DOM
 // itself is idle, so this waits a bit rather than racing it.
 setTimeout(syncCurrentSheet, 1500);
+
+// ── Chat roll watcher ─────────────────────────────────────────────────────────
+// Verified against a real exported chat log. Two message shapes matter:
+//
+// 1. Sheet rolls render through the Cypher sheet's OWN chat template
+//    (.sheet-rolltemplate-cyphsys), not Roll20's generic .rolls/.rolltotal/
+//    .who markup — there is no .who or .rolltotal anywhere in this sheet's
+//    output. Character name is in .sheet-charname, the skill/stat/ability
+//    being rolled is in .sheet-title, success/failure in a .sheet-subtitle
+//    with class .sheet-success or .sheet-failure, and the actual d20 result
+//    sits in an .inlinerollresult right after the element whose
+//    data-i18n="roll:" (e.g. <span data-i18n="roll:">Roll:</span>). Ability/
+//    cypher description messages use this same template with no roll
+//    inside, so they're naturally skipped by requiring a roll result.
+//    Recovery rolls are a different shape within the same template: a dice
+//    formula (e.g. "1d6+1") next to a result tagged data-i18n="points",
+//    with no "Roll:" line at all.
+// 2. Plain Roll20 rolls (a GM typing "/roll 1d20" with no sheet involved)
+//    use Roll20's native markup instead: .formula for the typed command,
+//    .rolled for the final total.
+//
+// This only runs in the frame that actually has a chat panel — character
+// sheet iframes don't, so `watchChat()` is a no-op there.
+
+function textOf(el) {
+    return el ? el.textContent.trim() : "";
+}
+
+function capitalize(s) {
+    return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
+function parseCyphsysRoll(msgEl, speakerName) {
+    const template = msgEl.querySelector(".sheet-rolltemplate-cyphsys");
+    if (!template) return null;
+
+    const charName = textOf(template.querySelector(".sheet-charname")) || speakerName;
+    const title = capitalize(textOf(template.querySelector(".sheet-title")));
+
+    const rollLabel = template.querySelector("[data-i18n='roll:']");
+    if (rollLabel) {
+        const total = textOf(rollLabel.parentElement?.querySelector(".inlinerollresult"));
+        if (total) {
+            const outcome = textOf(template.querySelector(".sheet-subtitle.sheet-success, .sheet-subtitle.sheet-failure"));
+            return {
+                characterName: charName,
+                formula: outcome ? `${title} — ${outcome}` : title,
+                total,
+                raw: textOf(template).slice(0, 300),
+            };
+        }
+    }
+
+    if (/recovery roll/i.test(title)) {
+        const pointsLine = Array.from(template.querySelectorAll(".sheet-inblock .sheet-line"))
+            .find(line => line.querySelector("[data-i18n='points']"));
+        const total = textOf(pointsLine?.querySelector(".inlinerollresult"));
+        if (total) {
+            const dice = textOf(pointsLine.querySelector(".sheet-subtitle"));
+            return {
+                characterName: charName,
+                formula: dice ? `Recovery Roll (${dice})` : "Recovery Roll",
+                total,
+                raw: textOf(template).slice(0, 300),
+            };
+        }
+    }
+
+    return null; // an ability/cypher description reference with no dice attached
+}
+
+function parseNativeRoll(msgEl, speakerName) {
+    if (!msgEl.classList.contains("rollresult")) return null;
+    const total = textOf(msgEl.querySelector(".rolled"));
+    if (!total) return null;
+    const formula = textOf(msgEl.querySelector(".formula")).replace(/rolling\s*/i, "");
+    return { characterName: speakerName, formula, total, raw: textOf(msgEl).slice(0, 300) };
+}
+
+function parseRollMessage(msgEl) {
+    const speakerName = textOf(msgEl.querySelector(".by")).replace(/:\s*$/, "");
+    return parseCyphsysRoll(msgEl, speakerName) || parseNativeRoll(msgEl, speakerName);
+}
+
+function handleChatMutation(mutations) {
+    for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+            if (node.nodeType !== 1) continue;
+            const messages = node.classList?.contains("message")
+                ? [node]
+                : Array.from(node.querySelectorAll?.(".message") ?? []);
+            for (const msg of messages) {
+                const roll = parseRollMessage(msg);
+                if (roll) {
+                    chrome.runtime.sendMessage({ type: "CHAT_ROLL", ...roll })
+                        .catch(() => { /* background worker not ready yet — next roll will retry */ });
+                }
+            }
+        }
+    }
+}
+
+function watchChat() {
+    const chatLog = document.querySelector("#textchat .content");
+    if (!chatLog) return; // this frame has no chat panel (e.g. a popped-out sheet)
+    new MutationObserver(handleChatMutation).observe(chatLog, { childList: true, subtree: true });
+}
+
+setTimeout(watchChat, 1500);

@@ -28,6 +28,7 @@ import { SpotlightNpcs } from "../_dashboard-shared/SpotlightNpcs";
 import { QuestProgress } from "../_dashboard-shared/QuestProgress";
 import { QuickWikiDialog } from "../_dashboard-shared/QuickWikiDialog";
 import { WikiSearchPin } from "../_dashboard-shared/WikiSearchPin";
+import { RollLog } from "../_dashboard-shared/RollLog";
 import { CreatureLookup } from "./CreatureLookup";
 
 const client = generateClient<Schema>();
@@ -338,6 +339,9 @@ export default function GmDashboardPage() {
                             <CreatureLookup pinnedIds={gmScreen.pinnedCreatureIds} onTogglePin={toggleCreaturePin}
                                 onClose={() => setCreatureSearchOpen(false)} />
                         )}
+
+                        <SectionHeader label="Dice Rolls" sectionKey="rolls" collapsed={collapsed("rolls")} onToggle={toggleSection} />
+                        {!collapsed("rolls") && <RollLog campaignId={campaignId} />}
 
                         <SectionHeader label="Active Quests" sectionKey="quests" collapsed={collapsed("quests")} onToggle={toggleSection} />
                         {!collapsed("quests") && <QuestProgress campaignId={campaignId} />}

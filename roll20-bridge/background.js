@@ -39,6 +39,7 @@ function envKey(base, env) {
 }
 
 const DEBOUNCE_MS = 600;
+const ROLL_LOG_CAP = 50; // per campaign — this is a live feed, not an archive
 const pending = new Map(); // characterName -> { attrs: {}, rows: Map<"section|rowId", {section,rowId,row}>, timer }
 let characterCache = null; // { campaignId, fetchedAt, byNameLower: Map<string,string> }
 
@@ -47,6 +48,9 @@ chrome.runtime.onMessage.addListener((msg) => {
         queueChange(msg.characterName, msg.attr, msg.value);
     } else if (msg?.type === "REPEATING_ROW") {
         queueRepeatingRow(msg.characterName, msg.section, msg.rowId, msg.row);
+    } else if (msg?.type === "CHAT_ROLL") {
+        recordRoll(msg.characterName, msg.formula, msg.total, msg.raw)
+            .catch((err) => console.error("[Roll20 Bridge] failed to record roll", err));
     }
 });
 
@@ -320,6 +324,45 @@ async function listCampaignCharacters(campaignId) {
         { filter: { campaignId: { eq: campaignId } } },
     );
     return data.listPlayerCharacters.items;
+}
+
+// ── Chat roll log ─────────────────────────────────────────────────────────────
+// A live feed for the GM dashboard, not an archive — recordRoll() always
+// prunes each campaign back down to ROLL_LOG_CAP right after writing.
+
+async function recordRoll(characterName, formula, total, raw) {
+    const env = await getActiveEnvironment();
+    const key = envKey("campaignId", env);
+    const { [key]: campaignId } = await chrome.storage.local.get(key);
+    if (!campaignId) return; // no campaign configured — same as character sync, just skip
+
+    await gqlRequest(
+        `mutation Create($input: CreateRollLogEntryInput!) {
+            createRollLogEntry(input: $input) { id }
+        }`,
+        { input: { campaignId, characterName, formula, total, raw, rolledAt: new Date().toISOString() } },
+    );
+    await pruneRollLog(campaignId);
+}
+
+async function pruneRollLog(campaignId) {
+    const data = await gqlRequest(
+        `query List($filter: ModelRollLogEntryFilterInput) {
+            listRollLogEntries(filter: $filter) { items { id rolledAt } }
+        }`,
+        { filter: { campaignId: { eq: campaignId } } },
+    );
+    const items = data.listRollLogEntries.items;
+    if (items.length <= ROLL_LOG_CAP) return;
+
+    const oldestFirst = items.slice().sort((a, b) => (a.rolledAt || "").localeCompare(b.rolledAt || ""));
+    const toDelete = oldestFirst.slice(0, items.length - ROLL_LOG_CAP);
+    for (const item of toDelete) {
+        await gqlRequest(
+            `mutation Del($input: DeleteRollLogEntryInput!) { deleteRollLogEntry(input: $input) { id } }`,
+            { input: { id: item.id } },
+        );
+    }
 }
 
 // ── Token handling ─────────────────────────────────────────────────────────────

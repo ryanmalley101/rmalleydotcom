@@ -102,6 +102,37 @@ If production ever runs in a different AWS region than sandbox, no manifest
 change is needed — `host_permissions` already uses region wildcards
 (`https://*.appsync-api.*.amazonaws.com/*`, `https://cognito-idp.*.amazonaws.com/*`).
 
+## Dice roll log
+
+Separately from character sheet syncing, `content.js` also watches the
+Roll20 chat log (`#textchat .content`) with a `MutationObserver` and forwards
+detected rolls (character name, formula, total) to the GM dashboard's "Dice
+Rolls" widget, live. This is a **rolling feed, not an archive** — each write
+prunes the campaign's log back down to its most recent ~50 entries
+(`ROLL_LOG_CAP` in `background.js`), so don't rely on it for roll history.
+
+Verified against a real exported chat log. Two message shapes are handled,
+and both are documented in detail in the comment above `parseCyphsysRoll()`
+in `content.js`:
+
+- **Sheet rolls** render through the Cypher sheet's own chat template
+  (`.sheet-rolltemplate-cyphsys`) — not Roll20's generic `.rolls`/
+  `.rolltotal`/`.who` markup, which this sheet doesn't use at all. Covers
+  stat/skill/attack/ability task rolls (skipping ability or cypher
+  *description* messages, which use the same template with no roll inside)
+  and Recovery Rolls (a differently-shaped block within the same template).
+- **Plain Roll20 rolls** (e.g. a GM typing `/roll 1d20` with no sheet
+  involved) use Roll20's native chat markup (`.formula`, `.rolled`) instead.
+
+**Not surfaced**: the GM Intrusion flag that can appear alongside a failed
+roll, and the difficulty/effort/cost breakdown shown under each roll — only
+the character, what was rolled, the outcome (success/failure where shown),
+and the final number make it to the dashboard. If a different message shape
+turns up that isn't covered (a different attack/ability variant, a Cypher
+or Artifact depletion roll, etc.), the fix is the same playbook: paste the
+actual rendered chat HTML and adjust `parseCyphsysRoll()`/`parseNativeRoll()`
+in `content.js`.
+
 ## Using it
 
 - In Roll20, **pop out each PC's character sheet** into its own tab/window
