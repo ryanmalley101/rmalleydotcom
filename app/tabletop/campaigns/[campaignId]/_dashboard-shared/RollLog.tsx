@@ -35,8 +35,10 @@ export function RollLog({ campaignId }: { campaignId: string }) {
             setRolls(sorted.slice(0, MAX_SHOWN));
         });
 
+        console.log("[Roll Log] subscribing for campaign", campaignId);
         const onCreate = client.models.RollLogEntry.onCreate().subscribe({
             next: (item) => {
+                console.log("[Roll Log] onCreate fired", item);
                 if (!item || item.campaignId !== campaignId) return;
                 setRolls(prev => [item, ...prev].slice(0, MAX_SHOWN));
             },
