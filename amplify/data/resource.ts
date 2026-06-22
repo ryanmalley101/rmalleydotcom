@@ -117,6 +117,20 @@ const WikiArticleRevision = a.model({
   savedAt:   a.datetime(),
 }).authorization(allow => [allow.owner()]);
 
+// Rolling window of recent dice rolls detected in the Roll20 chat by the
+// browser extension (roll20-bridge/) — not a permanent archive. The
+// extension prunes each campaign down to its most recent ~50 entries after
+// every write, so this is meant to be a live "what just happened" feed for
+// the GM dashboard, not roll history.
+const RollLogEntry = a.model({
+  campaignId:    a.string().required(),
+  characterName: a.string(),
+  formula:       a.string(),
+  total:         a.string(), // kept as text — not every rendered result is a clean integer
+  raw:           a.string(), // fallback snippet of the chat message, for anything the parser missed
+  rolledAt:      a.datetime(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
 const CampaignSession = a.model({
   campaignId:    a.string().required(),
   sessionNumber: a.integer(),
@@ -322,6 +336,7 @@ const schema = a.schema({
   Campaign,
   WikiArticle,
   WikiArticleRevision,
+  RollLogEntry,
   WorldMap,
   CampaignSession,
   PlayerCharacter,
