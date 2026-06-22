@@ -26,7 +26,7 @@ function ArticleRow({ article, isPinned, expanded, onToggleExpand, onTogglePin }
                     {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 </IconButton>
                 <Typography variant="body2" sx={{ fontWeight: 700, flex: 1 }}>{article.title}</Typography>
-                {article.category && <Chip label={article.category} size="small" sx={{ height: 18, fontSize: "0.6rem" }} />}
+                {article.articleType && <Chip label={article.articleType} size="small" sx={{ height: 18, fontSize: "0.6rem" }} />}
                 {article.visibleToPlayers === false && (
                     <Tooltip title="Not visible to players">
                         <EyeOff size={13} color="#6a1b9a" />

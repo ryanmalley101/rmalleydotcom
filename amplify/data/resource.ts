@@ -96,7 +96,6 @@ const WikiArticle = a.model({
   worldId:       a.string().required(),
   title:         a.string().required(),
   content:       a.string(),
-  category:      a.string(),
   tags:          a.string().array(),
   excerpt:       a.string(),
   coverImageUrl: a.string(),

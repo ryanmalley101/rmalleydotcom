@@ -14,6 +14,7 @@ import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 import { hasBBCode, convertBBCodeToMarkdown } from "@/lib/bbcodeConverter";
+import { ARTICLE_TYPE_COLORS } from "@/lib/wikiArticleTypes";
 
 const client = generateClient<Schema>();
 type World    = Schema["DnDWorld"]["type"];
@@ -21,14 +22,6 @@ type Article  = Schema["WikiArticle"]["type"];
 type Campaign = Schema["Campaign"]["type"];
 type WorldMap = Schema["WorldMap"]["type"];
 
-const ARTICLE_TYPE_COLORS: Record<string, string> = {
-    Settlement:   "#0e7490",
-    Location:     "#92400e",
-    Landmark:     "#7e22ce",
-    Person:       "#1d4ed8",
-    Organization: "#15803d",
-    Lore:         "#374151",
-};
 const STATUS_COLOR: Record<string, string> = { draft: "#f57c00", stub: "#546e7a" };
 const STATUS_LABEL: Record<string, string> = { draft: "Draft", stub: "Stub" };
 
@@ -158,11 +151,10 @@ export default function WorldPage() {
         load();
     }
 
-    // ── Filter chips: articleType + category + tags, deduped ──
+    // ── Filter chips: articleType + tags, deduped ──
     const filterOptions = useMemo(() => ["All", ...Array.from(new Set(
         articles.flatMap(a => [
             a.articleType,
-            a.category,
             ...(a.tags ?? []),
         ].filter(Boolean) as string[])
     )).sort()], [articles]);
@@ -170,10 +162,9 @@ export default function WorldPage() {
     // ── Filtered article list (full-text search) ──
     const filtered = useMemo(() => articles.filter(a => {
         if (catFilter !== "All") {
-            const inType     = a.articleType === catFilter;
-            const inCategory = (a.category ?? "Other") === catFilter;
-            const inTags     = (a.tags ?? []).includes(catFilter);
-            if (!inType && !inCategory && !inTags) return false;
+            const inType = a.articleType === catFilter;
+            const inTags = (a.tags ?? []).includes(catFilter);
+            if (!inType && !inTags) return false;
         }
         if (search) {
             const q = search.toLowerCase();
@@ -375,10 +366,6 @@ export default function WorldPage() {
                                                                 sx={{ height: 18, fontSize: "0.65rem",
                                                                       backgroundColor: ARTICLE_TYPE_COLORS[a.articleType] ?? undefined,
                                                                       color: ARTICLE_TYPE_COLORS[a.articleType] ? "#fff" : undefined }} />
-                                                        )}
-                                                        {a.category && a.category !== a.articleType && (
-                                                            <Chip label={a.category} size="small" variant="outlined"
-                                                                sx={{ height: 18, fontSize: "0.65rem" }} />
                                                         )}
                                                         {a.status && a.status !== "published" && (
                                                             <Chip label={STATUS_LABEL[a.status] ?? a.status} size="small"

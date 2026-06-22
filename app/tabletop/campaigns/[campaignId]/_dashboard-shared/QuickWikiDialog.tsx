@@ -8,25 +8,24 @@ import {
 import Link from "next/link";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { ARTICLE_TYPES, DEFAULT_ARTICLE_TYPE } from "@/lib/wikiArticleTypes";
 
 const client = generateClient<Schema>();
 type World = Schema["DnDWorld"]["type"];
-
-const CATEGORIES = ["Location", "Person", "Species", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
 
 interface QuickWikiDialogProps {
     open: boolean;
     onClose: () => void;
     worldIds: string[];
-    defaultCategory?: string;
+    defaultArticleType?: string;
     onCreated?: (articleId: string, worldId: string) => void;
 }
 
-export function QuickWikiDialog({ open, onClose, worldIds, defaultCategory, onCreated }: QuickWikiDialogProps) {
+export function QuickWikiDialog({ open, onClose, worldIds, defaultArticleType, onCreated }: QuickWikiDialogProps) {
     const [worlds, setWorlds] = useState<World[]>([]);
     const [worldId, setWorldId] = useState("");
     const [title, setTitle] = useState("");
-    const [category, setCategory] = useState(defaultCategory ?? "Other");
+    const [articleType, setArticleType] = useState(defaultArticleType ?? DEFAULT_ARTICLE_TYPE);
     const [content, setContent] = useState("");
     const [saving, setSaving] = useState(false);
     const [createdId, setCreatedId] = useState<string | null>(null);
@@ -41,14 +40,14 @@ export function QuickWikiDialog({ open, onClose, worldIds, defaultCategory, onCr
     }, [open, worldIds]);
 
     function reset() {
-        setTitle(""); setCategory(defaultCategory ?? "Other"); setContent(""); setCreatedId(null);
+        setTitle(""); setArticleType(defaultArticleType ?? DEFAULT_ARTICLE_TYPE); setContent(""); setCreatedId(null);
     }
 
     async function save() {
         if (!title.trim() || !worldId) return;
         setSaving(true);
         const { data } = await client.models.WikiArticle.create({
-            worldId, title: title.trim(), category, content: content || undefined,
+            worldId, title: title.trim(), articleType, content: content || undefined,
         });
         setSaving(false);
         if (data) {
@@ -91,9 +90,9 @@ export function QuickWikiDialog({ open, onClose, worldIds, defaultCategory, onCr
                         <TextField label="Title" size="small" fullWidth autoFocus value={title}
                             onChange={e => setTitle(e.target.value)} />
                         <FormControl size="small" fullWidth>
-                            <InputLabel>Category</InputLabel>
-                            <Select label="Category" value={category} onChange={e => setCategory(e.target.value)}>
-                                {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+                            <InputLabel>Article Type</InputLabel>
+                            <Select label="Article Type" value={articleType} onChange={e => setArticleType(e.target.value)}>
+                                {ARTICLE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                             </Select>
                         </FormControl>
                         <TextField label="Content" size="small" multiline minRows={4} fullWidth value={content}

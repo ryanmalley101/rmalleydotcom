@@ -26,6 +26,22 @@ export function useWikiLinkInsert({ content, setContent, articleTitles }: UseWik
             rangeRef.current = { start, end };
             setQuery(content.slice(start, end));
             setOpen(true);
+            return;
+        }
+        // Tab normally moves focus to the next element (e.g. the Cancel
+        // button) instead of typing — intercept it so it inserts an actual
+        // tab character, like a regular text editor.
+        if (e.key === "Tab") {
+            e.preventDefault();
+            const el = textareaRef.current;
+            const start = el?.selectionStart ?? 0;
+            const end = el?.selectionEnd ?? 0;
+            setContent(content.slice(0, start) + "\t" + content.slice(end));
+            const pos = start + 1;
+            setTimeout(() => {
+                const ta = textareaRef.current;
+                if (ta) { ta.focus(); ta.setSelectionRange(pos, pos); }
+            }, 0);
         }
     }
 

@@ -19,7 +19,7 @@ const client = generateClient<Schema>();
 type NPC = Schema["NPC"]["type"];
 type WikiArticle = Schema["WikiArticle"]["type"];
 
-// An NPC is a WikiArticle (category "Person") plus this campaign's tracking
+// An NPC is a WikiArticle (articleType "Character") plus this campaign's tracking
 // state — name/description/role/etc. all live on the article; isAlive,
 // relationship, and notes are specific to running this campaign.
 export default function NpcsPage() {
@@ -46,7 +46,7 @@ export default function NpcsPage() {
         setNpcs((npcRes.data ?? []).filter(n => n.campaignId === campaignId));
         if (ids.length > 0) {
             const { data } = await client.models.WikiArticle.list();
-            setArticles((data ?? []).filter(a => ids.includes(a.worldId) && a.category === "Person"));
+            setArticles((data ?? []).filter(a => ids.includes(a.worldId) && a.articleType === "Character"));
         }
         setLoading(false);
     }
@@ -127,7 +127,7 @@ export default function NpcsPage() {
                     </Box>
                 </Box>
                 <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mb: 3 }}>
-                    Each NPC is a "Person" wiki article — its name, description, and lore live there. This page
+                    Each NPC is a "Character" wiki article — its name, description, and lore live there. This page
                     tracks who's currently relevant to this campaign, plus alive/dead status and notes.
                 </Typography>
 
@@ -136,7 +136,7 @@ export default function NpcsPage() {
                         <Users size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
                         <Typography sx={{ color: "text.secondary" }}>
                             {npcs.length === 0
-                                ? "No NPCs tracked yet. Track an existing Person wiki article, or create a new one."
+                                ? "No NPCs tracked yet. Track an existing Character wiki article, or create a new one."
                                 : "No NPCs match this filter."}
                         </Typography>
                     </Box>
@@ -203,7 +203,7 @@ export default function NpcsPage() {
                     </Box>
                 )}
 
-                {/* Track an existing Person article */}
+                {/* Track an existing Character article */}
                 <Dialog open={addOpen} onClose={() => setAddOpen(false)} maxWidth="sm" fullWidth>
                     <DialogTitle>Track an NPC</DialogTitle>
                     <DialogContent sx={{ pt: 2 }}>
@@ -213,7 +213,7 @@ export default function NpcsPage() {
                             </Typography>
                         ) : unlinkedArticles.length === 0 ? (
                             <Typography variant="body2" sx={{ color: "text.disabled" }}>
-                                No untracked "Person" wiki articles in this campaign's worlds. Create one instead.
+                                No untracked "Character" wiki articles in this campaign's worlds. Create one instead.
                             </Typography>
                         ) : (
                             <Autocomplete
@@ -221,7 +221,7 @@ export default function NpcsPage() {
                                 getOptionLabel={a => a.title}
                                 onChange={(_, article) => { if (article) linkArticle(article); }}
                                 loading={linking}
-                                renderInput={params => <TextField {...params} label="Search Person articles…" autoFocus />}
+                                renderInput={params => <TextField {...params} label="Search Character articles…" autoFocus />}
                             />
                         )}
                     </DialogContent>
@@ -231,7 +231,7 @@ export default function NpcsPage() {
                 </Dialog>
 
                 <QuickWikiDialog open={wikiOpen} onClose={() => setWikiOpen(false)} worldIds={worldIds}
-                    defaultCategory="Person" onCreated={handleWikiCreated} />
+                    defaultArticleType="Character" onCreated={handleWikiCreated} />
 
                 {/* Stop-tracking confirmation */}
                 <Dialog open={!!deleteNpc} onClose={() => setDeleteNpc(null)}>

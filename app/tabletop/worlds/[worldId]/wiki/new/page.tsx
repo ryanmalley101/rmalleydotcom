@@ -14,11 +14,10 @@ import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 import { useWikiLinkInsert } from "../useWikiLinkInsert";
 import { useFileDrop } from "../useFileDrop";
+import { ARTICLE_TYPES, DEFAULT_ARTICLE_TYPE } from "@/lib/wikiArticleTypes";
 
 const client = generateClient<Schema>();
 
-const CATEGORIES    = ["Location", "Person", "Species", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
-const ARTICLE_TYPES = ["Settlement", "Location", "Landmark", "Person", "Organization", "Lore", "Event", "Deity", "Faction", "Other"];
 const STATUS_OPTIONS = ["published", "draft", "stub"] as const;
 type ArticleStatus = typeof STATUS_OPTIONS[number];
 const STATUS_COLOR: Record<ArticleStatus, string> = { published: "#2e7d32", draft: "#f57c00", stub: "#546e7a" };
@@ -29,8 +28,7 @@ export default function NewArticlePage() {
     const router = useRouter();
 
     const [title, setTitle]             = useState("");
-    const [category, setCategory]       = useState("Other");
-    const [articleType, setArticleType] = useState("");
+    const [articleType, setArticleType] = useState(DEFAULT_ARTICLE_TYPE);
     const [status, setStatus]           = useState<ArticleStatus>("published");
     const [visibleToPlayers, setVisibleToPlayers] = useState(true);
     const [excerpt, setExcerpt]         = useState("");
@@ -88,8 +86,7 @@ export default function NewArticlePage() {
         const { data } = await client.models.WikiArticle.create({
             worldId,
             title:         title.trim(),
-            category,
-            articleType:   articleType || undefined,
+            articleType,
             status,
             visibleToPlayers,
             excerpt:       excerpt.trim() || undefined,
@@ -150,17 +147,9 @@ export default function NewArticlePage() {
 
                     <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
                         <FormControl sx={{ minWidth: 160 }}>
-                            <InputLabel>Category</InputLabel>
-                            <Select label="Category" value={category}
-                                onChange={e => setCategory(e.target.value)}>
-                                {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-                            </Select>
-                        </FormControl>
-                        <FormControl sx={{ minWidth: 160 }}>
                             <InputLabel>Article Type</InputLabel>
                             <Select label="Article Type" value={articleType}
                                 onChange={e => setArticleType(e.target.value)}>
-                                <MenuItem value=""><em>None</em></MenuItem>
                                 {ARTICLE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                             </Select>
                         </FormControl>

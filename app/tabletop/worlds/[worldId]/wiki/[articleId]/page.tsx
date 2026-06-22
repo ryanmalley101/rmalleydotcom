@@ -22,13 +22,12 @@ import { Lightbox } from "../Lightbox";
 import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
 import { snapshotRevision } from "@/lib/wikiRevisions";
 import { RevisionHistoryDialog } from "./RevisionHistoryDialog";
+import { ARTICLE_TYPES, ARTICLE_TYPE_COLORS, DEFAULT_ARTICLE_TYPE } from "@/lib/wikiArticleTypes";
 
 const client = generateClient<Schema>();
 type Article = Schema["WikiArticle"]["type"];
 type Session = Schema["CampaignSession"]["type"];
 
-const CATEGORIES    = ["Location", "Person", "Species", "Organization", "Event", "Item", "Lore", "Deity", "Other"];
-const ARTICLE_TYPES = ["Settlement", "Location", "Landmark", "Person", "Organization", "Lore", "Event", "Deity", "Faction", "Other"];
 const STATUS_OPTIONS = ["published", "draft", "stub"] as const;
 type ArticleStatus = typeof STATUS_OPTIONS[number];
 const STATUS_COLOR: Record<ArticleStatus, string> = {
@@ -40,15 +39,6 @@ const STATUS_LABEL: Record<ArticleStatus, string> = {
     published: "Published",
     draft:     "Draft",
     stub:      "Stub",
-};
-
-const ARTICLE_TYPE_COLORS: Record<string, string> = {
-    Settlement:   "#0e7490",
-    Location:     "#92400e",
-    Landmark:     "#7e22ce",
-    Person:       "#1d4ed8",
-    Organization: "#15803d",
-    Lore:         "#374151",
 };
 
 // ── WikiContent — markdown + [[link]] rendering ───────────────────────────────
@@ -151,8 +141,7 @@ export default function ArticlePage() {
 
     // Edit form state
     const [title, setTitle]             = useState("");
-    const [category, setCategory]       = useState("Other");
-    const [articleType, setArticleType] = useState("");
+    const [articleType, setArticleType] = useState(DEFAULT_ARTICLE_TYPE);
     const [content, setContent]         = useState("");
     const [excerpt, setExcerpt]         = useState("");
     const [coverImageUrl, setCover]     = useState("");
@@ -200,8 +189,7 @@ export default function ArticlePage() {
         setAll((allRes.data ?? []).filter(x => x.worldId === worldId));
         if (a) {
             setTitle(a.title);
-            setCategory(a.category ?? "Other");
-            setArticleType(a.articleType ?? "");
+            setArticleType(a.articleType ?? DEFAULT_ARTICLE_TYPE);
             setContent(a.content ?? "");
             setExcerpt(a.excerpt ?? "");
             setCover(a.coverImageUrl ?? "");
@@ -278,8 +266,7 @@ export default function ArticlePage() {
         const articleGallery = (article.galleryImageKeys ?? []).filter((k): k is string => k != null);
         return (
             title !== article.title ||
-            category !== (article.category ?? "Other") ||
-            articleType !== (article.articleType ?? "") ||
+            articleType !== (article.articleType ?? DEFAULT_ARTICLE_TYPE) ||
             content !== (article.content ?? "") ||
             excerpt !== (article.excerpt ?? "") ||
             coverImageUrl !== (article.coverImageUrl ?? "") ||
@@ -290,7 +277,7 @@ export default function ArticlePage() {
             JSON.stringify(tags) !== JSON.stringify(articleTags) ||
             JSON.stringify(galleryKeys) !== JSON.stringify(articleGallery)
         );
-    }, [article, editing, title, category, articleType, content, excerpt,
+    }, [article, editing, title, articleType, content, excerpt,
         coverImageUrl, coverImageKey, status, visibleToPlayers, parentTitle, tags, galleryKeys]);
 
     // Warn on browser-level exits (refresh, close tab, type a new URL) while dirty.
@@ -308,7 +295,7 @@ export default function ArticlePage() {
         const timer = setTimeout(() => { silentSave(); }, 4000);
         return () => clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [editing, autosaveEnabled, isDirty, title, category, articleType, content,
+    }, [editing, autosaveEnabled, isDirty, title, articleType, content,
         excerpt, coverImageUrl, coverImageKey, status, visibleToPlayers, parentTitle, tags, galleryKeys]);
 
     async function uploadCover(file: File) {
@@ -362,8 +349,7 @@ export default function ArticlePage() {
     function buildUpdatePayload() {
         return {
             title: title.trim(),
-            category,
-            articleType: articleType || undefined,
+            articleType,
             content,
             excerpt: excerpt.trim() || undefined,
             coverImageUrl: coverImageUrl.trim() || undefined,
@@ -396,8 +382,7 @@ export default function ArticlePage() {
         setArticle(prev => prev ? {
             ...prev,
             title: payload.title,
-            category: payload.category ?? null,
-            articleType: payload.articleType ?? null,
+            articleType: payload.articleType,
             content: payload.content ?? null,
             excerpt: payload.excerpt ?? null,
             coverImageUrl: payload.coverImageUrl ?? null,
@@ -421,8 +406,7 @@ export default function ArticlePage() {
     function cancelEdit() {
         if (article) {
             setTitle(article.title);
-            setCategory(article.category ?? "Other");
-            setArticleType(article.articleType ?? "");
+            setArticleType(article.articleType ?? DEFAULT_ARTICLE_TYPE);
             setContent(article.content ?? "");
             setExcerpt(article.excerpt ?? "");
             setCover(article.coverImageUrl ?? "");
@@ -505,17 +489,9 @@ export default function ArticlePage() {
                             value={title} onChange={e => setTitle(e.target.value)} />
                         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
                             <FormControl sx={{ minWidth: 160 }}>
-                                <InputLabel>Category</InputLabel>
-                                <Select label="Category" value={category}
-                                    onChange={e => setCategory(e.target.value)}>
-                                    {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-                                </Select>
-                            </FormControl>
-                            <FormControl sx={{ minWidth: 160 }}>
                                 <InputLabel>Article Type</InputLabel>
                                 <Select label="Article Type" value={articleType}
                                     onChange={e => setArticleType(e.target.value)}>
-                                    <MenuItem value=""><em>None</em></MenuItem>
                                     {ARTICLE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                                 </Select>
                             </FormControl>
@@ -785,9 +761,6 @@ export default function ArticlePage() {
                                     {article.articleType && (
                                         <Chip label={article.articleType} size="small"
                                             sx={{ backgroundColor: ARTICLE_TYPE_COLORS[article.articleType] ?? "#555", color: "#fff" }} />
-                                    )}
-                                    {article.category && article.category !== article.articleType && (
-                                        <Chip label={article.category} size="small" variant="outlined" />
                                     )}
                                     {article.status && article.status !== "published" && (
                                         <Chip label={STATUS_LABEL[article.status as ArticleStatus] ?? article.status}
