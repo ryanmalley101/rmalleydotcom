@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
     Box, Container, Typography, Button, TextField,
     CircularProgress, Divider, IconButton, Tooltip,
     Dialog, DialogTitle, DialogContent, DialogActions,
-    Chip, InputAdornment,
+    Chip, InputAdornment, Switch,
 } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, Pencil, Save, X, Trash2, CalendarDays, BookOpen, Search, Plus } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
 
 const client = generateClient<Schema>();
 type Session = Schema["CampaignSession"]["type"];
@@ -32,7 +33,20 @@ export default function SessionPage() {
     const [editing, setEditing]       = useState(false);
     const [loading, setLoading]       = useState(true);
     const [saving, setSaving]         = useState(false);
+    const [autosaving, setAutosaving] = useState(false);
+    const [lastAutosaved, setLastAutosaved] = useState<Date | null>(null);
     const [confirmDelete, setConfirmDelete] = useState(false);
+
+    const { autosaveDefault, autosaveDefaultLoaded, setAutosaveDefault } = useAutosaveDefault();
+    const [autosaveEnabled, setAutosaveEnabled] = useState(true);
+    const autosaveSeededRef = useRef(false);
+
+    useEffect(() => {
+        if (autosaveDefaultLoaded && !autosaveSeededRef.current) {
+            setAutosaveEnabled(autosaveDefault);
+            autosaveSeededRef.current = true;
+        }
+    }, [autosaveDefaultLoaded, autosaveDefault]);
     const [articleSearch, setArticleSearch] = useState("");
     const [pinDialogOpen, setPinDialog]     = useState(false);
 
@@ -42,6 +56,33 @@ export default function SessionPage() {
     const [prepNotes, setPrep]     = useState("");
     const [sessionNotes, setNotes] = useState("");
     const [playerSummary, setPlayerSummary] = useState("");
+
+    const isDirty = useMemo(() => {
+        if (!session || !editing) return false;
+        return (
+            title !== (session.title ?? "") ||
+            number !== (session.sessionNumber?.toString() ?? "") ||
+            date !== (session.date ?? "") ||
+            prepNotes !== (session.prepNotes ?? "") ||
+            sessionNotes !== (session.sessionNotes ?? "") ||
+            playerSummary !== (session.playerSummary ?? "")
+        );
+    }, [session, editing, title, number, date, prepNotes, sessionNotes, playerSummary]);
+
+    useEffect(() => {
+        function handler(e: BeforeUnloadEvent) {
+            if (isDirty) { e.preventDefault(); e.returnValue = ""; }
+        }
+        window.addEventListener("beforeunload", handler);
+        return () => window.removeEventListener("beforeunload", handler);
+    }, [isDirty]);
+
+    useEffect(() => {
+        if (!editing || !autosaveEnabled || !isDirty) return;
+        const timer = setTimeout(() => { silentSave(); }, 4000);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editing, autosaveEnabled, isDirty, title, number, date, prepNotes, sessionNotes, playerSummary]);
 
     async function load() {
         const { data: s } = await client.models.CampaignSession.get({ id: sessionId });
@@ -70,6 +111,31 @@ export default function SessionPage() {
     }
 
     useEffect(() => { load(); }, [sessionId]);
+
+    async function silentSave() {
+        if (!session) return;
+        setAutosaving(true);
+        await client.models.CampaignSession.update({
+            id: session.id,
+            title: title.trim() || undefined,
+            sessionNumber: number ? parseInt(number, 10) : undefined,
+            date: date || undefined,
+            prepNotes,
+            sessionNotes,
+            playerSummary: playerSummary || undefined,
+        });
+        setSession(prev => prev ? {
+            ...prev,
+            title: title.trim() || null,
+            sessionNumber: number ? parseInt(number, 10) : null,
+            date: date || null,
+            prepNotes,
+            sessionNotes,
+            playerSummary: playerSummary || null,
+        } : prev);
+        setAutosaving(false);
+        setLastAutosaved(new Date());
+    }
 
     async function save() {
         if (!session) return;
@@ -187,12 +253,32 @@ export default function SessionPage() {
                         <TextField multiline minRows={5} fullWidth label="Player Summary"
                             value={playerSummary} onChange={e => setPlayerSummary(e.target.value)}
                             sx={{ "& textarea": { fontFamily: "inherit", fontSize: "0.95rem" } }} />
-                        <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
-                            <Button startIcon={<X size={16} />} onClick={cancelEdit}>Cancel</Button>
-                            <Button variant="contained" startIcon={<Save size={16} />}
-                                onClick={save} disabled={saving} sx={{ backgroundColor: "primary.main" }}>
-                                {saving ? <CircularProgress size={18} /> : "Save"}
-                            </Button>
+                        <Box sx={{ display: "flex", gap: 2, justifyContent: "space-between", alignItems: "center" }}>
+                            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                                <Switch size="small" checked={autosaveEnabled}
+                                    onChange={e => setAutosaveEnabled(e.target.checked)} />
+                                <Typography variant="caption" sx={{ color: "text.secondary" }}>Autosave</Typography>
+                                {autosaveDefaultLoaded && autosaveEnabled !== autosaveDefault && (
+                                    <Button size="small" onClick={() => setAutosaveDefault(autosaveEnabled)}
+                                        sx={{ fontSize: "0.65rem", minWidth: 0, p: 0, textTransform: "none", color: "primary.main" }}>
+                                        Set as default
+                                    </Button>
+                                )}
+                                {autosaving ? (
+                                    <Typography variant="caption" sx={{ color: "text.disabled" }}>Saving…</Typography>
+                                ) : lastAutosaved ? (
+                                    <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                                        Autosaved {lastAutosaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                    </Typography>
+                                ) : null}
+                            </Box>
+                            <Box sx={{ display: "flex", gap: 2 }}>
+                                <Button startIcon={<X size={16} />} onClick={cancelEdit}>Cancel</Button>
+                                <Button variant="contained" startIcon={<Save size={16} />}
+                                    onClick={save} disabled={saving} sx={{ backgroundColor: "primary.main" }}>
+                                    {saving ? <CircularProgress size={18} /> : "Save"}
+                                </Button>
+                            </Box>
                         </Box>
                     </Box>
                 ) : (
