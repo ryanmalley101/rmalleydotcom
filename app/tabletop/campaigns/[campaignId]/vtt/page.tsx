@@ -16,12 +16,6 @@ import type { Schema } from "@/amplify/data/resource";
 const client = generateClient<Schema>();
 type VttBoard = Schema["VttBoard"]["type"];
 
-function parseTokenCount(json: string | null | undefined): number {
-    if (!json) return 0;
-    try { return (JSON.parse(json) as unknown[]).length; }
-    catch { return 0; }
-}
-
 export default function VttListPage() {
     const { campaignId } = useParams<{ campaignId: string }>();
     const router = useRouter();
@@ -52,7 +46,6 @@ export default function VttListPage() {
             name: newName.trim(),
             gridCols: parseInt(newCols, 10) || 30,
             gridRows: parseInt(newRows, 10) || 20,
-            tokensJson: "[]",
         });
         setCreating(false);
         setCreateOpen(false);
@@ -110,39 +103,35 @@ export default function VttListPage() {
                     </Box>
                 ) : (
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                        {boards.map(b => {
-                            const tokenCount = parseTokenCount(b.tokensJson);
-                            return (
-                                <Card key={b.id} sx={{ borderLeft: "4px solid", borderColor: "primary.light" }}>
-                                    <Box sx={{ display: "flex", alignItems: "stretch" }}>
-                                        <CardActionArea
-                                            component={Link}
-                                            href={`/tabletop/campaigns/${campaignId}/vtt/${b.id}`}
-                                            sx={{ flex: 1 }}
-                                        >
-                                            <CardContent sx={{ py: 1.5 }}>
-                                                <Typography variant="h6" sx={{ fontWeight: 700, color: "primary.dark" }}>
-                                                    {b.name}
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                                                    {b.gridCols ?? 30} × {b.gridRows ?? 20} grid
-                                                    {" · "}
-                                                    {tokenCount} token{tokenCount !== 1 ? "s" : ""}
-                                                </Typography>
-                                            </CardContent>
-                                        </CardActionArea>
-                                        <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
-                                            <Tooltip title="Delete board">
-                                                <IconButton size="small" color="error"
-                                                    onClick={() => setDeleteId(b.id)}>
-                                                    <Trash2 size={16} />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Box>
+                        {boards.map(b => (
+                            <Card key={b.id} sx={{ borderLeft: "4px solid", borderColor: "primary.light" }}>
+                                <Box sx={{ display: "flex", alignItems: "stretch" }}>
+                                    <CardActionArea
+                                        component={Link}
+                                        href={`/tabletop/campaigns/${campaignId}/vtt/${b.id}`}
+                                        sx={{ flex: 1 }}
+                                    >
+                                        <CardContent sx={{ py: 1.5 }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 700, color: "primary.dark" }}>
+                                                {b.name}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                                                {b.gridCols ?? 30} × {b.gridRows ?? 20} grid
+                                                {b.mapImageKey && " · map set"}
+                                            </Typography>
+                                        </CardContent>
+                                    </CardActionArea>
+                                    <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
+                                        <Tooltip title="Delete board">
+                                            <IconButton size="small" color="error"
+                                                onClick={() => setDeleteId(b.id)}>
+                                                <Trash2 size={16} />
+                                            </IconButton>
+                                        </Tooltip>
                                     </Box>
-                                </Card>
-                            );
-                        })}
+                                </Box>
+                            </Card>
+                        ))}
                     </Box>
                 )}
 
