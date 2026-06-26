@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { UserPlus, ScrollText } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
+import { getCurrentUser } from "aws-amplify/auth";
 import type { Schema } from "@/amplify/data/resource";
 
 const client = generateClient<Schema>();
@@ -45,10 +46,12 @@ function JoinCampaignContent() {
     async function joinCampaign() {
         if (!invite || !playerName.trim()) return;
         setJoining(true);
+        const { userId } = await getCurrentUser();
         await client.models.CampaignMember.create({
             campaignId: invite.campaignId,
             role:       invite.role,
             playerName: playerName.trim(),
+            userId,
         });
         setJoined(true);
         setJoining(false);

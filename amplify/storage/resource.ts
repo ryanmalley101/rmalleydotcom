@@ -21,5 +21,8 @@ export const storage = defineStorage({
         'vtt-tokens/*': [
             allow.authenticated.to(['read', 'write', 'delete']),
         ],
+        'session-music/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
     }),
 });

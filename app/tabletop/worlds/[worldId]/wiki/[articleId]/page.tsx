@@ -17,7 +17,7 @@ import type { Schema } from "@/amplify/data/resource";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useWikiLinkInsert } from "../useWikiLinkInsert";
-import { useFileDrop } from "../useFileDrop";
+import { useFileDrop } from "@/lib/useFileDrop";
 import { Lightbox } from "../Lightbox";
 import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
 import { snapshotRevision } from "@/lib/wikiRevisions";

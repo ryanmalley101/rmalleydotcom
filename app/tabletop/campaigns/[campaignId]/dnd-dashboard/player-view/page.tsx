@@ -10,6 +10,7 @@ import { CONDITION_COLOR } from "@/lib/dndConditions";
 import { snapshot } from "../PartyCard";
 import { QuestProgress } from "../../_dashboard-shared/QuestProgress";
 import { PinnedArticlesView } from "../../_dashboard-shared/PinnedArticlesView";
+import { SessionAudioPlayer } from "../../_dashboard-shared/SessionAudioPlayer";
 
 const client = generateClient<Schema>();
 type PlayerCharacter = Schema["PlayerCharacter"]["type"];
@@ -112,6 +113,10 @@ export default function PlayerViewPage() {
 
                 <PinnedArticlesView worldIds={worldIds} pinnedArticleIds={pinnedArticleIds} />
             </Container>
+
+            <Paper elevation={6} sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 10 }}>
+                <SessionAudioPlayer campaignId={campaignId} displayName="Viewer" controlsEnabled={false} />
+            </Paper>
         </Box>
     );
 }
