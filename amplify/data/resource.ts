@@ -297,13 +297,63 @@ const TodoItem = a.model({
 }).authorization(allow => [allow.owner()]);
 
 // Campaign membership (created by player on join)
-// VTT (Virtual Tabletop) — one board per scene, real-time token positions
+// VTT (Virtual Tabletop) — one board per scene. Tokens used to live in a
+// single tokensJson blob here; they're now their own VttToken model (below)
+// so each token can be moved/owned independently instead of rewriting the
+// whole board on every drag.
 const VttBoard = a.model({
   campaignId:  a.string().required(),
   name:        a.string().required(),
   gridCols:    a.integer(),  // default 30
   gridRows:    a.integer(),  // default 20
-  tokensJson:  a.string(),   // JSON: VttToken[]
+  gridType:    a.string(),   // 'square' | 'hex' | 'none' — only 'square' is implemented so far
+  gridOffsetX: a.float(),    // pixel offset so the grid can align to a map image that doesn't start at (0,0)
+  gridOffsetY: a.float(),
+  mapImageKey: a.string(),   // Amplify Storage S3 key — the board's background map
+  mapWidthPx:  a.float(),
+  mapHeightPx: a.float(),
+  backgroundColor: a.string(), // fallback fill when no map image is set
+  fogEnabled:  a.boolean(),
+  fogJson:     a.string(),   // JSON: GM-painted revealed-cell coordinates
+}).authorization(allow => [allow.authenticated()]);
+
+// A token on a VttBoard. Provisional authorization below (matches
+// VttBoard's allow.authenticated()) — the VTT roadmap's Phase 2 tightens
+// this to per-token ownership via allow.ownerDefinedIn('ownerId') so a
+// player can only move their own token while the GM can move anything.
+// Not implemented yet: it needs real multi-account testing to get the
+// ownerId format right, not just a schema guess.
+const VttToken = a.model({
+  boardId:          a.string().required(),
+  x:                a.float().required(),
+  y:                a.float().required(),
+  width:            a.float().required(),
+  height:           a.float().required(),
+  rotation:         a.float(),
+  imageKey:         a.string(), // Amplify Storage S3 key — falls back to a colored circle when unset
+  label:            a.string(),
+  color:            a.string(),
+  linkedEntityId:   a.string(), // optional link to a PlayerCharacter / NPC / MonsterStatblock / Companion
+  linkedEntityType: a.string(), // 'playerCharacter' | 'npc' | 'monsterStatblock' | 'companion'
+  ownerId:          a.string(), // controlling player's identity; unset = GM-only
+  visibleToPlayers: a.boolean(),
+  conditionsJson:   a.string(), // mirrors PlayerCharacter.conditionsJson's shape
+  sortOrder:        a.integer(),
+}).authorization(allow => [allow.authenticated()]);
+
+// Campaign-wide chat, not scoped to a single board — a GM may want chat
+// visible regardless of which scene is currently open. Provisional
+// authorization (see VttToken's note above); whisperToIds isn't enforced
+// server-side yet, only filtered client-side once the chat UI exists.
+const ChatMessage = a.model({
+  campaignId:        a.string().required(),
+  authorName:        a.string().required(),
+  authorId:          a.string(), // sender's identity, for future whisper enforcement
+  text:              a.string(),
+  rollFormula:       a.string(),
+  rollTotal:         a.string(),
+  rollBreakdownJson: a.string(), // full dice breakdown, for an expandable "show the dice" detail
+  whisperToIds:      a.string().array(), // empty/unset = public
 }).authorization(allow => [allow.authenticated()]);
 
 const CampaignMember = a.model({
@@ -341,6 +391,8 @@ const schema = a.schema({
   CampaignSession,
   PlayerCharacter,
   VttBoard,
+  VttToken,
+  ChatMessage,
   CampaignMember,
   CampaignInvite,
   NPC,
