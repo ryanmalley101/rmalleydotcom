@@ -90,6 +90,13 @@ const Campaign = a.model({
   system:       a.string(),
   settingsJson: a.string(), // JSON: Partial<CombatSettings> — campaign-level defaults
   gmScreenJson: a.string(), // JSON: GM dashboard scratch data (e.g. intrusion ideas)
+  // Cognito sub of the campaign's creator/GM. Explicit rather than relying on
+  // the auto-managed owner-auth field, so client code (useCampaignRole) has a
+  // value it can read and compare without guessing Amplify's internal
+  // identity-claim format. Unset on campaigns created before this field
+  // existed — treated as permissive (everyone is GM-equivalent) rather than
+  // locking the real creator out; see useCampaignRole.ts.
+  gmUserId:     a.string(),
 }).authorization(allow => [allow.owner()]);
 
 const WikiArticle = a.model({
@@ -315,6 +322,7 @@ const VttBoard = a.model({
   backgroundColor: a.string(), // fallback fill when no map image is set
   fogEnabled:  a.boolean(),
   fogJson:     a.string(),   // JSON: GM-painted revealed-cell coordinates
+  drawingsJson: a.string(),  // JSON: freehand/shape annotations drawn on the board
 }).authorization(allow => [allow.authenticated()]);
 
 // A token on a VttBoard. Provisional authorization below (matches
@@ -360,6 +368,7 @@ const CampaignMember = a.model({
   campaignId: a.string().required(),
   role:       a.string().required(), // 'gm' | 'player'
   playerName: a.string(),
+  userId:     a.string(), // Cognito sub of whoever joined — same rationale as Campaign.gmUserId
 }).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
 // Invite records — record ID is the invite code
@@ -373,7 +382,38 @@ const CampaignInvite = a.model({
 const UserPreference = a.model({
   autosaveEnabled: a.boolean(),
   gmDashboardLayoutJson: a.string(), // JSON: { collapsedSections: string[], tableMode: boolean }
+  masterVolume: a.float(), // 0-1, personal ceiling on session ambient audio — see SessionPlayback
 }).authorization(allow => [allow.owner()]);
+
+// Session ambient audio — tracks are scoped to one campaign by path
+// (session-music/{campaignId}/*) and by this record's campaignId, same
+// posture as every other upload in this app (maps, portraits, wiki images):
+// any authenticated user *could* reach a file if they had its exact S3 key,
+// but campaignIds are UUIDs, not guessable, and there's no per-campaign
+// storage-level authorizer in this app to do better without a Lambda-backed
+// signed-URL minter. Treat this as organizational scoping, not a hard
+// security boundary — consistent with everything else here, not a new gap.
+const SessionTrack = a.model({
+  campaignId:      a.string().required(),
+  name:            a.string().required(),
+  storageKey:      a.string().required(),
+  durationSeconds: a.float(),
+  uploadedBy:      a.string(), // display name, not a Cognito identity — same convention as playerName elsewhere
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// One row per campaign (find-or-create, like UserPreference) — every
+// client computes its own playback position from this shared timeline
+// rather than reacting to "play" commands, so seek math stays consistent
+// even for a client that subscribes mid-track. See lib/useSessionPlayback.ts.
+const SessionPlayback = a.model({
+  campaignId:    a.string().required(),
+  trackId:       a.string(), // null = nothing playing
+  startedAtIso:  a.string(), // when the current playback span began
+  offsetSeconds: a.float(),  // track position startedAtIso corresponds to
+  paused:        a.boolean(),
+  loop:          a.boolean(),
+  volume:        a.float(), // GM-broadcast volume, 0-1 — multiplied by each listener's own masterVolume, not synced as a final value
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
 const schema = a.schema({
   DamageDice,
@@ -401,6 +441,8 @@ const schema = a.schema({
   Companion,
   TodoItem,
   UserPreference,
+  SessionTrack,
+  SessionPlayback,
   MonsterStatblock: a.model({
     id: a.id().required(),
     slug: a.string(),            // open5e slug, used for deduplication on import

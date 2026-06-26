@@ -112,7 +112,8 @@
       "Bash(curl -sL -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/124.0.0.0 Safari/537.36\" \"https://www.worldanvil.com/learn/article-guides/article-templates\" -o /tmp/wa_templates.html -w \"HTTP_STATUS:%{http_code}\\\\n\")",
       "Bash(grep -rln \"AuthGuard\\\\|AuthenticatorWrapper\" app/tabletop)",
       "Bash(echo \"exit: $?\")",
-      "Bash(taskkill //PID 18372 //F)"
+      "Bash(taskkill //PID 18372 //F)",
+      "Bash(npx tsc *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",

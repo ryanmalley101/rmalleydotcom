@@ -4,16 +4,17 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import {
     Box, Container, Typography, Button, TextField, Paper, Chip,
-    IconButton, Tooltip, CircularProgress, Checkbox,
+    IconButton, Tooltip, CircularProgress, Checkbox, Popover,
     Accordion, AccordionSummary, AccordionDetails, Switch, FormControlLabel, Alert,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 import {
     ArrowLeft, Shield, ChevronDown, ChevronRight, Plus, Trash2,
-    Search, Sparkles, Eye, Printer, BookOpen,
+    Search, Sparkles, Eye, Printer, BookOpen, Music,
 } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
+import { getCurrentUser } from "aws-amplify/auth";
 import type { Schema } from "@/amplify/data/resource";
 import {
     DAMAGE_TRACK_INFO, DIFFICULTY_TABLE, EFFORT_COST_TABLE, STEP_MODIFIERS,
@@ -29,6 +30,7 @@ import { QuestProgress } from "../_dashboard-shared/QuestProgress";
 import { QuickWikiDialog } from "../_dashboard-shared/QuickWikiDialog";
 import { WikiSearchPin } from "../_dashboard-shared/WikiSearchPin";
 import { RollLog } from "../_dashboard-shared/RollLog";
+import { SessionAudioPlayer } from "../_dashboard-shared/SessionAudioPlayer";
 import { CreatureLookup } from "./CreatureLookup";
 
 const client = generateClient<Schema>();
@@ -101,6 +103,11 @@ export default function GmDashboardPage() {
     const prevSnapshotsRef = useRef<Map<string, PartySnapshot>>(new Map());
 
     const { layout, toggleSection, setTableMode } = useGmDashboardLayout();
+    const [musicAnchor, setMusicAnchor] = useState<HTMLElement | null>(null);
+    const [displayName, setDisplayName] = useState("GM");
+    useEffect(() => {
+        getCurrentUser().then(u => setDisplayName(u.signInDetails?.loginId ?? u.username)).catch(() => {});
+    }, []);
 
     useEffect(() => {
         client.models.Campaign.get({ id: campaignId }).then(({ data }) => {
@@ -295,7 +302,17 @@ export default function GmDashboardPage() {
                             Print
                         </Button>
                     </Tooltip>
+                    <Tooltip title="Session music">
+                        <Button size="small" variant="outlined" startIcon={<Music size={14} />} onClick={e => setMusicAnchor(e.currentTarget)}>
+                            Music
+                        </Button>
+                    </Tooltip>
                 </Box>
+
+                <Popover open={!!musicAnchor} anchorEl={musicAnchor} onClose={() => setMusicAnchor(null)}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+                    <SessionAudioPlayer campaignId={campaignId} displayName={displayName} controlsEnabled />
+                </Popover>
 
                 {/* Alerts */}
                 {worsenedAlert && (
