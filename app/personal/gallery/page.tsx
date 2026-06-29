@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Box, Button, Container } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, FolderOpen, Images, Sparkles, SwatchBook } from "lucide-react";
+import { ArrowLeft, BarChart3, FolderOpen, Images, Sparkles, SwatchBook } from "lucide-react";
 import { suggestedTags, useGalleryData } from "./_lib/useGalleryData";
 import { GalleryView } from "./_components/GalleryView";
 import { BulkAutoTagDialog } from "./_components/BulkAutoTagDialog";
@@ -44,6 +44,10 @@ export default function GalleryPage() {
                             <Button component={Link} href="/personal/gallery/galleries" variant="outlined"
                                 startIcon={<FolderOpen size={16} />}>
                                 Sub-Galleries
+                            </Button>
+                            <Button component={Link} href="/personal/gallery/curate" variant="outlined"
+                                startIcon={<BarChart3 size={16} />}>
+                                Curate
                             </Button>
                         </>
                     }
