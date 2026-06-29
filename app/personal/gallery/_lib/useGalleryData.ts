@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { generateClient } from "aws-amplify/data";
 import { getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
-import { AI_VISION_TAGS } from "@/lib/aestheticTags";
+import { AI_VISION_TAG_CATEGORIES, AI_VISION_TAGS } from "@/lib/aestheticTags";
 
 const client = generateClient<Schema>();
 
@@ -90,4 +90,58 @@ export function collectAllTags(photos: GalleryPhoto[]): string[] {
 // are useful even before any photo has been tagged.
 export function suggestedTags(photos: GalleryPhoto[]): string[] {
     return Array.from(new Set([...AI_VISION_TAGS, ...collectAllTags(photos)])).sort();
+}
+
+export interface TagFrequencyEntry {
+    tag: string;
+    count: number;
+    category: string | null; // null = freeform tag, not part of the curated vocabulary
+}
+
+const TAG_TO_CATEGORY = new Map<string, string>(
+    Object.entries(AI_VISION_TAG_CATEGORIES).flatMap(([category, tags]) =>
+        tags.map(tag => [tag, category] as const)
+    )
+);
+
+// Usage count for every tag, sorted most- to least-used — seeded with the
+// full curated vocabulary (at 0) so never-used tags show up as visibly
+// underrepresented rather than just being absent from the list.
+export function tagFrequency(photos: GalleryPhoto[]): TagFrequencyEntry[] {
+    const counts = new Map<string, number>();
+    for (const tag of AI_VISION_TAGS) counts.set(tag, 0);
+    for (const photo of photos) {
+        for (const tag of photo.tags ?? []) {
+            if (!tag) continue;
+            counts.set(tag, (counts.get(tag) ?? 0) + 1);
+        }
+    }
+    return Array.from(counts.entries())
+        .map(([tag, count]) => ({ tag, count, category: TAG_TO_CATEGORY.get(tag) ?? null }))
+        .sort((a, b) => b.count - a.count);
+}
+
+// Photos whose every tag falls within the `topN` most-used tags overall —
+// i.e. nothing about them is rare, so they're not adding much diversity to
+// the set. Ranked by a redundancy score (sum of each tag's global usage
+// count) so the most over-represented photos surface first.
+export function pruningCandidates(photos: GalleryPhoto[], topN: number): GalleryPhoto[] {
+    const frequency = tagFrequency(photos);
+    const countByTag = new Map(frequency.map(f => [f.tag, f.count]));
+    const wellRepresented = new Set(
+        frequency.filter(f => f.count > 0).slice(0, topN).map(f => f.tag)
+    );
+
+    return photos
+        .map(photo => {
+            const tags = (photo.tags ?? []).filter((t): t is string => !!t);
+            return { photo, tags };
+        })
+        .filter(({ tags }) => tags.length > 0 && tags.every(t => wellRepresented.has(t)))
+        .map(({ photo, tags }) => ({
+            photo,
+            score: tags.reduce((sum, t) => sum + (countByTag.get(t) ?? 0), 0),
+        }))
+        .sort((a, b) => b.score - a.score)
+        .map(({ photo }) => photo);
 }
