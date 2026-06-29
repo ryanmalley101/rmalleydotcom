@@ -143,9 +143,27 @@ export interface ReportLine {
     text: string;
 }
 
+export interface PacketRef {
+    index: number;
+    ts: number;
+    srcMac: string;
+    dstMac: string;
+    ethertypeName: string;
+    srcIp?: string;
+    dstIp?: string;
+    ipProtoName?: string;
+    ipTtl?: number;
+    srcPort?: number;
+    dstPort?: number;
+    tcpFlags?: string;
+    summary: string;
+    rawBytes: number[];
+}
+
 export interface Diagnosis {
     severity: "WARNING" | "CRITICAL";
     text: string;
+    packetRefs?: PacketRef[];
 }
 
 export const STAGE_ORDER = ["LINK", "AUTH", "IP", "GATEWAY", "DNS", "TIME", "CLOUD_TCP", "CLOUD_TLS", "ESTABLISHED"] as const;
@@ -397,6 +415,7 @@ interface DevState {
     /** Local TLS flows to RFC1918 destinations that aren't the gateway — likely Command Connector. */
     commandConnectorDests: Set<string>;
 
+    eventPackets: Map<string, PacketRef[]>;
     /** Per-stage relative timing (from device firstTs). */
     stageTimings: Partial<Record<Stage, number>>;
 }
@@ -460,6 +479,7 @@ function newDevice(): DevState {
         rtspSeen: false, ssdpSeen: false, llmnrSeen: false, stunSeen: false,
         dotSeen: false, dohSeen: false, plaintextHttpInternetCount: 0,
         commandConnectorDests: new Set(),
+        eventPackets: new Map(),
         stageTimings: {},
     };
 }
@@ -588,6 +608,52 @@ function markStage(d: DevState, stage: Stage, ts: number) {
     d.stageTimings[stage] = Math.max(0, ts - d.firstTs);
 }
 
+function tcpFlagsStr(flags: number): string {
+    const parts: string[] = [];
+    if (flags & TCP_SYN) parts.push("SYN");
+    if (flags & TCP_ACK) parts.push("ACK");
+    if (flags & TCP_RST) parts.push("RST");
+    if (flags & TCP_FIN) parts.push("FIN");
+    if (flags & 0x08) parts.push("PSH");
+    return parts.join("|") || `0x${flags.toString(16)}`;
+}
+
+function makePktRef(
+    index: number,
+    pkt: RawPacket,
+    ether: NonNullable<ReturnType<typeof parseEther>>,
+    summary: string,
+    ipInfo?: { src: string; dst: string; proto: number; ttl?: number },
+    transport?: { srcPort: number; dstPort: number; flags?: string },
+): PacketRef {
+    const ethertypeName =
+        ether.type === 0x0800 ? "IPv4" :
+        ether.type === 0x86dd ? "IPv6" :
+        ether.type === 0x0806 ? "ARP" :
+        ether.type === 0x888e ? "EAPOL" :
+        ether.type === 0x8100 ? "802.1Q" :
+        `0x${ether.type.toString(16).padStart(4, "0")}`;
+    const ipProtoName = ipInfo
+        ? ipInfo.proto === 6 ? "TCP" : ipInfo.proto === 17 ? "UDP" : ipInfo.proto === 1 ? "ICMP" : ipInfo.proto === 58 ? "ICMPv6" : `proto ${ipInfo.proto}`
+        : undefined;
+    return {
+        index, ts: pkt.ts,
+        srcMac: ether.src, dstMac: ether.dst,
+        ethertypeName,
+        srcIp: ipInfo?.src, dstIp: ipInfo?.dst,
+        ipProtoName, ipTtl: ipInfo?.ttl,
+        srcPort: transport?.srcPort, dstPort: transport?.dstPort,
+        tcpFlags: transport?.flags,
+        summary,
+        rawBytes: Array.from(pkt.data.subarray(0, Math.min(128, pkt.data.length))),
+    };
+}
+
+function addEventPkt(dev: DevState, tag: string, ref: PacketRef) {
+    const arr = dev.eventPackets.get(tag) ?? [];
+    if (arr.length < 3) { arr.push(ref); dev.eventPackets.set(tag, arr); }
+}
+
 // ============================================================================
 // Main analyzer
 // ============================================================================
@@ -616,7 +682,9 @@ export function analyze(packets: RawPacket[], opts: AnalyzeOptions = {}): Analys
     let totalWireBytes = 0;
     let truncatedFrames = 0;
 
+    let packetIndex = 0;
     for (const pkt of packets) {
+        packetIndex++;
         if (pkt.ts > 0) {
             if (firstTs === null || pkt.ts < firstTs) firstTs = pkt.ts;
             if (lastTs === null || pkt.ts > lastTs) lastTs = pkt.ts;
@@ -715,7 +783,10 @@ export function analyze(packets: RawPacket[], opts: AnalyzeOptions = {}): Analys
                 const dev = devices.get(vMac) ?? newDevice();
                 dev.eapolSeen = true;
                 if (r?.eapCode === 3) { dev.eapSuccess = true; markStage(dev, "AUTH", pkt.ts); }
-                else if (r?.eapCode === 4) dev.eapFailure = true;
+                else if (r?.eapCode === 4) {
+                    dev.eapFailure = true;
+                    addEventPkt(dev, "eap_failure", makePktRef(packetIndex, pkt, ether, "EAP Failure"));
+                }
                 devices.set(vMac, dev);
             }
         }
@@ -742,7 +813,7 @@ export function analyze(packets: RawPacket[], opts: AnalyzeOptions = {}): Analys
 
             if (ether.vlan !== undefined) dev.vlansSeen.add(ether.vlan);
 
-            processPacket(pkt, ether, dev, fromDev, vMac, ether.dst, cloudSuffixes, shared);
+            processPacket(pkt, ether, dev, fromDev, vMac, ether.dst, cloudSuffixes, shared, packetIndex);
         }
     }
 
@@ -861,9 +932,10 @@ function processPacket(
     dstMac: string,
     cloudSuffixes: string[],
     shared: SharedState,
+    packetIndex: number,
 ): void {
     if (ether.type === 0x86dd) {
-        processIpv6(pkt, ether, dev, fromDev, vMac, dstMac, cloudSuffixes, shared);
+        processIpv6(pkt, ether, dev, fromDev, vMac, dstMac, cloudSuffixes, shared, packetIndex);
         return;
     }
 
@@ -880,7 +952,10 @@ function processPacket(
             if (fromDev && arp.spa === arp.tpa && arp.spa !== "0.0.0.0") dev.gratuitousArpSeen = true;
             const gw = dev.dhcpGateway;
             if (gw) {
-                if (arp.op === 1 && fromDev && arp.tpa === gw) dev.gwArpReq = true;
+                if (arp.op === 1 && fromDev && arp.tpa === gw) {
+                    dev.gwArpReq = true;
+                    addEventPkt(dev, "arp_gw_req", makePktRef(packetIndex, pkt, ether, `ARP who-has ${gw}?`));
+                }
                 if (arp.op === 2 && !fromDev && arp.spa === gw && dstMac === vMac) {
                     dev.gwArpRes = true;
                     markStage(dev, "GATEWAY", pkt.ts);
@@ -925,9 +1000,16 @@ function processPacket(
 
     if (ip.proto === 1 && dstMac === vMac) {
         const ic = parseIcmp(pkt.data, ip.payloadOff);
+        const icmpIpInfo = { src: ip.src, dst: ip.dst, proto: 1, ttl: pkt.data[ether.payloadOff + 8] };
         if (ic?.type === 3) {
-            if (ic.code === 4) dev.healthWarnings.add("MTU/PMTUD: ICMP Fragmentation Needed received.");
-            else if (ic.code === 9 || ic.code === 10 || ic.code === 13) dev.healthWarnings.add("UPSTREAM POLICY: ICMP admin-prohibited received.");
+            if (ic.code === 4) {
+                dev.healthWarnings.add("MTU/PMTUD: ICMP Fragmentation Needed received.");
+                addEventPkt(dev, "icmp_frag_needed", makePktRef(packetIndex, pkt, ether, "ICMP Fragmentation Needed", icmpIpInfo));
+            }
+            else if (ic.code === 9 || ic.code === 10 || ic.code === 13) {
+                dev.healthWarnings.add("UPSTREAM POLICY: ICMP admin-prohibited received.");
+                addEventPkt(dev, "icmp_prohibited", makePktRef(packetIndex, pkt, ether, "ICMP Administratively Prohibited", icmpIpInfo));
+            }
             else if (ic.code === 0) dev.healthWarnings.add("REACHABILITY: ICMP Network Unreachable received.");
             else if (ic.code === 1) dev.healthWarnings.add("REACHABILITY: ICMP Host Unreachable received.");
             else if (ic.code === 3) dev.healthWarnings.add("REACHABILITY: ICMP Port Unreachable received.");
@@ -940,8 +1022,8 @@ function processPacket(
         }
     }
 
-    if (ip.proto === 17) processUdpv4(pkt, ip, dev, fromDev, vMac, dstMac, cloudSuffixes);
-    else if (ip.proto === 6) processTcpv4(pkt, ether, ip, dev, fromDev, vMac, dstMac, cloudSuffixes);
+    if (ip.proto === 17) processUdpv4(pkt, ether, ip, dev, fromDev, vMac, dstMac, cloudSuffixes, packetIndex);
+    else if (ip.proto === 6) processTcpv4(pkt, ether, ip, dev, fromDev, vMac, dstMac, cloudSuffixes, packetIndex);
 }
 
 function processIpv6(
@@ -953,6 +1035,7 @@ function processIpv6(
     dstMac: string,
     cloudSuffixes: string[],
     shared: SharedState,
+    _packetIndex: number,
 ) {
     const ip6 = parseIpv6(pkt.data, ether.payloadOff);
     if (!ip6) return;
@@ -1001,18 +1084,23 @@ function processIpv6(
 
 function processUdpv4(
     pkt: RawPacket,
+    ether: NonNullable<ReturnType<typeof parseEther>>,
     ip: NonNullable<ReturnType<typeof parseIpv4>>,
     dev: DevState,
     fromDev: boolean,
     vMac: string,
     dstMac: string,
     cloudSuffixes: string[],
+    packetIndex: number,
 ) {
     const udp = parseUdp(pkt.data, ip.payloadOff);
     if (!udp) return;
 
     if (udp.sport === 123 || udp.dport === 123) {
-        if (fromDev) { dev.ntpSent = true; dev.ntpServers.add(ip.dst); }
+        if (fromDev) {
+            dev.ntpSent = true; dev.ntpServers.add(ip.dst);
+            addEventPkt(dev, "ntp_request", makePktRef(packetIndex, pkt, ether, `NTP request to ${ip.dst}`, { src: ip.src, dst: ip.dst, proto: 17, ttl: pkt.data[ether.payloadOff + 8] }, { srcPort: udp.sport, dstPort: udp.dport }));
+        }
         else if (dstMac === vMac) { dev.ntpRcvd = true; dev.ntpServers.add(ip.src); markStage(dev, "TIME", pkt.ts); }
     }
     if (udp.sport === 5353 || udp.dport === 5353) {
@@ -1031,12 +1119,16 @@ function processUdpv4(
             if (dhcp.messageType === 1 && fromDev) {
                 dev.dhcpDiscoverCount++;
                 if (dhcp.xid !== undefined) dev.dhcpDiscoverTs.set(dhcp.xid, pkt.ts);
+                addEventPkt(dev, "dhcp_discover", makePktRef(packetIndex, pkt, ether, "DHCP Discover", { src: ip.src, dst: ip.dst, proto: 17, ttl: pkt.data[ether.payloadOff + 8] }, { srcPort: udp.sport, dstPort: udp.dport }));
             }
             if (dhcp.messageType === 3 && fromDev) {
                 dev.dhcpRequestCount++;
                 if (dhcp.xid !== undefined) dev.dhcpRequestTs.set(dhcp.xid, pkt.ts);
             }
-            if (dhcp.messageType === 4 && fromDev) dev.dhcpDeclineSeen = true;
+            if (dhcp.messageType === 4 && fromDev) {
+                dev.dhcpDeclineSeen = true;
+                addEventPkt(dev, "dhcp_decline", makePktRef(packetIndex, pkt, ether, "DHCP Decline", { src: ip.src, dst: ip.dst, proto: 17, ttl: pkt.data[ether.payloadOff + 8] }, { srcPort: udp.sport, dstPort: udp.dport }));
+            }
             if (dhcp.messageType === 2 && dstMac === vMac && dhcp.xid !== undefined) {
                 const t0 = dev.dhcpDiscoverTs.get(dhcp.xid);
                 if (t0 !== undefined && (dev.dhcpOfferLatencyMs === null || pkt.ts - t0 < dev.dhcpOfferLatencyMs / 1000)) {
@@ -1061,7 +1153,10 @@ function processUdpv4(
                 }
             }
             if (dhcp.messageType === 2 && dhcp.serverId) dev.dhcpServerIds.add(dhcp.serverId);
-            if (dhcp.messageType === 6 && dstMac === vMac) dev.dhcpNakSeen = true;
+            if (dhcp.messageType === 6 && dstMac === vMac) {
+                dev.dhcpNakSeen = true;
+                addEventPkt(dev, "dhcp_nak", makePktRef(packetIndex, pkt, ether, "DHCP NAK", { src: ip.src, dst: ip.dst, proto: 17, ttl: pkt.data[ether.payloadOff + 8] }, { srcPort: udp.sport, dstPort: udp.dport }));
+            }
             if (fromDev) {
                 if (dhcp.vendorClass) dev.dhcpVendorClass = dhcp.vendorClass;
                 if (dhcp.hostName) dev.dhcpHostName = dhcp.hostName;
@@ -1088,6 +1183,9 @@ function processUdpv4(
                 if (isDnsPort) {
                     dev.dnsServersObserved.add(ip.src);
                     dev.dnsRcodeCounts.set(dns.rcode, (dev.dnsRcodeCounts.get(dns.rcode) ?? 0) + 1);
+                    if (dns.rcode !== 0) {
+                        addEventPkt(dev, "dns_error", makePktRef(packetIndex, pkt, ether, `DNS ${rcodeName(dns.rcode)} for ${dns.qname ?? "?"}`, { src: ip.src, dst: ip.dst, proto: 17, ttl: pkt.data[ether.payloadOff + 8] }, { srcPort: udp.sport, dstPort: udp.dport }));
+                    }
                     const t0 = dev.dnsQueryTs.get(dns.txid);
                     if (t0 !== undefined) {
                         dev.dnsResponseLatencyMs.push((pkt.ts - t0) * 1000);
@@ -1132,6 +1230,7 @@ function processTcpv4(
     vMac: string,
     dstMac: string,
     cloudSuffixes: string[],
+    packetIndex: number,
 ) {
     const tcp = parseTcp(pkt.data, ip.payloadOff, ip.payloadLen);
     if (!tcp) return;
@@ -1174,7 +1273,10 @@ function processTcpv4(
         dev.synTimes.set(remoteKey, pkt.ts);
         dev.cloudSynCount.set(remoteKey, (dev.cloudSynCount.get(remoteKey) ?? 0) + 1);
         dev.tcpSynFromDev++;
-        if (dev.verkadaCloudIps.has(remoteIp)) dev.cloudSynDests.add(remoteKey);
+        if (dev.verkadaCloudIps.has(remoteIp)) {
+            dev.cloudSynDests.add(remoteKey);
+            addEventPkt(dev, "cloud_syn", makePktRef(packetIndex, pkt, ether, `TCP SYN to cloud ${remoteKey}`, { src: ip.src, dst: ip.dst, proto: 6, ttl: pkt.data[ether.payloadOff + 8] }, { srcPort: tcp.sport, dstPort: tcp.dport, flags: tcpFlagsStr(tcp.flags) }));
+        }
     } else if (!fromDev && isSyn && isAck) {
         const t0 = dev.synTimes.get(remoteKey);
         if (t0 !== undefined) {
@@ -1198,8 +1300,15 @@ function processTcpv4(
     }
 
     if (isRst) {
-        if (fromDev) dev.tcpRstFromDev = true;
-        else dev.tcpRstFromNet = true;
+        const rstIp = { src: ip.src, dst: ip.dst, proto: 6, ttl: pkt.data[ether.payloadOff + 8] };
+        const rstTcp = { srcPort: tcp.sport, dstPort: tcp.dport, flags: tcpFlagsStr(tcp.flags) };
+        if (fromDev) {
+            dev.tcpRstFromDev = true;
+            addEventPkt(dev, "tcp_rst_from_dev", makePktRef(packetIndex, pkt, ether, `TCP RST from device (→${remoteKey})`, rstIp, rstTcp));
+        } else {
+            dev.tcpRstFromNet = true;
+            addEventPkt(dev, "tcp_rst_from_net", makePktRef(packetIndex, pkt, ether, `TCP RST from network (${remoteKey})`, rstIp, rstTcp));
+        }
     }
 
     if (tcp.window === 0 && (remotePort === 443 || VERKADA_LOCAL_TCP_PORTS.has(remotePort) || VERKADA_LOCAL_TCP_PORTS.has(localPort))) {
@@ -1246,7 +1355,10 @@ function processTcpv4(
         const { alerts, appDataCount } = parseTlsAlertsAndRecords(payload);
         for (const code of alerts) {
             dev.tlsAlerts.add(TLS_ALERTS[code] ?? `code_${code}`);
-            if (code === 42) dev.badCertDetected = true;
+            if (code === 42) {
+                dev.badCertDetected = true;
+                addEventPkt(dev, "tls_bad_cert", makePktRef(packetIndex, pkt, ether, "TLS Alert: bad_certificate (42)", { src: ip.src, dst: ip.dst, proto: 6, ttl: pkt.data[ether.payloadOff + 8] }, { srcPort: tcp.sport, dstPort: tcp.dport, flags: tcpFlagsStr(tcp.flags) }));
+            }
         }
         if (appDataCount > 0 && cloudBound) {
             const stats = dev.cloudFlows.get(flowKey);
@@ -1657,6 +1769,7 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: "802.1X is enabled on the switchport and is rejecting the camera (EAP Failure). The camera cannot reach the LAN until port authentication succeeds — check the RADIUS configuration and the MAC/credentials registered for this device, or move the port to an unauthenticated VLAN.",
+            packetRefs: d.eventPackets.get("eap_failure"),
         });
     }
 
@@ -1676,12 +1789,14 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: "The DHCP server returned NAK to the camera — it refused to grant a lease. Usually the camera's REQUEST asked for an address outside the current scope (lease moved subnets, stale lease cached, or scope exhaustion).",
+            packetRefs: d.eventPackets.get("dhcp_nak"),
         });
     }
     if (d.dhcpDeclineSeen) {
         out.push({
             severity: "CRITICAL",
             text: "The camera sent DHCP DECLINE on the offered address — typically because its ARP probe detected another host already using that IP. Look for a duplicate IP in the DHCP scope / static assignments.",
+            packetRefs: d.eventPackets.get("dhcp_decline"),
         });
     }
     if (d.dhcpServerIds.size >= 2) {
@@ -1694,11 +1809,13 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: `The camera sent ${d.dhcpDiscoverCount} DHCP DISCOVERs and never received an ACK. The DHCP server is unreachable or refusing this device — check the DHCP scope, the relay/helper address on the gateway, and any MAC-based filters.`,
+            packetRefs: d.eventPackets.get("dhcp_discover"),
         });
     } else if (d.dhcpDiscoverCount >= 2) {
         out.push({
             severity: "WARNING",
             text: `The camera repeated DHCP DISCOVER ${d.dhcpDiscoverCount} times during the capture, which usually means it lost its lease or rebooted mid-capture (possible reboot loop).`,
+            packetRefs: d.eventPackets.get("dhcp_discover"),
         });
     }
 
@@ -1706,6 +1823,7 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "WARNING",
             text: `The camera ARPed for its default gateway (${d.dhcpGateway}) but never saw a reply in this capture. The reply may have been missed because the capture is one-directional (SPAN), the gateway IP from DHCP may be wrong, or the gateway is offline.`,
+            packetRefs: d.eventPackets.get("arp_gw_req"),
         });
     }
 
@@ -1731,16 +1849,19 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
             out.push({
                 severity: "CRITICAL",
                 text: `The configured DNS resolver returned SERVFAIL ${servfail} time(s). Either the upstream recursive resolver is broken, or DNSSEC validation is failing — switch DNS server or fix the resolver.`,
+                packetRefs: d.eventPackets.get("dns_error"),
             });
         } else if (nxdomain > 0) {
             out.push({
                 severity: "CRITICAL",
                 text: `${nxdomain} DNS lookup(s) returned NXDOMAIN. The names exist (Verkada cameras query well-known hostnames) but the resolver is being told they don't — usually a DNS-blocking firewall, "safe-browsing" appliance, or a stale/misconfigured DNS zone.`,
+                packetRefs: d.eventPackets.get("dns_error"),
             });
         } else {
             out.push({
                 severity: "CRITICAL",
                 text: "The camera is sending DNS queries over UDP/53 but never receiving a valid answer. UDP/53 is being blocked, the configured DNS server is unreachable, or every query is timing out.",
+                packetRefs: d.eventPackets.get("dns_error"),
             });
         }
     }
@@ -1815,6 +1936,7 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: `The camera is sending TCP SYNs to the Verkada cloud (${unansweredCloud.sort().join(", ")}) but no SYN-ACKs are coming back. An upstream firewall is dropping outbound traffic to those endpoints — verify Verkada's required IP/port allowlist on the perimeter firewall.`,
+            packetRefs: d.eventPackets.get("cloud_syn"),
         });
     } else if (d.cloudSynDests.size === 0 && d.dnsVerkadaQueries.size > 0 && d.sniHostnames.size === 0) {
         out.push({
@@ -1878,6 +2000,7 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: "The camera is sending NTP requests (UDP/123) but never receives a reply. Until time sync works, TLS certificate validation will fail and the camera will not be able to connect to the cloud — open UDP/123 outbound or point the camera at a reachable NTP server.",
+            packetRefs: d.eventPackets.get("ntp_request"),
         });
     }
 
@@ -1885,6 +2008,7 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: "TLS handshake failed with bad_certificate (alert 42). This almost always means an SSL/TLS inspection middlebox is between the camera and the cloud and is presenting its own certificate — cameras pin Verkada's CA and will not trust it. Exempt Verkada destinations from inspection on the firewall.",
+            packetRefs: d.eventPackets.get("tls_bad_cert"),
         });
     }
 
@@ -1900,11 +2024,13 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: "TCP RST packets are arriving from the network and tearing down the camera's sessions. A firewall, IPS, or other stateful middlebox is killing the connection — check session timeout values and any intrusion-prevention rules that might be matching this traffic.",
+            packetRefs: d.eventPackets.get("tcp_rst_from_net"),
         });
     } else if (d.tcpRstFromDev) {
         out.push({
             severity: "WARNING",
             text: "The camera itself is resetting some of its TCP sessions, which usually indicates it received an unexpected response, hit an application-level error, or aborted a stalled connection.",
+            packetRefs: d.eventPackets.get("tcp_rst_from_dev"),
         });
     }
 
@@ -1912,12 +2038,14 @@ function buildDiagnoses(d: DevState, cloudSuffixes: string[]): Diagnosis[] {
         out.push({
             severity: "CRITICAL",
             text: "A firewall on the path returned ICMP \"administratively prohibited,\" explicitly blocking the camera's outbound traffic. Compare the camera's destination IPs/ports against the firewall's allow-list.",
+            packetRefs: d.eventPackets.get("icmp_prohibited"),
         });
     }
     if (hasMtuIssue || d.ipv4FragmentCount > 0) {
         out.push({
             severity: "WARNING",
             text: "Path MTU mismatch — either ICMP Fragmentation Needed / Packet Too Big was returned, or IPv4 fragments were observed. If PMTU discovery is being blackholed (ICMP dropped upstream), large frames will silently fail.",
+            packetRefs: d.eventPackets.get("icmp_frag_needed"),
         });
     }
     if (hasZeroWindow) {
