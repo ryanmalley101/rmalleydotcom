@@ -140,7 +140,11 @@
       "Bash(node -e \"const {Jimp} = require\\('jimp'\\); console.log\\(typeof Jimp, typeof Jimp.read, typeof Jimp.fromBuffer\\)\")",
       "Bash(xargs grep -l \"ScaleToFitOptions\")",
       "Bash(xargs cat)",
-      "Bash(tasklist //FI \"PID eq 43864\")"
+      "Bash(tasklist //FI \"PID eq 43864\")",
+      "Bash(aws pricing *)",
+      "Bash(aws sts *)",
+      "Bash(aws budgets *)",
+      "Bash(aws dynamodb *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
