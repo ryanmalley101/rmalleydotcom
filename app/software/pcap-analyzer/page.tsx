@@ -7,6 +7,7 @@ import {
     Box,
     Button,
     Chip,
+    Collapse,
     Container,
     Divider,
     LinearProgress,
@@ -15,7 +16,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { Activity, AlertTriangle, ArrowLeft, Check, Clipboard, FileText, Printer, Upload, X } from "lucide-react";
+import { Activity, AlertTriangle, ArrowLeft, Check, ChevronDown, Clipboard, FileText, Printer, Upload, X } from "lucide-react";
 
 import { loadCapture } from "./lib/parser";
 import {
@@ -27,6 +28,7 @@ import {
     type AnalysisResult,
     type DeviceReport,
     type Diagnosis,
+    type PacketRef,
     type ReportLine,
     type Severity,
 } from "./lib/analyzer";
@@ -575,7 +577,7 @@ export default function PcapAnalyzerPage() {
                             {dev.diagnoses.length > 0 ? (
                                 <Stack spacing={1.25} sx={{ mb: visibleLines.length || dev.tlsAlerts.length ? 2.5 : 0 }}>
                                     {dev.diagnoses.map((dx, i) => (
-                                        <DiagnosisRow key={i} dx={dx} />
+                                        <DiagnosisRow key={i} dx={dx} captureStart={result.captureQuality.firstTs ?? undefined} />
                                     ))}
                                 </Stack>
                             ) : (
@@ -620,33 +622,122 @@ export default function PcapAnalyzerPage() {
     );
 }
 
-function DiagnosisRow({ dx }: { dx: Diagnosis }) {
+function DiagnosisRow({ dx, captureStart }: { dx: Diagnosis; captureStart?: number }) {
+    const [expanded, setExpanded] = useState(false);
     const color = SEVERITY_COLOR[dx.severity];
+    const hasPackets = (dx.packetRefs?.length ?? 0) > 0;
     return (
-        <Box
-            sx={{
-                display: "flex",
-                gap: 1.5,
-                alignItems: "flex-start",
-                p: 1.5,
-                borderRadius: 1,
-                backgroundColor: `${color}14`,
-                borderLeft: `3px solid ${color}`,
-            }}
-        >
-            <Box sx={{ flexShrink: 0, color, mt: "2px" }}>
-                <AlertTriangle size={18} />
+        <Box sx={{ borderRadius: 1, backgroundColor: `${color}14`, borderLeft: `3px solid ${color}`, overflow: "hidden" }}>
+            <Box
+                sx={{
+                    display: "flex", gap: 1.5, alignItems: "flex-start", p: 1.5,
+                    cursor: hasPackets ? "pointer" : "default",
+                    userSelect: "none",
+                }}
+                onClick={hasPackets ? () => setExpanded(e => !e) : undefined}
+            >
+                <Box sx={{ flexShrink: 0, color, mt: "2px" }}>
+                    <AlertTriangle size={18} />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                    <Typography
+                        variant="caption"
+                        sx={{ color, fontFamily: "monospace", fontWeight: 700, letterSpacing: 0.5, display: "block", mb: 0.25 }}
+                    >
+                        {dx.severity}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: "text.primary", lineHeight: 1.6 }}>
+                        {dx.text}
+                    </Typography>
+                </Box>
+                {hasPackets && (
+                    <Box
+                        sx={{
+                            flexShrink: 0, color: "text.disabled", mt: "2px",
+                            transition: "transform 0.15s",
+                            transform: expanded ? "rotate(180deg)" : "none",
+                        }}
+                        title={expanded ? "Hide packet details" : `Show ${dx.packetRefs!.length} packet${dx.packetRefs!.length === 1 ? "" : "s"}`}
+                    >
+                        <ChevronDown size={16} />
+                    </Box>
+                )}
             </Box>
-            <Box>
+            {hasPackets && (
+                <Collapse in={expanded}>
+                    <Box sx={{ px: 1.5, pb: 1.5, borderTop: `1px solid ${color}30` }}>
+                        {dx.packetRefs!.map((pkt, i) => (
+                            <PacketDetail key={i} packet={pkt} captureStart={captureStart} first={i === 0} />
+                        ))}
+                    </Box>
+                </Collapse>
+            )}
+        </Box>
+    );
+}
+
+function PacketDetail({ packet, captureStart, first }: { packet: PacketRef; captureStart?: number; first: boolean }) {
+    const tsOffset = captureStart !== undefined && packet.ts > 0
+        ? `+${(packet.ts - captureStart).toFixed(3)}s`
+        : packet.ts > 0 ? `ts=${packet.ts.toFixed(3)}` : "";
+
+    const headerLines: string[] = [
+        `Ethernet  ${packet.srcMac.toUpperCase()}  →  ${packet.dstMac.toUpperCase()}  [${packet.ethertypeName}]`,
+    ];
+    if (packet.srcIp || packet.dstIp) {
+        const ttlStr = packet.ipTtl !== undefined ? `  TTL=${packet.ipTtl}` : "";
+        headerLines.push(`${packet.ethertypeName === "IPv6" ? "IPv6    " : "IPv4    "}  ${packet.srcIp ?? "?"}  →  ${packet.dstIp ?? "?"}  (${packet.ipProtoName ?? "?"}${ttlStr})`);
+    }
+    if (packet.srcPort !== undefined || packet.dstPort !== undefined) {
+        const flagStr = packet.tcpFlags ? `  [${packet.tcpFlags}]` : "";
+        headerLines.push(`${(packet.ipProtoName ?? "L4").padEnd(8)}  ${packet.srcPort ?? "?"}  →  ${packet.dstPort ?? "?"}${flagStr}`);
+    }
+
+    const bytes = packet.rawBytes;
+    const hexLines: string[] = [];
+    for (let i = 0; i < bytes.length; i += 16) {
+        const chunk = bytes.slice(i, i + 16);
+        const offset = i.toString(16).padStart(4, "0");
+        const hexPart = chunk.map(b => b.toString(16).padStart(2, "0")).join(" ").padEnd(47);
+        const asciiPart = chunk.map(b => (b >= 0x20 && b < 0x7f) ? String.fromCharCode(b) : ".").join("");
+        hexLines.push(`${offset}  ${hexPart}  ${asciiPart}`);
+    }
+
+    return (
+        <Box sx={{ mt: first ? 1 : 1.5 }}>
+            <Typography
+                variant="caption"
+                sx={{ fontFamily: "monospace", color: "text.disabled", display: "block", mb: 0.5 }}
+            >
+                Packet #{packet.index}{tsOffset ? `  ·  ${tsOffset}` : ""}  ·  {packet.summary}
+            </Typography>
+            {headerLines.map((l, i) => (
                 <Typography
+                    key={i}
                     variant="caption"
-                    sx={{ color, fontFamily: "monospace", fontWeight: 700, letterSpacing: 0.5, display: "block", mb: 0.25 }}
+                    sx={{ display: "block", fontFamily: "monospace", color: "text.secondary", lineHeight: 1.7 }}
                 >
-                    {dx.severity}
+                    {l}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.primary", lineHeight: 1.6 }}>
-                    {dx.text}
-                </Typography>
+            ))}
+            <Box
+                sx={{
+                    mt: 0.75,
+                    p: 1,
+                    backgroundColor: "rgba(0,0,0,0.25)",
+                    borderRadius: 0.5,
+                    overflowX: "auto",
+                }}
+            >
+                {hexLines.map((l, i) => (
+                    <Typography
+                        key={i}
+                        variant="caption"
+                        sx={{ display: "block", fontFamily: "monospace", whiteSpace: "pre", color: "text.primary", lineHeight: 1.5, fontSize: "0.72rem" }}
+                    >
+                        {l}
+                    </Typography>
+                ))}
             </Box>
         </Box>
     );

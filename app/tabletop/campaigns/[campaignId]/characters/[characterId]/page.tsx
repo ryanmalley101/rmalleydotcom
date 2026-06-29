@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
     Box, Container, Typography, Button, TextField, MenuItem,
@@ -19,6 +19,7 @@ import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 import CypherSheet from "./CypherSheet";
+import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
 
 const client = generateClient<Schema>();
 type PC         = Schema["PlayerCharacter"]["type"];
@@ -243,7 +244,14 @@ export default function CharacterPage() {
     const [pc, setPc]             = useState<PC | null>(null);
     const [loading, setLoading]   = useState(true);
     const [saving, setSaving]     = useState(false);
+    const [autosaving, setAutosaving] = useState(false);
+    const [lastAutosaved, setLastAutosaved] = useState<Date | null>(null);
     const [editing, setEditing]   = useState(false);
+
+    const { autosaveDefault, autosaveDefaultLoaded, setAutosaveDefault } = useAutosaveDefault();
+    const [autosaveEnabled, setAutosaveEnabled] = useState(true);
+    const autosaveSeededRef = useRef(false);
+    const lastSavedRef = useRef<string>("");
     const [tab, setTab]           = useState(0);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [importOpen, setImportOpen]       = useState(false);
@@ -281,7 +289,7 @@ export default function CharacterPage() {
     const [dsf, setDsf] = useState(0); // failures
 
     function hydrate(p: PC) {
-        setForm({
+        const newForm = {
             characterName: p.characterName ?? "",
             playerName:    p.playerName ?? "",
             race:          p.race ?? "",
@@ -324,17 +332,128 @@ export default function CharacterPage() {
             electrum:      String(p.electrum ?? 0),
             gold:          String(p.gold ?? 0),
             platinum:      String(p.platinum ?? 0),
+        };
+        const newClasses  = parseJson<ClassEntry[]>(p.classesJson, p.characterClass ? [{ class: p.characterClass, level: p.level ?? 1, subclass: p.subclass ?? undefined }] : []);
+        const newSaveProfs  = parseJson<string[]>(p.saveProficienciesJson, []);
+        const newSkillProfs = parseJson<Record<string, string>>(p.skillProficienciesJson, {});
+        const newAttacks    = parseJson<AttackEntry[]>(p.attacksJson, []);
+        const newInventory  = parseJson<InventoryItem[]>(p.inventoryJson, []);
+        const newSpellSlots = parseJson<SpellSlots>(p.spellSlotsJson, {});
+        const newSpells     = parseJson<SpellEntry[]>(p.spellsJson, []);
+        const newFeatures   = parseJson<FeatureEntry[]>(p.featuresJson, []);
+        const newDss = p.deathSaveSuccesses ?? 0;
+        const newDsf = p.deathSaveFailures ?? 0;
+
+        setForm(newForm);
+        setClasses(newClasses);
+        setSaveProfs(newSaveProfs);
+        setSkillProfs(newSkillProfs);
+        setAttacks(newAttacks);
+        setInventory(newInventory);
+        setSpellSlots(newSpellSlots);
+        setSpells(newSpells);
+        setFeatures(newFeatures);
+        setDss(newDss);
+        setDsf(newDsf);
+
+        lastSavedRef.current = JSON.stringify({
+            form: newForm, classes: newClasses, saveProfs: newSaveProfs,
+            skillProfs: newSkillProfs, attacks: newAttacks, inventory: newInventory,
+            spellSlots: newSpellSlots, spells: newSpells, features: newFeatures,
+            dss: newDss, dsf: newDsf,
         });
-        setClasses(parseJson<ClassEntry[]>(p.classesJson, p.characterClass ? [{ class: p.characterClass, level: p.level ?? 1, subclass: p.subclass ?? undefined }] : []));
-        setSaveProfs(parseJson<string[]>(p.saveProficienciesJson, []));
-        setSkillProfs(parseJson<Record<string, string>>(p.skillProficienciesJson, {}));
-        setAttacks(parseJson<AttackEntry[]>(p.attacksJson, []));
-        setInventory(parseJson<InventoryItem[]>(p.inventoryJson, []));
-        setSpellSlots(parseJson<SpellSlots>(p.spellSlotsJson, {}));
-        setSpells(parseJson<SpellEntry[]>(p.spellsJson, []));
-        setFeatures(parseJson<FeatureEntry[]>(p.featuresJson, []));
-        setDss(p.deathSaveSuccesses ?? 0);
-        setDsf(p.deathSaveFailures ?? 0);
+    }
+
+    useEffect(() => {
+        if (autosaveDefaultLoaded && !autosaveSeededRef.current) {
+            setAutosaveEnabled(autosaveDefault);
+            autosaveSeededRef.current = true;
+        }
+    }, [autosaveDefaultLoaded, autosaveDefault]);
+
+    const isDirty = useMemo(() => {
+        if (!editing) return false;
+        const current = JSON.stringify({ form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf });
+        return current !== lastSavedRef.current;
+    }, [editing, form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf]);
+
+    useEffect(() => {
+        function handler(e: BeforeUnloadEvent) {
+            if (isDirty) { e.preventDefault(); e.returnValue = ""; }
+        }
+        window.addEventListener("beforeunload", handler);
+        return () => window.removeEventListener("beforeunload", handler);
+    }, [isDirty]);
+
+    useEffect(() => {
+        if (!editing || !autosaveEnabled || !isDirty) return;
+        const timer = setTimeout(() => { silentSave(); }, 4000);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editing, autosaveEnabled, isDirty, form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf]);
+
+    async function silentSave() {
+        if (!pc) return;
+        setAutosaving(true);
+        await client.models.PlayerCharacter.update({
+            id: pc.id,
+            characterName: form.characterName.trim(),
+            playerName:    form.playerName.trim() || undefined,
+            race:          form.race.trim() || undefined,
+            background:    form.background.trim() || undefined,
+            alignment:     form.alignment || undefined,
+            xp:            num("xp"),
+            classesJson:   JSON.stringify(classes),
+            characterClass: classes[0]?.class || undefined,
+            subclass:      classes[0]?.subclass || undefined,
+            level:         totalLevel || undefined,
+            strength:      num("strength"),
+            dexterity:     num("dexterity"),
+            constitution:  num("constitution"),
+            intelligence:  num("intelligence"),
+            wisdom:        num("wisdom"),
+            charisma:      num("charisma"),
+            saveProficienciesJson:  JSON.stringify(saveProfs),
+            skillProficienciesJson: JSON.stringify(skillProfs),
+            maxHp:         num("maxHp") || undefined,
+            currentHp:     num("currentHp") || undefined,
+            tempHp:        num("tempHp") || undefined,
+            armorClass:    num("armorClass") || undefined,
+            speed:         num("speed") || undefined,
+            initiative:    num("initiative") || undefined,
+            hitDice:       form.hitDice || undefined,
+            deathSaveSuccesses: dss,
+            deathSaveFailures:  dsf,
+            inspiration:   form.inspiration === "true",
+            exhaustion:    num("exhaustion"),
+            attacksJson:   JSON.stringify(attacks),
+            inventoryJson: JSON.stringify(inventory),
+            copper:        num("copper"), silver: num("silver"),
+            electrum:      num("electrum"), gold: num("gold"), platinum: num("platinum"),
+            spellcastingAbility: form.spellcastingAbility || undefined,
+            spellSlotsJson: JSON.stringify(spellSlots),
+            spellsJson:    JSON.stringify(spells),
+            featuresJson:  JSON.stringify(features),
+            personality:   form.personality || undefined,
+            ideals:        form.ideals || undefined,
+            bonds:         form.bonds || undefined,
+            flaws:         form.flaws || undefined,
+            backstory:     form.backstory || undefined,
+            notes:         form.notes || undefined,
+            allies:        form.allies || undefined,
+            gender:        form.gender || undefined,
+            age:           form.age || undefined,
+            height:        form.height || undefined,
+            weight:        form.weight || undefined,
+            eyes:          form.eyes || undefined,
+            skin:          form.skin || undefined,
+            hair:          form.hair || undefined,
+            languages:     form.languages || undefined,
+            proficiencies: form.proficiencies || undefined,
+        });
+        lastSavedRef.current = JSON.stringify({ form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf });
+        setAutosaving(false);
+        setLastAutosaved(new Date());
     }
 
     async function load() {
@@ -690,6 +809,24 @@ export default function CharacterPage() {
                         </Button>
                         {editing ? (
                             <>
+                                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                                    <Switch size="small" checked={autosaveEnabled}
+                                        onChange={e => setAutosaveEnabled(e.target.checked)} />
+                                    <Typography variant="caption" sx={{ color: "text.secondary" }}>Autosave</Typography>
+                                    {autosaveDefaultLoaded && autosaveEnabled !== autosaveDefault && (
+                                        <Button size="small" onClick={() => setAutosaveDefault(autosaveEnabled)}
+                                            sx={{ fontSize: "0.65rem", minWidth: 0, p: 0, textTransform: "none", color: "primary.main" }}>
+                                            Set as default
+                                        </Button>
+                                    )}
+                                    {autosaving ? (
+                                        <Typography variant="caption" sx={{ color: "text.disabled" }}>Saving…</Typography>
+                                    ) : lastAutosaved ? (
+                                        <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                                            Autosaved {lastAutosaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                        </Typography>
+                                    ) : null}
+                                </Box>
                                 <Button startIcon={<X size={16} />} onClick={() => { hydrate(pc); setEditing(false); }}>Cancel</Button>
                                 <Button variant="contained" startIcon={<Save size={16} />}
                                     onClick={save} disabled={saving} sx={{ backgroundColor: "primary.main" }}>
