@@ -303,6 +303,26 @@ const TodoItem = a.model({
   dueDate:     a.string(),
 }).authorization(allow => [allow.owner()]);
 
+// ── Photo gallery ────────────────────────────────────────────────────────────
+
+// A sub-gallery is just a name/description — photo membership lives on
+// GalleryPhoto.subGalleryIds (array-of-ids, same escape-valve pattern as
+// Campaign.worldIds) rather than a join table.
+const SubGallery = a.model({
+  name:        a.string().required(),
+  description: a.string(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+const GalleryPhoto = a.model({
+  storageKey:    a.string().required(), // Amplify Storage S3 key
+  filename:      a.string().required(),
+  uploadedAt:    a.datetime().required(),
+  uploaderId:    a.string(),  // Cognito sub
+  uploaderName:  a.string(),  // signInDetails.loginId at time of upload
+  subGalleryIds: a.string().array(), // SubGallery ids this photo is assigned to
+  tags:          a.string().array(), // freeform aesthetic tags (e.g. 'warm', 'bohemian') — manually entered for now, source-agnostic so AI tagging can populate the same field later
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
 // Campaign membership (created by player on join)
 // VTT (Virtual Tabletop) — one board per scene. Tokens used to live in a
 // single tokensJson blob here; they're now their own VttToken model (below)
@@ -440,6 +460,8 @@ const schema = a.schema({
   Faction,
   Companion,
   TodoItem,
+  SubGallery,
+  GalleryPhoto,
   UserPreference,
   SessionTrack,
   SessionPlayback,

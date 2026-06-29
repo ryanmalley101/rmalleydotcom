@@ -24,5 +24,8 @@ export const storage = defineStorage({
         'session-music/*': [
             allow.authenticated.to(['read', 'write', 'delete']),
         ],
+        'gallery-photos/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
     }),
 });
