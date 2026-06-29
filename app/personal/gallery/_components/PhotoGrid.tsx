@@ -42,7 +42,7 @@ export function PhotoGrid({
                             },
                         }}>
                         {urls[photo.storageKey] ? (
-                            <Box component="img" src={urls[photo.storageKey]} alt={photo.filename}
+                            <Box component="img" src={urls[photo.storageKey]} alt={photo.filename} loading="lazy"
                                 sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                         ) : (
                             <Box sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>

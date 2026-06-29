@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-    Box, Button, Chip, CircularProgress, Container, FormControl, InputLabel,
-    MenuItem, Select, TextField, Typography,
+    Box, Button, Checkbox, Chip, CircularProgress, Container, FormControl,
+    FormControlLabel, InputLabel, MenuItem, Select, TextField, Typography,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, RotateCcw, Save, SwatchBook } from "lucide-react";
+import { ArrowLeft, RotateCcw, Save, SwatchBook, Undo2 } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { remove } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
@@ -28,10 +28,12 @@ export default function SwipePage() {
 
     const [phase, setPhase] = useState<Phase>("select");
     const [sourceId, setSourceId] = useState("master");
+    const [includeUntagged, setIncludeUntagged] = useState(false);
     const [pool, setPool] = useState<GalleryPhoto[]>([]);
     const [roundIndex, setRoundIndex] = useState(0);
     const [liked, setLiked] = useState<GalleryPhoto[]>([]);
     const [roundNumber, setRoundNumber] = useState(1);
+    const [history, setHistory] = useState<{ index: number; liked: boolean }[]>([]);
 
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [managingPhoto, setManagingPhoto] = useState<GalleryPhoto | null>(null);
@@ -39,6 +41,7 @@ export default function SwipePage() {
     const [saveName, setSaveName] = useState("");
     const [saving, setSaving] = useState(false);
     const [deletingCurrent, setDeletingCurrent] = useState(false);
+    const [tagsVisible, setTagsVisible] = useState(false);
 
     // Keep the liked set in sync with reloads (tag edits / deletes) made
     // from the results screen's manage dialog.
@@ -51,13 +54,28 @@ export default function SwipePage() {
     }, [photos, phase]);
 
     function poolForSource(id: string) {
-        return id === "master" ? photos : photos.filter(p => p.subGalleryIds?.includes(id));
+        const base = id === "master" ? photos : photos.filter(p => p.subGalleryIds?.includes(id));
+        if (includeUntagged) return base;
+        return base.filter(p => (p.tags ?? []).filter(Boolean).length > 0);
+    }
+
+    // photos arrives newest-first (and "liked" follows whatever order it was
+    // accumulated in) — shuffle on every round so swipe order isn't just
+    // upload order, for the initial start and every "Swipe Again" alike.
+    function shuffled(arr: GalleryPhoto[]): GalleryPhoto[] {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
     }
 
     function startSwiping(initialPool: GalleryPhoto[]) {
-        setPool(initialPool);
+        setPool(shuffled(initialPool));
         setRoundIndex(0);
         setLiked([]);
+        setHistory([]);
         setPhase("swiping");
     }
 
@@ -71,6 +89,7 @@ export default function SwipePage() {
     function decide(yes: boolean) {
         const current = pool[roundIndex];
         if (yes) setLiked(prev => [...prev, current]);
+        setHistory(prev => [...prev, { index: roundIndex, liked: yes }]);
         const next = roundIndex + 1;
         if (next >= pool.length) {
             setPhase("results");
@@ -78,6 +97,29 @@ export default function SwipePage() {
             setRoundIndex(next);
         }
     }
+
+    // Steps back one decision — covers the fat-finger case (mis-tap/mis-key
+    // during fast swiping), including undoing the swipe that just ended the
+    // round, which is why this also works from the results screen.
+    function undo() {
+        if (history.length === 0) return;
+        const last = history[history.length - 1];
+        setHistory(prev => prev.slice(0, -1));
+        if (last.liked) setLiked(prev => prev.slice(0, -1));
+        setRoundIndex(last.index);
+        setPhase("swiping");
+    }
+
+    // Preloads the next photo's image while the current one is on screen, so
+    // advancing to it doesn't pop in / flicker while the browser fetches it.
+    useEffect(() => {
+        if (phase !== "swiping") return;
+        const next = pool[roundIndex + 1];
+        const nextUrl = next ? urls[next.storageKey] : undefined;
+        if (!nextUrl) return;
+        const img = new window.Image();
+        img.src = nextUrl;
+    }, [phase, roundIndex, pool, urls]);
 
     // Deletes the photo currently on screen — for the obvious-junk case where
     // swiping no isn't enough, you just want it gone. Removes it from the
@@ -106,11 +148,12 @@ export default function SwipePage() {
         function handleKeyDown(e: KeyboardEvent) {
             if (e.key === "ArrowLeft") decide(false);
             else if (e.key === "ArrowRight") decide(true);
+            else if (e.key === "Backspace") { e.preventDefault(); undo(); }
         }
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [phase, roundIndex, pool, liked]);
+    }, [phase, roundIndex, pool, liked, history]);
 
     function swipeAgainOnLiked() {
         setRoundNumber(prev => prev + 1);
@@ -188,7 +231,7 @@ export default function SwipePage() {
                         <FormControl fullWidth>
                             <InputLabel>Source</InputLabel>
                             <Select label="Source" value={sourceId} onChange={e => setSourceId(e.target.value)}>
-                                <MenuItem value="master">Master Gallery ({photos.length})</MenuItem>
+                                <MenuItem value="master">Master Gallery ({poolForSource("master").length})</MenuItem>
                                 {subGalleries.map(g => (
                                     <MenuItem key={g.id} value={g.id}>
                                         {g.name} ({poolForSource(g.id).length})
@@ -196,6 +239,15 @@ export default function SwipePage() {
                                 ))}
                             </Select>
                         </FormControl>
+                        <FormControlLabel
+                            control={<Checkbox checked={includeUntagged}
+                                onChange={e => setIncludeUntagged(e.target.checked)} />}
+                            label={
+                                <Typography sx={{ fontSize: "0.88rem", color: "text.secondary" }}>
+                                    Include untagged photos
+                                </Typography>
+                            }
+                        />
                         <Button variant="contained" onClick={handleStart}
                             disabled={poolForSource(sourceId).length === 0}
                             sx={{ backgroundColor: ACCENT, "&:hover": { backgroundColor: "#db2777" } }}>
@@ -205,7 +257,7 @@ export default function SwipePage() {
                 ) : phase === "swiping" && current ? (
                     <Box sx={{ mt: 3 }}>
                         <Typography sx={{ color: "text.disabled", fontSize: "0.78rem", mb: 2 }}>
-                            Round {roundNumber}
+                            Round {roundNumber} · {liked.length} liked so far
                         </Typography>
                         <SwipeCard
                             key={current.id}
@@ -217,8 +269,13 @@ export default function SwipePage() {
                             onNo={() => decide(false)}
                             onDelete={deleteCurrent}
                             deleting={deletingCurrent}
+                            tagsVisible={tagsVisible}
+                            onToggleTags={() => setTagsVisible(v => !v)}
                         />
                         <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 3 }}>
+                            <Button size="small" startIcon={<Undo2 size={14} />} onClick={undo} disabled={history.length === 0}>
+                                Undo
+                            </Button>
                             <Button size="small" onClick={() => setPhase("results")}>Finish Early</Button>
                             <Button size="small" color="inherit" onClick={startOver}>Exit</Button>
                         </Box>
@@ -263,6 +320,9 @@ export default function SwipePage() {
                             </Button>
                             <Button startIcon={<RotateCcw size={16} />} onClick={startOver}>
                                 Start Over
+                            </Button>
+                            <Button startIcon={<Undo2 size={16} />} onClick={undo} disabled={history.length === 0}>
+                                Undo Last Swipe
                             </Button>
                         </Box>
 
