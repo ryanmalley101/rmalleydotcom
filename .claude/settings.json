@@ -134,7 +134,13 @@
       "Bash(tasklist //FI \"PID eq 13340\")",
       "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
       "Bash(aws s3api *)",
-      "Bash(aws lambda *)"
+      "Bash(aws lambda *)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"ProcessId=13340\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\")",
+      "Bash(node -e \"const {Jimp} = require\\('jimp'\\); console.log\\(typeof Jimp, typeof Jimp.read, typeof Jimp.fromBuffer\\)\")",
+      "Bash(xargs grep -l \"ScaleToFitOptions\")",
+      "Bash(xargs cat)",
+      "Bash(tasklist //FI \"PID eq 43864\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",

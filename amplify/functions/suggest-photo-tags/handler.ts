@@ -1,10 +1,18 @@
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
+import { Jimp } from 'jimp';
 import type { Schema } from '../../data/resource';
 import { AI_VISION_TAGS, AI_VISION_TAG_DESCRIPTIONS } from '../../../lib/aestheticTags';
 
 const s3 = new S3Client();
 const bedrock = new BedrockRuntimeClient();
+
+// Bedrock caps vision input at 5MB and Anthropic's own guidance gets no
+// quality benefit past ~1568px on the long edge — original uploads (phone
+// photos especially) routinely exceed both, so always downscale + re-encode
+// as JPEG rather than passing the original bytes through.
+const MAX_DIMENSION = 1568;
+const JPEG_QUALITY = 82;
 
 // Each tag is paired with the concrete visual evidence that justifies it, so
 // the model checks the image against a checklist instead of guessing from
@@ -33,8 +41,13 @@ export const handler: Schema['suggestPhotoTags']['functionHandler'] = async (eve
     }));
     const bytes = await object.Body?.transformToByteArray();
     if (!bytes) return [];
-    const base64 = Buffer.from(bytes).toString('base64');
-    const mediaType = object.ContentType ?? 'image/jpeg';
+
+    const image = await Jimp.read(Buffer.from(bytes));
+    if (image.width > MAX_DIMENSION || image.height > MAX_DIMENSION) {
+        image.scaleToFit({ w: MAX_DIMENSION, h: MAX_DIMENSION });
+    }
+    const jpegBuffer = await image.getBuffer('image/jpeg', { quality: JPEG_QUALITY });
+    const base64 = jpegBuffer.toString('base64');
 
     const response = await bedrock.send(new InvokeModelCommand({
         modelId: process.env.MODEL_ID,
@@ -47,7 +60,7 @@ export const handler: Schema['suggestPhotoTags']['functionHandler'] = async (eve
             messages: [{
                 role: 'user',
                 content: [
-                    { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+                    { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
                     { type: 'text', text: 'Tag this photo per the system prompt.' },
                 ],
             }],
