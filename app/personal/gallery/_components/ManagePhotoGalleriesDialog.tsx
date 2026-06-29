@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import {
-    Autocomplete, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent,
-    DialogTitle, FormControlLabel, TextField, Typography,
+    Autocomplete, Box, Button, Checkbox, Chip, CircularProgress, Dialog, DialogActions,
+    DialogContent, DialogTitle, FormControlLabel, TextField, Typography,
 } from "@mui/material";
-import { Trash2 } from "lucide-react";
+import { Sparkles, Trash2 } from "lucide-react";
 import { remove } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
@@ -32,6 +32,7 @@ export function ManagePhotoGalleriesDialog({
     const [saving, setSaving] = useState(false);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [tagging, setTagging] = useState(false);
 
     useEffect(() => {
         if (open && photo) {
@@ -43,6 +44,18 @@ export function ManagePhotoGalleriesDialog({
 
     function toggle(id: string) {
         setSelectedIds(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
+    }
+
+    async function autoTag() {
+        if (!photo) return;
+        setTagging(true);
+        try {
+            const { data: suggested } = await client.queries.suggestPhotoTags({ storageKey: photo.storageKey });
+            const valid = (suggested ?? []).filter((t): t is string => !!t);
+            setTags(prev => Array.from(new Set([...prev, ...valid])));
+        } finally {
+            setTagging(false);
+        }
     }
 
     async function save() {
@@ -73,9 +86,15 @@ export function ManagePhotoGalleriesDialog({
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
             <DialogTitle>Manage Photo</DialogTitle>
             <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 0.5, pt: "16px !important" }}>
-                <Typography variant="caption" sx={{ color: "text.secondary", mb: 0.5 }}>
-                    Aesthetic tags
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                        Aesthetic tags
+                    </Typography>
+                    <Button size="small" onClick={autoTag} disabled={tagging}
+                        startIcon={tagging ? <CircularProgress size={12} /> : <Sparkles size={14} />}>
+                        Auto-tag
+                    </Button>
+                </Box>
                 <Autocomplete
                     multiple freeSolo size="small"
                     options={allTags}

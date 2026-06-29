@@ -4,7 +4,7 @@ import { Box, Button, Container } from "@mui/material";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, FolderOpen } from "lucide-react";
-import { collectAllTags, useGalleryData } from "../../_lib/useGalleryData";
+import { suggestedTags, useGalleryData } from "../../_lib/useGalleryData";
 import { GalleryView } from "../../_components/GalleryView";
 
 export default function SubGalleryPage() {
@@ -27,7 +27,7 @@ export default function SubGalleryPage() {
                     title={loading ? "" : subGallery?.name ?? "Sub-Gallery"}
                     subtitle={subGallery?.description ?? undefined}
                     photos={galleryPhotos}
-                    allTags={collectAllTags(photos)}
+                    allTags={suggestedTags(photos)}
                     subGalleries={subGalleries}
                     urls={urls}
                     loading={loading}

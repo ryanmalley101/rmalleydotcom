@@ -1,4 +1,5 @@
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
+import { suggestPhotoTagsFunction } from '../functions/suggest-photo-tags/resource.js';
 
 const DamageDice = a.customType({
   damage_dice: a.string().required(),
@@ -323,6 +324,16 @@ const GalleryPhoto = a.model({
   tags:          a.string().array(), // freeform aesthetic tags (e.g. 'warm', 'bohemian') — manually entered for now, source-agnostic so AI tagging can populate the same field later
 }).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
+// On-demand AI tag suggestions for a single photo (Bedrock vision call) —
+// returns suggestions only, doesn't write to GalleryPhoto itself; the client
+// merges them into the same editable tags field a user would type into by hand.
+const suggestPhotoTags = a
+  .query()
+  .arguments({ storageKey: a.string().required() })
+  .returns(a.string().array())
+  .authorization(allow => [allow.authenticated()])
+  .handler(a.handler.function(suggestPhotoTagsFunction));
+
 // Campaign membership (created by player on join)
 // VTT (Virtual Tabletop) — one board per scene. Tokens used to live in a
 // single tokensJson blob here; they're now their own VttToken model (below)
@@ -462,6 +473,7 @@ const schema = a.schema({
   TodoItem,
   SubGallery,
   GalleryPhoto,
+  suggestPhotoTags,
   UserPreference,
   SessionTrack,
   SessionPlayback,

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, RotateCcw, Save, SwatchBook } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
-import { collectAllTags, useGalleryData, type GalleryPhoto } from "../_lib/useGalleryData";
+import { suggestedTags, useGalleryData, type GalleryPhoto } from "../_lib/useGalleryData";
 import { SwipeCard } from "../_components/SwipeCard";
 import { PhotoGrid } from "../_components/PhotoGrid";
 import { PhotoLightbox } from "../_components/PhotoLightbox";
@@ -132,7 +132,7 @@ export default function SwipePage() {
         return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
     }, [liked]);
 
-    const allTags = collectAllTags(photos);
+    const allTags = suggestedTags(photos);
     const imageUrls = liked.map(p => urls[p.storageKey] ?? "");
     const current = pool[roundIndex];
 
