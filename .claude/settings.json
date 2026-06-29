@@ -127,7 +127,14 @@
       "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/personal/gallery/swipe)",
       "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/login)",
       "Bash(echo \"exit:$?\")",
-      "Bash(node -e \"const m = require\\('@aws-amplify/backend'\\); console.log\\(typeof m.defineFunction, typeof m.defineStorage, typeof m.defineData\\)\")"
+      "Bash(node -e \"const m = require\\('@aws-amplify/backend'\\); console.log\\(typeof m.defineFunction, typeof m.defineStorage, typeof m.defineData\\)\")",
+      "Bash(aws iam *)",
+      "Bash(aws appsync *)",
+      "Bash(curl -sf -o /dev/null -w \"dev server: %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(tasklist //FI \"PID eq 13340\")",
+      "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
+      "Bash(aws s3api *)",
+      "Bash(aws lambda *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",

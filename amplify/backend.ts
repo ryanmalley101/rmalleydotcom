@@ -31,3 +31,14 @@ suggestPhotoTagsLambda.addToRolePolicy(
         ],
     })
 );
+
+// Anthropic models on Bedrock are delivered via an AWS Marketplace
+// subscription under the hood — the calling role needs these to complete
+// that subscription handshake on first invocation, not just bedrock:InvokeModel.
+suggestPhotoTagsLambda.addToRolePolicy(
+    new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['aws-marketplace:ViewSubscriptions', 'aws-marketplace:Subscribe'],
+        resources: ['*'],
+    })
+);
