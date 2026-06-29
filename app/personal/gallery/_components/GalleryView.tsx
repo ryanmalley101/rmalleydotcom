@@ -1,20 +1,24 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import {
-    Box, Button, CircularProgress, Dialog, DialogActions, DialogContent,
-    DialogTitle, Pagination, Typography,
+    Autocomplete, Box, Button, Chip, CircularProgress, Dialog, DialogActions,
+    DialogContent, DialogTitle, FormControl, IconButton, MenuItem, Pagination,
+    Select, TextField, Tooltip, Typography,
 } from "@mui/material";
-import { CheckSquare, Trash2, Upload, X, type LucideIcon } from "lucide-react";
+import { CheckSquare, Shuffle, Trash2, Upload, X, type LucideIcon } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { remove } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
+import { collectAllTags } from "../_lib/useGalleryData";
 import { PhotoGrid } from "./PhotoGrid";
 import { PhotoLightbox } from "./PhotoLightbox";
 import { UploadDialog } from "./UploadDialog";
 import { ManagePhotoGalleriesDialog } from "./ManagePhotoGalleriesDialog";
 
 const client = generateClient<Schema>();
+
+type SortMode = "newest" | "oldest" | "shuffle";
 
 type GalleryPhoto = Schema["GalleryPhoto"]["type"];
 type SubGallery = Schema["SubGallery"]["type"];
@@ -52,11 +56,46 @@ export function GalleryView({
     const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
     const [bulkDeleting, setBulkDeleting] = useState(false);
     const [page, setPage] = useState(1);
+    const [activeTags, setActiveTags] = useState<string[]>([]);
+    const [sortMode, setSortMode] = useState<SortMode>("newest");
+    const [shuffleSeed, setShuffleSeed] = useState(0);
 
-    const pageCount = Math.max(1, Math.ceil(photos.length / PAGE_SIZE));
+    const usedTags = collectAllTags(photos);
+    const filteredPhotos = activeTags.length === 0
+        ? photos
+        : photos.filter(p => activeTags.every(t => (p.tags ?? []).includes(t)));
+
+    // photos arrives newest-first already; "oldest" just reverses that, and
+    // "shuffle" re-randomizes only when the underlying set or the seed
+    // changes (clicking "Shuffle again"), not on every render.
+    const sortedPhotos = useMemo(() => {
+        if (sortMode === "oldest") return [...filteredPhotos].reverse();
+        if (sortMode === "shuffle") {
+            const arr = [...filteredPhotos];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+        return filteredPhotos;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filteredPhotos, sortMode, shuffleSeed]);
+
+    const pageCount = Math.max(1, Math.ceil(sortedPhotos.length / PAGE_SIZE));
     const safePage = Math.min(page, pageCount);
-    const pagedPhotos = photos.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+    const pagedPhotos = sortedPhotos.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
     const imageUrls = pagedPhotos.map(p => urls[p.storageKey] ?? "");
+
+    function changeTagFilter(tags: string[]) {
+        setActiveTags(tags);
+        setPage(1);
+    }
+
+    function changeSortMode(mode: SortMode) {
+        setSortMode(mode);
+        setPage(1);
+    }
 
     function exitSelectionMode() {
         setSelectionMode(false);
@@ -114,6 +153,42 @@ export function GalleryView({
                 </Box>
             </Box>
 
+            {(usedTags.length > 0 || photos.length > 0) && (
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 1.5, mb: 2 }}>
+                    {usedTags.length > 0 ? (
+                        <Autocomplete
+                            multiple size="small"
+                            options={usedTags}
+                            value={activeTags}
+                            onChange={(_, v) => changeTagFilter(v)}
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) => (
+                                    <Chip label={option} size="small" {...getTagProps({ index })} />
+                                ))
+                            }
+                            renderInput={params => <TextField {...params} placeholder="Filter by tag…" />}
+                            sx={{ minWidth: 220, flex: "1 1 220px" }}
+                        />
+                    ) : <Box />}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <FormControl size="small" sx={{ minWidth: 140 }}>
+                            <Select value={sortMode} onChange={e => changeSortMode(e.target.value as SortMode)}>
+                                <MenuItem value="newest">Newest first</MenuItem>
+                                <MenuItem value="oldest">Oldest first</MenuItem>
+                                <MenuItem value="shuffle">Shuffle</MenuItem>
+                            </Select>
+                        </FormControl>
+                        {sortMode === "shuffle" && (
+                            <Tooltip title="Shuffle again">
+                                <IconButton size="small" onClick={() => setShuffleSeed(s => s + 1)}>
+                                    <Shuffle size={16} />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                    </Box>
+                </Box>
+            )}
+
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 1.5, mb: 4 }}>
                 {selectionMode ? (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
@@ -142,7 +217,9 @@ export function GalleryView({
                 ) : (
                     <>
                         <Typography variant="body1" sx={{ color: "text.secondary" }}>
-                            {photos.length} photo{photos.length === 1 ? "" : "s"}
+                            {activeTags.length > 0
+                                ? `${sortedPhotos.length} of ${photos.length} photo${photos.length === 1 ? "" : "s"}`
+                                : `${photos.length} photo${photos.length === 1 ? "" : "s"}`}
                             {pageCount > 1 ? ` · page ${safePage} of ${pageCount}` : ""}
                         </Typography>
                         {photos.length > 0 && (
@@ -165,6 +242,17 @@ export function GalleryView({
                     <Button variant="outlined" onClick={() => setUploadOpen(true)}
                         sx={{ borderColor: ACCENT, color: ACCENT }}>
                         Upload photos
+                    </Button>
+                </Box>
+            ) : sortedPhotos.length === 0 ? (
+                <Box sx={{ textAlign: "center", py: 10 }}>
+                    <Icon size={48} color="#6b7280" style={{ marginBottom: 12 }} />
+                    <Typography sx={{ color: "text.secondary", mb: 2 }}>
+                        No photos match the selected tags.
+                    </Typography>
+                    <Button variant="outlined" onClick={() => changeTagFilter([])}
+                        sx={{ borderColor: ACCENT, color: ACCENT }}>
+                        Clear filters
                     </Button>
                 </Box>
             ) : (

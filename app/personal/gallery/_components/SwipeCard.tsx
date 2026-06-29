@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Box, Button, Chip, CircularProgress, IconButton, Typography } from "@mui/material";
-import { Check, Trash2, X } from "lucide-react";
+import { Check, Eye, EyeOff, Trash2, X } from "lucide-react";
 import type { GalleryPhoto } from "../_lib/useGalleryData";
 
 interface SwipeCardProps {
@@ -14,10 +14,15 @@ interface SwipeCardProps {
     onNo: () => void;
     onDelete?: () => Promise<void> | void;
     deleting?: boolean;
+    tagsVisible: boolean;
+    onToggleTags: () => void;
 }
 
-export function SwipeCard({ photo, url, position, total, onYes, onNo, onDelete, deleting }: SwipeCardProps) {
+export function SwipeCard({
+    photo, url, position, total, onYes, onNo, onDelete, deleting, tagsVisible, onToggleTags,
+}: SwipeCardProps) {
     const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const tags = (photo.tags ?? []).filter((t): t is string => !!t);
 
     async function handleConfirmDelete() {
         await onDelete?.();
@@ -30,40 +35,51 @@ export function SwipeCard({ photo, url, position, total, onYes, onNo, onDelete, 
                 {position} / {total}
             </Typography>
 
-            <Box sx={{
-                position: "relative",
-                width: "100%", maxWidth: 480,
-                borderRadius: 3, overflow: "hidden",
-                backgroundColor: "background.paper",
-                border: "1px solid rgba(255,255,255,0.08)",
-            }}>
-                {url ? (
-                    <Box component="img" src={url} alt={photo.filename}
-                        sx={{ width: "100%", maxHeight: "60vh", objectFit: "contain", display: "block" }} />
-                ) : (
-                    <Box sx={{ width: "100%", height: 320 }} />
-                )}
-                {onDelete && (
-                    <IconButton onClick={() => setConfirmingDelete(true)}
-                        sx={{
-                            position: "absolute", top: 8, right: 8, color: "#fff",
-                            backgroundColor: "rgba(0,0,0,0.45)",
-                            "&:hover": { backgroundColor: "rgba(220,38,38,0.7)" },
-                        }}>
-                        <Trash2 size={16} />
-                    </IconButton>
-                )}
-                {(photo.tags ?? []).length > 0 && (
-                    <Box sx={{
-                        position: "absolute", bottom: 8, left: 8, right: 8,
-                        display: "flex", flexWrap: "wrap", gap: 0.5,
-                    }}>
-                        {(photo.tags ?? []).map(tag => tag && (
-                            <Chip key={tag} label={tag} size="small"
-                                sx={{ backgroundColor: "rgba(0,0,0,0.6)", color: "#fff" }} />
-                        ))}
-                    </Box>
-                )}
+            <Box sx={{ display: "flex", gap: 2.5, alignItems: "flex-start", justifyContent: "center", flexWrap: "wrap" }}>
+                <Box sx={{
+                    position: "relative",
+                    width: "100%", maxWidth: 480,
+                    borderRadius: 3, overflow: "hidden",
+                    backgroundColor: "background.paper",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                }}>
+                    {url ? (
+                        <Box component="img" src={url} alt={photo.filename}
+                            sx={{ width: "100%", maxHeight: "60vh", objectFit: "contain", display: "block" }} />
+                    ) : (
+                        <Box sx={{ width: "100%", height: 320 }} />
+                    )}
+                    {onDelete && (
+                        <IconButton onClick={() => setConfirmingDelete(true)}
+                            sx={{
+                                position: "absolute", top: 8, right: 8, color: "#fff",
+                                backgroundColor: "rgba(0,0,0,0.45)",
+                                "&:hover": { backgroundColor: "rgba(220,38,38,0.7)" },
+                            }}>
+                            <Trash2 size={16} />
+                        </IconButton>
+                    )}
+                </Box>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 150, maxWidth: 200 }}>
+                    <Button size="small" onClick={onToggleTags}
+                        startIcon={tagsVisible ? <EyeOff size={14} /> : <Eye size={14} />}>
+                        {tagsVisible ? "Hide tags" : "Show tags"}
+                    </Button>
+                    {tagsVisible && (
+                        tags.length > 0 ? (
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                {tags.map(tag => (
+                                    <Chip key={tag} label={tag} size="small" />
+                                ))}
+                            </Box>
+                        ) : (
+                            <Typography sx={{ color: "text.disabled", fontSize: "0.75rem" }}>
+                                No tags yet.
+                            </Typography>
+                        )
+                    )}
+                </Box>
             </Box>
 
             {confirmingDelete ? (
