@@ -15,5 +15,17 @@ export const storage = defineStorage({
         'wiki-gallery/*': [
             allow.authenticated.to(['read', 'write', 'delete']),
         ],
+        'vtt-maps/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
+        'vtt-tokens/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
+        'session-music/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
+        'gallery-photos/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
     }),
 });

@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { ArrowLeft, ScrollText, Plus, Pencil, Trash2 } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
+import { getCurrentUser } from "aws-amplify/auth";
 import type { Schema } from "@/amplify/data/resource";
 
 const client = generateClient<Schema>();
@@ -68,7 +69,8 @@ export default function CampaignsPage() {
         if (editing) {
             await client.models.Campaign.update({ id: editing.id, ...form });
         } else {
-            await client.models.Campaign.create(form);
+            const { userId } = await getCurrentUser();
+            await client.models.Campaign.create({ ...form, gmUserId: userId });
         }
         setSaving(false);
         setDialog(false);

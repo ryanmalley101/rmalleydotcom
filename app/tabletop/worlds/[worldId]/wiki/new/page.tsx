@@ -13,7 +13,7 @@ import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 import { useWikiLinkInsert } from "../useWikiLinkInsert";
-import { useFileDrop } from "../useFileDrop";
+import { useFileDrop } from "@/lib/useFileDrop";
 import { ARTICLE_TYPES, DEFAULT_ARTICLE_TYPE } from "@/lib/wikiArticleTypes";
 
 const client = generateClient<Schema>();

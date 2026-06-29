@@ -1,4 +1,5 @@
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
+import { suggestPhotoTagsFunction } from '../functions/suggest-photo-tags/resource.js';
 
 const DamageDice = a.customType({
   damage_dice: a.string().required(),
@@ -90,6 +91,13 @@ const Campaign = a.model({
   system:       a.string(),
   settingsJson: a.string(), // JSON: Partial<CombatSettings> — campaign-level defaults
   gmScreenJson: a.string(), // JSON: GM dashboard scratch data (e.g. intrusion ideas)
+  // Cognito sub of the campaign's creator/GM. Explicit rather than relying on
+  // the auto-managed owner-auth field, so client code (useCampaignRole) has a
+  // value it can read and compare without guessing Amplify's internal
+  // identity-claim format. Unset on campaigns created before this field
+  // existed — treated as permissive (everyone is GM-equivalent) rather than
+  // locking the real creator out; see useCampaignRole.ts.
+  gmUserId:     a.string(),
 }).authorization(allow => [allow.owner()]);
 
 const WikiArticle = a.model({
@@ -296,20 +304,102 @@ const TodoItem = a.model({
   dueDate:     a.string(),
 }).authorization(allow => [allow.owner()]);
 
+// ── Photo gallery ────────────────────────────────────────────────────────────
+
+// A sub-gallery is just a name/description — photo membership lives on
+// GalleryPhoto.subGalleryIds (array-of-ids, same escape-valve pattern as
+// Campaign.worldIds) rather than a join table.
+const SubGallery = a.model({
+  name:        a.string().required(),
+  description: a.string(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+const GalleryPhoto = a.model({
+  storageKey:    a.string().required(), // Amplify Storage S3 key
+  filename:      a.string().required(),
+  uploadedAt:    a.datetime().required(),
+  uploaderId:    a.string(),  // Cognito sub
+  uploaderName:  a.string(),  // signInDetails.loginId at time of upload
+  subGalleryIds: a.string().array(), // SubGallery ids this photo is assigned to
+  tags:          a.string().array(), // freeform aesthetic tags (e.g. 'warm', 'bohemian') — manually entered for now, source-agnostic so AI tagging can populate the same field later
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// On-demand AI tag suggestions for a single photo (Bedrock vision call) —
+// returns suggestions only, doesn't write to GalleryPhoto itself; the client
+// merges them into the same editable tags field a user would type into by hand.
+const suggestPhotoTags = a
+  .query()
+  .arguments({ storageKey: a.string().required() })
+  .returns(a.string().array())
+  .authorization(allow => [allow.authenticated()])
+  .handler(a.handler.function(suggestPhotoTagsFunction));
+
 // Campaign membership (created by player on join)
-// VTT (Virtual Tabletop) — one board per scene, real-time token positions
+// VTT (Virtual Tabletop) — one board per scene. Tokens used to live in a
+// single tokensJson blob here; they're now their own VttToken model (below)
+// so each token can be moved/owned independently instead of rewriting the
+// whole board on every drag.
 const VttBoard = a.model({
   campaignId:  a.string().required(),
   name:        a.string().required(),
   gridCols:    a.integer(),  // default 30
   gridRows:    a.integer(),  // default 20
-  tokensJson:  a.string(),   // JSON: VttToken[]
+  gridType:    a.string(),   // 'square' | 'hex' | 'none' — only 'square' is implemented so far
+  gridOffsetX: a.float(),    // pixel offset so the grid can align to a map image that doesn't start at (0,0)
+  gridOffsetY: a.float(),
+  mapImageKey: a.string(),   // Amplify Storage S3 key — the board's background map
+  mapWidthPx:  a.float(),
+  mapHeightPx: a.float(),
+  backgroundColor: a.string(), // fallback fill when no map image is set
+  fogEnabled:  a.boolean(),
+  fogJson:     a.string(),   // JSON: GM-painted revealed-cell coordinates
+  drawingsJson: a.string(),  // JSON: freehand/shape annotations drawn on the board
+}).authorization(allow => [allow.authenticated()]);
+
+// A token on a VttBoard. Provisional authorization below (matches
+// VttBoard's allow.authenticated()) — the VTT roadmap's Phase 2 tightens
+// this to per-token ownership via allow.ownerDefinedIn('ownerId') so a
+// player can only move their own token while the GM can move anything.
+// Not implemented yet: it needs real multi-account testing to get the
+// ownerId format right, not just a schema guess.
+const VttToken = a.model({
+  boardId:          a.string().required(),
+  x:                a.float().required(),
+  y:                a.float().required(),
+  width:            a.float().required(),
+  height:           a.float().required(),
+  rotation:         a.float(),
+  imageKey:         a.string(), // Amplify Storage S3 key — falls back to a colored circle when unset
+  label:            a.string(),
+  color:            a.string(),
+  linkedEntityId:   a.string(), // optional link to a PlayerCharacter / NPC / MonsterStatblock / Companion
+  linkedEntityType: a.string(), // 'playerCharacter' | 'npc' | 'monsterStatblock' | 'companion'
+  ownerId:          a.string(), // controlling player's identity; unset = GM-only
+  visibleToPlayers: a.boolean(),
+  conditionsJson:   a.string(), // mirrors PlayerCharacter.conditionsJson's shape
+  sortOrder:        a.integer(),
+}).authorization(allow => [allow.authenticated()]);
+
+// Campaign-wide chat, not scoped to a single board — a GM may want chat
+// visible regardless of which scene is currently open. Provisional
+// authorization (see VttToken's note above); whisperToIds isn't enforced
+// server-side yet, only filtered client-side once the chat UI exists.
+const ChatMessage = a.model({
+  campaignId:        a.string().required(),
+  authorName:        a.string().required(),
+  authorId:          a.string(), // sender's identity, for future whisper enforcement
+  text:              a.string(),
+  rollFormula:       a.string(),
+  rollTotal:         a.string(),
+  rollBreakdownJson: a.string(), // full dice breakdown, for an expandable "show the dice" detail
+  whisperToIds:      a.string().array(), // empty/unset = public
 }).authorization(allow => [allow.authenticated()]);
 
 const CampaignMember = a.model({
   campaignId: a.string().required(),
   role:       a.string().required(), // 'gm' | 'player'
   playerName: a.string(),
+  userId:     a.string(), // Cognito sub of whoever joined — same rationale as Campaign.gmUserId
 }).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
 // Invite records — record ID is the invite code
@@ -323,7 +413,38 @@ const CampaignInvite = a.model({
 const UserPreference = a.model({
   autosaveEnabled: a.boolean(),
   gmDashboardLayoutJson: a.string(), // JSON: { collapsedSections: string[], tableMode: boolean }
+  masterVolume: a.float(), // 0-1, personal ceiling on session ambient audio — see SessionPlayback
 }).authorization(allow => [allow.owner()]);
+
+// Session ambient audio — tracks are scoped to one campaign by path
+// (session-music/{campaignId}/*) and by this record's campaignId, same
+// posture as every other upload in this app (maps, portraits, wiki images):
+// any authenticated user *could* reach a file if they had its exact S3 key,
+// but campaignIds are UUIDs, not guessable, and there's no per-campaign
+// storage-level authorizer in this app to do better without a Lambda-backed
+// signed-URL minter. Treat this as organizational scoping, not a hard
+// security boundary — consistent with everything else here, not a new gap.
+const SessionTrack = a.model({
+  campaignId:      a.string().required(),
+  name:            a.string().required(),
+  storageKey:      a.string().required(),
+  durationSeconds: a.float(),
+  uploadedBy:      a.string(), // display name, not a Cognito identity — same convention as playerName elsewhere
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// One row per campaign (find-or-create, like UserPreference) — every
+// client computes its own playback position from this shared timeline
+// rather than reacting to "play" commands, so seek math stays consistent
+// even for a client that subscribes mid-track. See lib/useSessionPlayback.ts.
+const SessionPlayback = a.model({
+  campaignId:    a.string().required(),
+  trackId:       a.string(), // null = nothing playing
+  startedAtIso:  a.string(), // when the current playback span began
+  offsetSeconds: a.float(),  // track position startedAtIso corresponds to
+  paused:        a.boolean(),
+  loop:          a.boolean(),
+  volume:        a.float(), // GM-broadcast volume, 0-1 — multiplied by each listener's own masterVolume, not synced as a final value
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
 const schema = a.schema({
   DamageDice,
@@ -341,6 +462,8 @@ const schema = a.schema({
   CampaignSession,
   PlayerCharacter,
   VttBoard,
+  VttToken,
+  ChatMessage,
   CampaignMember,
   CampaignInvite,
   NPC,
@@ -348,7 +471,12 @@ const schema = a.schema({
   Faction,
   Companion,
   TodoItem,
+  SubGallery,
+  GalleryPhoto,
+  suggestPhotoTags,
   UserPreference,
+  SessionTrack,
+  SessionPlayback,
   MonsterStatblock: a.model({
     id: a.id().required(),
     slug: a.string(),            // open5e slug, used for deduplication on import
