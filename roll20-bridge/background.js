@@ -330,6 +330,12 @@ async function listCampaignCharacters(campaignId) {
 // A live feed for the GM dashboard, not an archive — recordRoll() always
 // prunes each campaign back down to ROLL_LOG_CAP right after writing.
 
+// Full field list, not just { id } — same reasoning as PLAYER_CHARACTER_FIELDS
+// above: AppSync's onCreate broadcast to live subscribers (the GM dashboard)
+// only resolves to a non-null/complete payload when the mutation's own
+// selection set is the full field list, not a subset.
+const ROLL_LOG_FIELDS = `id campaignId characterName formula total raw rolledAt`;
+
 async function recordRoll(characterName, formula, total, raw) {
     const env = await getActiveEnvironment();
     const key = envKey("campaignId", env);
@@ -338,7 +344,7 @@ async function recordRoll(characterName, formula, total, raw) {
 
     await gqlRequest(
         `mutation Create($input: CreateRollLogEntryInput!) {
-            createRollLogEntry(input: $input) { id }
+            createRollLogEntry(input: $input) { ${ROLL_LOG_FIELDS} }
         }`,
         { input: { campaignId, characterName, formula, total, raw, rolledAt: new Date().toISOString() } },
     );

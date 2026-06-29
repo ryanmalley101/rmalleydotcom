@@ -2,7 +2,7 @@
 
 import { Box, Container, Typography } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, CheckSquare } from "lucide-react";
+import { ArrowLeft, CheckSquare, Images } from "lucide-react";
 
 const tools = [
     {
@@ -11,6 +11,13 @@ const tools = [
         icon: CheckSquare,
         href: "/personal/todos",
         accent: "#10b981",
+    },
+    {
+        title: "Photo Gallery",
+        description: "Upload and browse photos, organized into sub-galleries.",
+        icon: Images,
+        href: "/personal/gallery",
+        accent: "#ec4899",
     },
 ];
 
