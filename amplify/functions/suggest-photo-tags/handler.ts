@@ -30,7 +30,7 @@ const SYSTEM_PROMPT = `You are a computer vision system tagging home decor / int
 
 ${TAG_CHECKLIST}
 
-When given a photo, choose up to 8 tags total whose evidence is clearly present, drawing from multiple categories where relevant (layout, design archetype, lighting, color, texture, material) rather than only one. Respond with ONLY a JSON array of the exact tag strings, e.g. ["open-concept","warm-toned","natural wood"]. Do not include any other text.`;
+When given a photo, choose up to 12 tags total whose evidence is clearly present, drawing from multiple categories where relevant (layout, design archetype, lighting, color, texture, material) rather than only one. Respond with ONLY a JSON array of the exact tag strings, e.g. ["open-concept","warm-toned","natural wood"]. Do not include any other text.`;
 
 export const handler: Schema['suggestPhotoTags']['functionHandler'] = async (event) => {
     const { storageKey } = event.arguments;
