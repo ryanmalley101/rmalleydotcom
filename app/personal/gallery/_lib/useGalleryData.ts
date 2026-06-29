@@ -11,6 +11,31 @@ const client = generateClient<Schema>();
 export type GalleryPhoto = Schema["GalleryPhoto"]["type"];
 export type SubGallery = Schema["SubGallery"]["type"];
 
+// list() only returns one page (100 items by default) — galleries with more
+// than that would silently under-count and drop photos past the first page,
+// so every caller needs the complete set, not just a page of it.
+async function listAllPhotos(): Promise<GalleryPhoto[]> {
+    const all: GalleryPhoto[] = [];
+    let nextToken: string | null | undefined;
+    do {
+        const res = await client.models.GalleryPhoto.list({ limit: 1000, nextToken });
+        all.push(...(res.data ?? []));
+        nextToken = res.nextToken;
+    } while (nextToken);
+    return all;
+}
+
+async function listAllSubGalleries(): Promise<SubGallery[]> {
+    const all: SubGallery[] = [];
+    let nextToken: string | null | undefined;
+    do {
+        const res = await client.models.SubGallery.list({ limit: 1000, nextToken });
+        all.push(...(res.data ?? []));
+        nextToken = res.nextToken;
+    } while (nextToken);
+    return all;
+}
+
 // Shared by the master gallery and every sub-gallery page: lists both
 // models and resolves a signed display URL for every photo's S3 key
 // (mirrors the wiki gallery's getUrl-resolution pattern).
@@ -22,15 +47,15 @@ export function useGalleryData() {
 
     const reload = useCallback(async () => {
         setLoading(true);
-        const [photosRes, galleriesRes] = await Promise.all([
-            client.models.GalleryPhoto.list(),
-            client.models.SubGallery.list(),
+        const [allPhotos, allGalleries] = await Promise.all([
+            listAllPhotos(),
+            listAllSubGalleries(),
         ]);
-        const loadedPhotos = (photosRes.data ?? []).sort((a, b) =>
+        const loadedPhotos = allPhotos.sort((a, b) =>
             (b.uploadedAt ?? "").localeCompare(a.uploadedAt ?? "")
         );
         setPhotos(loadedPhotos);
-        setSubGalleries(galleriesRes.data ?? []);
+        setSubGalleries(allGalleries);
 
         const resolved: Record<string, string> = {};
         await Promise.all(loadedPhotos.map(async photo => {

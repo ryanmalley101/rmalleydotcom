@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, RotateCcw, Save, SwatchBook } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
+import { remove } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 import { suggestedTags, useGalleryData, type GalleryPhoto } from "../_lib/useGalleryData";
 import { SwipeCard } from "../_components/SwipeCard";
@@ -37,6 +38,7 @@ export default function SwipePage() {
     const [showSaveForm, setShowSaveForm] = useState(false);
     const [saveName, setSaveName] = useState("");
     const [saving, setSaving] = useState(false);
+    const [deletingCurrent, setDeletingCurrent] = useState(false);
 
     // Keep the liked set in sync with reloads (tag edits / deletes) made
     // from the results screen's manage dialog.
@@ -74,6 +76,28 @@ export default function SwipePage() {
             setPhase("results");
         } else {
             setRoundIndex(next);
+        }
+    }
+
+    // Deletes the photo currently on screen — for the obvious-junk case where
+    // swiping no isn't enough, you just want it gone. Removes it from the
+    // pool in place so the next photo slides into the same index, and syncs
+    // the master gallery so it doesn't reappear in a later round/session.
+    async function deleteCurrent() {
+        const photo = pool[roundIndex];
+        if (!photo) return;
+        setDeletingCurrent(true);
+        try {
+            await remove({ path: photo.storageKey });
+            await client.models.GalleryPhoto.delete({ id: photo.id });
+            const newPool = pool.filter((_, i) => i !== roundIndex);
+            setPool(newPool);
+            if (roundIndex >= newPool.length) {
+                setPhase("results");
+            }
+            reload();
+        } finally {
+            setDeletingCurrent(false);
         }
     }
 
@@ -184,12 +208,15 @@ export default function SwipePage() {
                             Round {roundNumber}
                         </Typography>
                         <SwipeCard
+                            key={current.id}
                             photo={current}
                             url={urls[current.storageKey] ?? ""}
                             position={roundIndex + 1}
                             total={pool.length}
                             onYes={() => decide(true)}
                             onNo={() => decide(false)}
+                            onDelete={deleteCurrent}
+                            deleting={deletingCurrent}
                         />
                         <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 3 }}>
                             <Button size="small" onClick={() => setPhase("results")}>Finish Early</Button>
