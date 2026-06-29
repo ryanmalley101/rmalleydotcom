@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import {
     Box, Button, CircularProgress, Dialog, DialogActions, DialogContent,
-    DialogTitle, Typography,
+    DialogTitle, Pagination, Typography,
 } from "@mui/material";
 import { CheckSquare, Trash2, Upload, X, type LucideIcon } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
@@ -20,6 +20,7 @@ type GalleryPhoto = Schema["GalleryPhoto"]["type"];
 type SubGallery = Schema["SubGallery"]["type"];
 
 const ACCENT = "#ec4899";
+const PAGE_SIZE = 100;
 
 interface GalleryViewProps {
     icon: LucideIcon;
@@ -50,8 +51,12 @@ export function GalleryView({
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
     const [bulkDeleting, setBulkDeleting] = useState(false);
+    const [page, setPage] = useState(1);
 
-    const imageUrls = photos.map(p => urls[p.storageKey] ?? "");
+    const pageCount = Math.max(1, Math.ceil(photos.length / PAGE_SIZE));
+    const safePage = Math.min(page, pageCount);
+    const pagedPhotos = photos.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+    const imageUrls = pagedPhotos.map(p => urls[p.storageKey] ?? "");
 
     function exitSelectionMode() {
         setSelectionMode(false);
@@ -115,8 +120,12 @@ export function GalleryView({
                         <Typography sx={{ color: "text.secondary", fontSize: "0.9rem" }}>
                             {selectedIds.size} selected
                         </Typography>
-                        <Button size="small" onClick={() => setSelectedIds(new Set(photos.map(p => p.id)))}>
-                            Select All
+                        <Button size="small" onClick={() => setSelectedIds(prev => {
+                            const next = new Set(prev);
+                            pagedPhotos.forEach(p => next.add(p.id));
+                            return next;
+                        })}>
+                            {pageCount > 1 ? "Select Page" : "Select All"}
                         </Button>
                         <Button size="small" onClick={() => setSelectedIds(new Set())} disabled={selectedIds.size === 0}>
                             Clear
@@ -134,6 +143,7 @@ export function GalleryView({
                     <>
                         <Typography variant="body1" sx={{ color: "text.secondary" }}>
                             {photos.length} photo{photos.length === 1 ? "" : "s"}
+                            {pageCount > 1 ? ` · page ${safePage} of ${pageCount}` : ""}
                         </Typography>
                         {photos.length > 0 && (
                             <Button size="small" startIcon={<CheckSquare size={14} />} onClick={() => setSelectionMode(true)}>
@@ -158,8 +168,17 @@ export function GalleryView({
                     </Button>
                 </Box>
             ) : (
-                <PhotoGrid photos={photos} urls={urls} onPhotoClick={setLightboxIndex}
-                    selectionMode={selectionMode} selectedIds={selectedIds} onToggleSelect={toggleSelect} />
+                <>
+                    <PhotoGrid photos={pagedPhotos} urls={urls} onPhotoClick={setLightboxIndex}
+                        selectionMode={selectionMode} selectedIds={selectedIds} onToggleSelect={toggleSelect} />
+                    {pageCount > 1 && (
+                        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                            <Pagination count={pageCount} page={safePage}
+                                onChange={(_, p) => { setPage(p); setLightboxIndex(null); }}
+                                color="standard" />
+                        </Box>
+                    )}
+                </>
             )}
 
             <PhotoLightbox
@@ -167,7 +186,7 @@ export function GalleryView({
                 index={lightboxIndex}
                 onClose={() => setLightboxIndex(null)}
                 onIndexChange={setLightboxIndex}
-                onManage={lightboxIndex !== null ? () => setManagingPhoto(photos[lightboxIndex]) : undefined}
+                onManage={lightboxIndex !== null ? () => setManagingPhoto(pagedPhotos[lightboxIndex]) : undefined}
             />
 
             <UploadDialog

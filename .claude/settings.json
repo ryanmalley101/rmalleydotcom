@@ -144,7 +144,9 @@
       "Bash(aws pricing *)",
       "Bash(aws sts *)",
       "Bash(aws budgets *)",
-      "Bash(aws dynamodb *)"
+      "Bash(aws dynamodb *)",
+      "Bash(xargs grep -l \"ListArgs\\\\|nextToken\")",
+      "Bash(xargs grep -l \"nextToken\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
