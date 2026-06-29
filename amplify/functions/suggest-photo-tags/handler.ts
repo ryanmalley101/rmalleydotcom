@@ -17,10 +17,15 @@ const ddb = DynamoDBDocumentClient.from(new DynamoDBClient());
 const MAX_DIMENSION = 1568;
 const JPEG_QUALITY = 82;
 
-// Claude Haiku 4.5 on Bedrock: $1 / $5 per million input/output tokens —
-// expressed as micro-dollars per token so the running daily total can be
-// an integer in DynamoDB (1 input token = 1 micro, 1 output token = 5 micros).
+// Claude Haiku 4.5 on Bedrock: $1 / $5 per million input/output tokens,
+// expressed as micro-dollars per token (1 input token = 1 micro, 1 output
+// token = 5 micros) so the running daily total can live in DynamoDB as an
+// integer. Cache writes (5-min TTL) cost 1.25x normal input price; cache
+// reads cost ~0.1x — both must be priced separately from plain input_tokens,
+// not folded in at the flat rate, or the daily counter undercounts real spend.
 const INPUT_MICROS_PER_TOKEN = 1;
+const CACHE_WRITE_MICROS_PER_TOKEN = 1.25;
+const CACHE_READ_MICROS_PER_TOKEN = 0.1;
 const OUTPUT_MICROS_PER_TOKEN = 5;
 const DAILY_BUDGET_MICROS = Number(process.env.DAILY_BUDGET_MICROS ?? 3_000_000);
 
@@ -80,7 +85,14 @@ export const handler: Schema['suggestPhotoTags']['functionHandler'] = async (eve
         body: JSON.stringify({
             anthropic_version: 'bedrock-2023-05-31',
             max_tokens: 200,
-            system: SYSTEM_PROMPT,
+            // cache_control marks the (large, byte-identical-every-call) tag
+            // checklist as cacheable — the first call in a burst pays a 1.25x
+            // write premium, every other call within the 5-min TTL reads it
+            // back at ~10% of normal price. Bulk-tagging runs hit this
+            // constantly since calls land seconds apart, well under the TTL.
+            system: [
+                { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
+            ],
             messages: [{
                 role: 'user',
                 content: [
@@ -94,8 +106,12 @@ export const handler: Schema['suggestPhotoTags']['functionHandler'] = async (eve
     const parsed = JSON.parse(Buffer.from(response.body).toString());
 
     const usage = parsed.usage ?? {};
-    const callMicros = (usage.input_tokens ?? 0) * INPUT_MICROS_PER_TOKEN
-        + (usage.output_tokens ?? 0) * OUTPUT_MICROS_PER_TOKEN;
+    const callMicros = Math.round(
+        (usage.input_tokens ?? 0) * INPUT_MICROS_PER_TOKEN
+        + (usage.cache_creation_input_tokens ?? 0) * CACHE_WRITE_MICROS_PER_TOKEN
+        + (usage.cache_read_input_tokens ?? 0) * CACHE_READ_MICROS_PER_TOKEN
+        + (usage.output_tokens ?? 0) * OUTPUT_MICROS_PER_TOKEN
+    );
     await ddb.send(new UpdateCommand({
         TableName: process.env.AI_USAGE_TABLE_NAME,
         Key: { date },
