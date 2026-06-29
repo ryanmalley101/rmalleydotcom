@@ -113,7 +113,21 @@
       "Bash(grep -rln \"AuthGuard\\\\|AuthenticatorWrapper\" app/tabletop)",
       "Bash(echo \"exit: $?\")",
       "Bash(taskkill //PID 18372 //F)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npx ampx *)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(npm ls *)",
+      "Bash(npx --no-install playwright --version)",
+      "Bash(aws --version)",
+      "Bash(aws bedrock *)",
+      "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/personal)",
+      "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/personal/gallery)",
+      "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/personal/gallery/swipe)",
+      "Bash(curl -sf -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/login)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(node -e \"const m = require\\('@aws-amplify/backend'\\); console.log\\(typeof m.defineFunction, typeof m.defineStorage, typeof m.defineData\\)\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",

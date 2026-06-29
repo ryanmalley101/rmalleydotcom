@@ -3,7 +3,7 @@
 import { Box, Button, Container } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, FolderOpen, Images, SwatchBook } from "lucide-react";
-import { collectAllTags, useGalleryData } from "./_lib/useGalleryData";
+import { suggestedTags, useGalleryData } from "./_lib/useGalleryData";
 import { GalleryView } from "./_components/GalleryView";
 
 export default function GalleryPage() {
@@ -22,7 +22,7 @@ export default function GalleryPage() {
                     title="Photo Gallery"
                     subtitle="Every upload, regardless of sub-gallery."
                     photos={photos}
-                    allTags={collectAllTags(photos)}
+                    allTags={suggestedTags(photos)}
                     subGalleries={subGalleries}
                     urls={urls}
                     loading={loading}

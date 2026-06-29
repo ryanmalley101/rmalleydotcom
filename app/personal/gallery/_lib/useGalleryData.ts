@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { generateClient } from "aws-amplify/data";
 import { getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
+import { AI_VISION_TAGS } from "@/lib/aestheticTags";
 
 const client = generateClient<Schema>();
 
@@ -57,4 +58,11 @@ export function collectAllTags(photos: GalleryPhoto[]): string[] {
         }
     }
     return Array.from(tags).sort();
+}
+
+// Autocomplete suggestions for the tag editor: the curated aesthetic
+// vocabulary plus whatever freeform tags are already in use, so suggestions
+// are useful even before any photo has been tagged.
+export function suggestedTags(photos: GalleryPhoto[]): string[] {
+    return Array.from(new Set([...AI_VISION_TAGS, ...collectAllTags(photos)])).sort();
 }
