@@ -1,13 +1,20 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import { Upload, type LucideIcon } from "lucide-react";
+import {
+    Box, Button, CircularProgress, Dialog, DialogActions, DialogContent,
+    DialogTitle, Typography,
+} from "@mui/material";
+import { CheckSquare, Trash2, Upload, X, type LucideIcon } from "lucide-react";
+import { generateClient } from "aws-amplify/data";
+import { remove } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 import { PhotoGrid } from "./PhotoGrid";
 import { PhotoLightbox } from "./PhotoLightbox";
 import { UploadDialog } from "./UploadDialog";
 import { ManagePhotoGalleriesDialog } from "./ManagePhotoGalleriesDialog";
+
+const client = generateClient<Schema>();
 
 type GalleryPhoto = Schema["GalleryPhoto"]["type"];
 type SubGallery = Schema["SubGallery"]["type"];
@@ -39,8 +46,43 @@ export function GalleryView({
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [uploadOpen, setUploadOpen] = useState(false);
     const [managingPhoto, setManagingPhoto] = useState<GalleryPhoto | null>(null);
+    const [selectionMode, setSelectionMode] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
+    const [bulkDeleting, setBulkDeleting] = useState(false);
 
     const imageUrls = photos.map(p => urls[p.storageKey] ?? "");
+
+    function exitSelectionMode() {
+        setSelectionMode(false);
+        setSelectedIds(new Set());
+    }
+
+    function toggleSelect(id: string) {
+        setSelectedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+        });
+    }
+
+    async function bulkDelete() {
+        setBulkDeleting(true);
+        try {
+            const targets = photos.filter(p => selectedIds.has(p.id));
+            await Promise.all(targets.map(async photo => {
+                try {
+                    await remove({ path: photo.storageKey });
+                    await client.models.GalleryPhoto.delete({ id: photo.id });
+                } catch { /* skip failures, continue deleting the rest */ }
+            }));
+            setConfirmingBulkDelete(false);
+            exitSelectionMode();
+            reload();
+        } finally {
+            setBulkDeleting(false);
+        }
+    }
 
     return (
         <>
@@ -67,9 +109,40 @@ export function GalleryView({
                 </Box>
             </Box>
 
-            <Typography variant="body1" sx={{ color: "text.secondary", mb: 4 }}>
-                {photos.length} photo{photos.length === 1 ? "" : "s"}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 1.5, mb: 4 }}>
+                {selectionMode ? (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+                        <Typography sx={{ color: "text.secondary", fontSize: "0.9rem" }}>
+                            {selectedIds.size} selected
+                        </Typography>
+                        <Button size="small" onClick={() => setSelectedIds(new Set(photos.map(p => p.id)))}>
+                            Select All
+                        </Button>
+                        <Button size="small" onClick={() => setSelectedIds(new Set())} disabled={selectedIds.size === 0}>
+                            Clear
+                        </Button>
+                        <Button size="small" color="error" variant="contained" disabled={selectedIds.size === 0}
+                            startIcon={<Trash2 size={14} />}
+                            onClick={() => setConfirmingBulkDelete(true)}>
+                            Delete Selected
+                        </Button>
+                        <Button size="small" startIcon={<X size={14} />} onClick={exitSelectionMode}>
+                            Done
+                        </Button>
+                    </Box>
+                ) : (
+                    <>
+                        <Typography variant="body1" sx={{ color: "text.secondary" }}>
+                            {photos.length} photo{photos.length === 1 ? "" : "s"}
+                        </Typography>
+                        {photos.length > 0 && (
+                            <Button size="small" startIcon={<CheckSquare size={14} />} onClick={() => setSelectionMode(true)}>
+                                Select
+                            </Button>
+                        )}
+                    </>
+                )}
+            </Box>
 
             {loading ? (
                 <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
@@ -85,7 +158,8 @@ export function GalleryView({
                     </Button>
                 </Box>
             ) : (
-                <PhotoGrid photos={photos} urls={urls} onPhotoClick={setLightboxIndex} />
+                <PhotoGrid photos={photos} urls={urls} onPhotoClick={setLightboxIndex}
+                    selectionMode={selectionMode} selectedIds={selectedIds} onToggleSelect={toggleSelect} />
             )}
 
             <PhotoLightbox
@@ -113,6 +187,21 @@ export function GalleryView({
                 onSaved={reload}
                 onDeleted={() => { setManagingPhoto(null); setLightboxIndex(null); reload(); }}
             />
+
+            <Dialog open={confirmingBulkDelete} onClose={() => setConfirmingBulkDelete(false)}>
+                <DialogTitle>Delete {selectedIds.size} photo{selectedIds.size === 1 ? "" : "s"}?</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        This permanently deletes the selected photos and their files. This can&apos;t be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmingBulkDelete(false)}>Cancel</Button>
+                    <Button color="error" variant="contained" onClick={bulkDelete} disabled={bulkDeleting}>
+                        {bulkDeleting ? "Deleting…" : "Delete"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

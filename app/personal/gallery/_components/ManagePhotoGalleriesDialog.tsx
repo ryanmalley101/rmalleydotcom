@@ -33,12 +33,14 @@ export function ManagePhotoGalleriesDialog({
     const [confirmingDelete, setConfirmingDelete] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [tagging, setTagging] = useState(false);
+    const [tagError, setTagError] = useState<string | null>(null);
 
     useEffect(() => {
         if (open && photo) {
             setSelectedIds((photo.subGalleryIds ?? []).filter((id): id is string => !!id));
             setTags((photo.tags ?? []).filter((t): t is string => !!t));
             setConfirmingDelete(false);
+            setTagError(null);
         }
     }, [open, photo]);
 
@@ -49,10 +51,17 @@ export function ManagePhotoGalleriesDialog({
     async function autoTag() {
         if (!photo) return;
         setTagging(true);
+        setTagError(null);
         try {
-            const { data: suggested } = await client.queries.suggestPhotoTags({ storageKey: photo.storageKey });
+            const { data: suggested, errors } = await client.queries.suggestPhotoTags({ storageKey: photo.storageKey });
+            if (errors?.length) {
+                setTagError(errors[0].message);
+                return;
+            }
             const valid = (suggested ?? []).filter((t): t is string => !!t);
             setTags(prev => Array.from(new Set([...prev, ...valid])));
+        } catch (e) {
+            setTagError(e instanceof Error ? e.message : "Auto-tag failed.");
         } finally {
             setTagging(false);
         }
@@ -95,6 +104,11 @@ export function ManagePhotoGalleriesDialog({
                         Auto-tag
                     </Button>
                 </Box>
+                {tagError && (
+                    <Typography sx={{ color: "error.main", fontSize: "0.78rem", mb: 1 }}>
+                        {tagError}
+                    </Typography>
+                )}
                 <Autocomplete
                     multiple freeSolo size="small"
                     options={allTags}

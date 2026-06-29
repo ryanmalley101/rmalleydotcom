@@ -24,6 +24,7 @@ type Status = "running" | "done" | "error";
 export function BulkAutoTagDialog({ open, photos, onClose, onDone }: BulkAutoTagDialogProps) {
     const [running, setRunning] = useState(false);
     const [statuses, setStatuses] = useState<Record<string, Status>>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const cancelledRef = useRef(false);
 
     const targets = photos.filter(p => (p.tags ?? []).filter(Boolean).length === 0);
@@ -31,11 +32,13 @@ export function BulkAutoTagDialog({ open, photos, onClose, onDone }: BulkAutoTag
     const completed = Object.keys(statuses).length;
     const errorCount = Object.values(statuses).filter(s => s === "error").length;
     const started = completed > 0 || running;
+    const distinctErrors = Array.from(new Set(Object.values(errors)));
 
     async function start() {
         setRunning(true);
         cancelledRef.current = false;
         setStatuses({});
+        setErrors({});
 
         let cursor = 0;
         async function worker() {
@@ -44,11 +47,17 @@ export function BulkAutoTagDialog({ open, photos, onClose, onDone }: BulkAutoTag
                 const photo = targets[cursor++];
                 setStatuses(prev => ({ ...prev, [photo.id]: "running" }));
                 try {
-                    const { data: suggested } = await client.queries.suggestPhotoTags({ storageKey: photo.storageKey });
+                    const { data: suggested, errors: gqlErrors } = await client.queries.suggestPhotoTags({ storageKey: photo.storageKey });
+                    if (gqlErrors?.length) {
+                        setErrors(prev => ({ ...prev, [photo.id]: gqlErrors[0].message }));
+                        setStatuses(prev => ({ ...prev, [photo.id]: "error" }));
+                        continue;
+                    }
                     const valid = (suggested ?? []).filter((t): t is string => !!t);
                     await client.models.GalleryPhoto.update({ id: photo.id, tags: valid });
                     setStatuses(prev => ({ ...prev, [photo.id]: "done" }));
-                } catch {
+                } catch (e) {
+                    setErrors(prev => ({ ...prev, [photo.id]: e instanceof Error ? e.message : "Failed to tag this photo." }));
                     setStatuses(prev => ({ ...prev, [photo.id]: "error" }));
                 }
             }
@@ -82,6 +91,15 @@ export function BulkAutoTagDialog({ open, photos, onClose, onDone }: BulkAutoTag
                             {completed} / {total} processed{errorCount > 0 ? ` · ${errorCount} failed` : ""}
                             {!running && completed === total ? " · done" : ""}
                         </Typography>
+                        {distinctErrors.length > 0 && (
+                            <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 0.5 }}>
+                                {distinctErrors.map((msg, i) => (
+                                    <Typography key={i} sx={{ color: "error.main", fontSize: "0.75rem" }}>
+                                        {msg}
+                                    </Typography>
+                                ))}
+                            </Box>
+                        )}
                     </Box>
                 )}
             </DialogContent>

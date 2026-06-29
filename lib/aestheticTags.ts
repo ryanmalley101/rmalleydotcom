@@ -6,7 +6,7 @@
 // Autocomplete suggestions.
 export const AI_VISION_TAG_CATEGORIES = {
     "Global Scene & Layout": [
-        "open-concept", "cluttered", "sparse", "staged", "lived-in",
+        "open-concept", "cluttered", "sparse", "lived-in",
         "symmetrical", "asymmetrical", "high-ceiling", "loft",
     ],
     "Design Archetype": [
@@ -47,7 +47,6 @@ export const AI_VISION_TAG_DESCRIPTIONS: Record<string, string> = {
     "open-concept": "The camera frame captures a distinct lack of interior partition walls, showing a continuous flow between multiple functional zones like the kitchen, dining, or living spaces.",
     "cluttered": "A high density of distinct foreground objects, resulting in overlapping bounding boxes, intersecting lines, and negligible negative space on flat surfaces.",
     "sparse": "A high percentage of empty floor and wall pixels, minimal furniture footprint, and vast, uninterrupted fields of negative space.",
-    "staged": "Rigidly manicured object placement, pristine textiles devoid of creases, zero personal artifacts, and a composition mimicking a commercial catalog shot.",
     "lived-in": "Minor visual imperfections present, such as slightly rumpled throws, off-angle pillows, or casual everyday items like an open book or a ceramic mug.",
     "symmetrical": "The left and right halves of the frame mirror one another closely in architectural structure and furniture placement.",
     "asymmetrical": "An intentionally unbalanced distribution of visual weight, form, or furniture orientation across the vertical axis of the image.",
