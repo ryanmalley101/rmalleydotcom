@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
     Box, Button, Checkbox, Chip, CircularProgress, Container, FormControl,
-    FormControlLabel, InputLabel, MenuItem, Select, TextField, Typography,
+    FormControlLabel, InputLabel, MenuItem, Select, Tab, Tabs, TextField, Typography,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -32,8 +32,10 @@ export default function SwipePage() {
     const [pool, setPool] = useState<GalleryPhoto[]>([]);
     const [roundIndex, setRoundIndex] = useState(0);
     const [liked, setLiked] = useState<GalleryPhoto[]>([]);
+    const [disliked, setDisliked] = useState<GalleryPhoto[]>([]);
     const [roundNumber, setRoundNumber] = useState(1);
     const [history, setHistory] = useState<{ index: number; liked: boolean }[]>([]);
+    const [resultTab, setResultTab] = useState(0);
 
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [managingPhoto, setManagingPhoto] = useState<GalleryPhoto | null>(null);
@@ -47,9 +49,9 @@ export default function SwipePage() {
     // from the results screen's manage dialog.
     useEffect(() => {
         if (phase !== "results") return;
-        setLiked(prev => prev
-            .map(p => photos.find(np => np.id === p.id))
-            .filter((p): p is GalleryPhoto => !!p));
+        const stillExists = (p: GalleryPhoto) => photos.find(np => np.id === p.id);
+        setLiked(prev => prev.map(stillExists).filter((p): p is GalleryPhoto => !!p));
+        setDisliked(prev => prev.map(stillExists).filter((p): p is GalleryPhoto => !!p));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [photos, phase]);
 
@@ -75,7 +77,9 @@ export default function SwipePage() {
         setPool(shuffled(initialPool));
         setRoundIndex(0);
         setLiked([]);
+        setDisliked([]);
         setHistory([]);
+        setResultTab(0);
         setPhase("swiping");
     }
 
@@ -89,6 +93,7 @@ export default function SwipePage() {
     function decide(yes: boolean) {
         const current = pool[roundIndex];
         if (yes) setLiked(prev => [...prev, current]);
+        else setDisliked(prev => [...prev, current]);
         setHistory(prev => [...prev, { index: roundIndex, liked: yes }]);
         const next = roundIndex + 1;
         if (next >= pool.length) {
@@ -106,6 +111,7 @@ export default function SwipePage() {
         const last = history[history.length - 1];
         setHistory(prev => prev.slice(0, -1));
         if (last.liked) setLiked(prev => prev.slice(0, -1));
+        else setDisliked(prev => prev.slice(0, -1));
         setRoundIndex(last.index);
         setPhase("swiping");
     }
@@ -164,8 +170,10 @@ export default function SwipePage() {
         setPhase("select");
         setPool([]);
         setLiked([]);
+        setDisliked([]);
         setRoundIndex(0);
         setRoundNumber(1);
+        setResultTab(0);
         setShowSaveForm(false);
         setSaveName("");
     }
@@ -188,20 +196,42 @@ export default function SwipePage() {
         }
     }
 
-    const tagCounts = useMemo(() => {
-        const counts = new Map<string, number>();
-        for (const photo of liked) {
-            for (const tag of photo.tags ?? []) {
-                if (!tag) continue;
-                counts.set(tag, (counts.get(tag) ?? 0) + 1);
-            }
-        }
-        return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
-    }, [liked]);
+    function buildCounts(photos: GalleryPhoto[]) {
+        const m = new Map<string, number>();
+        for (const p of photos)
+            for (const t of p.tags ?? [])
+                if (t) m.set(t, (m.get(t) ?? 0) + 1);
+        return m;
+    }
 
+    const likedCounts = useMemo(() => buildCounts(liked), [liked]);
+    const dislikedCounts = useMemo(() => buildCounts(disliked), [disliked]);
+
+    // tag rows for each of the three summary views
+    const favoriteTags = useMemo(() =>
+        Array.from(likedCounts.entries()).sort((a, b) => b[1] - a[1]),
+        [likedCounts]
+    );
+    const leastFavoriteTags = useMemo(() =>
+        Array.from(dislikedCounts.entries()).sort((a, b) => b[1] - a[1]),
+        [dislikedCounts]
+    );
+    const netTags = useMemo(() => {
+        const allTagNames = new Set(Array.from(likedCounts.keys()).concat(Array.from(dislikedCounts.keys())));
+        return Array.from(allTagNames)
+            .map(tag => [tag, (likedCounts.get(tag) ?? 0) - (dislikedCounts.get(tag) ?? 0)] as [string, number])
+            .filter(([, net]) => net !== 0)
+            .sort((a, b) => b[1] - a[1]);
+    }, [likedCounts, dislikedCounts]);
+
+    const maxAbsNet = netTags.length > 0 ? Math.max(...netTags.map(([, n]) => Math.abs(n))) : 1;
     const allTags = suggestedTags(photos);
-    const imageUrls = liked.map(p => urls[p.storageKey] ?? "");
     const current = pool[roundIndex];
+
+    // Lightbox source changes with the active results tab — tab 0 browses
+    // liked photos, tab 1 browses disliked photos, tab 2 has no grid.
+    const lightboxPhotos = resultTab === 1 ? disliked : liked;
+    const lightboxImageUrls = lightboxPhotos.map(p => urls[p.storageKey] ?? "");
 
     return (
         <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
@@ -282,29 +312,103 @@ export default function SwipePage() {
                     </Box>
                 ) : (
                     <Box sx={{ mt: 3 }}>
-                        <Typography sx={{ color: "text.secondary", mb: 1 }}>
-                            Round {roundNumber}: kept {liked.length} of {pool.length}
+                        <Typography sx={{ color: "text.secondary", mb: 2 }}>
+                            Round {roundNumber}: kept {liked.length} of {pool.length} · passed {disliked.length}
                         </Typography>
 
-                        {tagCounts.length > 0 && (
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1 }}>
-                                    Tags among what you liked
-                                </Typography>
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
-                                    {tagCounts.map(([tag, count]) => (
-                                        <Chip key={tag} label={`${tag} (${count})`} size="small" />
-                                    ))}
-                                </Box>
-                            </Box>
+                        <Tabs value={resultTab} onChange={(_, v) => { setResultTab(v); setLightboxIndex(null); }} sx={{ mb: 2 }}
+                            TabIndicatorProps={{ sx: { backgroundColor: ACCENT } }}>
+                            <Tab label="Favorite Tags" sx={{ "&.Mui-selected": { color: ACCENT } }} />
+                            <Tab label="Least Favorite Tags" sx={{ "&.Mui-selected": { color: ACCENT } }} />
+                            <Tab label="Specifics" sx={{ "&.Mui-selected": { color: ACCENT } }} />
+                        </Tabs>
+
+                        {resultTab === 0 && (
+                            <>
+                                {favoriteTags.length > 0 ? (
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, mb: 3 }}>
+                                        {favoriteTags.map(([tag, count]) => (
+                                            <Chip key={tag} label={`${tag} (${count})`} size="small" />
+                                        ))}
+                                    </Box>
+                                ) : (
+                                    <Typography sx={{ color: "text.secondary", mb: 3 }}>No tags to summarize yet.</Typography>
+                                )}
+                                {liked.length === 0 ? (
+                                    <Typography sx={{ color: "text.secondary", py: 4 }}>
+                                        You didn&apos;t keep anything this round.
+                                    </Typography>
+                                ) : (
+                                    <PhotoGrid photos={liked} urls={urls} onPhotoClick={setLightboxIndex} />
+                                )}
+                            </>
                         )}
 
-                        {liked.length === 0 ? (
-                            <Typography sx={{ color: "text.secondary", py: 4 }}>
-                                You didn&apos;t keep anything this round.
-                            </Typography>
-                        ) : (
-                            <PhotoGrid photos={liked} urls={urls} onPhotoClick={setLightboxIndex} />
+                        {resultTab === 1 && (
+                            <>
+                                {leastFavoriteTags.length > 0 ? (
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, mb: 3 }}>
+                                        {leastFavoriteTags.map(([tag, count]) => (
+                                            <Chip key={tag} label={`${tag} (${count})`} size="small"
+                                                sx={{ backgroundColor: "rgba(248,113,113,0.12)", color: "#f87171" }} />
+                                        ))}
+                                    </Box>
+                                ) : (
+                                    <Typography sx={{ color: "text.secondary", mb: 3 }}>No tags to summarize yet.</Typography>
+                                )}
+                                {disliked.length === 0 ? (
+                                    <Typography sx={{ color: "text.secondary", py: 4 }}>
+                                        You didn&apos;t pass on anything this round.
+                                    </Typography>
+                                ) : (
+                                    <PhotoGrid photos={disliked} urls={urls} onPhotoClick={setLightboxIndex} />
+                                )}
+                            </>
+                        )}
+
+                        {resultTab === 2 && (
+                            netTags.length === 0 ? (
+                                <Typography sx={{ color: "text.secondary", py: 4 }}>
+                                    Swipe through some tagged photos to see net scores.
+                                </Typography>
+                            ) : (
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75, maxWidth: 420 }}>
+                                    {netTags.map(([tag, net]) => (
+                                        <Box key={tag} sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                                            <Typography sx={{
+                                                flex: 1, fontSize: "0.85rem",
+                                                color: net > 0 ? "text.primary" : "text.secondary",
+                                                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                                            }}>
+                                                {tag}
+                                            </Typography>
+                                            <Box sx={{
+                                                flex: 1, height: 14, borderRadius: 1,
+                                                backgroundColor: "rgba(255,255,255,0.04)",
+                                                position: "relative",
+                                            }}>
+                                                <Box sx={{
+                                                    position: "absolute",
+                                                    top: 0, height: "100%", borderRadius: 1,
+                                                    left: net >= 0 ? "50%" : `${50 + (net / maxAbsNet) * 50}%`,
+                                                    width: `${(Math.abs(net) / maxAbsNet) * 50}%`,
+                                                    backgroundColor: net > 0 ? "#4ade80" : "#f87171",
+                                                }} />
+                                                <Box sx={{
+                                                    position: "absolute", top: 0, left: "50%",
+                                                    height: "100%", width: 1, backgroundColor: "divider",
+                                                }} />
+                                            </Box>
+                                            <Typography sx={{
+                                                width: 32, textAlign: "right", fontSize: "0.78rem", fontWeight: 600,
+                                                color: net > 0 ? "#4ade80" : "#f87171",
+                                            }}>
+                                                {net > 0 ? `+${net}` : net}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            )
                         )}
 
                         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, mt: 3 }}>
@@ -339,11 +443,11 @@ export default function SwipePage() {
                         )}
 
                         <PhotoLightbox
-                            images={imageUrls}
+                            images={lightboxImageUrls}
                             index={lightboxIndex}
                             onClose={() => setLightboxIndex(null)}
                             onIndexChange={setLightboxIndex}
-                            onManage={lightboxIndex !== null ? () => setManagingPhoto(liked[lightboxIndex]) : undefined}
+                            onManage={lightboxIndex !== null ? () => setManagingPhoto(lightboxPhotos[lightboxIndex]) : undefined}
                         />
                         <ManagePhotoGalleriesDialog
                             open={!!managingPhoto}
