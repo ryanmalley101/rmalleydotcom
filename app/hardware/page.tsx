@@ -3,8 +3,10 @@
 import { Box, Container, Typography, Button, Divider } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, Cpu } from "lucide-react";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 
 export default function HardwarePage() {
+  useDocumentTitle("Hardware");
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
       <Container maxWidth="md">

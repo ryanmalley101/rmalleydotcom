@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
     Box, Container, Typography, Button, Chip, Divider,
     CircularProgress, Card, CardActionArea, CardContent,
@@ -101,6 +102,7 @@ export default function CampaignPage() {
     const router = useRouter();
 
     const [campaign, setCampaign]   = useState<Campaign | null>(null);
+    useDocumentTitle(campaign?.name ?? null);
     const [sessions, setSessions]   = useState<Session[]>([]);
     const [characters, setChars]    = useState<PlayerCharacter[]>([]);
     const [worlds, setWorlds]       = useState<World[]>([]);

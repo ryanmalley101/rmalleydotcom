@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
     Box, Container, Typography, Button, TextField, MenuItem,
     Select, FormControl, InputLabel, CircularProgress, Divider,
@@ -242,6 +243,7 @@ export default function CharacterPage() {
     const router = useRouter();
 
     const [pc, setPc]             = useState<PC | null>(null);
+    useDocumentTitle(pc?.characterName ?? null);
     const [loading, setLoading]   = useState(true);
     const [saving, setSaving]     = useState(false);
     const [autosaving, setAutosaving] = useState(false);

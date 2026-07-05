@@ -4,11 +4,13 @@ import { useState } from "react";
 import { Box, Button, Container } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, BarChart3, FolderOpen, Images, Sparkles, SwatchBook } from "lucide-react";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import { suggestedTags, useGalleryData } from "./_lib/useGalleryData";
 import { GalleryView } from "./_components/GalleryView";
 import { BulkAutoTagDialog } from "./_components/BulkAutoTagDialog";
 
 export default function GalleryPage() {
+    useDocumentTitle("Photo Gallery");
     const { photos, subGalleries, urls, loading, reload } = useGalleryData();
     const [bulkTagOpen, setBulkTagOpen] = useState(false);
 

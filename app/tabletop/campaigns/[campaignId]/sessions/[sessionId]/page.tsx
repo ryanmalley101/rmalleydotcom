@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { ArrowLeft, Pencil, Save, X, Trash2, CalendarDays, BookOpen, Search, Plus, Image } from "lucide-react";
 import { MarkdownContent } from "@/lib/MarkdownContent";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
@@ -221,6 +222,7 @@ export default function SessionPage() {
 
     const displayTitle  = session.title || "Untitled Session";
     const displayNumber = session.sessionNumber ? `Session #${session.sessionNumber}` : "Session";
+    useDocumentTitle(`${displayNumber}: ${displayTitle}`);
 
     return (
         <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>

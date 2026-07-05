@@ -11,6 +11,7 @@ import { ArrowLeft, Plus, Users } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { useCampaignRole } from "@/lib/useCampaignRole";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import { TimelineView } from "./_components/TimelineView";
 import { EventDialog } from "./_components/EventDialog";
 
@@ -26,6 +27,7 @@ export default function TimelinePage() {
     const { isGm: isGM, loading: roleLoading } = useCampaignRole(campaignId);
 
     const [campaign, setCampaign]         = useState<Campaign | null>(null);
+    useDocumentTitle(campaign ? `${campaign.name} — Chronicle` : null);
     const [sessions, setSessions]         = useState<CampaignSession[]>([]);
     const [events, setEvents]             = useState<TimelineEvent[]>([]);
     const [articles, setArticles]         = useState<WikiArticle[]>([]);
