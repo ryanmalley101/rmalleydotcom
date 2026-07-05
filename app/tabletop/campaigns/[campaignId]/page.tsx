@@ -6,12 +6,12 @@ import {
     Box, Container, Typography, Button, Chip, Divider,
     CircularProgress, Card, CardActionArea, CardContent,
     IconButton, Tooltip, Dialog, DialogTitle, DialogContent,
-    DialogActions, Tabs, Tab, TextField, Snackbar, Alert,
+    DialogActions, Paper, TextField, Snackbar, Alert,
     MenuItem, Select, FormControl, InputLabel, Switch, FormControlLabel,
 } from "@mui/material";
 import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "./combatSettings";
 import Link from "next/link";
-import { ArrowLeft, Plus, ScrollText, Users, BookOpen, Trash2, CalendarDays, Swords, UserPlus, Copy, Shield, Pencil, Settings, PawPrint, LayoutGrid, BookMarked } from "lucide-react";
+import { ArrowLeft, Plus, ScrollText, Users, BookOpen, Trash2, CalendarDays, Swords, UserPlus, Copy, Shield, Pencil, Settings, PawPrint, LayoutGrid, BookMarked, Map, ChevronRight } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 
@@ -106,7 +106,6 @@ export default function CampaignPage() {
     const [worlds, setWorlds]       = useState<World[]>([]);
     const [encounters, setEncounters] = useState<Encounter[]>([]);
     const [members, setMembers]     = useState<CampaignMember[]>([]);
-    const [tab, setTab]             = useState(0);
     const [loading, setLoading]     = useState(true);
     const [deleteSession, setDelSess]  = useState<string | null>(null);
     const [deleteChar, setDelChar]     = useState<string | null>(null);
@@ -318,148 +317,126 @@ export default function CampaignPage() {
                     </Box>
                 )}
 
-                <Box sx={{ display: "flex", gap: 1, ml: 6, mb: 3 }}>
-                    <Button
-                        component={Link}
-                        href={`/tabletop/campaigns/${campaignId}/vtt`}
-                        variant="outlined"
-                        size="small"
-                        startIcon={<LayoutGrid size={14} />}
-                        sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
-                    >
-                        Virtual Table
-                    </Button>
-                    {campaign.system === "Cypher System" && (
-                        <Button
-                            component={Link}
-                            href={`/tabletop/campaigns/${campaignId}/gm-dashboard`}
-                            variant="outlined"
-                            size="small"
-                            startIcon={<Shield size={14} />}
-                            sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
-                        >
-                            GM Dashboard
-                        </Button>
-                    )}
-                    {(campaign.system === "D&D 5e" || campaign.system === "D&D 5.5e (2024)") && (
-                        <Button
-                            component={Link}
-                            href={`/tabletop/campaigns/${campaignId}/dnd-dashboard`}
-                            variant="outlined"
-                            size="small"
-                            startIcon={<Shield size={14} />}
-                            sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
-                        >
-                            GM Dashboard
-                        </Button>
-                    )}
+                {/* ── Active tools grid ── */}
+                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 1.5, mb: 4 }}>
+                    {(campaign.system === "Cypher System"
+                        ? [{ label: "GM Dashboard", icon: Shield, href: `/tabletop/campaigns/${campaignId}/gm-dashboard` }]
+                        : campaign.system === "D&D 5e" || campaign.system === "D&D 5.5e (2024)"
+                        ? [{ label: "GM Dashboard", icon: Shield, href: `/tabletop/campaigns/${campaignId}/dnd-dashboard` }]
+                        : []
+                    ).concat([
+                        { label: "Virtual Table", icon: LayoutGrid, href: `/tabletop/campaigns/${campaignId}/vtt` },
+                        { label: "Chronicle", icon: BookMarked, href: `/tabletop/campaigns/${campaignId}/timeline` },
+                        { label: "Calendar", icon: CalendarDays, href: `/tabletop/campaigns/${campaignId}/calendar` },
+                    ]).map(({ label, icon: Icon, href }) => (
+                        <Paper key={label} elevation={1} component={Link} href={href}
+                            sx={{
+                                p: 1.5, display: "flex", alignItems: "center", gap: 1.5,
+                                borderTop: "2px solid", borderColor: "primary.light",
+                                textDecoration: "none", color: "text.primary",
+                                transition: "background-color 0.15s, box-shadow 0.15s",
+                                "&:hover": { backgroundColor: "action.hover", boxShadow: 2 },
+                            }}>
+                            <Icon size={16} color="#8C5A3A" />
+                            <Typography sx={{ fontWeight: 600, fontSize: "0.82rem" }}>{label}</Typography>
+                            <ChevronRight size={14} color="#c9a87c" style={{ marginLeft: "auto" }} />
+                        </Paper>
+                    ))}
                 </Box>
 
-                <Tabs value={tab}
-                    onChange={(_, v) => {
-                        if (v === 7) {
-                            router.push(`/tabletop/campaigns/${campaignId}/timeline`);
-                        } else if (v === 8) {
-                            router.push(`/tabletop/campaigns/${campaignId}/calendar`);
-                        } else {
-                            setTab(v);
-                        }
-                    }}
-                    variant="scrollable" scrollButtons="auto"
-                    sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}>
-                    <Tab label={`Sessions (${sessions.length})`} icon={<CalendarDays size={16} />} iconPosition="start" />
-                    <Tab label={`Characters (${characters.length})`} icon={<Users size={16} />} iconPosition="start" />
-                    <Tab label={`Encounters (${encounters.length})`} icon={<Swords size={16} />} iconPosition="start" />
-                    <Tab label={`Members (${members.length})`} icon={<UserPlus size={16} />} iconPosition="start" />
-                    <Tab label="NPCs" icon={<Users size={16} />} iconPosition="start" />
-                    <Tab label="Quests" icon={<ScrollText size={16} />} iconPosition="start" />
-                    <Tab label="Factions" icon={<Shield size={16} />} iconPosition="start" />
-                    <Tab label="Chronicle" icon={<BookMarked size={16} />} iconPosition="start" />
-                    <Tab label="Calendar" icon={<CalendarDays size={16} />} iconPosition="start" />
-                </Tabs>
+                {/* ── Story & History ── */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 1, mb: 2 }}>
+                    <CalendarDays size={15} color="#8C5A3A" />
+                    <Typography sx={{ fontFamily: "'Cinzel', serif", fontWeight: 700, color: "primary.dark", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        Story &amp; History
+                    </Typography>
+                    <Divider sx={{ flex: 1 }} />
+                    <Button variant="text" size="small" startIcon={<Plus size={14} />}
+                        component={Link} href={`/tabletop/campaigns/${campaignId}/sessions/new`}
+                        sx={{ color: "primary.main", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                        New Session
+                    </Button>
+                </Box>
 
-                {/* ── Sessions tab ── */}
-                {tab === 0 && (
-                    <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                            <Button variant="contained" startIcon={<Plus size={16} />}
-                                component={Link} href={`/tabletop/campaigns/${campaignId}/sessions/new`}
-                                sx={{ backgroundColor: "primary.main", whiteSpace: "nowrap" }}>
-                                New Session
-                            </Button>
-                        </Box>
-
-                        {sessions.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <CalendarDays size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No sessions yet. Add your first session to get started.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                {sessions.map(s => (
-                                    <Card key={s.id} sx={{ borderLeft: "3px solid", borderColor: "primary.light" }}>
-                                        <Box sx={{ display: "flex", alignItems: "stretch" }}>
-                                            <CardActionArea component={Link}
-                                                href={`/tabletop/campaigns/${campaignId}/sessions/${s.id}`} sx={{ flex: 1 }}>
-                                                <CardContent sx={{ py: 1.5 }}>
-                                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                                        <Typography variant="subtitle2" sx={{ color: "text.secondary", minWidth: 28 }}>
-                                                            #{s.sessionNumber ?? "?"}
-                                                        </Typography>
-                                                        <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", fontSize: "1rem" }}>
-                                                            {s.title || "Untitled Session"}
-                                                        </Typography>
-                                                        {s.date && (
-                                                            <Typography variant="caption" sx={{ color: "text.secondary", ml: "auto" }}>
-                                                                {s.date}
-                                                            </Typography>
-                                                        )}
-                                                    </Box>
-                                                    {s.prepNotes && (
-                                                        <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5,
-                                                            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                            {s.prepNotes.slice(0, 120)}
-                                                        </Typography>
-                                                    )}
-                                                </CardContent>
-                                            </CardActionArea>
-                                            <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
-                                                <Tooltip title="Delete session">
-                                                    <IconButton size="small" color="error" onClick={() => setDelSess(s.id)}>
-                                                        <Trash2 size={14} />
-                                                    </IconButton>
-                                                </Tooltip>
+                {sessions.length === 0 ? (
+                    <Box sx={{ textAlign: "center", py: 4 }}>
+                        <Typography sx={{ color: "text.secondary", fontSize: "0.88rem" }}>
+                            No sessions yet.
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 3 }}>
+                        {sessions.map(s => (
+                            <Card key={s.id} sx={{ borderLeft: "3px solid", borderColor: "primary.light" }}>
+                                <Box sx={{ display: "flex", alignItems: "stretch" }}>
+                                    <CardActionArea component={Link}
+                                        href={`/tabletop/campaigns/${campaignId}/sessions/${s.id}`} sx={{ flex: 1 }}>
+                                        <CardContent sx={{ py: 1.5 }}>
+                                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                                <Typography variant="subtitle2" sx={{ color: "text.secondary", minWidth: 28 }}>
+                                                    #{s.sessionNumber ?? "?"}
+                                                </Typography>
+                                                <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", fontSize: "1rem" }}>
+                                                    {s.title || "Untitled Session"}
+                                                </Typography>
+                                                {s.date && (
+                                                    <Typography variant="caption" sx={{ color: "text.secondary", ml: "auto" }}>
+                                                        {s.date}
+                                                    </Typography>
+                                                )}
                                             </Box>
-                                        </Box>
-                                    </Card>
-                                ))}
-                            </Box>
-                        )}
-                    </>
+                                            {s.prepNotes && (
+                                                <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5,
+                                                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                    {s.prepNotes.slice(0, 120)}
+                                                </Typography>
+                                            )}
+                                        </CardContent>
+                                    </CardActionArea>
+                                    <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
+                                        <Tooltip title="Delete session">
+                                            <IconButton size="small" color="error" onClick={() => setDelSess(s.id)}>
+                                                <Trash2 size={14} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
+                                </Box>
+                            </Card>
+                        ))}
+                    </Box>
                 )}
 
-                {/* ── Characters tab ── */}
-                {tab === 1 && (
-                    <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                            <Button variant="contained" startIcon={<Plus size={16} />}
-                                component={Link} href={`/tabletop/campaigns/${campaignId}/characters/new`}
-                                sx={{ backgroundColor: "primary.main", whiteSpace: "nowrap" }}>
-                                Add Character
-                            </Button>
-                        </Box>
+                {/* ── Characters & Combat ── */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 2, mb: 2 }}>
+                    <Users size={15} color="#8C5A3A" />
+                    <Typography sx={{ fontFamily: "'Cinzel', serif", fontWeight: 700, color: "primary.dark", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        Characters &amp; Combat
+                    </Typography>
+                    <Divider sx={{ flex: 1 }} />
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                        <Button variant="text" size="small" startIcon={<Plus size={14} />}
+                            component={Link} href={`/tabletop/campaigns/${campaignId}/characters/new`}
+                            sx={{ color: "primary.main", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                            Add Character
+                        </Button>
+                        <Button variant="text" size="small" startIcon={<Plus size={14} />}
+                            onClick={createEncounter} disabled={creatingEnc}
+                            sx={{ color: "primary.main", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                            {creatingEnc ? "Creating…" : "New Encounter"}
+                        </Button>
+                    </Box>
+                </Box>
 
-                        {characters.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <Users size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No characters yet. Add player characters for this campaign.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                {characters.length === 0 && encounters.length === 0 ? (
+                    <Box sx={{ textAlign: "center", py: 4, mb: 3 }}>
+                        <Typography sx={{ color: "text.secondary", fontSize: "0.88rem" }}>
+                            No characters or encounters yet.
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3, alignItems: "flex-start" }}>
+                        {characters.length > 0 && (
+                            <Box sx={{ flex: "1 1 260px", display: "flex", flexDirection: "column", gap: 1.5 }}>
                                 {characters.map(pc => (
                                     <Card key={pc.id} sx={{ borderLeft: "3px solid", borderColor: "secondary.main" }}>
                                         <Box sx={{ display: "flex", alignItems: "stretch" }}>
@@ -503,29 +480,8 @@ export default function CampaignPage() {
                                 ))}
                             </Box>
                         )}
-                    </>
-                )}
-
-                {/* ── Encounters tab ── */}
-                {tab === 2 && (
-                    <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                            <Button variant="contained" startIcon={<Plus size={16} />}
-                                onClick={createEncounter} disabled={creatingEnc}
-                                sx={{ backgroundColor: "primary.main", whiteSpace: "nowrap" }}>
-                                {creatingEnc ? "Creating…" : "New Encounter"}
-                            </Button>
-                        </Box>
-
-                        {encounters.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <Swords size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No encounters yet. Build one to plan and run combat!
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                        {encounters.length > 0 && (
+                            <Box sx={{ flex: "1 1 260px", display: "flex", flexDirection: "column", gap: 1.5 }}>
                                 {encounters.map(enc => (
                                     <Card key={enc.id} sx={{ borderLeft: "3px solid #8C5A3A" }}>
                                         <Box sx={{ display: "flex", alignItems: "stretch" }}>
@@ -561,110 +517,94 @@ export default function CampaignPage() {
                                 ))}
                             </Box>
                         )}
-                    </>
+                    </Box>
                 )}
 
-                {/* ── Members tab ── */}
-                {tab === 3 && (
-                    <>
-                        <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
-                            <Button variant="outlined" startIcon={<UserPlus size={16} />}
-                                onClick={() => generateInvite("player")}>
-                                Invite Player
-                            </Button>
-                            <Button variant="outlined" startIcon={<UserPlus size={16} />}
-                                onClick={() => generateInvite("gm")}>
-                                Invite GM
+                {/* ── World ── */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 2, mb: 2 }}>
+                    <Map size={15} color="#8C5A3A" />
+                    <Typography sx={{ fontFamily: "'Cinzel', serif", fontWeight: 700, color: "primary.dark", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        World
+                    </Typography>
+                    <Divider sx={{ flex: 1 }} />
+                </Box>
+                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 1.5, mb: 3 }}>
+                    {[
+                        { label: "NPCs", icon: Users, href: `/tabletop/campaigns/${campaignId}/npcs`, desc: "Non-player characters" },
+                        { label: "Quests", icon: ScrollText, href: `/tabletop/campaigns/${campaignId}/quests`, desc: "Active & completed quests" },
+                        { label: "Factions", icon: Shield, href: `/tabletop/campaigns/${campaignId}/factions`, desc: "Reputation tracker" },
+                    ].map(({ label, icon: Icon, href, desc }) => (
+                        <Paper key={label} elevation={1} component={Link} href={href}
+                            sx={{
+                                p: 2, display: "flex", flexDirection: "column", gap: 0.5,
+                                borderTop: "2px solid", borderColor: "divider",
+                                textDecoration: "none",
+                                transition: "background-color 0.15s, box-shadow 0.15s",
+                                "&:hover": { backgroundColor: "action.hover", boxShadow: 2 },
+                            }}>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <Icon size={16} color="#8C5A3A" />
+                                <Typography sx={{ fontWeight: 700, color: "primary.dark", fontSize: "0.88rem" }}>{label}</Typography>
+                            </Box>
+                            <Typography variant="caption" sx={{ color: "text.secondary" }}>{desc}</Typography>
+                        </Paper>
+                    ))}
+                </Box>
+
+                {/* ── Campaign ── */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 2, mb: 2 }}>
+                    <UserPlus size={15} color="#8C5A3A" />
+                    <Typography sx={{ fontFamily: "'Cinzel', serif", fontWeight: 700, color: "primary.dark", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        Campaign
+                    </Typography>
+                    <Divider sx={{ flex: 1 }} />
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                        <Button variant="text" size="small" startIcon={<UserPlus size={14} />}
+                            onClick={() => generateInvite("player")}
+                            sx={{ color: "primary.main", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                            Invite Player
+                        </Button>
+                        <Button variant="text" size="small" startIcon={<UserPlus size={14} />}
+                            onClick={() => generateInvite("gm")}
+                            sx={{ color: "primary.main", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                            Invite GM
+                        </Button>
+                    </Box>
+                </Box>
+
+                {inviteLink && (
+                    <Box sx={{ mb: 2, p: 2, border: 1, borderColor: "primary.light", borderRadius: 2, backgroundColor: "background.paper" }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1, color: "primary.dark" }}>Invite Link (expires in 7 days)</Typography>
+                        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                            <TextField value={inviteLink} fullWidth size="small" slotProps={{ input: { readOnly: true } }} />
+                            <Button variant="contained" startIcon={<Copy size={14} />} onClick={copyInvite} sx={{ whiteSpace: "nowrap" }}>
+                                Copy
                             </Button>
                         </Box>
-
-                        {inviteLink && (
-                            <Box sx={{ mb: 3, p: 2, border: 1, borderColor: "primary.light", borderRadius: 2, backgroundColor: "background.paper" }}>
-                                <Typography variant="subtitle2" sx={{ mb: 1, color: "primary.dark" }}>Invite Link (expires in 7 days)</Typography>
-                                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                                    <TextField value={inviteLink} fullWidth size="small" slotProps={{ input: { readOnly: true } }} />
-                                    <Button variant="contained" startIcon={<Copy size={14} />} onClick={copyInvite} sx={{ whiteSpace: "nowrap" }}>
-                                        Copy
-                                    </Button>
-                                </Box>
-                            </Box>
-                        )}
-
-                        {members.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <UserPlus size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No members yet. Generate an invite link to share with players.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                {members.map(m => (
-                                    <Card key={m.id} sx={{ borderLeft: "3px solid", borderColor: m.role === "gm" ? "warning.main" : "primary.light" }}>
-                                        <CardContent sx={{ py: 1.5, "&:last-child": { pb: 1.5 } }}>
-                                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                                <Typography variant="subtitle2" sx={{ flex: 1, color: "primary.dark" }}>
-                                                    {m.playerName || "Unknown Player"}
-                                                </Typography>
-                                                <Chip
-                                                    label={m.role === "gm" ? "GM" : "Player"}
-                                                    size="small"
-                                                    color={m.role === "gm" ? "warning" : "default"}
-                                                />
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </Box>
-                        )}
-                    </>
-                )}
-
-                {/* ── NPCs tab ── */}
-                {tab === 4 && (
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6, gap: 3 }}>
-                        <Users size={48} color="#8C5A3A" />
-                        <Typography variant="h5" sx={{ fontWeight: 600, color: "primary.dark" }}>NPC Tracker</Typography>
-                        <Typography sx={{ color: "text.secondary", textAlign: "center", maxWidth: 400 }}>
-                            Track the non-player characters your party encounters — their roles, locations, motivations, and relationships.
-                        </Typography>
-                        <Button variant="contained" size="large"
-                            component={Link} href={`/tabletop/campaigns/${campaignId}/npcs`}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            Open NPC Tracker
-                        </Button>
                     </Box>
                 )}
 
-                {/* ── Quests tab ── */}
-                {tab === 5 && (
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6, gap: 3 }}>
-                        <ScrollText size={48} color="#8C5A3A" />
-                        <Typography variant="h5" sx={{ fontWeight: 600, color: "primary.dark" }}>Quest Tracker</Typography>
-                        <Typography sx={{ color: "text.secondary", textAlign: "center", maxWidth: 400 }}>
-                            Manage active quests, objectives, rewards, and completed adventures.
+                {members.length === 0 ? (
+                    <Box sx={{ textAlign: "center", py: 4, mb: 3 }}>
+                        <Typography sx={{ color: "text.secondary", fontSize: "0.88rem" }}>
+                            No members yet. Generate an invite link to share with players.
                         </Typography>
-                        <Button variant="contained" size="large"
-                            component={Link} href={`/tabletop/campaigns/${campaignId}/quests`}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            Open Quest Tracker
-                        </Button>
                     </Box>
-                )}
-
-                {/* ── Factions tab ── */}
-                {tab === 6 && (
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6, gap: 3 }}>
-                        <Shield size={48} color="#8C5A3A" />
-                        <Typography variant="h5" sx={{ fontWeight: 600, color: "primary.dark" }}>Faction Tracker</Typography>
-                        <Typography sx={{ color: "text.secondary", textAlign: "center", maxWidth: 400 }}>
-                            Track factions and organizations, and the party's reputation with each.
-                        </Typography>
-                        <Button variant="contained" size="large"
-                            component={Link} href={`/tabletop/campaigns/${campaignId}/factions`}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            Open Faction Tracker
-                        </Button>
+                ) : (
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 3 }}>
+                        {members.map(m => (
+                            <Card key={m.id} sx={{ borderLeft: "3px solid", borderColor: m.role === "gm" ? "warning.main" : "primary.light" }}>
+                                <CardContent sx={{ py: 1.5, "&:last-child": { pb: 1.5 } }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                        <Typography variant="subtitle2" sx={{ flex: 1, color: "primary.dark" }}>
+                                            {m.playerName || "Unknown Player"}
+                                        </Typography>
+                                        <Chip label={m.role === "gm" ? "GM" : "Player"} size="small"
+                                            color={m.role === "gm" ? "warning" : "default"} />
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        ))}
                     </Box>
                 )}
 
