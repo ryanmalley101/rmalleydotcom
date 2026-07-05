@@ -304,6 +304,49 @@ const TodoItem = a.model({
   dueDate:     a.string(),
 }).authorization(allow => [allow.owner()]);
 
+// ── Campaign calendar ─────────────────────────────────────────────────────────
+
+// One per campaign. Defines the world's calendar structure — month names and
+// lengths, weekday names, and an optional "current day" counter the GM advances
+// as the campaign progresses. All structure is stored as JSON escape valves so
+// GMs can freely rename months or adjust day counts without a schema migration.
+const CampaignCalendar = a.model({
+  campaignId:       a.string().required(),
+  monthsJson:       a.string(), // JSON: [{name: string, days: number}]
+  weekdayNamesJson: a.string(), // JSON: string[] — length is days-per-week
+  currentDay:       a.integer(), // current absolute in-world day (1-indexed), optional
+  epochName:        a.string(), // optional era label shown in header, e.g. "Year of Rising"
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// Day-by-day campaign notes keyed by absolute day number (1 = first day of
+// in-world time, 2 = second, etc.). The display date is always derived
+// client-side from the CalendarConfig, so renaming months never breaks entries.
+const DailyNote = a.model({
+  campaignId:  a.string().required(),
+  dayNumber:   a.integer().required(), // absolute 1-indexed in-world day
+  title:       a.string(),
+  notes:       a.string(),
+  articleIds:  a.string().array(), // linked WikiArticle IDs
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// ── Campaign timeline ─────────────────────────────────────────────────────────
+
+// A single narrative event on the campaign's timeline. Sessions contribute
+// automatically as anchors; custom events (battles, deaths, revelations, etc.)
+// sit between them. Chronological order is driven by realDate (ISO string) so
+// campaigns without strict real-world scheduling can still sort consistently.
+const TimelineEvent = a.model({
+  campaignId:       a.string().required(),
+  title:            a.string().required(),
+  description:      a.string(),
+  eventType:        a.string(), // 'battle'|'revelation'|'death'|'alliance'|'quest'|'milestone'|'other'
+  realDate:         a.string(), // ISO "2024-06-15" — primary sort key
+  inWorldDate:      a.string(), // free-text "Kythorn 15, 1492 DR" — display only
+  articleIds:       a.string().array(), // linked WikiArticle IDs
+  sessionId:        a.string(), // optional link to a CampaignSession
+  visibleToPlayers: a.boolean(), // false = GM-only; default treated as true by client
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
 // ── Photo gallery ────────────────────────────────────────────────────────────
 
 // A sub-gallery is just a name/description — photo membership lives on
@@ -471,6 +514,9 @@ const schema = a.schema({
   Faction,
   Companion,
   TodoItem,
+  CampaignCalendar,
+  DailyNote,
+  TimelineEvent,
   SubGallery,
   GalleryPhoto,
   suggestPhotoTags,

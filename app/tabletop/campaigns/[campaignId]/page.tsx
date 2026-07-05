@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "./combatSettings";
 import Link from "next/link";
-import { ArrowLeft, Plus, ScrollText, Users, BookOpen, Trash2, CalendarDays, Swords, UserPlus, Copy, Shield, Pencil, Settings, PawPrint, LayoutGrid } from "lucide-react";
+import { ArrowLeft, Plus, ScrollText, Users, BookOpen, Trash2, CalendarDays, Swords, UserPlus, Copy, Shield, Pencil, Settings, PawPrint, LayoutGrid, BookMarked } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 
@@ -355,7 +355,17 @@ export default function CampaignPage() {
                     )}
                 </Box>
 
-                <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"
+                <Tabs value={tab}
+                    onChange={(_, v) => {
+                        if (v === 7) {
+                            router.push(`/tabletop/campaigns/${campaignId}/timeline`);
+                        } else if (v === 8) {
+                            router.push(`/tabletop/campaigns/${campaignId}/calendar`);
+                        } else {
+                            setTab(v);
+                        }
+                    }}
+                    variant="scrollable" scrollButtons="auto"
                     sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}>
                     <Tab label={`Sessions (${sessions.length})`} icon={<CalendarDays size={16} />} iconPosition="start" />
                     <Tab label={`Characters (${characters.length})`} icon={<Users size={16} />} iconPosition="start" />
@@ -364,6 +374,8 @@ export default function CampaignPage() {
                     <Tab label="NPCs" icon={<Users size={16} />} iconPosition="start" />
                     <Tab label="Quests" icon={<ScrollText size={16} />} iconPosition="start" />
                     <Tab label="Factions" icon={<Shield size={16} />} iconPosition="start" />
+                    <Tab label="Chronicle" icon={<BookMarked size={16} />} iconPosition="start" />
+                    <Tab label="Calendar" icon={<CalendarDays size={16} />} iconPosition="start" />
                 </Tabs>
 
                 {/* ── Sessions tab ── */}
