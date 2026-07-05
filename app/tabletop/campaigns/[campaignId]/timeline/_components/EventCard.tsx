@@ -5,6 +5,7 @@ import { Box, Chip, Collapse, IconButton, Paper, Tooltip, Typography } from "@mu
 import Link from "next/link";
 import { BookOpen, ChevronDown, ChevronRight, EyeOff, Pencil, Trash2 } from "lucide-react";
 import type { Schema } from "@/amplify/data/resource";
+import { MarkdownContent } from "@/lib/MarkdownContent";
 
 type TimelineEvent = Schema["TimelineEvent"]["type"];
 
@@ -81,9 +82,7 @@ export function EventCard({ event, articleMap, isGM, defaultExpanded = false, on
             <Collapse in={expanded}>
                 <Box sx={{ px: 2, pb: 1.5 }}>
                     {event.description && (
-                        <Typography variant="body2" sx={{ color: "text.secondary", whiteSpace: "pre-wrap", mb: 1 }}>
-                            {event.description}
-                        </Typography>
+                        <MarkdownContent dim sx={{ mb: 1 }}>{event.description}</MarkdownContent>
                     )}
                     {linkedArticles.length > 0 && (
                         <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 0.5 }}>

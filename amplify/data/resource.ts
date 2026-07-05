@@ -148,6 +148,7 @@ const CampaignSession = a.model({
   sessionNotes:  a.string(),
   playerSummary: a.string(), // player-facing recap visible to all members
   articleIds:    a.string().array(),
+  imageKeys:     a.string().array(), // Amplify Storage S3 keys for attached images (maps, handouts, etc.)
 }).authorization(allow => [allow.owner()]);
 
 const PlayerCharacter = a.model({
