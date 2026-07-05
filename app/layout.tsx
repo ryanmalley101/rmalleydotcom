@@ -9,7 +9,10 @@ import ThemeRegistry from "./components/themeRegistry/themeRegistry";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ryan Malley",
+  title: {
+    template: "%s | Ryan Malley",
+    default:  "Ryan Malley",
+  },
   description: "Projects in software, hardware, and tabletop.",
 };
 

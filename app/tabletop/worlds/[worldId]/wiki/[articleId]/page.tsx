@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
     Box, Container, Typography, Button, TextField, Chip,
     Divider, CircularProgress, MenuItem, Select, FormControl,
@@ -131,6 +132,7 @@ export default function ArticlePage() {
     const router = useRouter();
 
     const [article, setArticle]   = useState<Article | null>(null);
+    useDocumentTitle(article?.title ?? null);
     const [allArticles, setAll]   = useState<Article[]>([]);
     const [sessions, setSessions] = useState<{ session: Session; campaignName: string }[]>([]);
     const [editing, setEditing]   = useState(false);

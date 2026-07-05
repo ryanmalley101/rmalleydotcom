@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
     Box, Typography, Button, CircularProgress, IconButton,
     Tooltip, Dialog, DialogTitle, DialogContent, DialogActions,
@@ -62,6 +63,7 @@ export default function MapPage() {
     const { worldId, mapId } = useParams<{ worldId: string; mapId: string }>();
 
     const [map, setMap]           = useState<WorldMap | null>(null);
+    useDocumentTitle(map?.name ?? null);
     const [imageUrl, setImageUrl] = useState<string>("");
     const [pins, setPins]         = useState<MapPin[]>([]);
     const [articles, setArticles] = useState<Article[]>([]);

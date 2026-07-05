@@ -10,6 +10,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Settings } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { useCampaignRole } from "@/lib/useCampaignRole";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
     parseCalendarConfig, prevMonthSafe, nextMonthSafe,
     dayToDate, dateToDayNumber, formatDate,
@@ -28,6 +29,7 @@ export default function CalendarPage() {
     const { isGm: isGM, loading: roleLoading } = useCampaignRole(campaignId);
 
     const [campaign, setCampaign]         = useState<Campaign | null>(null);
+    useDocumentTitle(campaign ? `${campaign.name} — Calendar` : null);
     const [calendarRecord, setCalendarRecord] = useState<CampaignCalendar | null>(null);
     const [notes, setNotes]               = useState<DailyNote[]>([]);
     const [loading, setLoading]           = useState(true);

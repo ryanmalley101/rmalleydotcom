@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
     Box, Container, Typography, Button, Chip, Divider,
     CircularProgress, TextField, Dialog, DialogTitle,
@@ -37,6 +38,7 @@ export default function WorldPage() {
     const router = useRouter();
 
     const [world, setWorld]         = useState<World | null>(null);
+    useDocumentTitle(world?.name ?? null);
     const [articles, setArticles]   = useState<Article[]>([]);
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [maps, setMaps]           = useState<WorldMap[]>([]);
