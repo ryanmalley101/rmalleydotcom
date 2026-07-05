@@ -4,6 +4,7 @@ import { Box, Paper, Typography, Button } from "@mui/material";
 import Link from "next/link";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { MarkdownContent } from "@/lib/MarkdownContent";
 
 const client = generateClient<Schema>();
 type CampaignSession = Schema["CampaignSession"]["type"];
@@ -45,9 +46,7 @@ export function SessionPrepCard({ session, campaignId }: { session: CampaignSess
                 </Button>
             </Box>
             {session.prepNotes ? (
-                <Typography variant="body2" sx={{ color: "text.secondary", whiteSpace: "pre-wrap" }}>
-                    {session.prepNotes}
-                </Typography>
+                <MarkdownContent dim>{session.prepNotes}</MarkdownContent>
             ) : (
                 <Typography variant="body2" sx={{ color: "text.disabled" }}>
                     No prep notes written for this session yet.

@@ -8,6 +8,7 @@ import {
 import { BookOpen, CalendarCheck, Trash2, X } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { MarkdownContent } from "@/lib/MarkdownContent";
 import { WikiSearchPin } from "../../_dashboard-shared/WikiSearchPin";
 import { type CalendarConfig, dayToDate, formatDate } from "../_lib/calendarMath";
 
@@ -173,12 +174,13 @@ export function DayNotePanel({
                     {note?.title && (
                         <Typography sx={{ fontWeight: 600 }}>{note.title}</Typography>
                     )}
-                    <Typography variant="body2" sx={{
-                        color: note?.notes ? "text.primary" : "text.disabled",
-                        fontFamily: "Georgia, serif", whiteSpace: "pre-wrap",
-                    }}>
-                        {note?.notes || "No notes for this day."}
-                    </Typography>
+                    {note?.notes ? (
+                        <MarkdownContent>{note.notes}</MarkdownContent>
+                    ) : (
+                        <Typography variant="body2" sx={{ color: "text.disabled", fontStyle: "italic" }}>
+                            No notes for this day.
+                        </Typography>
+                    )}
                 </>
             )}
         </Box>

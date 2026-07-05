@@ -27,5 +27,8 @@ export const storage = defineStorage({
         'gallery-photos/*': [
             allow.authenticated.to(['read', 'write', 'delete']),
         ],
+        'session-notes/*': [
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
     }),
 });
