@@ -6,7 +6,7 @@ import {
     FormControlLabel, InputLabel, MenuItem, Select, Tab, Tabs, TextField, Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, RotateCcw, Save, SwatchBook, Undo2 } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { remove } from "aws-amplify/storage";
@@ -24,10 +24,11 @@ type Phase = "select" | "swiping" | "results";
 
 export default function SwipePage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { photos, subGalleries, urls, loading, reload } = useGalleryData();
 
     const [phase, setPhase] = useState<Phase>("select");
-    const [sourceId, setSourceId] = useState("master");
+    const [sourceId, setSourceId] = useState(() => searchParams.get("source") ?? "master");
     const [includeUntagged, setIncludeUntagged] = useState(false);
     const [pool, setPool] = useState<GalleryPhoto[]>([]);
     const [roundIndex, setRoundIndex] = useState(0);

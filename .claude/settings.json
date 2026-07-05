@@ -146,7 +146,13 @@
       "Bash(aws budgets *)",
       "Bash(aws dynamodb *)",
       "Bash(xargs grep -l \"ListArgs\\\\|nextToken\")",
-      "Bash(xargs grep -l \"nextToken\")"
+      "Bash(xargs grep -l \"nextToken\")",
+      "Bash(aws cloudformation *)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('amplify_outputs.json'\\)\\); print\\(d.get\\('data',{}\\).get\\('url',''\\)\\); print\\(d.get\\('auth',{}\\).get\\('user_pool_id',''\\)\\); print\\(d.get\\('storage',{}\\).get\\('bucket_name',''\\)\\)\")",
+      "Bash(node -e \"const d=require\\('./amplify_outputs.json'\\); console.log\\(d?.data?.url||''\\); console.log\\(d?.auth?.user_pool_id||''\\); console.log\\(d?.storage?.bucket_name||''\\)\")",
+      "Bash(node -e \"const d=require\\('./amplify_outputs.json'\\); console.log\\(d?.data?.url||d?.custom?.API?.GraphQL?.endpoint||''\\); console.log\\(d?.auth?.user_pool_id||''\\); console.log\\(d?.storage?.bucket_name||''\\)\")",
+      "Bash(npx cdk *)",
+      "Bash(node -e \"const d=require\\('./amplify_outputs.json'\\); console.log\\('AppSync:', d?.data?.url||''\\); console.log\\('UserPool:', d?.auth?.user_pool_id||''\\)\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",
