@@ -31,6 +31,9 @@ export default function SessionPage() {
     const router = useRouter();
 
     const [session, setSession]       = useState<Session | null>(null);
+    useDocumentTitle(session
+        ? `Session #${session.sessionNumber ?? "?"}: ${session.title || "Untitled Session"}`
+        : null);
     const [pinned, setPinned]         = useState<Article[]>([]);
     const [allArticles, setAll]       = useState<Article[]>([]);
     const [editing, setEditing]       = useState(false);
@@ -222,7 +225,6 @@ export default function SessionPage() {
 
     const displayTitle  = session.title || "Untitled Session";
     const displayNumber = session.sessionNumber ? `Session #${session.sessionNumber}` : "Session";
-    useDocumentTitle(`${displayNumber}: ${displayTitle}`);
 
     return (
         <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
