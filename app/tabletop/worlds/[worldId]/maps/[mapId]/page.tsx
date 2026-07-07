@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
     Box, Typography, Button, CircularProgress, IconButton,
@@ -15,8 +15,17 @@ import { getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
 
 const client = generateClient<Schema>();
-type Article = Schema["WikiArticle"]["type"];
-type WorldMap = Schema["WorldMap"]["type"];
+type Article        = Schema["WikiArticle"]["type"];
+type WorldMap       = Schema["WorldMap"]["type"];
+type CSession       = Schema["CampaignSession"]["type"];
+type CNpc           = Schema["NPC"]["type"];
+type CTimelineEvent = Schema["TimelineEvent"]["type"];
+
+interface ArticleCampaignData {
+    sessions: Pick<CSession, "id" | "sessionNumber" | "title">[];
+    npcs:     Pick<CNpc, "id" | "articleId">[];
+    events:   Pick<CTimelineEvent, "id" | "title" | "inWorldDate" | "realDate">[];
+}
 
 // ── Pin type ──────────────────────────────────────────────────────────────────
 
@@ -61,6 +70,8 @@ function PinMarker({ color, size = 28 }: { color: string; size?: number }) {
 
 export default function MapPage() {
     const { worldId, mapId } = useParams<{ worldId: string; mapId: string }>();
+    const searchParams = useSearchParams();
+    const campaignId = searchParams.get("campaign");
 
     const [map, setMap]           = useState<WorldMap | null>(null);
     useDocumentTitle(map?.name ?? null);
@@ -82,6 +93,9 @@ export default function MapPage() {
     const dragging     = useRef<{ pinId: string; startX: number; startY: number } | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [draggingId, setDraggingId] = useState<string | null>(null);
+
+    // Campaign context (populated when ?campaign= is in the URL)
+    const [articleCampaignIndex, setArticleCampaignIndex] = useState<Map<string, ArticleCampaignData>>(new Map());
 
     // ── Load ────────────────────────────────────────────────────────────────
 
@@ -111,6 +125,31 @@ export default function MapPage() {
     }
 
     useEffect(() => { load(); }, [mapId]);
+
+    // When ?campaign= is present, fetch sessions/NPCs/events and build
+    // an index from article ID → connected campaign items.
+    useEffect(() => {
+        if (!campaignId) return;
+        Promise.all([
+            client.models.CampaignSession.list(),
+            client.models.NPC.list(),
+            client.models.TimelineEvent.list(),
+        ]).then(([sessRes, npcRes, evtRes]) => {
+            const sessions = (sessRes.data ?? []).filter(s => s.campaignId === campaignId);
+            const npcs     = (npcRes.data  ?? []).filter(n => n.campaignId === campaignId);
+            const events   = (evtRes.data  ?? []).filter(e => e.campaignId === campaignId && client.models.TimelineEvent);
+
+            const index = new Map<string, ArticleCampaignData>();
+            const ensure = (id: string) => {
+                if (!index.has(id)) index.set(id, { sessions: [], npcs: [], events: [] });
+                return index.get(id)!;
+            };
+            sessions.forEach(s => (s.articleIds ?? []).filter(Boolean).forEach(id => ensure(id!).sessions.push(s)));
+            npcs.forEach(n => { if (n.articleId) ensure(n.articleId).npcs.push(n); });
+            events.forEach(e => (e.articleIds ?? []).filter(Boolean).forEach(id => ensure(id!).events.push(e)));
+            setArticleCampaignIndex(index);
+        });
+    }, [campaignId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ── Persist pins ────────────────────────────────────────────────────────
 
@@ -235,11 +274,20 @@ export default function MapPage() {
                 backdropFilter: "blur(4px)", zIndex: 10,
                 borderBottom: "1px solid rgba(255,255,255,0.1)",
             }}>
-                <Button component={Link} href={`/tabletop/worlds/${worldId}`}
-                    startIcon={<ArrowLeft size={15} />}
-                    sx={{ color: "rgba(255,255,255,0.8)", minWidth: 0, px: 1 }}>
-                    World
-                </Button>
+                {campaignId ? (
+                    <Button component={Link}
+                        href={`/tabletop/campaigns/${campaignId}`}
+                        startIcon={<ArrowLeft size={15} />}
+                        sx={{ color: "rgba(255,255,255,0.8)", minWidth: 0, px: 1 }}>
+                        Campaign
+                    </Button>
+                ) : (
+                    <Button component={Link} href={`/tabletop/worlds/${worldId}`}
+                        startIcon={<ArrowLeft size={15} />}
+                        sx={{ color: "rgba(255,255,255,0.8)", minWidth: 0, px: 1 }}>
+                        World
+                    </Button>
+                )}
                 <Typography sx={{ color: "rgba(255,255,255,0.9)", fontWeight: 600, flex: 1 }}>
                     {map.name}
                 </Typography>
@@ -453,6 +501,41 @@ export default function MapPage() {
                             )}
                         </Box>
                     </Box>
+                    {/* Campaign connections — shown when viewing from a campaign context */}
+                    {campaignId && editPin?.articleId && (() => {
+                        const connected = articleCampaignIndex.get(editPin.articleId);
+                        if (!connected) return null;
+                        const total = connected.sessions.length + connected.npcs.length + connected.events.length;
+                        if (total === 0) return null;
+                        return (
+                            <Box sx={{ borderTop: "1px solid", borderColor: "divider", pt: 1.5, mt: 0.5 }}>
+                                <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, display: "block", mb: 0.75 }}>
+                                    Campaign connections
+                                </Typography>
+                                {connected.sessions.map(s => (
+                                    <Box key={s.id} component={Link}
+                                        href={`/tabletop/campaigns/${campaignId}/sessions/${s.id}`}
+                                        sx={{ display: "block", fontSize: "0.78rem", color: "primary.main", textDecoration: "none",
+                                            mb: 0.25, "&:hover": { textDecoration: "underline" } }}>
+                                        📅 Session #{s.sessionNumber ?? "?"}: {s.title || "Untitled Session"}
+                                    </Box>
+                                ))}
+                                {connected.npcs.map(n => (
+                                    <Box key={n.id} sx={{ fontSize: "0.78rem", color: "text.secondary", mb: 0.25 }}>
+                                        👤 NPC tracked in this campaign
+                                    </Box>
+                                ))}
+                                {connected.events.map(e => (
+                                    <Box key={e.id} component={Link}
+                                        href={`/tabletop/campaigns/${campaignId}/timeline`}
+                                        sx={{ display: "block", fontSize: "0.78rem", color: "primary.main", textDecoration: "none",
+                                            mb: 0.25, "&:hover": { textDecoration: "underline" } }}>
+                                        📜 {e.inWorldDate ?? e.realDate ?? ""} {e.title}
+                                    </Box>
+                                ))}
+                            </Box>
+                        );
+                    })()}
                 </DialogContent>
                 <DialogActions>
                     <Button startIcon={<X size={14} />} onClick={closeEdit}>Cancel</Button>
