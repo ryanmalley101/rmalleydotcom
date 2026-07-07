@@ -30,5 +30,9 @@ export const storage = defineStorage({
         'session-notes/*': [
             allow.authenticated.to(['read', 'write', 'delete']),
         ],
+        'handouts/*': [
+            allow.guest.to(['read']),
+            allow.authenticated.to(['read', 'write', 'delete']),
+        ],
     }),
 });

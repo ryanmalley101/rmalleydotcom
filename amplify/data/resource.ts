@@ -97,7 +97,8 @@ const Campaign = a.model({
   // identity-claim format. Unset on campaigns created before this field
   // existed — treated as permissive (everyone is GM-equivalent) rather than
   // locking the real creator out; see useCampaignRole.ts.
-  gmUserId:     a.string(),
+  gmUserId:       a.string(),
+  initiativeJson: a.string(), // JSON: serialized campaign initiative tracker state
 }).authorization(allow => [allow.owner()]);
 
 const WikiArticle = a.model({
@@ -304,6 +305,39 @@ const TodoItem = a.model({
   priority:    a.string(), // 'low' | 'medium' | 'high'
   dueDate:     a.string(),
 }).authorization(allow => [allow.owner()]);
+
+// ── Player handouts ──────────────────────────────────────────────────────────
+
+// GM-created handouts (text + images) that can be published for anyone with
+// the share link — including players who don't have an account. When isPublic
+// is true the content is also written to S3 at handouts/{publicToken}/content.json
+// with guest-read access, so the public /handout/[token] route can serve it
+// without any Amplify auth.
+const Handout = a.model({
+  campaignId:  a.string().required(),
+  title:       a.string().required(),
+  content:     a.string(),            // optional markdown
+  imageKeys:   a.string().array(),    // S3 keys under handouts/{publicToken}/
+  publicToken: a.string(),            // UUID for the public share URL
+  isPublic:    a.boolean(),           // false = draft
+  sessionId:   a.string(),            // optional link to a CampaignSession
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// ── Campaign resources ────────────────────────────────────────────────────────
+
+// Freeform GM-defined trackers — anything the table wants to track that doesn't
+// fit an existing model (food/water, reputation with a city, morale, corruption,
+// etc.). maxValue is optional; when set the UI shows a progress bar.
+const CampaignResource = a.model({
+  campaignId:  a.string().required(),
+  name:        a.string().required(), // "Party Food Supply", "Reputation with Merchants"
+  description: a.string(),
+  value:       a.float().required(),
+  maxValue:    a.float(), // optional — enables progress bar
+  unit:        a.string(), // display label after the number: "days", "gold", "points"
+  color:       a.string(), // hex accent color for the card border
+  sortOrder:   a.integer(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
 // ── Campaign calendar ─────────────────────────────────────────────────────────
 
@@ -517,6 +551,8 @@ const schema = a.schema({
   TodoItem,
   CampaignCalendar,
   DailyNote,
+  Handout,
+  CampaignResource,
   TimelineEvent,
   SubGallery,
   GalleryPhoto,
