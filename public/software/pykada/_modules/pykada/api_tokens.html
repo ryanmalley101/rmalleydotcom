@@ -297,6 +297,13 @@
         <span class="c1"># We&#39;ll use 25 minutes (1500 seconds) as a safe buffer for a 30-minute token.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_buffer_seconds</span> <span class="o">=</span> <span class="mi">25</span> <span class="o">*</span> <span class="mi">60</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The API key backing this token manager, so a second manager</span>
+<span class="sd">        (e.g. for a different token type, like streaming JWTs) can be</span>
+<span class="sd">        built for the same credential without re-plumbing it.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_key</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_new_token</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetches a new token and its expiry from the Verkada API using the specified URL.</span>
@@ -427,6 +434,23 @@
 
     <span class="k">return</span> <span class="n">default_token_manager</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_default_streaming_token_manager</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the default token manager instance for streaming JWTs.</span>
+
+<span class="sd">    This is a distinct token from the standard ``x-verkada-auth`` API</span>
+<span class="sd">    token: it&#39;s fetched from the footage token endpoint and is what the</span>
+<span class="sd">    footage streaming endpoint expects as its ``jwt`` query parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">default_streaming_token_manager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">VerkadaAuthError</span><span class="p">(</span>
+            <span class="s2">&quot;No API key found. Set VERKADA_API_KEY in your environment &quot;</span>
+            <span class="s2">&quot;or pass api_key directly to the client.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">default_streaming_token_manager</span>
 
 
 <span class="c1"># --- Public functions for your library ---</span>

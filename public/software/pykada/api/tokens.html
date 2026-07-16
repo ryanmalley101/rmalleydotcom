@@ -270,6 +270,14 @@ token, automatically refreshing it before expiry (25-minute buffer on a
 </ul>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pykada.api_tokens.VerkadaTokenManager.api_key">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">api_key</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#pykada.api_tokens.VerkadaTokenManager.api_key" title="Link to this definition">¶</a></dt>
+<dd><p>The API key backing this token manager, so a second manager
+(e.g. for a different token type, like streaming JWTs) can be
+built for the same credential without re-plumbing it.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pykada.api_tokens.VerkadaTokenManager.get_token">
 <span class="sig-name descname"><span class="pre">get_token</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykada/api_tokens.html#VerkadaTokenManager.get_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykada.api_tokens.VerkadaTokenManager.get_token" title="Link to this definition">¶</a></dt>
@@ -368,6 +376,7 @@ without explicitly importing it.</p>
             <ul>
 <li><a class="reference internal" href="#">Token Manager</a><ul>
 <li><a class="reference internal" href="#pykada.api_tokens.VerkadaTokenManager"><code class="docutils literal notranslate"><span class="pre">VerkadaTokenManager</span></code></a><ul>
+<li><a class="reference internal" href="#pykada.api_tokens.VerkadaTokenManager.api_key"><code class="docutils literal notranslate"><span class="pre">VerkadaTokenManager.api_key</span></code></a></li>
 <li><a class="reference internal" href="#pykada.api_tokens.VerkadaTokenManager.get_token"><code class="docutils literal notranslate"><span class="pre">VerkadaTokenManager.get_token()</span></code></a></li>
 </ul>
 </li>
