@@ -238,6 +238,10 @@ const PlayerCharacter = a.model({
   equipment:      a.string(),
   features:       a.string(),
   spells:         a.string(),
+// allow.authenticated() (not allow.owner()) is intentional: the GM dashboard's
+// damage/heal controls write to player-owned PlayerCharacter records directly.
+// Tightening this requires a campaign-membership check that isn't feasible with
+// simple Amplify auth rules — needs a custom resolver or Lambda authorizer.
 }).authorization(allow => [allow.authenticated()]);
 
 // Companion/pet — linked to a PC, visible to all authenticated users (GM can see)
@@ -471,7 +475,7 @@ const ChatMessage = a.model({
   rollTotal:         a.string(),
   rollBreakdownJson: a.string(), // full dice breakdown, for an expandable "show the dice" detail
   whisperToIds:      a.string().array(), // empty/unset = public
-}).authorization(allow => [allow.authenticated()]);
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read', 'create'])]);
 
 const CampaignMember = a.model({
   campaignId: a.string().required(),
@@ -620,7 +624,7 @@ const schema = a.schema({
     mythic_desc: a.string(),
     mythic_actions: a.ref('MonsterAbility').required().array(),
   })
-  .authorization(allow => [allow.authenticated()])
+  .authorization(allow => [allow.owner(), allow.authenticated().to(['read'])])
 });
 
 export const data = defineData({
