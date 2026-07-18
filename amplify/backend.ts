@@ -2,6 +2,7 @@ import { defineBackend } from '@aws-amplify/backend';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { CfnUserPool } from 'aws-cdk-lib/aws-cognito';
 import { auth } from './auth/resource.js';
 import { data } from './data/resource.js';
 import { storage } from './storage/resource.js';
@@ -13,6 +14,15 @@ const backend = defineBackend({
     storage,
     suggestPhotoTagsFunction,
 });
+
+// Auto-remember devices so MFA is only challenged on new devices, not every login.
+// challengeRequiredOnNewDevice: true  → new/unrecognized devices always prompt for MFA.
+// deviceOnlyRememberedOnUserPrompt: false → all devices are remembered automatically (no opt-in prompt).
+const cfnUserPool = backend.auth.resources.userPool.node.defaultChild as CfnUserPool;
+cfnUserPool.deviceConfiguration = {
+    challengeRequiredOnNewDevice: true,
+    deviceOnlyRememberedOnUserPrompt: false,
+};
 
 const suggestPhotoTagsLambda = backend.suggestPhotoTagsFunction.resources.lambda;
 const stack = Stack.of(suggestPhotoTagsLambda);
