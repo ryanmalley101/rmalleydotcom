@@ -2,7 +2,7 @@
 
 import { Box, Container, Typography } from "@mui/material";
 import Link from "next/link";
-import { Code2, Cpu, Sword, ListTodo } from "lucide-react";
+import { Code2, Cpu, Sword, ListTodo, Briefcase } from "lucide-react";
 
 const categories = [
   {
@@ -12,6 +12,14 @@ const categories = [
     icon: Code2,
     href: "/software",
     accent: "#6366f1",
+  },
+  {
+    title: "Professional",
+    meta: "cost models · calculators",
+    description: "Tools built for my day job.",
+    icon: Briefcase,
+    href: "/professional",
+    accent: "#7c3aed",
   },
   {
     title: "Hardware",
