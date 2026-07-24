@@ -9,12 +9,13 @@ import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "./lib/colors";
 import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution, type ShapeOption } from "./lib/defaults";
 import type { IncumbentChoice, ScenarioInputs, SolutionInputs } from "./lib/model";
 import { decodeShareState, encodeShareState } from "./lib/shareState";
+import IntroScreen from "./components/IntroScreen";
 import ShapeStep from "./components/ShapeStep";
 import ScenarioStep from "./components/ScenarioStep";
 import SolutionsStep from "./components/SolutionsStep";
 import ResultsView from "./components/ResultsView";
 
-type Phase = "wizard" | "results";
+type Phase = "intro" | "wizard" | "results";
 
 // Convenience defaults for this tool's actual primary audience, comparing
 // against whatever a prospect already runs. Neither
@@ -57,7 +58,7 @@ function TcoCalculatorInner() {
     return raw ? decodeShareState(raw) : null;
   });
 
-  const [phase, setPhase] = useState<Phase>(initial ? "results" : "wizard");
+  const [phase, setPhase] = useState<Phase>(initial ? "results" : "intro");
   const [stepIndex, setStepIndex] = useState(0);
   const [shapeId, setShapeId] = useState<string | null>(initial?.shapeId ?? null);
   const [scenario, setScenario] = useState<ScenarioInputs>(initial?.scenario ?? DEFAULT_SCENARIO);
@@ -104,6 +105,19 @@ function TcoCalculatorInner() {
 
   const canProceed = stepIndex === 0 ? shapeId !== null : true;
 
+  if (phase === "intro") {
+    return (
+      <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
+        <Container size="lg">
+          <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
+            Back
+          </Button>
+          <IntroScreen onStart={() => setPhase("wizard")} />
+        </Container>
+      </Box>
+    );
+  }
+
   if (phase === "results" && solA && solB) {
     return (
       <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
@@ -138,10 +152,8 @@ function TcoCalculatorInner() {
           Back
         </Button>
         <Title order={2} mb={4}>TCO Comparison Wizard</Title>
-        <Text c={TEXT_MUTED} size="sm" mb="xl" maw={700}>
-          A quick setup for comparing the total cost of two video-management deployments over time. Works for
-          on-prem vs. on-prem, cloud vs. cloud, or one of each. You name both sides and set the numbers. This is
-          an independent estimate tool, not affiliated with or endorsed by any vendor named here.
+        <Text c={TEXT_MUTED} size="sm" mb="xl">
+          Three quick steps to set up your comparison.
         </Text>
 
         <Stepper active={stepIndex} onStepClick={setStepIndex} allowNextStepsSelect={false} mb="xl">

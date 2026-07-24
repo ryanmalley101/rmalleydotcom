@@ -21,8 +21,7 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
       <div>
         <Title order={4} mb={4}>Key variables</Title>
         <Text size="sm" c={TEXT_MUTED}>
-          The shared facts about the deployment, same for both solutions being compared. Defaults are
-          directional placeholders; adjust to fit your scenario.
+          Shared facts for both solutions. Defaults are placeholders, adjust as needed.
         </Text>
       </div>
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">

@@ -10,8 +10,7 @@ export default function ShapeStep({ value, onChange }: { value: string | null; o
       <div>
         <Title order={4} mb={4}>What are you comparing?</Title>
         <Text size="sm" c={TEXT_MUTED}>
-          Pick the shape of the comparison. Either side can represent any vendor, the wizard just sets up
-          the cost structure that matches how that kind of deployment is typically priced.
+          Either side can represent any vendor.
         </Text>
       </div>
       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
@@ -34,7 +33,7 @@ export default function ShapeStep({ value, onChange }: { value: string | null; o
                   <Text size="sm" c={TEXT_MUTED}>{opt.description}</Text>
                   <Stack gap={2} mt="sm">
                     <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }}>
-                      Often cited as strengths
+                      Strengths
                     </Text>
                     {opt.pros.map((p) => (
                       <Text key={p} size="xs" c={TEXT_MUTED}>&bull; {p}</Text>
@@ -42,7 +41,7 @@ export default function ShapeStep({ value, onChange }: { value: string | null; o
                   </Stack>
                   <Stack gap={2} mt="xs">
                     <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }}>
-                      Often cited as tradeoffs
+                      Tradeoffs
                     </Text>
                     {opt.cons.map((c) => (
                       <Text key={c} size="xs" c={TEXT_MUTED}>&bull; {c}</Text>

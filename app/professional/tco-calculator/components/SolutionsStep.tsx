@@ -140,10 +140,14 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
           onChange={(v) => set("tierPrice", num(v))}
         />
       </Group>
-      <Text size="xs" c={TEXT_MUTED} mt={-8}>
-        &asymp; ${perYear.toFixed(2)}/yr per camera before the retention multiplier. Other ongoing costs
-        (support, software updates) are assumed bundled into the license.
-      </Text>
+      <Box mt={-8}>
+        <InfoLabel
+          label={`≈ $${perYear.toFixed(2)}/yr per camera`}
+          help="Before the retention multiplier. Other ongoing costs, like support and software updates, are assumed bundled into the license."
+          size="var(--mantine-font-size-xs)"
+          color={TEXT_MUTED}
+        />
+      </Box>
       {sol.migrationStrategy === "connector" && (
         <NumberInput
           label="Cloud connector appliance ($/unit)"
@@ -281,8 +285,7 @@ export default function SolutionsStep({
       <div>
         <Title order={4} mb={4}>Name & configure each solution</Title>
         <Text size="sm" c={TEXT_MUTED}>
-          Pick a provider for each side (or choose &quot;Other&quot; to type your own) and adjust the numbers that
-          matter most. Every other assumption stays editable on the results page.
+          Pick a provider for each side and adjust what matters most. Everything else stays editable later.
         </Text>
       </div>
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">

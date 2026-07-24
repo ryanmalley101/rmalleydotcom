@@ -98,13 +98,13 @@ export const SHAPE_OPTIONS: ShapeOption[] = [
   {
     id: "onprem-cloud",
     label: "Cloud / Hybrid vs. On-Prem",
-    description: "The classic tradeoff: an on-premises deployment against a cloud/hybrid one, CapEx vs. OpEx, head-to-head.",
+    description: "An on-prem deployment against a cloud/hybrid one: CapEx vs. OpEx.",
     pros: [
-      "Directly compares the CapEx-heavy and OpEx-heavy approaches",
-      "Useful when evaluating a migration off an existing on-prem system",
+      "Compares the CapEx-heavy and OpEx-heavy approaches directly",
+      "Good for evaluating a migration off an existing on-prem system",
     ],
     cons: [
-      "Harder to compare apples-to-apples, since the two paths differ structurally, not just in price",
+      "Harder to compare apples-to-apples; the two paths differ structurally",
     ],
     modelA: "onprem",
     modelB: "cloud",
@@ -112,14 +112,14 @@ export const SHAPE_OPTIONS: ShapeOption[] = [
   {
     id: "cloud-cloud",
     label: "Two Cloud / Hybrid Solutions",
-    description: "Compare two cloud-managed or hybrid deployments: a lighter on-site footprint with subscription-based licensing.",
+    description: "Two cloud-managed or hybrid deployments: lighter on-site footprint, subscription licensing.",
     pros: [
       "Less on-site hardware to buy, rack, and refresh",
-      "Typically lower admin labor and truck rolls; faster remote investigations",
+      "Lower admin labor and truck rolls; faster investigations",
     ],
     cons: [
-      "Recurring per-camera subscription fees compound over the horizon",
-      "Ongoing dependency on cloud connectivity",
+      "Subscription fees compound over the horizon",
+      "Depends on cloud connectivity",
     ],
     modelA: "cloud",
     modelB: "cloud",
@@ -127,14 +127,14 @@ export const SHAPE_OPTIONS: ShapeOption[] = [
   {
     id: "onprem-onprem",
     label: "Two On-Prem Solutions",
-    description: "Compare two on-premises deployments head-to-head: servers, storage, and hardware you own and refresh on a cycle.",
+    description: "Two on-premises deployments: servers, storage, and hardware you own and refresh.",
     pros: [
-      "No recurring per-camera subscription, mostly one-time or perpetual licensing",
-      "Full data locality; local recording doesn't depend on internet uptime",
+      "No recurring per-camera subscription",
+      "Full data locality, no internet dependency",
     ],
     cons: [
-      "Higher upfront and recurring hardware capex (servers, storage, analytics appliances)",
-      "Typically more admin labor and truck rolls to keep running",
+      "Higher hardware capex, upfront and ongoing",
+      "More admin labor and truck rolls",
     ],
     modelA: "onprem",
     modelB: "onprem",
