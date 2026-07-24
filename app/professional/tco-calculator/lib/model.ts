@@ -103,6 +103,11 @@ export interface SolutionInputs {
   tierYears: number;
   applianceCost: number; // connector/NVR-style appliance, only used when migrationStrategy is "connector"
   applianceCapacity: number;
+  // Editable, matching on-prem's refreshCycleYears/yearsUntilNextRefresh, rather
+  // than a hardcoded cadence: there's no reason the appliance side should be the
+  // one part of this model a user can't adjust to their own assumptions.
+  applianceRefreshCycleYears: number;
+  yearsUntilNextApplianceRefresh: number;
 
   // On-prem only
   baseLicense: number;
@@ -208,7 +213,11 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
         // ripReplace has no connector appliance, so no ongoing hardware refresh or its power draw.
         if (sol.migrationStrategy === "connector") {
           yearCosts["Power/facilities"] = applianceUnits * 0.06 * 8760 * scenario.electricityRate;
-          if (y % 10 === 0 && y < yrs) {
+          if (
+            y >= sol.yearsUntilNextApplianceRefresh &&
+            (y - sol.yearsUntilNextApplianceRefresh) % sol.applianceRefreshCycleYears === 0 &&
+            y < yrs
+          ) {
             yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits;
           }
         }

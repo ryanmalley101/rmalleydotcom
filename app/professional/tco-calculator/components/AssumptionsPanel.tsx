@@ -97,6 +97,8 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
             <>
               {num("Connector appliance ($/unit)", "applianceCost")}
               {num("Cameras per appliance", "applianceCapacity", { min: 1 })}
+              {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1 })}
+              {num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0 })}
             </>
           )}
         </>

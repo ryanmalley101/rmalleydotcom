@@ -35,6 +35,8 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       tierYears: 5,
       applianceCost: 9999,
       applianceCapacity: 50,
+      applianceRefreshCycleYears: 7,
+      yearsUntilNextApplianceRefresh: 2,
       // on-prem-only fields, unused by the cloud formula but kept populated,
       // so switching a solution's model later doesn't lose prior edits
       baseLicense: 1500,
@@ -79,6 +81,8 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     tierYears: 5,
     applianceCost: 9999,
     applianceCapacity: 50,
+    applianceRefreshCycleYears: 7,
+    yearsUntilNextApplianceRefresh: 2,
   };
 }
 

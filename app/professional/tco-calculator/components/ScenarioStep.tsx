@@ -13,6 +13,13 @@ const RETENTION_LABEL = (
   />
 );
 
+const NPV_LABEL = (
+  <InfoLabel
+    label="NPV discount (%)"
+    help="How much future spending is discounted to reflect that a dollar spent later is worth less than a dollar spent today. Higher rates shrink the weight of costs further out in the horizon; 0% treats every year's dollars the same."
+  />
+);
+
 const ESCALATION_LABEL = (
   <InfoLabel
     label="Annual cost escalation (%)"
@@ -47,7 +54,7 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
           onChange={(v) => set("bitrateMbps", num(v))} />
         <NumberInput label="Investigations/mo" leftSection={icon(Search)} value={value.investigationsPerMonth} min={0}
           onChange={(v) => set("investigationsPerMonth", num(v))} />
-        <NumberInput label="NPV discount (%)" leftSection={icon(Percent)} value={value.npvDiscountPct} min={0} max={100} step={0.5} decimalScale={1}
+        <NumberInput label={NPV_LABEL} leftSection={icon(Percent)} value={value.npvDiscountPct} min={0} max={100} step={0.5} decimalScale={1}
           onChange={(v) => set("npvDiscountPct", num(v))} />
         <NumberInput label={ESCALATION_LABEL} leftSection={icon(TrendingUp)}
           value={value.annualEscalationPct} min={0} max={100} step={0.5} decimalScale={1}
