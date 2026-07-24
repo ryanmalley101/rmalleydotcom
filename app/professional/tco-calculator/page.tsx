@@ -19,13 +19,21 @@ type Phase = "wizard" | "results";
 // Convenience defaults for this tool's primary audience: someone on the
 // Verkada side comparing against whatever a prospect already runs. Neither
 // is forced, both stay fully editable, they just save a click for the most
-// common starting point instead of leaving every field blank.
-function defaultNameFor(slot: "a" | "b", opt: ShapeOption): string {
+// common starting point instead of leaving every field blank. On-prem
+// defaults to Milestone/Axis (the same pairing the original single-vendor
+// tool's numeric defaults were drawn from), so the name lines up with the
+// numbers rather than sitting under a generic placeholder.
+function seedSolution(slot: "a" | "b", opt: ShapeOption): SolutionInputs {
   const model = slot === "a" ? opt.modelA : opt.modelB;
-  if (model !== "cloud") return slot === "a" ? "Solution A (On-Prem)" : "Solution B (On-Prem)";
-  const bothCloud = opt.modelA === "cloud" && opt.modelB === "cloud";
-  if (bothCloud && slot === "b") return "Solution B (Cloud)"; // leave the "compared against" side open
-  return "Verkada";
+  const bothSameModel = opt.modelA === opt.modelB;
+  const leaveOpen = bothSameModel && slot === "b"; // the "compared against" side, when both sides share a model
+
+  if (model === "cloud") {
+    return defaultSolution(slot, leaveOpen ? "Solution B (Cloud)" : "Verkada", model);
+  }
+  if (leaveOpen) return defaultSolution(slot, "Solution B (On-Prem)", model);
+  const sol = defaultSolution(slot, "", model);
+  return { ...sol, vmsProvider: "Milestone XProtect", cameraProvider: "Axis Communications", name: "Milestone XProtect · Axis Communications cameras" };
 }
 
 function defaultIncumbentFor(opt: ShapeOption): IncumbentChoice {
@@ -82,12 +90,8 @@ function TcoCalculatorInner() {
       setScenario((prev) => ({ ...prev, incumbent: defaultIncumbentFor(opt) }));
     }
     setShapeId(id);
-    setSolA((prev) =>
-      prev && prev.model === opt.modelA ? prev : defaultSolution("a", defaultNameFor("a", opt), opt.modelA)
-    );
-    setSolB((prev) =>
-      prev && prev.model === opt.modelB ? prev : defaultSolution("b", defaultNameFor("b", opt), opt.modelB)
-    );
+    setSolA((prev) => (prev && prev.model === opt.modelA ? prev : seedSolution("a", opt)));
+    setSolB((prev) => (prev && prev.model === opt.modelB ? prev : seedSolution("b", opt)));
   }
 
   function next() {
