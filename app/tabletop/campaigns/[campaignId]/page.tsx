@@ -2,18 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
-    Box, Container, Typography, Button, Chip, Divider,
-    CircularProgress, Card, CardActionArea, CardContent,
-    IconButton, Tooltip, Dialog, DialogTitle, DialogContent,
-    DialogActions, Tabs, Tab, TextField, Snackbar, Alert,
-    MenuItem, Select, FormControl, InputLabel, Switch, FormControlLabel,
+    ActionIcon, Anchor, Badge, Box, Button, Center, Divider, Group,
+    Loader, Modal, Paper, Select, SimpleGrid, Stack, Text, TextInput,
+    ThemeIcon, Title, Tooltip,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import {
+    // MUI kept only for CombatSettingsDialog — full migration deferred
+    Box as MuiBox, Dialog, DialogTitle, DialogContent, DialogActions,
+    Typography, FormControlLabel, Switch, Button as MuiButton,
+    Snackbar, Alert,
 } from "@mui/material";
-import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "./combatSettings";
 import Link from "next/link";
-import { ArrowLeft, Plus, ScrollText, Users, BookOpen, Trash2, CalendarDays, Swords, UserPlus, Copy, Shield, Pencil, Settings, PawPrint, LayoutGrid } from "lucide-react";
+import {
+    ArrowLeft, Bookmark, BookMarked, BookOpen, CalendarDays, ChevronRight,
+    Copy, Gauge, Globe, LayoutGrid, ListOrdered, Map, PawPrint,
+    Pencil, Plus, RotateCcw, ScrollText, Settings, Shield,
+    Swords, Trash2, UserPlus, Users,
+} from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "./combatSettings";
+import { useCampaignRole } from "@/lib/useCampaignRole";
 
 const client = generateClient<Schema>();
 type Campaign        = Schema["Campaign"]["type"];
@@ -21,8 +33,21 @@ type Session         = Schema["CampaignSession"]["type"];
 type PlayerCharacter = Schema["PlayerCharacter"]["type"];
 type World           = Schema["DnDWorld"]["type"];
 type Encounter       = Schema["Encounter"]["type"];
-type CampaignMember = Schema["CampaignMember"]["type"];
+type CampaignMember  = Schema["CampaignMember"]["type"];
 type Companion       = Schema["Companion"]["type"];
+type WorldMap        = Schema["WorldMap"]["type"];
+
+const T = {
+    pageBg: "#1a0d05", cardBg: "#261508", cardHover: "#321b0c",
+    border: "rgba(210,140,70,0.22)", borderHot: "rgba(239,107,26,0.55)",
+    divider: "rgba(210,140,70,0.18)", cream: "#f0ddb5", amber: "#d4aa72",
+    dimmed: "#a67c4a", accent: "#ef6b1a", heading: "#e8c060",
+    deepBorder: "rgba(239,107,26,0.3)",
+};
+
+const STATUS_COLOR: Record<string, string> = {
+    Active: "#15803d", Paused: "#b45309", Completed: "#1d4ed8", Planning: "#7e22ce",
+};
 
 function parseClasses(pc: PlayerCharacter): string {
     if (pc.classesJson) {
@@ -35,25 +60,16 @@ function parseClasses(pc: PlayerCharacter): string {
 }
 function totalLevel(pc: PlayerCharacter): number | undefined {
     if (pc.classesJson) {
-        try {
-            const arr: { level: number }[] = JSON.parse(pc.classesJson);
-            return arr.reduce((s, c) => s + c.level, 0);
-        } catch { /* fall through */ }
+        try { return (JSON.parse(pc.classesJson) as { level: number }[]).reduce((s, c) => s + c.level, 0); }
+        catch { /* fall through */ }
     }
     return pc.level ?? undefined;
 }
 
-function CombatSettingsDialog({
-    open, value, title, subtitle, inheritLabel, onClose, onSave, onReset,
-}: {
-    open: boolean;
-    value: CombatSettings;
-    title: string;
-    subtitle?: string;
-    inheritLabel?: string;
-    onClose: () => void;
-    onSave: (s: CombatSettings) => void;
-    onReset?: () => void;
+// CombatSettingsDialog — kept as MUI since it's internal/complex and deferred from this migration pass
+function CombatSettingsDialog({ open, value, title, subtitle, inheritLabel, onClose, onSave, onReset }: {
+    open: boolean; value: CombatSettings; title: string; subtitle?: string;
+    inheritLabel?: string; onClose: () => void; onSave: (s: CombatSettings) => void; onReset?: () => void;
 }) {
     const [draft, setDraft] = useState<CombatSettings>({ ...DEFAULT_COMBAT_SETTINGS });
     useEffect(() => { if (open) setDraft({ ...value }); }, [open, value]);
@@ -62,12 +78,10 @@ function CombatSettingsDialog({
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
-                {subtitle && (
-                    <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>{subtitle}</Typography>
-                )}
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                {subtitle && <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>{subtitle}</Typography>}
+                <MuiBox sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                     {(Object.keys(SETTING_META) as (keyof CombatSettings)[]).map(k => (
-                        <Box key={k} sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+                        <MuiBox key={k} sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
                             <FormControlLabel
                                 control={<Switch checked={draft[k]} onChange={() => toggle(k)} size="small" color="warning" />}
                                 label={<Typography variant="body2" sx={{ fontWeight: 600 }}>{SETTING_META[k].label}</Typography>}
@@ -75,57 +89,132 @@ function CombatSettingsDialog({
                             <Typography variant="caption" sx={{ color: "text.secondary", pl: 5.5 }}>
                                 {SETTING_META[k].desc}
                             </Typography>
-                        </Box>
+                        </MuiBox>
                     ))}
-                </Box>
+                </MuiBox>
             </DialogContent>
             <DialogActions sx={{ justifyContent: onReset ? "space-between" : "flex-end" }}>
-                {onReset && (
-                    <Button size="small" onClick={onReset} sx={{ color: "text.secondary" }}>
-                        {inheritLabel ?? "Reset to defaults"}
-                    </Button>
-                )}
-                <Box sx={{ display: "flex", gap: 1 }}>
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button variant="contained" onClick={() => onSave(draft)} sx={{ backgroundColor: "primary.main" }}>
-                        Save
-                    </Button>
-                </Box>
+                {onReset && <MuiButton size="small" onClick={onReset} sx={{ color: "text.secondary" }}>{inheritLabel ?? "Reset to defaults"}</MuiButton>}
+                <MuiBox sx={{ display: "flex", gap: 1 }}>
+                    <MuiButton onClick={onClose}>Cancel</MuiButton>
+                    <MuiButton variant="contained" onClick={() => onSave(draft)} sx={{ backgroundColor: "primary.main" }}>Save</MuiButton>
+                </MuiBox>
             </DialogActions>
         </Dialog>
     );
 }
 
+// ── Section divider ───────────────────────────────────────────────────────────
+function SectionHeader({ icon: Icon, label, actions }: { icon: React.ElementType; label: string; actions?: React.ReactNode }) {
+    return (
+        <Box my="xl">
+            <Group gap="sm" mb={6}>
+                <ThemeIcon size="sm" radius="xs" style={{ background: `${T.accent}22`, color: T.accent }}>
+                    <Icon size={13} />
+                </ThemeIcon>
+                <Text size="xs" fw={800} tt="uppercase"
+                    style={{ letterSpacing: 3, color: T.accent, fontFamily: "var(--font-cinzel), serif" }}>
+                    {label}
+                </Text>
+                {actions && <Box ml="auto">{actions}</Box>}
+            </Group>
+            <Divider style={{ borderColor: T.divider }} />
+        </Box>
+    );
+}
+
+// ── Tool shortcut ─────────────────────────────────────────────────────────────
+function ToolCard({ icon: Icon, label, href }: { icon: React.ElementType; label: string; href: string }) {
+    return (
+        <Anchor component={Link} href={href} underline="never">
+            <Paper p="sm" radius="sm" style={{
+                background: T.cardBg, border: `1px solid ${T.border}`,
+                borderTop: `2px solid ${T.deepBorder}`,
+            }}>
+                <Group gap="xs" wrap="nowrap">
+                    <ThemeIcon size="sm" radius="xs" style={{ background: T.accent, color: T.pageBg, flexShrink: 0 }}>
+                        <Icon size={12} />
+                    </ThemeIcon>
+                    <Text size="sm" fw={600} style={{ color: T.cream, flex: 1 }}>{label}</Text>
+                    <ChevronRight size={12} style={{ color: T.dimmed }} />
+                </Group>
+            </Paper>
+        </Anchor>
+    );
+}
+
+// ── Nav card (World section) ──────────────────────────────────────────────────
+function NavCard({ icon: Icon, label, desc, href }: { icon: React.ElementType; label: string; desc: string; href: string }) {
+    return (
+        <Anchor component={Link} href={href} underline="never">
+            <Paper p="md" radius="sm" style={{
+                background: T.cardBg, border: `1px solid ${T.border}`,
+                borderTop: `3px solid ${T.accent}`,
+            }}>
+                <Group gap="sm" mb={4} wrap="nowrap">
+                    <ThemeIcon size="sm" radius="xs" style={{ background: `${T.accent}22`, color: T.accent, flexShrink: 0 }}>
+                        <Icon size={12} />
+                    </ThemeIcon>
+                    <Text fw={700} size="sm" style={{ color: T.cream, flex: 1 }}>{label}</Text>
+                    <ChevronRight size={13} style={{ color: T.dimmed }} />
+                </Group>
+                <Text size="xs" style={{ color: T.dimmed }}>{desc}</Text>
+            </Paper>
+        </Anchor>
+    );
+}
+
+// ── Confirm delete modal ──────────────────────────────────────────────────────
+function ConfirmModal({ opened, onClose, onConfirm, title, message }: {
+    opened: boolean; onClose: () => void; onConfirm: () => void; title: string; message?: string;
+}) {
+    return (
+        <Modal opened={opened} onClose={onClose} title={title} size="sm"
+            styles={{ content: { background: T.cardBg, border: `1px solid ${T.border}` },
+                      header: { background: T.cardBg }, title: { color: T.cream } }}>
+            <Text style={{ color: T.amber }} mb="lg">{message ?? "This cannot be undone."}</Text>
+            <Group justify="flex-end" gap="sm">
+                <Button variant="subtle" style={{ color: T.dimmed }} onClick={onClose}>Cancel</Button>
+                <Button color="red" onClick={onConfirm}>Delete</Button>
+            </Group>
+        </Modal>
+    );
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function CampaignPage() {
     const { campaignId } = useParams<{ campaignId: string }>();
     const router = useRouter();
+    const { isGm: isGM } = useCampaignRole(campaignId);
 
     const [campaign, setCampaign]   = useState<Campaign | null>(null);
+    useDocumentTitle(campaign?.name ?? null);
     const [sessions, setSessions]   = useState<Session[]>([]);
     const [characters, setChars]    = useState<PlayerCharacter[]>([]);
     const [worlds, setWorlds]       = useState<World[]>([]);
+    const [worldMaps, setWorldMaps] = useState<WorldMap[]>([]);
     const [encounters, setEncounters] = useState<Encounter[]>([]);
     const [members, setMembers]     = useState<CampaignMember[]>([]);
-    const [tab, setTab]             = useState(0);
+    const [companions, setCompanions] = useState<Companion[]>([]);
     const [loading, setLoading]     = useState(true);
-    const [deleteSession, setDelSess]  = useState<string | null>(null);
-    const [deleteChar, setDelChar]     = useState<string | null>(null);
-    const [deleteEnc, setDelEnc]       = useState<string | null>(null);
+
+    const [deleteSession, setDelSess] = useState<string | null>(null);
+    const [deleteChar, setDelChar]    = useState<string | null>(null);
+    const [deleteEnc, setDelEnc]      = useState<string | null>(null);
     const [creatingEnc, setCreatingEnc] = useState(false);
-    const [companions, setCompanions]   = useState<Companion[]>([]);
-    const [inviteRole, setInviteRole]   = useState<"player"|"gm">("player");
     const [inviteLink, setInviteLink]   = useState<string | null>(null);
     const [copiedSnack, setCopiedSnack] = useState(false);
-    const [editOpen, setEditOpen]       = useState(false);
-    const [editName, setEditName]       = useState("");
-    const [editDesc, setEditDesc]       = useState("");
-    const [editStatus, setEditStatus]   = useState("");
-    const [editSystem, setEditSystem]   = useState("");
-    const [settingsOpen, setSettingsOpen] = useState(false);
     const [combatSettings, setCombatSettings] = useState<CombatSettings>({ ...DEFAULT_COMBAT_SETTINGS });
 
+    const [editOpen, { open: openEdit, close: closeEdit }]         = useDisclosure(false);
+    const [settingsOpen, { open: openSettings, close: closeSettings }] = useDisclosure(false);
+    const [editName, setEditName]     = useState("");
+    const [editDesc, setEditDesc]     = useState("");
+    const [editStatus, setEditStatus] = useState("");
+    const [editSystem, setEditSystem] = useState("");
+
     async function load() {
-        const [cRes, sRes, pcRes, wRes, encRes, memRes, compRes] = await Promise.all([
+        const [cRes, sRes, pcRes, wRes, encRes, memRes, compRes, mapsRes] = await Promise.all([
             client.models.Campaign.get({ id: campaignId }),
             client.models.CampaignSession.list(),
             client.models.PlayerCharacter.list(),
@@ -133,35 +222,31 @@ export default function CampaignPage() {
             client.models.Encounter.list(),
             client.models.CampaignMember.list(),
             client.models.Companion.list(),
+            client.models.WorldMap.list(),
         ]);
         const camp = cRes.data;
         setCampaign(camp);
         setCombatSettings(parseSettings(camp?.settingsJson));
-        setSessions(
-            (sRes.data ?? [])
-                .filter(s => s.campaignId === campaignId)
-                .sort((a, b) => (a.sessionNumber ?? 0) - (b.sessionNumber ?? 0))
-        );
+        setSessions((sRes.data ?? []).filter(s => s.campaignId === campaignId)
+            .sort((a, b) => (a.sessionNumber ?? 0) - (b.sessionNumber ?? 0)));
         setChars((pcRes.data ?? []).filter(pc => pc.campaignId === campaignId));
         setEncounters((encRes.data ?? []).filter(e => e.campaignId === campaignId));
         setMembers((memRes.data ?? []).filter(m => m.campaignId === campaignId));
         setCompanions((compRes.data ?? []).filter(c => c.campaignId === campaignId));
         if (camp) {
-            setWorlds((wRes.data ?? []).filter(w => (camp.worldIds ?? []).includes(w.id)));
+            const wIds = (camp.worldIds ?? []).filter((id): id is string => !!id);
+            setWorlds((wRes.data ?? []).filter(w => wIds.includes(w.id)));
+            setWorldMaps((mapsRes.data ?? []).filter(m => wIds.includes(m.worldId)));
         }
         setLoading(false);
     }
 
     async function generateInvite(role: "player" | "gm") {
         const { data } = await client.models.CampaignInvite.create({
-            campaignId,
-            role,
+            campaignId, role,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         });
-        if (data) {
-            const link = `${window.location.origin}/tabletop/join?code=${data.id}`;
-            setInviteLink(link);
-        }
+        if (data) setInviteLink(`${window.location.origin}/tabletop/join?code=${data.id}`);
     }
 
     async function copyInvite() {
@@ -175,569 +260,422 @@ export default function CampaignPage() {
     async function confirmDeleteSession() {
         if (!deleteSession) return;
         await client.models.CampaignSession.delete({ id: deleteSession });
-        setDelSess(null);
-        load();
+        setDelSess(null); load();
     }
-
     async function confirmDeleteChar() {
         if (!deleteChar) return;
         await client.models.PlayerCharacter.delete({ id: deleteChar });
-        setDelChar(null);
-        load();
+        setDelChar(null); load();
     }
-
     async function confirmDeleteEnc() {
         if (!deleteEnc) return;
         await client.models.Encounter.delete({ id: deleteEnc });
-        setDelEnc(null);
-        load();
+        setDelEnc(null); load();
     }
-
     async function createEncounter() {
         setCreatingEnc(true);
-        const res = await client.models.Encounter.create({
-            campaignId,
-            name: "New Encounter",
-            status: "planned",
-        });
-        if (res.data?.id) {
-            router.push(`/tabletop/campaigns/${campaignId}/encounters/${res.data.id}`);
-        }
+        const res = await client.models.Encounter.create({ campaignId, name: "New Encounter", status: "planned" });
+        if (res.data?.id) router.push(`/tabletop/campaigns/${campaignId}/encounters/${res.data.id}`);
         setCreatingEnc(false);
     }
-
-    function openEdit() {
-        setEditName(campaign?.name ?? "");
-        setEditDesc(campaign?.description ?? "");
-        setEditStatus(campaign?.status ?? "");
-        setEditSystem(campaign?.system ?? "");
-        setEditOpen(true);
-    }
-
     async function saveCampaignEdit() {
         if (!editName.trim()) return;
         await client.models.Campaign.update({
-            id: campaignId,
-            name: editName.trim(),
-            description: editDesc || undefined,
-            status: editStatus || undefined,
-            system: editSystem || undefined,
+            id: campaignId, name: editName.trim(),
+            description: editDesc || undefined, status: editStatus || undefined, system: editSystem || undefined,
         });
-        setCampaign(prev => prev ? {
-            ...prev,
-            name: editName.trim(),
-            description: editDesc || null,
-            status: editStatus || null,
-            system: editSystem || null,
-        } : prev);
-        setEditOpen(false);
+        setCampaign(prev => prev ? { ...prev, name: editName.trim(), description: editDesc || null,
+            status: editStatus || null, system: editSystem || null } : prev);
+        closeEdit();
     }
-
     async function saveSettings(s: CombatSettings) {
         setCombatSettings(s);
         await client.models.Campaign.update({ id: campaignId, settingsJson: JSON.stringify(s) });
-        setSettingsOpen(false);
+        closeSettings();
     }
 
+    const dashboardHref = campaign?.system === "Cypher System"
+        ? `/tabletop/campaigns/${campaignId}/gm-dashboard`
+        : `/tabletop/campaigns/${campaignId}/dnd-dashboard`;
+
     if (loading) return (
-        <Box sx={{ display: "flex", justifyContent: "center", pt: 12 }}>
-            <CircularProgress sx={{ color: "primary.main" }} />
-        </Box>
+        <Center mih="100vh" style={{ background: T.pageBg }}>
+            <Loader style={{ color: T.accent }} />
+        </Center>
     );
-
     if (!campaign) return (
-        <Box sx={{ textAlign: "center", pt: 12 }}>
-            <Typography color="error">Campaign not found.</Typography>
-            <Button component={Link} href="/tabletop/campaigns" sx={{ mt: 2 }}>Back to Campaigns</Button>
-        </Box>
+        <Center mih="100vh" style={{ background: T.pageBg }}>
+            <Text c="red">Campaign not found.</Text>
+        </Center>
     );
-
-    const statusColor: Record<string, string> = {
-        Active: "#15803d", Paused: "#b45309", Completed: "#1d4ed8", Planning: "#7e22ce",
-    };
 
     return (
-        <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
-            <Container maxWidth="md">
-                <Button component={Link} href="/tabletop/campaigns" startIcon={<ArrowLeft size={16} />}
-                    sx={{ mb: 4, color: "primary.main" }}>
+        <Box mih="100vh" py="xl" style={{ background: T.pageBg }}>
+            <Box maw={900} mx="auto" px="md">
+                <Button component={Link} href="/tabletop/campaigns" variant="subtle" size="sm" mb="xl"
+                    leftSection={<ArrowLeft size={14} />} style={{ color: T.accent }}>
                     My Campaigns
                 </Button>
 
-                {/* Header */}
-                <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: 1 }}>
-                    <Box sx={{ flex: 1 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                            <ScrollText size={28} color="#8C5A3A" />
-                            <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "primary.dark" }}>
+                {/* Hero header */}
+                <Paper p="xl" radius="lg" mb="xl" style={{
+                    background: `linear-gradient(135deg, ${T.cardBg}, #1e0c04)`,
+                    border: `1px solid ${T.deepBorder}`,
+                    boxShadow: `0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 ${T.deepBorder}`,
+                }}>
+                    <Group justify="space-between" align="flex-start" wrap="nowrap">
+                        <Box>
+                            <Title order={1}
+                                style={{ color: T.heading, lineHeight: 1.1, textShadow: `0 2px 16px ${T.heading}44` }}>
                                 {campaign.name}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ display: "flex", gap: 1, ml: 6, mt: 0.5, flexWrap: "wrap", alignItems: "center" }}>
-                            {campaign.status && (
-                                <Chip label={campaign.status} size="small"
-                                    sx={{ backgroundColor: statusColor[campaign.status] ?? "#555", color: "#fff" }} />
+                            </Title>
+                            <Group gap="sm" mt="xs" wrap="wrap">
+                                {campaign.status && (
+                                    <Badge size="sm"
+                                        style={{ background: `${STATUS_COLOR[campaign.status] ?? "#555"}22`,
+                                            color: STATUS_COLOR[campaign.status] ?? T.amber,
+                                            border: `1px solid ${STATUS_COLOR[campaign.status] ?? T.border}44` }}>
+                                        {campaign.status}
+                                    </Badge>
+                                )}
+                                {campaign.system && (
+                                    <Text size="xs" tt="uppercase" fw={600}
+                                        style={{ letterSpacing: 2, color: T.dimmed }}>
+                                        {campaign.system}
+                                    </Text>
+                                )}
+                                {worlds.map(w => (
+                                    <Anchor key={w.id} component={Link}
+                                        href={`/tabletop/worlds/${w.id}`} size="xs" style={{ color: T.accent }}>
+                                        🌍 {w.name}
+                                    </Anchor>
+                                ))}
+                            </Group>
+                            {campaign.description && (
+                                <Text size="sm" mt="sm" maw={480} style={{ color: T.amber }}>
+                                    {campaign.description}
+                                </Text>
                             )}
-                            {campaign.system && (
-                                <Typography variant="caption" sx={{ color: "text.secondary", textTransform: "uppercase", letterSpacing: 1 }}>
-                                    {campaign.system}
-                                </Typography>
-                            )}
                         </Box>
-                    </Box>
-                    <Box sx={{ display: "flex", gap: 0.5 }}>
-                        <Tooltip title="Edit campaign details">
-                            <IconButton onClick={openEdit} sx={{ color: "primary.main", mt: 0.5 }}>
-                                <Pencil size={18} />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Combat automation settings">
-                            <IconButton onClick={() => setSettingsOpen(true)} sx={{ color: "text.secondary", mt: 0.5 }}>
-                                <Settings size={18} />
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                </Box>
+                        <Group gap={4} style={{ flexShrink: 0 }}>
+                            <Tooltip label="Edit campaign">
+                                <ActionIcon variant="subtle" size="lg" style={{ color: T.amber }}
+                                    onClick={() => {
+                                        setEditName(campaign.name);
+                                        setEditDesc(campaign.description ?? "");
+                                        setEditStatus(campaign.status ?? "");
+                                        setEditSystem(campaign.system ?? "");
+                                        openEdit();
+                                    }}>
+                                    <Pencil size={16} />
+                                </ActionIcon>
+                            </Tooltip>
+                            <Tooltip label="Combat settings">
+                                <ActionIcon variant="subtle" size="lg" style={{ color: T.amber }} onClick={openSettings}>
+                                    <Settings size={16} />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Group>
+                    </Group>
+                </Paper>
 
-                {campaign.description && (
-                    <Typography variant="body1" sx={{ color: "text.secondary", mb: 2, ml: 6 }}>
-                        {campaign.description}
-                    </Typography>
-                )}
+                {/* Active tools */}
+                <SimpleGrid cols={{ base: 2, sm: campaign.system ? 4 : 3 }} spacing="sm" mb="xl">
+                    {campaign.system && <ToolCard icon={Shield} label="GM Dashboard" href={dashboardHref} />}
+                    <ToolCard icon={LayoutGrid} label="Virtual Table" href={`/tabletop/campaigns/${campaignId}/vtt`} />
+                    <ToolCard icon={BookMarked} label="Chronicle" href={`/tabletop/campaigns/${campaignId}/timeline`} />
+                    <ToolCard icon={CalendarDays} label="Calendar" href={`/tabletop/campaigns/${campaignId}/calendar`} />
+                </SimpleGrid>
 
-                {/* Linked worlds */}
-                {worlds.length > 0 && (
-                    <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", ml: 6, mb: 3 }}>
-                        {worlds.map(w => (
-                            <Chip
-                                key={w.id} label={w.name} size="small" clickable
-                                component={Link} href={`/tabletop/worlds/${w.id}`}
-                                icon={<BookOpen size={12} />}
-                            />
-                        ))}
-                    </Box>
-                )}
-
-                <Box sx={{ display: "flex", gap: 1, ml: 6, mb: 3 }}>
-                    <Button
-                        component={Link}
-                        href={`/tabletop/campaigns/${campaignId}/vtt`}
-                        variant="outlined"
-                        size="small"
-                        startIcon={<LayoutGrid size={14} />}
-                        sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
-                    >
-                        Virtual Table
-                    </Button>
-                    {campaign.system === "Cypher System" && (
-                        <Button
-                            component={Link}
-                            href={`/tabletop/campaigns/${campaignId}/gm-dashboard`}
-                            variant="outlined"
-                            size="small"
-                            startIcon={<Shield size={14} />}
-                            sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
-                        >
-                            GM Dashboard
-                        </Button>
-                    )}
-                    {(campaign.system === "D&D 5e" || campaign.system === "D&D 5.5e (2024)") && (
-                        <Button
-                            component={Link}
-                            href={`/tabletop/campaigns/${campaignId}/dnd-dashboard`}
-                            variant="outlined"
-                            size="small"
-                            startIcon={<Shield size={14} />}
-                            sx={{ borderColor: "primary.light", color: "primary.main", fontSize: "0.78rem" }}
-                        >
-                            GM Dashboard
-                        </Button>
-                    )}
-                </Box>
-
-                <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"
-                    sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}>
-                    <Tab label={`Sessions (${sessions.length})`} icon={<CalendarDays size={16} />} iconPosition="start" />
-                    <Tab label={`Characters (${characters.length})`} icon={<Users size={16} />} iconPosition="start" />
-                    <Tab label={`Encounters (${encounters.length})`} icon={<Swords size={16} />} iconPosition="start" />
-                    <Tab label={`Members (${members.length})`} icon={<UserPlus size={16} />} iconPosition="start" />
-                    <Tab label="NPCs" icon={<Users size={16} />} iconPosition="start" />
-                    <Tab label="Quests" icon={<ScrollText size={16} />} iconPosition="start" />
-                    <Tab label="Factions" icon={<Shield size={16} />} iconPosition="start" />
-                </Tabs>
-
-                {/* ── Sessions tab ── */}
-                {tab === 0 && (
+                {/* Maps */}
+                {worldMaps.length > 0 && (
                     <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                            <Button variant="contained" startIcon={<Plus size={16} />}
-                                component={Link} href={`/tabletop/campaigns/${campaignId}/sessions/new`}
-                                sx={{ backgroundColor: "primary.main", whiteSpace: "nowrap" }}>
-                                New Session
-                            </Button>
-                        </Box>
+                        <SectionHeader icon={Map} label="Maps" />
+                        <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm" mb="xl">
+                            {worldMaps.map(m => (
+                                <Anchor key={m.id} component={Link}
+                                    href={`/tabletop/worlds/${m.worldId}/maps/${m.id}?campaign=${campaignId}`}
+                                    underline="never">
+                                    <Paper p="sm" radius="sm" style={{ background: T.cardBg, border: `1px solid ${T.border}` }}>
+                                        <Group gap="xs" wrap="nowrap">
+                                            <Map size={14} style={{ color: T.accent }} />
+                                            <Text size="sm" fw={600} style={{ color: T.cream, flex: 1 }} lineClamp={1}>{m.name}</Text>
+                                            <ChevronRight size={12} style={{ color: T.dimmed }} />
+                                        </Group>
+                                    </Paper>
+                                </Anchor>
+                            ))}
+                        </SimpleGrid>
+                    </>
+                )}
 
-                        {sessions.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <CalendarDays size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No sessions yet. Add your first session to get started.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                {sessions.map(s => (
-                                    <Card key={s.id} sx={{ borderLeft: "3px solid", borderColor: "primary.light" }}>
-                                        <Box sx={{ display: "flex", alignItems: "stretch" }}>
-                                            <CardActionArea component={Link}
-                                                href={`/tabletop/campaigns/${campaignId}/sessions/${s.id}`} sx={{ flex: 1 }}>
-                                                <CardContent sx={{ py: 1.5 }}>
-                                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                                        <Typography variant="subtitle2" sx={{ color: "text.secondary", minWidth: 28 }}>
-                                                            #{s.sessionNumber ?? "?"}
-                                                        </Typography>
-                                                        <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", fontSize: "1rem" }}>
-                                                            {s.title || "Untitled Session"}
-                                                        </Typography>
-                                                        {s.date && (
-                                                            <Typography variant="caption" sx={{ color: "text.secondary", ml: "auto" }}>
-                                                                {s.date}
-                                                            </Typography>
-                                                        )}
-                                                    </Box>
+                {/* Story & History — Sessions */}
+                <SectionHeader icon={CalendarDays} label="Story & History"
+                    actions={isGM && (
+                        <Button component={Link} href={`/tabletop/campaigns/${campaignId}/sessions/new`}
+                            size="xs" leftSection={<Plus size={12} />}
+                            style={{ background: T.accent, color: T.pageBg }}>
+                            New Session
+                        </Button>
+                    )} />
+
+                {sessions.length === 0 ? (
+                    <Text size="sm" ta="center" py="xl" style={{ color: T.dimmed }}>No sessions yet.</Text>
+                ) : (
+                    <Stack gap="xs" mb="xl">
+                        {sessions.map(s => (
+                            <Paper key={s.id} radius="sm" style={{
+                                background: T.cardBg, border: `1px solid ${T.border}`,
+                                borderLeft: `4px solid ${T.accent}`, overflow: "hidden",
+                            }}>
+                                <Group wrap="nowrap">
+                                    <Anchor component={Link}
+                                        href={`/tabletop/campaigns/${campaignId}/sessions/${s.id}`}
+                                        underline="never" style={{ flex: 1, minWidth: 0 }}>
+                                        <Box p="sm">
+                                            <Group gap="sm" wrap="nowrap">
+                                                <Text size="xs" style={{ color: T.dimmed, minWidth: 28, textAlign: "center" }}>
+                                                    #{s.sessionNumber ?? "?"}
+                                                </Text>
+                                                <Box style={{ flex: 1, minWidth: 0 }}>
+                                                    <Text fw={600} size="sm" style={{ color: T.cream }} lineClamp={1}>
+                                                        {s.title || "Untitled Session"}
+                                                    </Text>
                                                     {s.prepNotes && (
-                                                        <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5,
-                                                            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                        <Text size="xs" style={{ color: T.dimmed }} lineClamp={1}>
                                                             {s.prepNotes.slice(0, 120)}
-                                                        </Typography>
+                                                        </Text>
                                                     )}
-                                                </CardContent>
-                                            </CardActionArea>
-                                            <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
-                                                <Tooltip title="Delete session">
-                                                    <IconButton size="small" color="error" onClick={() => setDelSess(s.id)}>
-                                                        <Trash2 size={14} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
+                                                </Box>
+                                                {s.date && <Text size="xs" style={{ color: T.dimmed, flexShrink: 0 }}>{s.date}</Text>}
+                                            </Group>
                                         </Box>
-                                    </Card>
-                                ))}
-                            </Box>
-                        )}
-                    </>
+                                    </Anchor>
+                                    {isGM && (
+                                        <Box pr="xs">
+                                            <Tooltip label="Delete session">
+                                                <ActionIcon variant="subtle" color="red" size="sm"
+                                                    onClick={() => setDelSess(s.id)}>
+                                                    <Trash2 size={13} />
+                                                </ActionIcon>
+                                            </Tooltip>
+                                        </Box>
+                                    )}
+                                </Group>
+                            </Paper>
+                        ))}
+                    </Stack>
                 )}
 
-                {/* ── Characters tab ── */}
-                {tab === 1 && (
-                    <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                            <Button variant="contained" startIcon={<Plus size={16} />}
-                                component={Link} href={`/tabletop/campaigns/${campaignId}/characters/new`}
-                                sx={{ backgroundColor: "primary.main", whiteSpace: "nowrap" }}>
-                                Add Character
-                            </Button>
-                        </Box>
-
-                        {characters.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <Users size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No characters yet. Add player characters for this campaign.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                {characters.map(pc => (
-                                    <Card key={pc.id} sx={{ borderLeft: "3px solid", borderColor: "secondary.main" }}>
-                                        <Box sx={{ display: "flex", alignItems: "stretch" }}>
-                                            <CardActionArea component={Link}
-                                                href={`/tabletop/campaigns/${campaignId}/characters/${pc.id}`} sx={{ flex: 1 }}>
-                                                <CardContent sx={{ py: 1.5 }}>
-                                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                                        <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", fontSize: "1rem" }}>
-                                                            {pc.characterName}
-                                                        </Typography>
-                                                        {totalLevel(pc) && (
-                                                            <Chip label={`Lv ${totalLevel(pc)}`} size="small"
-                                                                sx={{ height: 18, fontSize: "0.65rem" }} />
-                                                        )}
-                                                    </Box>
-                                                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                                                        {[pc.race, parseClasses(pc)].filter(Boolean).join(" · ")}
-                                                        {pc.playerName ? ` — played by ${pc.playerName}` : ""}
-                                                    </Typography>
-                                                </CardContent>
-                                            </CardActionArea>
-                                            <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
-                                                <Tooltip title="Delete character">
-                                                    <IconButton size="small" color="error" onClick={() => setDelChar(pc.id)}>
-                                                        <Trash2 size={14} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
-                                        </Box>
-                                        {companions.filter(c => c.characterId === pc.id).map(c => (
-                                            <Box key={c.id} sx={{ display: "flex", alignItems: "center", gap: 1, px: 2, py: 0.75,
-                                                borderTop: 1, borderColor: "divider", backgroundColor: "action.hover" }}>
-                                                <PawPrint size={12} color="#8C5A3A" />
-                                                <Typography variant="caption" sx={{ color: "text.secondary", fontStyle: "italic" }}>
-                                                    {c.name}{c.companionType ? ` (${c.companionType})` : ""}
-                                                    {c.currentHp != null && c.maxHp != null ? ` — ${c.currentHp}/${c.maxHp} HP` : ""}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Card>
-                                ))}
-                            </Box>
-                        )}
-                    </>
-                )}
-
-                {/* ── Encounters tab ── */}
-                {tab === 2 && (
-                    <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                            <Button variant="contained" startIcon={<Plus size={16} />}
+                {/* Characters & Combat */}
+                <SectionHeader icon={Users} label="Characters & Combat"
+                    actions={isGM && (
+                        <Group gap="xs">
+                            <Button component={Link} href={`/tabletop/campaigns/${campaignId}/characters/new`}
+                                size="xs" variant="subtle" leftSection={<Plus size={12} />}
+                                style={{ color: T.accent }}>Add Character</Button>
+                            <Button size="xs" variant="subtle" leftSection={<Plus size={12} />}
                                 onClick={createEncounter} disabled={creatingEnc}
-                                sx={{ backgroundColor: "primary.main", whiteSpace: "nowrap" }}>
+                                style={{ color: T.accent }}>
                                 {creatingEnc ? "Creating…" : "New Encounter"}
                             </Button>
-                        </Box>
+                            <Button component={Link} href={`/tabletop/campaigns/${campaignId}/initiative`}
+                                size="xs" variant="subtle" leftSection={<ListOrdered size={12} />}
+                                style={{ color: T.accent }}>Initiative</Button>
+                        </Group>
+                    )} />
 
-                        {encounters.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <Swords size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No encounters yet. Build one to plan and run combat!
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                {encounters.map(enc => (
-                                    <Card key={enc.id} sx={{ borderLeft: "3px solid #8C5A3A" }}>
-                                        <Box sx={{ display: "flex", alignItems: "stretch" }}>
-                                            <CardActionArea component={Link}
-                                                href={`/tabletop/campaigns/${campaignId}/encounters/${enc.id}`} sx={{ flex: 1 }}>
-                                                <CardContent sx={{ py: 1.5 }}>
-                                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                                        <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", fontSize: "1rem" }}>
-                                                            {enc.name}
-                                                        </Typography>
-                                                        {enc.status && enc.status !== "planned" && (
-                                                            <Chip label={enc.status} size="small"
-                                                                sx={{ height: 18, fontSize: "0.65rem", textTransform: "capitalize" }} />
+                {(characters.length > 0 || encounters.length > 0) ? (
+                    <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm" mb="xl">
+                        {characters.length > 0 && (
+                            <Stack gap="xs">
+                                {characters.map(pc => (
+                                    <Paper key={pc.id} radius="sm" style={{
+                                        background: T.cardBg, border: `1px solid ${T.border}`,
+                                        borderLeft: `4px solid ${T.heading}`, overflow: "hidden",
+                                    }}>
+                                        <Group wrap="nowrap">
+                                            <Anchor component={Link}
+                                                href={`/tabletop/campaigns/${campaignId}/characters/${pc.id}`}
+                                                underline="never" style={{ flex: 1, minWidth: 0 }}>
+                                                <Box p="sm">
+                                                    <Group gap="xs" mb={2}>
+                                                        <Text fw={700} size="sm" style={{ color: T.cream }}>{pc.characterName}</Text>
+                                                        {totalLevel(pc) && (
+                                                            <Badge size="xs" style={{ background: T.heading, color: T.pageBg, fontWeight: 800 }}>
+                                                                Lv {totalLevel(pc)}
+                                                            </Badge>
                                                         )}
-                                                    </Box>
-                                                    {enc.description && (
-                                                        <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5,
-                                                            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                            {enc.description}
-                                                        </Typography>
-                                                    )}
-                                                </CardContent>
-                                            </CardActionArea>
-                                            <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
-                                                <Tooltip title="Delete encounter">
-                                                    <IconButton size="small" color="error" onClick={() => setDelEnc(enc.id)}>
-                                                        <Trash2 size={14} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
-                                        </Box>
-                                    </Card>
+                                                    </Group>
+                                                    <Text size="xs" style={{ color: T.dimmed }} lineClamp={1}>
+                                                        {[pc.race, parseClasses(pc)].filter(Boolean).join(" · ")}
+                                                        {pc.playerName ? ` — ${pc.playerName}` : ""}
+                                                    </Text>
+                                                    {companions.filter(c => c.characterId === pc.id).map(c => (
+                                                        <Group key={c.id} gap={4} mt={4}>
+                                                            <PawPrint size={11} style={{ color: T.dimmed }} />
+                                                            <Text size="xs" style={{ color: T.dimmed, fontStyle: "italic" }}>
+                                                                {c.name}{c.companionType ? ` (${c.companionType})` : ""}
+                                                                {c.currentHp != null && c.maxHp != null ? ` — ${c.currentHp}/${c.maxHp} HP` : ""}
+                                                            </Text>
+                                                        </Group>
+                                                    ))}
+                                                </Box>
+                                            </Anchor>
+                                            {isGM && (
+                                                <Box pr="xs">
+                                                    <Tooltip label="Delete character">
+                                                        <ActionIcon variant="subtle" color="red" size="sm" onClick={() => setDelChar(pc.id)}>
+                                                            <Trash2 size={13} />
+                                                        </ActionIcon>
+                                                    </Tooltip>
+                                                </Box>
+                                            )}
+                                        </Group>
+                                    </Paper>
                                 ))}
-                            </Box>
+                            </Stack>
                         )}
-                    </>
+                        {encounters.length > 0 && (
+                            <Stack gap="xs">
+                                {encounters.map(enc => (
+                                    <Paper key={enc.id} radius="sm" style={{
+                                        background: T.cardBg, border: `1px solid ${T.border}`,
+                                        borderLeft: `4px solid #c44426`, overflow: "hidden",
+                                    }}>
+                                        <Group wrap="nowrap">
+                                            <Anchor component={Link}
+                                                href={`/tabletop/campaigns/${campaignId}/encounters/${enc.id}`}
+                                                underline="never" style={{ flex: 1, minWidth: 0 }}>
+                                                <Box p="sm">
+                                                    <Group gap="xs">
+                                                        <Text fw={600} size="sm" style={{ color: T.cream }}>{enc.name}</Text>
+                                                        {enc.status && enc.status !== "planned" && (
+                                                            <Badge size="xs" tt="capitalize"
+                                                                style={{ background: `${T.accent}22`, color: T.accent }}>
+                                                                {enc.status}
+                                                            </Badge>
+                                                        )}
+                                                    </Group>
+                                                </Box>
+                                            </Anchor>
+                                            {isGM && (
+                                                <Box pr="xs">
+                                                    <Tooltip label="Delete encounter">
+                                                        <ActionIcon variant="subtle" color="red" size="sm" onClick={() => setDelEnc(enc.id)}>
+                                                            <Trash2 size={13} />
+                                                        </ActionIcon>
+                                                    </Tooltip>
+                                                </Box>
+                                            )}
+                                        </Group>
+                                    </Paper>
+                                ))}
+                            </Stack>
+                        )}
+                    </SimpleGrid>
+                ) : (
+                    <Text size="sm" ta="center" py="lg" mb="xl" style={{ color: T.dimmed }}>No characters or encounters yet.</Text>
                 )}
 
-                {/* ── Members tab ── */}
-                {tab === 3 && (
-                    <>
-                        <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
-                            <Button variant="outlined" startIcon={<UserPlus size={16} />}
-                                onClick={() => generateInvite("player")}>
+                {/* World */}
+                <SectionHeader icon={Globe} label="World" />
+                <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="sm" mb="xl">
+                    <NavCard icon={Users} label="NPCs" desc="Non-player characters" href={`/tabletop/campaigns/${campaignId}/npcs`} />
+                    <NavCard icon={ScrollText} label="Quests" desc="Active & completed" href={`/tabletop/campaigns/${campaignId}/quests`} />
+                    <NavCard icon={Shield} label="Factions" desc="Reputation tracker" href={`/tabletop/campaigns/${campaignId}/factions`} />
+                    <NavCard icon={Gauge} label="Resources" desc="Custom trackers" href={`/tabletop/campaigns/${campaignId}/resources`} />
+                    <NavCard icon={BookOpen} label="Handouts" desc="Share notes & images" href={`/tabletop/campaigns/${campaignId}/handouts`} />
+                </SimpleGrid>
+
+                {/* Campaign — Members */}
+                <SectionHeader icon={UserPlus} label="Campaign"
+                    actions={isGM && (
+                        <Group gap="xs">
+                            <Button size="xs" variant="subtle" leftSection={<UserPlus size={12} />}
+                                style={{ color: T.accent }} onClick={() => generateInvite("player")}>
                                 Invite Player
                             </Button>
-                            <Button variant="outlined" startIcon={<UserPlus size={16} />}
-                                onClick={() => generateInvite("gm")}>
+                            <Button size="xs" variant="subtle" leftSection={<UserPlus size={12} />}
+                                style={{ color: T.accent }} onClick={() => generateInvite("gm")}>
                                 Invite GM
                             </Button>
-                        </Box>
+                        </Group>
+                    )} />
 
-                        {inviteLink && (
-                            <Box sx={{ mb: 3, p: 2, border: 1, borderColor: "primary.light", borderRadius: 2, backgroundColor: "background.paper" }}>
-                                <Typography variant="subtitle2" sx={{ mb: 1, color: "primary.dark" }}>Invite Link (expires in 7 days)</Typography>
-                                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                                    <TextField value={inviteLink} fullWidth size="small" slotProps={{ input: { readOnly: true } }} />
-                                    <Button variant="contained" startIcon={<Copy size={14} />} onClick={copyInvite} sx={{ whiteSpace: "nowrap" }}>
-                                        Copy
-                                    </Button>
-                                </Box>
-                            </Box>
-                        )}
-
-                        {members.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <UserPlus size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    No members yet. Generate an invite link to share with players.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                {members.map(m => (
-                                    <Card key={m.id} sx={{ borderLeft: "3px solid", borderColor: m.role === "gm" ? "warning.main" : "primary.light" }}>
-                                        <CardContent sx={{ py: 1.5, "&:last-child": { pb: 1.5 } }}>
-                                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                                <Typography variant="subtitle2" sx={{ flex: 1, color: "primary.dark" }}>
-                                                    {m.playerName || "Unknown Player"}
-                                                </Typography>
-                                                <Chip
-                                                    label={m.role === "gm" ? "GM" : "Player"}
-                                                    size="small"
-                                                    color={m.role === "gm" ? "warning" : "default"}
-                                                />
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </Box>
-                        )}
-                    </>
+                {inviteLink && (
+                    <Paper p="sm" radius="sm" mb="md"
+                        style={{ background: T.cardBg, border: `1px solid ${T.deepBorder}` }}>
+                        <Text size="xs" style={{ color: T.amber }} mb={6}>Invite link (expires in 7 days)</Text>
+                        <Group gap="sm">
+                            <TextInput value={inviteLink} readOnly size="xs" style={{ flex: 1 }}
+                                styles={{ input: { background: T.pageBg, borderColor: T.border, color: T.cream, fontSize: "0.78rem" } }} />
+                            <Button size="xs" leftSection={<Copy size={12} />} onClick={copyInvite}
+                                style={{ background: T.accent, color: T.pageBg }}>Copy</Button>
+                        </Group>
+                    </Paper>
                 )}
 
-                {/* ── NPCs tab ── */}
-                {tab === 4 && (
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6, gap: 3 }}>
-                        <Users size={48} color="#8C5A3A" />
-                        <Typography variant="h5" sx={{ fontWeight: 600, color: "primary.dark" }}>NPC Tracker</Typography>
-                        <Typography sx={{ color: "text.secondary", textAlign: "center", maxWidth: 400 }}>
-                            Track the non-player characters your party encounters — their roles, locations, motivations, and relationships.
-                        </Typography>
-                        <Button variant="contained" size="large"
-                            component={Link} href={`/tabletop/campaigns/${campaignId}/npcs`}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            Open NPC Tracker
-                        </Button>
-                    </Box>
+                {members.length > 0 && (
+                    <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm" mb="xl">
+                        {members.map(m => (
+                            <Paper key={m.id} p="sm" radius="sm" style={{
+                                background: T.cardBg, border: `1px solid ${T.border}`,
+                                borderLeft: `4px solid ${m.role === "gm" ? T.heading : T.accent}`,
+                            }}>
+                                <Group justify="space-between">
+                                    <Text size="sm" fw={600} style={{ color: T.cream }}>{m.playerName || "—"}</Text>
+                                    <Badge size="xs"
+                                        style={{ background: `${m.role === "gm" ? T.heading : T.accent}22`,
+                                            color: m.role === "gm" ? T.heading : T.accent }}>
+                                        {m.role === "gm" ? "GM" : "Player"}
+                                    </Badge>
+                                </Group>
+                            </Paper>
+                        ))}
+                    </SimpleGrid>
                 )}
+            </Box>
 
-                {/* ── Quests tab ── */}
-                {tab === 5 && (
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6, gap: 3 }}>
-                        <ScrollText size={48} color="#8C5A3A" />
-                        <Typography variant="h5" sx={{ fontWeight: 600, color: "primary.dark" }}>Quest Tracker</Typography>
-                        <Typography sx={{ color: "text.secondary", textAlign: "center", maxWidth: 400 }}>
-                            Manage active quests, objectives, rewards, and completed adventures.
-                        </Typography>
-                        <Button variant="contained" size="large"
-                            component={Link} href={`/tabletop/campaigns/${campaignId}/quests`}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            Open Quest Tracker
-                        </Button>
-                    </Box>
-                )}
+            {/* ── Dialogs ── */}
+            <ConfirmModal opened={!!deleteSession} onClose={() => setDelSess(null)} onConfirm={confirmDeleteSession} title="Delete Session?" />
+            <ConfirmModal opened={!!deleteChar} onClose={() => setDelChar(null)} onConfirm={confirmDeleteChar} title="Delete Character?" />
+            <ConfirmModal opened={!!deleteEnc} onClose={() => setDelEnc(null)} onConfirm={confirmDeleteEnc} title="Delete Encounter?" />
 
-                {/* ── Factions tab ── */}
-                {tab === 6 && (
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6, gap: 3 }}>
-                        <Shield size={48} color="#8C5A3A" />
-                        <Typography variant="h5" sx={{ fontWeight: 600, color: "primary.dark" }}>Faction Tracker</Typography>
-                        <Typography sx={{ color: "text.secondary", textAlign: "center", maxWidth: 400 }}>
-                            Track factions and organizations, and the party's reputation with each.
-                        </Typography>
-                        <Button variant="contained" size="large"
-                            component={Link} href={`/tabletop/campaigns/${campaignId}/factions`}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            Open Faction Tracker
-                        </Button>
-                    </Box>
-                )}
+            {/* Edit campaign modal */}
+            <Modal opened={editOpen} onClose={closeEdit} title="Edit Campaign"
+                styles={{ content: { background: T.cardBg, border: `1px solid ${T.border}` },
+                          header: { background: T.cardBg }, title: { color: T.cream } }}>
+                <Stack gap="sm">
+                    <TextInput label="Campaign Name" required autoFocus value={editName}
+                        onChange={e => setEditName(e.target.value)}
+                        styles={{ input: { background: T.pageBg, borderColor: T.border, color: T.cream }, label: { color: T.amber } }} />
+                    <TextInput label="Description" value={editDesc}
+                        onChange={e => setEditDesc(e.target.value)}
+                        styles={{ input: { background: T.pageBg, borderColor: T.border, color: T.cream }, label: { color: T.amber } }} />
+                    <SimpleGrid cols={2} spacing="sm">
+                        <Select label="Status" value={editStatus || null} onChange={v => setEditStatus(v ?? "")}
+                            clearable data={["Planning","Active","Paused","Completed"]}
+                            styles={{ input: { background: T.pageBg, borderColor: T.border, color: T.cream }, label: { color: T.amber } }} />
+                        <TextInput label="System" value={editSystem} onChange={e => setEditSystem(e.target.value)}
+                            placeholder="e.g. D&D 5e"
+                            styles={{ input: { background: T.pageBg, borderColor: T.border, color: T.cream }, label: { color: T.amber } }} />
+                    </SimpleGrid>
+                    <Group justify="flex-end" gap="sm" mt="sm">
+                        <Button variant="subtle" style={{ color: T.dimmed }} onClick={closeEdit}>Cancel</Button>
+                        <Button disabled={!editName.trim()} onClick={saveCampaignEdit}
+                            style={{ background: T.accent, color: T.pageBg }}>Save</Button>
+                    </Group>
+                </Stack>
+            </Modal>
 
-                {/* Combat settings dialog */}
-                <CombatSettingsDialog
-                    open={settingsOpen}
-                    value={combatSettings}
-                    title="Campaign Combat Settings"
-                    subtitle="These are the defaults for all encounters in this campaign. Individual encounters can override them."
-                    onClose={() => setSettingsOpen(false)}
-                    onSave={saveSettings}
-                />
+            {/* Combat Settings Dialog (MUI, deferred from migration) */}
+            <CombatSettingsDialog
+                open={settingsOpen} value={combatSettings} onClose={closeSettings} onSave={saveSettings}
+                title="Campaign Combat Settings"
+                subtitle="Defaults for all encounters in this campaign. Individual encounters can override." />
 
-                {/* Campaign edit dialog */}
-                <Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth="sm" fullWidth>
-                    <DialogTitle>Edit Campaign</DialogTitle>
-                    <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: "16px !important" }}>
-                        <TextField
-                            label="Campaign Name" value={editName} autoFocus fullWidth
-                            onChange={e => setEditName(e.target.value)}
-                            onKeyDown={e => { if (e.key === "Enter") saveCampaignEdit(); }}
-                        />
-                        <TextField
-                            label="Description" value={editDesc} fullWidth multiline minRows={3}
-                            onChange={e => setEditDesc(e.target.value)}
-                            placeholder="What is this campaign about?"
-                        />
-                        <Box sx={{ display: "flex", gap: 2 }}>
-                            <FormControl size="small" sx={{ flex: 1 }}>
-                                <InputLabel>Status</InputLabel>
-                                <Select value={editStatus} label="Status" onChange={e => setEditStatus(e.target.value)}>
-                                    <MenuItem value="">None</MenuItem>
-                                    <MenuItem value="Planning">Planning</MenuItem>
-                                    <MenuItem value="Active">Active</MenuItem>
-                                    <MenuItem value="Paused">Paused</MenuItem>
-                                    <MenuItem value="Completed">Completed</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <TextField
-                                label="System" value={editSystem} size="small" sx={{ flex: 1 }}
-                                onChange={e => setEditSystem(e.target.value)}
-                                placeholder="e.g. D&D 5e, Pathfinder 2e"
-                            />
-                        </Box>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setEditOpen(false)}>Cancel</Button>
-                        <Button variant="contained" onClick={saveCampaignEdit} disabled={!editName.trim()}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            Save
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
-                {/* Delete session confirmation */}
-                <Dialog open={!!deleteSession} onClose={() => setDelSess(null)}>
-                    <DialogTitle>Delete Session?</DialogTitle>
-                    <DialogContent><Typography>This cannot be undone.</Typography></DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setDelSess(null)}>Cancel</Button>
-                        <Button color="error" variant="contained" onClick={confirmDeleteSession}>Delete</Button>
-                    </DialogActions>
-                </Dialog>
-
-                {/* Delete character confirmation */}
-                <Dialog open={!!deleteChar} onClose={() => setDelChar(null)}>
-                    <DialogTitle>Delete Character?</DialogTitle>
-                    <DialogContent><Typography>This cannot be undone.</Typography></DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setDelChar(null)}>Cancel</Button>
-                        <Button color="error" variant="contained" onClick={confirmDeleteChar}>Delete</Button>
-                    </DialogActions>
-                </Dialog>
-
-                {/* Delete encounter confirmation */}
-                <Dialog open={!!deleteEnc} onClose={() => setDelEnc(null)}>
-                    <DialogTitle>Delete Encounter?</DialogTitle>
-                    <DialogContent><Typography>This cannot be undone.</Typography></DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setDelEnc(null)}>Cancel</Button>
-                        <Button color="error" variant="contained" onClick={confirmDeleteEnc}>Delete</Button>
-                    </DialogActions>
-                </Dialog>
-            </Container>
-
+            {/* Copied snackbar (MUI) */}
             <Snackbar open={copiedSnack} autoHideDuration={3000} onClose={() => setCopiedSnack(false)}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
                 <Alert severity="success" onClose={() => setCopiedSnack(false)}>Invite link copied!</Alert>

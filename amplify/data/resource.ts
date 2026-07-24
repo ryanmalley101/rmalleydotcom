@@ -97,7 +97,8 @@ const Campaign = a.model({
   // identity-claim format. Unset on campaigns created before this field
   // existed — treated as permissive (everyone is GM-equivalent) rather than
   // locking the real creator out; see useCampaignRole.ts.
-  gmUserId:     a.string(),
+  gmUserId:       a.string(),
+  initiativeJson: a.string(), // JSON: serialized campaign initiative tracker state
 }).authorization(allow => [allow.owner()]);
 
 const WikiArticle = a.model({
@@ -148,6 +149,7 @@ const CampaignSession = a.model({
   sessionNotes:  a.string(),
   playerSummary: a.string(), // player-facing recap visible to all members
   articleIds:    a.string().array(),
+  imageKeys:     a.string().array(), // Amplify Storage S3 keys for attached images (maps, handouts, etc.)
 }).authorization(allow => [allow.owner()]);
 
 const PlayerCharacter = a.model({
@@ -236,6 +238,10 @@ const PlayerCharacter = a.model({
   equipment:      a.string(),
   features:       a.string(),
   spells:         a.string(),
+// allow.authenticated() (not allow.owner()) is intentional: the GM dashboard's
+// damage/heal controls write to player-owned PlayerCharacter records directly.
+// Tightening this requires a campaign-membership check that isn't feasible with
+// simple Amplify auth rules — needs a custom resolver or Lambda authorizer.
 }).authorization(allow => [allow.authenticated()]);
 
 // Companion/pet — linked to a PC, visible to all authenticated users (GM can see)
@@ -303,6 +309,82 @@ const TodoItem = a.model({
   priority:    a.string(), // 'low' | 'medium' | 'high'
   dueDate:     a.string(),
 }).authorization(allow => [allow.owner()]);
+
+// ── Player handouts ──────────────────────────────────────────────────────────
+
+// GM-created handouts (text + images) that can be published for anyone with
+// the share link — including players who don't have an account. When isPublic
+// is true the content is also written to S3 at handouts/{publicToken}/content.json
+// with guest-read access, so the public /handout/[token] route can serve it
+// without any Amplify auth.
+const Handout = a.model({
+  campaignId:  a.string().required(),
+  title:       a.string().required(),
+  content:     a.string(),            // optional markdown
+  imageKeys:   a.string().array(),    // S3 keys under handouts/{publicToken}/
+  publicToken: a.string(),            // UUID for the public share URL
+  isPublic:    a.boolean(),           // false = draft
+  sessionId:   a.string(),            // optional link to a CampaignSession
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// ── Campaign resources ────────────────────────────────────────────────────────
+
+// Freeform GM-defined trackers — anything the table wants to track that doesn't
+// fit an existing model (food/water, reputation with a city, morale, corruption,
+// etc.). maxValue is optional; when set the UI shows a progress bar.
+const CampaignResource = a.model({
+  campaignId:  a.string().required(),
+  name:        a.string().required(), // "Party Food Supply", "Reputation with Merchants"
+  description: a.string(),
+  value:       a.float().required(),
+  maxValue:    a.float(), // optional — enables progress bar
+  unit:        a.string(), // display label after the number: "days", "gold", "points"
+  color:       a.string(), // hex accent color for the card border
+  sortOrder:   a.integer(),
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// ── Campaign calendar ─────────────────────────────────────────────────────────
+
+// One per campaign. Defines the world's calendar structure — month names and
+// lengths, weekday names, and an optional "current day" counter the GM advances
+// as the campaign progresses. All structure is stored as JSON escape valves so
+// GMs can freely rename months or adjust day counts without a schema migration.
+const CampaignCalendar = a.model({
+  campaignId:       a.string().required(),
+  monthsJson:       a.string(), // JSON: [{name: string, days: number}]
+  weekdayNamesJson: a.string(), // JSON: string[] — length is days-per-week
+  currentDay:       a.integer(), // current absolute in-world day (1-indexed), optional
+  epochName:        a.string(), // optional era label shown in header, e.g. "Year of Rising"
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// Day-by-day campaign notes keyed by absolute day number (1 = first day of
+// in-world time, 2 = second, etc.). The display date is always derived
+// client-side from the CalendarConfig, so renaming months never breaks entries.
+const DailyNote = a.model({
+  campaignId:  a.string().required(),
+  dayNumber:   a.integer().required(), // absolute 1-indexed in-world day
+  title:       a.string(),
+  notes:       a.string(),
+  articleIds:  a.string().array(), // linked WikiArticle IDs
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
+
+// ── Campaign timeline ─────────────────────────────────────────────────────────
+
+// A single narrative event on the campaign's timeline. Sessions contribute
+// automatically as anchors; custom events (battles, deaths, revelations, etc.)
+// sit between them. Chronological order is driven by realDate (ISO string) so
+// campaigns without strict real-world scheduling can still sort consistently.
+const TimelineEvent = a.model({
+  campaignId:       a.string().required(),
+  title:            a.string().required(),
+  description:      a.string(),
+  eventType:        a.string(), // 'battle'|'revelation'|'death'|'alliance'|'quest'|'milestone'|'other'
+  realDate:         a.string(), // ISO "2024-06-15" — primary sort key
+  inWorldDate:      a.string(), // free-text "Kythorn 15, 1492 DR" — display only
+  articleIds:       a.string().array(), // linked WikiArticle IDs
+  sessionId:        a.string(), // optional link to a CampaignSession
+  visibleToPlayers: a.boolean(), // false = GM-only; default treated as true by client
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read'])]);
 
 // ── Photo gallery ────────────────────────────────────────────────────────────
 
@@ -393,7 +475,7 @@ const ChatMessage = a.model({
   rollTotal:         a.string(),
   rollBreakdownJson: a.string(), // full dice breakdown, for an expandable "show the dice" detail
   whisperToIds:      a.string().array(), // empty/unset = public
-}).authorization(allow => [allow.authenticated()]);
+}).authorization(allow => [allow.owner(), allow.authenticated().to(['read', 'create'])]);
 
 const CampaignMember = a.model({
   campaignId: a.string().required(),
@@ -471,6 +553,11 @@ const schema = a.schema({
   Faction,
   Companion,
   TodoItem,
+  CampaignCalendar,
+  DailyNote,
+  Handout,
+  CampaignResource,
+  TimelineEvent,
   SubGallery,
   GalleryPhoto,
   suggestPhotoTags,
@@ -537,7 +624,7 @@ const schema = a.schema({
     mythic_desc: a.string(),
     mythic_actions: a.ref('MonsterAbility').required().array(),
   })
-  .authorization(allow => [allow.authenticated()])
+  .authorization(allow => [allow.owner(), allow.authenticated().to(['read'])])
 });
 
 export const data = defineData({

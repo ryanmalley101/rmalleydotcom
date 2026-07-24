@@ -3,6 +3,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, CheckSquare, Images } from "lucide-react";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 
 const tools = [
     {
@@ -22,6 +23,7 @@ const tools = [
 ];
 
 export default function PersonalPage() {
+    useDocumentTitle("Personal");
     return (
         <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
             <Container maxWidth="md">

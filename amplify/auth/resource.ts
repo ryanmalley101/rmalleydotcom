@@ -1,11 +1,15 @@
 import { defineAuth } from "@aws-amplify/backend";
 
-/**
- * Define and configure your auth resource
- * @see https://docs.amplify.aws/gen2/build-a-backend/auth
- */
+type MfaMode = "OFF" | "OPTIONAL" | "REQUIRED";
+// Override at deploy time: MFA_MODE=OPTIONAL npx ampx sandbox
+const mfaMode: MfaMode = (process.env.MFA_MODE as MfaMode) ?? "REQUIRED";
+
 export const auth = defineAuth({
   loginWith: {
     email: true,
+  },
+  multifactor: {
+    mode: mfaMode,
+    totp: true,
   },
 });

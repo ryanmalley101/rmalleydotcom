@@ -146,7 +146,18 @@
       "Bash(aws budgets *)",
       "Bash(aws dynamodb *)",
       "Bash(xargs grep -l \"ListArgs\\\\|nextToken\")",
-      "Bash(xargs grep -l \"nextToken\")"
+      "Bash(xargs grep -l \"nextToken\")",
+      "Bash(aws cloudformation *)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('amplify_outputs.json'\\)\\); print\\(d.get\\('data',{}\\).get\\('url',''\\)\\); print\\(d.get\\('auth',{}\\).get\\('user_pool_id',''\\)\\); print\\(d.get\\('storage',{}\\).get\\('bucket_name',''\\)\\)\")",
+      "Bash(node -e \"const d=require\\('./amplify_outputs.json'\\); console.log\\(d?.data?.url||''\\); console.log\\(d?.auth?.user_pool_id||''\\); console.log\\(d?.storage?.bucket_name||''\\)\")",
+      "Bash(node -e \"const d=require\\('./amplify_outputs.json'\\); console.log\\(d?.data?.url||d?.custom?.API?.GraphQL?.endpoint||''\\); console.log\\(d?.auth?.user_pool_id||''\\); console.log\\(d?.storage?.bucket_name||''\\)\")",
+      "Bash(npx cdk *)",
+      "Bash(node -e \"const d=require\\('./amplify_outputs.json'\\); console.log\\('AppSync:', d?.data?.url||''\\); console.log\\('UserPool:', d?.auth?.user_pool_id||''\\)\")",
+      "Bash(grep -q \"^$\\\\|---amplify---\\\\|error TS\" \"C:\\\\Users\\\\ryanm\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-ryanm-Workspace-rmalleydotcom-rmalleydotcom\\\\ba1e3606-4637-44aa-bc8f-1c77fd6fd533\\\\tasks\\\\bzx3cqokq.output\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\('storage',{}\\).get\\('bucket_name',''\\)\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('amplify_outputs.json'\\)\\); auth=d.get\\('auth',{}\\); print\\(auth.get\\('identity_pool_id','no-identity-pool'\\)\\); print\\(auth.get\\('unauthenticated_identities_enabled', 'not-set'\\)\\)\")",
+      "Bash(node -e \"const icons = require\\('@tabler/icons-react'\\); const keys = Object.keys\\(icons\\); console.log\\(keys.filter\\(k => k.includes\\('Scroll'\\) || k.includes\\('List'\\) || k.includes\\('Gauge'\\)\\)\\); console.log\\('ls prop:', \\)\")",
+      "Bash(npx tailwindcss *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\ryanm\\Workspace\\rmalleydotcom\\rmalleydotcom\\app\\tabletop\\worlds\\[worldId]",

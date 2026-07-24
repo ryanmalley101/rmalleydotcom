@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/*
+  Scope Tailwind to the preview routes only.
+  The @source paths are relative to this CSS file.
+*/
+@source "../shadcn/**/*.{ts,tsx}";
+@source "../../../../../../components/ui/**/*.{ts,tsx}";
+
+/*
+  Custom theme tokens — Ember Leather dark palette.
+  Tailwind v4 maps @theme variables to utility classes automatically:
+  --color-background → bg-background, text-background, etc.
+*/
+@theme {
+    /* Backgrounds */
+    --color-background:       hsl(20 90% 5%);    /* #1a0d05 */
+    --color-card:             hsl(20 85% 9%);    /* #261508 */
+    --color-muted:            hsl(20 60% 15%);
+
+    /* Text */
+    --color-foreground:       hsl(39 68% 83%);   /* #f0ddb5 cream */
+    --color-card-foreground:  hsl(39 68% 83%);
+    --color-muted-foreground: hsl(30 35% 55%);
+    --color-heading:          hsl(45 78% 63%);   /* #e8c060 gold */
+
+    /* Accent — ember orange */
+    --color-primary:            hsl(23 84% 52%);  /* #ef6b1a */
+    --color-primary-foreground: hsl(20 90% 5%);
+
+    --color-border: hsl(25 60% 22%);
+    --color-ring:   hsl(23 84% 52%);
+
+    /* Typography */
+    --font-body:   "Georgia", "Times New Roman", serif;
+    --font-cinzel: var(--font-cinzel), "Cinzel", Georgia, serif;
+
+    /* Border radius */
+    --radius: 0.5rem;
+}
+
+/*
+  CSS variable aliases for shadcn/ui component files
+  which still reference HSL-based var() syntax.
+*/
+.shadcn-root {
+    --background:       20 90% 5%;
+    --card:             20 85% 9%;
+    --muted:            20 60% 15%;
+    --foreground:       39 68% 83%;
+    --card-foreground:  39 68% 83%;
+    --muted-foreground: 30 35% 55%;
+    --heading:          45 78% 63%;
+    --primary:          23 84% 52%;
+    --primary-foreground: 20 90% 5%;
+    --accent:           23 84% 52%;
+    --accent-foreground: 20 90% 5%;
+    --border:           25 60% 22%;
+    --ring:             23 84% 52%;
+    --radius:           0.5rem;
+}

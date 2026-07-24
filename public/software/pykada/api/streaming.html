@@ -263,8 +263,13 @@ not a standard API key.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseClient</span></code></p>
 <p>Client for interacting with Verkada Footage Streaming.
 This client provides methods to construct HLS playlist URLs for live
-and historical camera streams. Make sure to use specifically Streaming
-API Keys for this client, as regular API keys will not work.</p>
+and historical camera streams.</p>
+<p>The streaming endpoint does not accept the standard <code class="docutils literal notranslate"><span class="pre">x-verkada-auth</span></code>
+session token used by every other client. It requires a short-lived
+JWT fetched separately from the “Get Streaming Token” endpoint
+(<code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/cameras/v1/footage/token</span></code>), passed as the <code class="docutils literal notranslate"><span class="pre">jwt</span></code> query
+parameter on the playlist URL. This client fetches and caches that
+JWT independently of <code class="docutils literal notranslate"><span class="pre">self.request_manager</span></code>’s token.</p>
 <p>Initialize the client with either an API key or a token manager.
 If not key is provided, a default token manager will be used based
 on the environment configuration (VERKADA_API_KEY in a .env file).</p>

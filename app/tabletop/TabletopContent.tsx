@@ -1,10 +1,14 @@
 "use client";
 
-import { Box, Container, Typography, Button } from "@mui/material";
+import {
+    Anchor, Badge, Box, Button, Divider, Group,
+    SimpleGrid, Text, ThemeIcon, Title,
+} from "@mantine/core";
 import Link from "next/link";
 import {
-    ArrowLeft, Dices, Sword, BookOpen, Wand2, Gem, Coins, User,
-    ListOrdered, Calculator, ShieldAlert, Globe, ScrollText, Swords, BookMarked, Atom,
+    Atom, BookMarked, BookOpen, Calculator, Coins,
+    Dices, Gem, Globe, ListOrdered, ScrollText,
+    ShieldAlert, Sword, Swords, User, Wand2,
 } from "lucide-react";
 import type { EncounterTable } from "@/lib/encounterTables";
 
@@ -12,244 +16,180 @@ interface Props {
     encounterTables: Pick<EncounterTable, "name" | "slug" | "entries">[];
 }
 
-// ── Theme ─────────────────────────────────────────────────────────────────────
-
 const T = {
-    crimsonDeep:  "#7f1d1d",
-    crimson:      "#991b1b",
-    crimsonMid:   "#b91c1c",
-    crimsonLight: "#ef4444",
-    goldDeep:     "#78350f",
-    gold:         "#92400e",
-    goldMid:      "#b45309",
-    goldLight:    "#f59e0b",
+    pageBg: "#1a0d05", cardBg: "#261508",
+    border: "rgba(210,140,70,0.22)", divider: "rgba(210,140,70,0.18)",
+    cream: "#f0ddb5", amber: "#d4aa72", dimmed: "#a67c4a",
+    accent: "#ef6b1a", heading: "#e8c060", deepBorder: "rgba(239,107,26,0.3)",
 };
 
-// ── Featured card ─────────────────────────────────────────────────────────────
-
-function FeaturedCard({ icon: Icon, title, description, href, accent, iconColor, badge }: {
-    icon: React.ElementType;
-    title: string;
-    description: string;
-    href: string;
-    accent: string;
-    iconColor: string;
-    badge?: string;
+function FeaturedCard({ icon: Icon, title, description, href, badge }: {
+    icon: React.ElementType; title: string; description: string; href: string; badge?: string;
 }) {
     return (
-        <Box component={Link} href={href} sx={{
-            flex: "1 1 260px",
-            display: "flex", flexDirection: "column",
-            backgroundColor: "background.paper",
-            border: "1px solid rgba(153,27,27,0.25)",
-            borderTop: `3px solid ${accent}`,
-            borderRadius: "0 0 10px 10px",
-            p: 3,
-            textDecoration: "none",
-            transition: "box-shadow 0.15s, background-color 0.15s",
-            "&:hover": {
-                backgroundColor: `${accent}14`,
-                boxShadow: `0 6px 28px ${accent}40`,
-            },
-        }}>
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
-                <Icon size={28} color={iconColor} />
-                {badge && (
-                    <Typography sx={{
-                        fontSize: "0.6rem", fontWeight: 700, letterSpacing: 1.5,
-                        color: accent, border: `1px solid ${accent}55`,
-                        borderRadius: 1, px: 0.75, py: 0.25, textTransform: "uppercase",
-                    }}>
-                        {badge}
-                    </Typography>
-                )}
+        <Anchor component={Link} href={href} underline="never" style={{ flex: "1 1 260px" }}>
+            <Box
+                style={{
+                    background: T.cardBg, border: `1px solid ${T.border}`,
+                    borderTop: `3px solid ${T.accent}`, borderRadius: 10,
+                    padding: "1.25rem", display: "flex", flexDirection: "column", height: "100%",
+                    transition: "box-shadow 0.15s, background 0.15s",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 6px 28px ${T.accent}40`; (e.currentTarget as HTMLElement).style.background = `${T.accent}12`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = ""; (e.currentTarget as HTMLElement).style.background = T.cardBg; }}
+            >
+                <Group justify="space-between" mb="md">
+                    <ThemeIcon size="xl" radius="sm" style={{ background: `${T.accent}22`, color: T.accent }}>
+                        <Icon size={22} />
+                    </ThemeIcon>
+                    {badge && (
+                        <Badge size="xs" style={{ border: `1px solid ${T.accent}55`, background: "transparent", color: T.accent }}>
+                            {badge}
+                        </Badge>
+                    )}
+                </Group>
+                <Text fw={700} size="lg" style={{ color: T.cream }} mb={6}>{title}</Text>
+                <Text size="sm" style={{ color: T.dimmed, lineHeight: 1.6 }}>{description}</Text>
             </Box>
-            <Typography sx={{ fontWeight: 700, fontSize: "1.1rem", color: "text.primary", mb: 1 }}>
-                {title}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
-                {description}
-            </Typography>
-        </Box>
+        </Anchor>
     );
 }
 
-// ── Compact tool card ─────────────────────────────────────────────────────────
-
-function ToolCard({ icon: Icon, title, description, href, accent }: {
-    icon: React.ElementType;
-    title: string;
-    description: string;
-    href: string;
-    accent: string;
+function ToolCard({ icon: Icon, title, description, href }: {
+    icon: React.ElementType; title: string; description: string; href: string;
 }) {
     return (
-        <Box component={Link} href={href} sx={{
-            display: "flex", flexDirection: "column",
-            backgroundColor: "background.paper",
-            border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: 2,
-            p: 2,
-            textDecoration: "none",
-            transition: "border-color 0.15s, box-shadow 0.15s, background-color 0.15s",
-            "&:hover": {
-                borderColor: `${accent}80`,
-                boxShadow: `0 2px 14px ${accent}25`,
-                backgroundColor: `${accent}12`,
-            },
-        }}>
-            <Icon size={18} color={accent} style={{ marginBottom: 8, flexShrink: 0 }} />
-            <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "text.primary", mb: 0.5 }}>
-                {title}
-            </Typography>
-            <Typography variant="caption" sx={{ color: "text.secondary", lineHeight: 1.5 }}>
-                {description}
-            </Typography>
-        </Box>
+        <Anchor component={Link} href={href} underline="never">
+            <Box
+                style={{
+                    background: T.cardBg, border: `1px solid ${T.border}`,
+                    borderRadius: 8, padding: "0.875rem",
+                    transition: "border-color 0.15s, background 0.15s",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = `${T.accent}80`; (e.currentTarget as HTMLElement).style.background = `${T.accent}12`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = T.border; (e.currentTarget as HTMLElement).style.background = T.cardBg; }}
+            >
+                <Icon size={18} style={{ color: T.accent, marginBottom: 8, flexShrink: 0 }} />
+                <Text fw={600} size="sm" style={{ color: T.cream }} mb={4}>{title}</Text>
+                <Text size="xs" style={{ color: T.dimmed, lineHeight: 1.5 }}>{description}</Text>
+            </Box>
+        </Anchor>
     );
 }
 
-// ── Section header ────────────────────────────────────────────────────────────
-
-function SectionHeader({ label, accent }: { label: string; accent: string }) {
+function SectionDivider({ label }: { label: string }) {
     return (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
-            <Typography sx={{
-                fontSize: "0.6rem", fontWeight: 800, letterSpacing: 2.5,
-                color: accent, textTransform: "uppercase", lineHeight: 1, whiteSpace: "nowrap",
-            }}>
-                {label}
-            </Typography>
-            <Box sx={{ flex: 1, height: "1px", backgroundColor: `${accent}40` }} />
-        </Box>
+        <Divider
+            my="lg"
+            labelPosition="left"
+            label={
+                <Text size="xs" fw={800} tt="uppercase" style={{ letterSpacing: 2.5, color: T.accent }}>
+                    {label}
+                </Text>
+            }
+            styles={{ label: { color: T.accent }, root: { borderColor: T.divider } }}
+        />
     );
 }
 
-// ── Game-system banner — groups everything specific to one ruleset ───────────
-
-function SystemHeader({ icon: Icon, label, accent }: { icon: React.ElementType; label: string; accent: string }) {
+function SystemHeader({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
     return (
-        <Box sx={{
-            display: "flex", alignItems: "center", gap: 1.5, mt: 7, mb: 3,
-            pb: 1.5, borderBottom: `2px solid ${accent}55`,
-        }}>
-            <Icon size={24} color={accent} />
-            <Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary" }}>
-                {label}
-            </Typography>
+        <Box
+            mt={56} mb="lg" pb="sm"
+            style={{ borderBottom: `2px solid ${T.deepBorder}`, display: "flex", alignItems: "center", gap: 10 }}
+        >
+            <Icon size={24} style={{ color: T.accent }} />
+            <Title order={3} style={{ color: T.cream, fontFamily: "var(--font-cinzel), serif" }}>{label}</Title>
         </Box>
     );
 }
-
-// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function TabletopContent({ encounterTables }: Props) {
     return (
-        <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
-            <Container maxWidth="md">
-                <Button component={Link} href="/" startIcon={<ArrowLeft size={16} />}
-                    sx={{ mb: 4, color: T.goldLight }}>
+        <Box mih="100vh" py="xl" style={{ background: T.pageBg }}>
+            <Box maw={768} mx="auto" px="md">
+                <Button component={Link} href="/" variant="subtle" size="sm" mb="xl"
+                    leftSection={<span style={{ fontSize: 14 }}>←</span>}
+                    style={{ color: T.accent }}>
                     Back
                 </Button>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
-                    <Sword size={32} color={T.crimsonLight} />
-                    <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "text.primary" }}>
-                        Tabletop
-                    </Typography>
-                </Box>
-                <Typography variant="body1" sx={{ color: "text.secondary", mb: 5 }}>
+                <Group gap="sm" mb={4}>
+                    <Sword size={32} style={{ color: T.accent }} />
+                    <Title order={1} style={{ color: T.cream }}>Tabletop</Title>
+                </Group>
+                <Text size="md" style={{ color: T.dimmed }} mb="xl">
                     Tools for tabletop RPGs and D&amp;D 5e.
-                </Typography>
+                </Text>
 
-                {/* ── Campaign Manager ── */}
-                <SectionHeader label="Campaign Manager" accent={T.crimsonLight} />
-                <Box sx={{ display: "flex", gap: 2.5, flexWrap: "wrap", mb: 6 }}>
+                {/* Campaign Manager */}
+                <SectionDivider label="Campaign Manager" />
+                <Group gap="lg" mb="xl" grow>
                     <FeaturedCard
-                        icon={Globe}
-                        title="My Worlds"
+                        icon={Globe} title="My Worlds" badge="Wiki"
                         description="Build and manage D&D worlds with a full wiki — locations, factions, NPCs, lore, maps, and more."
                         href="/tabletop/worlds"
-                        accent={T.crimsonMid}
-                        iconColor={T.crimsonLight}
-                        badge="Wiki"
                     />
                     <FeaturedCard
-                        icon={ScrollText}
-                        title="My Campaigns"
+                        icon={ScrollText} title="My Campaigns" badge="Live"
                         description="Track sessions, prep notes, encounters, and player character sheets across all your campaigns."
                         href="/tabletop/campaigns"
-                        accent={T.crimson}
-                        iconColor={T.crimsonLight}
-                        badge="Live"
                     />
-                </Box>
+                </Group>
 
-                {/* ════════════════════════ D&D 5e ════════════════════════ */}
-                <SystemHeader icon={Sword} label="D&D 5e" accent={T.crimsonLight} />
+                {/* D&D 5e */}
+                <SystemHeader icon={Sword} label="D&D 5e" />
 
-                <SectionHeader label="Combat" accent={T.crimsonMid} />
-                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5, mb: 5 }}>
-                    <ToolCard icon={ListOrdered} accent={T.crimsonLight}
-                        title="Initiative Tracker"
+                <SectionDivider label="Combat" />
+                <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm" mb="xl">
+                    <ToolCard icon={ListOrdered} title="Initiative Tracker"
                         description="Track turn order, HP, and conditions. State persists in browser."
                         href="/tabletop/initiative" />
-                    <ToolCard icon={Swords} accent={T.crimsonLight}
-                        title="Encounter Difficulty"
+                    <ToolCard icon={Swords} title="Encounter Difficulty"
                         description="Rate encounters Easy / Medium / Hard / Deadly by XP budget."
                         href="/tabletop/encounter-calc" />
-                    <ToolCard icon={ShieldAlert} accent={T.crimsonLight}
-                        title="Conditions"
+                    <ToolCard icon={ShieldAlert} title="Conditions"
                         description="Quick-reference cards for all D&D 2024 conditions."
                         href="/tabletop/conditions" />
-                </Box>
+                </SimpleGrid>
 
-                <SectionHeader label="Generators" accent={T.goldMid} />
-                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5, mb: 5 }}>
-                    <ToolCard icon={Gem} accent={T.goldLight}
-                        title="Magic Item"
+                <SectionDivider label="Generators" />
+                <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm" mb="xl">
+                    <ToolCard icon={Gem} title="Magic Item"
                         description="Random magic item filtered by rarity and attunement."
                         href="/tabletop/magic-item" />
-                    <ToolCard icon={Coins} accent={T.goldLight}
-                        title="Loot Hoard"
+                    <ToolCard icon={Coins} title="Loot Hoard"
                         description="Generate currency and items for a treasure hoard by CR."
                         href="/tabletop/loot" />
-                    <ToolCard icon={User} accent={T.goldLight}
-                        title="NPC"
+                    <ToolCard icon={User} title="NPC"
                         description="Random NPC with species, class, background, and personality."
                         href="/tabletop/npc" />
-                    <ToolCard icon={Wand2} accent={T.goldLight}
-                        title="Spell Scroll"
+                    <ToolCard icon={Wand2} title="Spell Scroll"
                         description="Random spell scroll filtered by level, school, or class."
                         href="/tabletop/spell-scroll" />
-                    <ToolCard icon={Dices} accent={T.goldLight}
-                        title="Encounter Tables"
+                    <ToolCard icon={Dices} title="Encounter Tables"
                         description={`d100 tables for on-the-fly encounters (${encounterTables.length} tables).`}
                         href="/tabletop/encounters" />
-                </Box>
+                </SimpleGrid>
 
-                <SectionHeader label="Reference & Creation" accent={T.goldMid} />
-                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5 }}>
-                    <ToolCard icon={Sword} accent={T.goldLight}
-                        title="Monster Creator"
+                <SectionDivider label="Reference & Creation" />
+                <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
+                    <ToolCard icon={Sword} title="Monster Creator"
                         description="Build and save custom D&D 5e monster statblocks."
                         href="/create/monster" />
-                    <ToolCard icon={BookOpen} accent={T.goldLight}
-                        title="5.5e SRD"
+                    <ToolCard icon={BookOpen} title="5.5e SRD"
                         description="Searchable D&D 2024 reference — monsters, spells, items, classes."
                         href="/tabletop/srd" />
-                </Box>
+                </SimpleGrid>
 
-                {/* ════════════════════ Cypher System ════════════════════ */}
-                <SystemHeader icon={Atom} label="Cypher System" accent={T.goldLight} />
-
-                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 1.5 }}>
-                    <ToolCard icon={BookMarked} accent={T.goldLight}
-                        title="Cypher System SRD"
+                {/* Cypher System */}
+                <SystemHeader icon={Atom} label="Cypher System" />
+                <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
+                    <ToolCard icon={BookMarked} title="Cypher System SRD"
                         description="Searchable Cypher System reference — abilities, cyphers, foci, and more."
                         href="/tabletop/cypher" />
-                </Box>
-            </Container>
+                </SimpleGrid>
+            </Box>
         </Box>
     );
 }

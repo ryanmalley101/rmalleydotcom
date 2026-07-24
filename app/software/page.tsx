@@ -3,6 +3,7 @@
 import { Box, Container, Stack, Typography, Button, Divider } from "@mui/material";
 import Link from "next/link";
 import { ArrowLeft, Code2 } from "lucide-react";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 
 const projects = [
   {
@@ -20,6 +21,7 @@ const projects = [
 ];
 
 export default function SoftwarePage() {
+  useDocumentTitle("Software");
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
       <Container maxWidth="md">
