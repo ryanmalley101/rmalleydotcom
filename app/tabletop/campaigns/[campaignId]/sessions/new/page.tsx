@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
     Box, Container, Typography, Button, TextField,
@@ -22,19 +22,69 @@ export default function NewSessionPage() {
     const [date, setDate]            = useState("");
     const [prepNotes, setPrep]       = useState("");
     const [saving, setSaving]        = useState(false);
+    const createdIdRef = useRef<string | null>(null);
+    const [autoSaved, setAutoSaved] = useState<Date | null>(null);
+    const [autoSaving, setAutoSaving] = useState(false);
+
+    // Silently create or update the draft whenever any content is entered
+    useEffect(() => {
+        const hasContent = title.trim() || prepNotes.trim() || date || sessionNumber;
+        if (!hasContent) return;
+        const timer = setTimeout(async () => {
+            setAutoSaving(true);
+            try {
+                if (!createdIdRef.current) {
+                    const { data } = await client.models.CampaignSession.create({
+                        campaignId,
+                        sessionNumber: sessionNumber ? parseInt(sessionNumber, 10) : undefined,
+                        title: title.trim() || undefined,
+                        date: date || undefined,
+                        prepNotes,
+                        sessionNotes: "",
+                    });
+                    if (data) createdIdRef.current = data.id;
+                } else {
+                    await client.models.CampaignSession.update({
+                        id: createdIdRef.current,
+                        sessionNumber: sessionNumber ? parseInt(sessionNumber, 10) : undefined,
+                        title: title.trim() || undefined,
+                        date: date || undefined,
+                        prepNotes,
+                    });
+                }
+                setAutoSaved(new Date());
+            } finally {
+                setAutoSaving(false);
+            }
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, [title, sessionNumber, date, prepNotes, campaignId]);
 
     async function save() {
         setSaving(true);
-        const { data } = await client.models.CampaignSession.create({
-            campaignId,
-            sessionNumber: sessionNumber ? parseInt(sessionNumber, 10) : undefined,
-            title: title.trim() || undefined,
-            date: date || undefined,
-            prepNotes,
-            sessionNotes: "",
-        });
+        let sessionId = createdIdRef.current;
+        if (!sessionId) {
+            const { data } = await client.models.CampaignSession.create({
+                campaignId,
+                sessionNumber: sessionNumber ? parseInt(sessionNumber, 10) : undefined,
+                title: title.trim() || undefined,
+                date: date || undefined,
+                prepNotes,
+                sessionNotes: "",
+            });
+            if (!data) { setSaving(false); return; }
+            sessionId = data.id;
+        } else {
+            await client.models.CampaignSession.update({
+                id: sessionId,
+                sessionNumber: sessionNumber ? parseInt(sessionNumber, 10) : undefined,
+                title: title.trim() || undefined,
+                date: date || undefined,
+                prepNotes,
+            });
+        }
         setSaving(false);
-        if (data) router.push(`/tabletop/campaigns/${campaignId}/sessions/${data.id}`);
+        router.push(`/tabletop/campaigns/${campaignId}/sessions/${sessionId}`);
     }
 
     return (
@@ -79,7 +129,15 @@ export default function NewSessionPage() {
                         sx={{ "& textarea": { fontFamily: "inherit", fontSize: "0.95rem" } }}
                     />
 
-                    <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+                    <Box sx={{ display: "flex", gap: 2, alignItems: "center", justifyContent: "flex-end" }}>
+                        {autoSaving && (
+                            <Typography variant="caption" sx={{ color: "text.disabled" }}>Saving…</Typography>
+                        )}
+                        {!autoSaving && autoSaved && (
+                            <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                                Draft saved at {autoSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </Typography>
+                        )}
                         <Button component={Link} href={`/tabletop/campaigns/${campaignId}`}>Cancel</Button>
                         <Button variant="contained" onClick={save} disabled={saving}
                             sx={{ backgroundColor: "primary.main" }}>

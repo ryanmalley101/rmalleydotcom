@@ -4,6 +4,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Cinzel } from "next/font/google";
 import { Amplify } from "aws-amplify";
+import { MantineProvider, createTheme as createMantineTheme } from "@mantine/core";
+import "@mantine/core/styles.css";
 import outputs from "@/amplify_outputs.json";
 
 Amplify.configure(outputs, { ssr: true });
@@ -115,14 +117,39 @@ const tabletopTheme = createTheme({
     },
 });
 
+// Mantine theme — Ember Leather dark, mirrors the palette used in migrated pages.
+// Sits alongside MUI's ThemeProvider; neither interferes with the other.
+const mantineTheme = createMantineTheme({
+    primaryColor: "ember",
+    colors: {
+        dark: [
+            "#f0ddb5","#d4aa72","#a67c4a","#7a5530",
+            "#4a2e14","#361f0b","#261508","#1a0d05","#120903","#0c0602",
+        ],
+        ember: [
+            "#fff0e5","#ffd9be","#ffba8a","#ff9855",
+            "#f87d30","#ef6b1a","#d95c0f","#c25010","#ad4610","#993c0f",
+        ],
+        gold: [
+            "#fffce0","#fff5ba","#ffed85","#ffe24d",
+            "#ffd824","#f5c90e","#dbb208","#c09a05","#a88604","#907302",
+        ],
+    },
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    headings: { fontFamily: "var(--font-cinzel), 'Cinzel', Georgia, serif", fontWeight: "700" },
+});
+
 export default function TabletopLayout({ children }: { children: React.ReactNode }) {
     return (
-        // cinzel.variable injects --font-cinzel into scope for the CSS var in the theme
         <div className={cinzel.variable} style={{ minHeight: "100vh" }}>
-            <ThemeProvider theme={tabletopTheme}>
-                <CssBaseline />
-                {children}
-            </ThemeProvider>
+            {/* Mantine wraps first so migrated pages get dark Ember Leather tokens. */}
+            {/* MUI ThemeProvider is kept for pages not yet migrated. */}
+            <MantineProvider theme={mantineTheme} defaultColorScheme="dark">
+                <ThemeProvider theme={tabletopTheme}>
+                    <CssBaseline />
+                    {children}
+                </ThemeProvider>
+            </MantineProvider>
         </div>
     );
 }

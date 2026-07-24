@@ -2,14 +2,18 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import {
-    Box, Container, Typography, Button, Chip, Divider,
-    CircularProgress, TextField, Dialog, DialogTitle,
-    DialogContent, DialogActions, Card, CardActionArea, CardContent,
-    IconButton, Tooltip, Tabs, Tab, Alert, LinearProgress,
-} from "@mui/material";
+    ActionIcon, Alert, Anchor, Badge, Box, Button, Center,
+    Group, Loader, Modal, Progress, SimpleGrid, Stack,
+    Tabs, Text, TextInput, ThemeIcon, Title, Tooltip,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
-import { ArrowLeft, Plus, BookOpen, ScrollText, Trash2, Globe, Upload, Link2, AlertTriangle, Map as MapIcon, Wand2, EyeOff } from "lucide-react";
+import {
+    AlertTriangle, ArrowLeft, BookOpen, EyeOff,
+    Globe, Link2, Map as MapIcon, Plus, ScrollText, Trash2, Upload, Wand2,
+} from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import type { Schema } from "@/amplify/data/resource";
@@ -25,11 +29,93 @@ type WorldMap = Schema["WorldMap"]["type"];
 const STATUS_COLOR: Record<string, string> = { draft: "#f57c00", stub: "#546e7a" };
 const STATUS_LABEL: Record<string, string> = { draft: "Draft", stub: "Stub" };
 
-// Extract all [[Title]] references from content
+const T = {
+    pageBg: "#1a0d05", cardBg: "#261508", cardHover: "#321b0c",
+    border: "rgba(210,140,70,0.22)", borderHot: "rgba(239,107,26,0.55)",
+    divider: "rgba(210,140,70,0.18)", cream: "#f0ddb5", amber: "#d4aa72",
+    dimmed: "#a67c4a", accent: "#ef6b1a", heading: "#e8c060",
+    deepBorder: "rgba(239,107,26,0.3)",
+};
+
 function extractLinks(content: string | null | undefined): string[] {
     if (!content) return [];
-    const matches = content.matchAll(/\[\[([^\]]+)\]\]/g);
-    return Array.from(matches, m => m[1]);
+    return Array.from(content.matchAll(/\[\[([^\]]+)\]\]/g), m => m[1]);
+}
+
+// Clickable article card
+function ArticleRow({ a, worldId, onDelete }: { a: Article; worldId: string; thumb?: string; onDelete: () => void }) {
+    const thumb = useRef<string | undefined>();
+    const [thumbUrl, setThumbUrl] = useState<string | undefined>();
+
+    useEffect(() => {
+        if (a.coverImageKey && !thumb.current) {
+            getUrl({ path: a.coverImageKey, options: { expiresIn: 900 } })
+                .then(({ url }) => { thumb.current = url.toString(); setThumbUrl(url.toString()); })
+                .catch(() => {});
+        }
+    }, [a.coverImageKey]);
+
+    const coverUrl = thumbUrl || a.coverImageUrl || undefined;
+
+    return (
+        <Box style={{
+            background: T.cardBg, border: `1px solid ${T.border}`,
+            borderLeft: `3px solid ${T.accent}`, borderRadius: 6,
+            display: "flex", overflow: "hidden",
+        }}>
+            {coverUrl && (
+                <Box component="img" src={coverUrl} alt=""
+                    style={{ width: 56, objectFit: "cover", flexShrink: 0 }} />
+            )}
+            <Anchor component={Link} href={`/tabletop/worlds/${worldId}/wiki/${a.id}`}
+                underline="never" style={{ flex: 1, minWidth: 0 }}>
+                <Box p="sm">
+                    <Group gap={6} wrap="wrap" mb={2}>
+                        <Text fw={600} size="sm" style={{ color: T.cream }}>{a.title}</Text>
+                        {a.articleType && (
+                            <Badge size="xs"
+                                style={{
+                                    background: ARTICLE_TYPE_COLORS[a.articleType] ?? T.accent,
+                                    color: "#fff", border: "none", fontSize: "0.6rem",
+                                }}>
+                                {a.articleType}
+                            </Badge>
+                        )}
+                        {a.status && a.status !== "published" && (
+                            <Badge size="xs"
+                                style={{ background: STATUS_COLOR[a.status] ?? "#555", color: "#fff", border: "none" }}>
+                                {STATUS_LABEL[a.status] ?? a.status}
+                            </Badge>
+                        )}
+                        {a.visibleToPlayers === false && (
+                            <Badge size="xs" leftSection={<EyeOff size={9} />}
+                                style={{ background: "#6a1b9a", color: "#fff", border: "none" }}>
+                                GM Only
+                            </Badge>
+                        )}
+                        {(a.tags ?? []).slice(0, 3).map(tag => (
+                            <Badge key={tag} size="xs" variant="outline"
+                                style={{ borderColor: T.border, color: T.dimmed, fontSize: "0.6rem" }}>
+                                {tag}
+                            </Badge>
+                        ))}
+                    </Group>
+                    {(a.excerpt || a.content) && (
+                        <Text size="xs" lineClamp={1} style={{ color: T.dimmed }}>
+                            {a.excerpt || a.content?.slice(0, 120)}
+                        </Text>
+                    )}
+                </Box>
+            </Anchor>
+            <Group align="center" pr="xs">
+                <Tooltip label="Delete">
+                    <ActionIcon variant="subtle" color="red" size="sm" onClick={onDelete}>
+                        <Trash2 size={14} />
+                    </ActionIcon>
+                </Tooltip>
+            </Group>
+        </Box>
+    );
 }
 
 export default function WorldPage() {
@@ -37,29 +123,25 @@ export default function WorldPage() {
     const router = useRouter();
 
     const [world, setWorld]         = useState<World | null>(null);
+    useDocumentTitle(world?.name ?? null);
     const [articles, setArticles]   = useState<Article[]>([]);
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [maps, setMaps]           = useState<WorldMap[]>([]);
     const [mapThumbs, setMapThumbs] = useState<Record<string, string>>({});
-    const [articleThumbs, setArticleThumbs] = useState<Record<string, string>>({});
-    const [tab, setTab]             = useState(0);
     const [loading, setLoading]     = useState(true);
     const [catFilter, setCatFilter] = useState("All");
     const [search, setSearch]       = useState("");
     const [deleteId, setDeleteId]   = useState<string | null>(null);
 
-    // BBCode cleanup state
-    const [fixDialog, setFixDialog]   = useState(false);
-    const [fixing, setFixing]         = useState(false);
+    const [fixDialog, { open: openFix, close: closeFix }]       = useDisclosure(false);
+    const [newMapDialog, { open: openNewMap, close: closeNewMap }] = useDisclosure(false);
+    const [fixing, setFixing]           = useState(false);
     const [fixProgress, setFixProgress] = useState({ done: 0, total: 0 });
-
-    // Map upload state
     const [mapName, setMapName]         = useState("");
-    const [mapUploading, setMapUploading] = useState(false);
+    const [mapUploading, setMapUploading]   = useState(false);
     const [mapUploadProgress, setMapUploadProgress] = useState(0);
-    const [newMapDialog, setNewMapDialog] = useState(false);
-    const [pendingFile, setPendingFile]   = useState<File | null>(null);
-    const [deleteMapId, setDeleteMapId]   = useState<string | null>(null);
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
+    const [deleteMapId, setDeleteMapId] = useState<string | null>(null);
     const mapFileRef = useRef<HTMLInputElement>(null);
 
     async function load() {
@@ -76,7 +158,6 @@ export default function WorldPage() {
         const worldMaps = (mRes.data ?? []).filter(m => m.worldId === worldId);
         setMaps(worldMaps);
 
-        // Load thumbnails for each map
         const thumbs: Record<string, string> = {};
         await Promise.all(worldMaps.map(async m => {
             try {
@@ -85,17 +166,6 @@ export default function WorldPage() {
             } catch { /* ignore */ }
         }));
         setMapThumbs(thumbs);
-
-        // Resolve S3 cover images for articles that use coverImageKey
-        const worldArticles = (aRes.data ?? []).filter(a => a.worldId === worldId);
-        const artThumbs: Record<string, string> = {};
-        await Promise.all(worldArticles.filter(a => a.coverImageKey).map(async a => {
-            try {
-                const { url } = await getUrl({ path: a.coverImageKey!, options: { expiresIn: 900 } });
-                artThumbs[a.id] = url.toString();
-            } catch { /* ignore */ }
-        }));
-        setArticleThumbs(artThumbs);
         setLoading(false);
     }
 
@@ -113,7 +183,7 @@ export default function WorldPage() {
         if (!file) return;
         setPendingFile(file);
         setMapName(file.name.replace(/\.[^.]+$/, ""));
-        setNewMapDialog(true);
+        openNewMap();
     }
 
     async function uploadMap() {
@@ -124,8 +194,7 @@ export default function WorldPage() {
         const key = `maps/${worldId}/${Date.now()}.${ext}`;
         try {
             await uploadData({
-                path: key,
-                data: pendingFile,
+                path: key, data: pendingFile,
                 options: {
                     contentType: pendingFile.type,
                     onProgress: ({ transferredBytes, totalBytes }) => {
@@ -136,7 +205,7 @@ export default function WorldPage() {
             await client.models.WorldMap.create({ worldId, name: mapName.trim(), imageKey: key });
         } finally {
             setMapUploading(false);
-            setNewMapDialog(false);
+            closeNewMap();
             setPendingFile(null);
             setMapName("");
             if (mapFileRef.current) mapFileRef.current.value = "";
@@ -151,56 +220,42 @@ export default function WorldPage() {
         load();
     }
 
-    // ── Filter chips: articleType + tags, deduped ──
     const filterOptions = useMemo(() => ["All", ...Array.from(new Set(
-        articles.flatMap(a => [
-            a.articleType,
-            ...(a.tags ?? []),
-        ].filter(Boolean) as string[])
+        articles.flatMap(a => [a.articleType, ...(a.tags ?? [])].filter(Boolean) as string[])
     )).sort()], [articles]);
 
-    // ── Filtered article list (full-text search) ──
     const filtered = useMemo(() => articles.filter(a => {
         if (catFilter !== "All") {
-            const inType = a.articleType === catFilter;
-            const inTags = (a.tags ?? []).includes(catFilter);
-            if (!inType && !inTags) return false;
+            if (a.articleType !== catFilter && !(a.tags ?? []).includes(catFilter)) return false;
         }
         if (search) {
             const q = search.toLowerCase();
-            const inTitle   = a.title.toLowerCase().includes(q);
-            const inExcerpt = a.excerpt?.toLowerCase().includes(q) ?? false;
-            const inContent = a.content?.toLowerCase().includes(q) ?? false;
-            if (!inTitle && !inExcerpt && !inContent) return false;
+            if (!a.title.toLowerCase().includes(q) &&
+                !a.excerpt?.toLowerCase().includes(q) &&
+                !a.content?.toLowerCase().includes(q)) return false;
         }
         return true;
     }), [articles, catFilter, search]);
 
-    // ── Articles still containing raw BBCode (e.g. imported before the converter existed) ──
-    const bbcodeArticles = useMemo(
-        () => articles.filter(a => a.content && hasBBCode(a.content)),
-        [articles]
-    );
+    const bbcodeArticles = useMemo(() => articles.filter(a => a.content && hasBBCode(a.content)), [articles]);
 
     async function fixFormatting() {
         setFixing(true);
         setFixProgress({ done: 0, total: bbcodeArticles.length });
         for (let i = 0; i < bbcodeArticles.length; i++) {
-            const a = bbcodeArticles[i];
             try {
                 await client.models.WikiArticle.update({
-                    id: a.id,
-                    content: convertBBCodeToMarkdown(a.content!.replace(/\r\n/g, "\n").trim()),
+                    id: bbcodeArticles[i].id,
+                    content: convertBBCodeToMarkdown(bbcodeArticles[i].content!.replace(/\r\n/g, "\n").trim()),
                 });
-            } catch { /* skip and continue */ }
+            } catch { /* skip */ }
             setFixProgress({ done: i + 1, total: bbcodeArticles.length });
         }
         setFixing(false);
-        setFixDialog(false);
+        closeFix();
         load();
     }
 
-    // ── Broken links ──
     const titleToId = useMemo(() => {
         const map = new Map<string, string>();
         for (const a of articles) map.set(a.title.toLowerCase(), a.id);
@@ -214,441 +269,378 @@ export default function WorldPage() {
             for (const link of extractLinks(article.content)) {
                 if (!titleToId.has(link.toLowerCase())) {
                     const key = `${article.id}::${link.toLowerCase()}`;
-                    if (!seen.has(key)) {
-                        seen.add(key);
-                        results.push({ article, link });
-                    }
+                    if (!seen.has(key)) { seen.add(key); results.push({ article, link }); }
                 }
             }
         }
         return results;
     }, [articles, titleToId]);
 
-    // Group broken links by unresolved title for a compact view
     const brokenByTarget = useMemo(() => {
         const map = new Map<string, Article[]>();
         for (const { article, link } of brokenLinks) {
             const key = link.toLowerCase();
             if (!map.has(key)) map.set(key, []);
-            if (!map.get(key)!.find(a => a.id === article.id))
-                map.get(key)!.push(article);
+            if (!map.get(key)!.find(a => a.id === article.id)) map.get(key)!.push(article);
         }
         return Array.from(map.entries()).map(([k, arts]) => ({
-            link: brokenLinks.find(b => b.link.toLowerCase() === k)!.link,
-            articles: arts,
+            link: brokenLinks.find(b => b.link.toLowerCase() === k)!.link, articles: arts,
         })).sort((a, b) => a.link.localeCompare(b.link));
     }, [brokenLinks]);
 
     if (loading) return (
-        <Box sx={{ display: "flex", justifyContent: "center", pt: 12 }}>
-            <CircularProgress sx={{ color: "primary.main" }} />
-        </Box>
+        <Center mih="100vh" style={{ background: T.pageBg }}>
+            <Loader style={{ color: T.accent }} />
+        </Center>
     );
 
     if (!world) return (
-        <Box sx={{ textAlign: "center", pt: 12 }}>
-            <Typography color="error">World not found.</Typography>
-        </Box>
+        <Center mih="100vh" style={{ background: T.pageBg }}>
+            <Text c="red">World not found.</Text>
+        </Center>
     );
 
     return (
-        <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
-            <Container maxWidth="md">
-                <Button component={Link} href="/tabletop/worlds" startIcon={<ArrowLeft size={16} />}
-                    sx={{ mb: 4, color: "primary.main" }}>
+        <Box mih="100vh" py="xl" style={{ background: T.pageBg }}>
+            <Box maw={768} mx="auto" px="md">
+                <Button component={Link} href="/tabletop/worlds" variant="subtle" size="sm" mb="xl"
+                    leftSection={<ArrowLeft size={14} />} style={{ color: T.accent }}>
                     My Worlds
                 </Button>
 
-                {/* Header */}
-                <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: 1 }}>
+                <Group gap="sm" mb={4} align="flex-start" justify="space-between">
                     <Box>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                            <Globe size={28} color="#8C5A3A" />
-                            <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "primary.dark" }}>
-                                {world.name}
-                            </Typography>
-                        </Box>
+                        <Group gap="sm">
+                            <ThemeIcon size="lg" radius="sm" style={{ background: `${T.accent}22`, color: T.accent }}>
+                                <Globe size={20} />
+                            </ThemeIcon>
+                            <Title order={2} style={{ color: T.heading }}>{world.name}</Title>
+                        </Group>
                         {world.genre && (
-                            <Typography variant="caption" sx={{ color: "text.secondary", textTransform: "uppercase", letterSpacing: 1, ml: 6 }}>
+                            <Text size="xs" tt="uppercase" style={{ letterSpacing: 1, color: T.dimmed, marginLeft: 44 }}>
                                 {world.genre}
-                            </Typography>
+                            </Text>
                         )}
                     </Box>
-                </Box>
+                </Group>
                 {world.description && (
-                    <Typography variant="body1" sx={{ color: "text.secondary", mb: 4, ml: 6 }}>
-                        {world.description}
-                    </Typography>
+                    <Text size="sm" style={{ color: T.amber, marginLeft: 44 }} mb="lg">{world.description}</Text>
                 )}
 
-                <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3, borderBottom: 1, borderColor: "divider" }}>
-                    <Tab label={`Wiki (${articles.length})`} icon={<BookOpen size={16} />} iconPosition="start" />
-                    <Tab label={`Campaigns (${campaigns.length})`} icon={<ScrollText size={16} />} iconPosition="start" />
-                    <Tab label={`Maps (${maps.length})`} icon={<MapIcon size={16} />} iconPosition="start" />
-                    <Tab
-                        label={`Broken Links${brokenByTarget.length > 0 ? ` (${brokenByTarget.length})` : ""}`}
-                        icon={<AlertTriangle size={16} />} iconPosition="start"
-                        sx={brokenByTarget.length > 0 ? { color: "warning.main" } : {}}
-                    />
-                </Tabs>
+                <Tabs defaultValue="wiki"
+                    styles={{
+                        tab: { color: T.dimmed, "&[dataActive]": { color: T.accent, borderColor: T.accent } },
+                        root: { "--tabs-color": T.accent },
+                    }}>
+                    <Tabs.List mb="lg" style={{ borderColor: T.divider }}>
+                        <Tabs.Tab value="wiki" leftSection={<BookOpen size={14} />}>
+                            Wiki ({articles.length})
+                        </Tabs.Tab>
+                        <Tabs.Tab value="campaigns" leftSection={<ScrollText size={14} />}>
+                            Campaigns ({campaigns.length})
+                        </Tabs.Tab>
+                        <Tabs.Tab value="maps" leftSection={<MapIcon size={14} />}>
+                            Maps ({maps.length})
+                        </Tabs.Tab>
+                        <Tabs.Tab value="broken"
+                            leftSection={<AlertTriangle size={14} style={{ color: brokenByTarget.length > 0 ? "#f59e0b" : undefined }} />}
+                            style={{ color: brokenByTarget.length > 0 ? "#f59e0b" : undefined }}>
+                            Broken Links{brokenByTarget.length > 0 ? ` (${brokenByTarget.length})` : ""}
+                        </Tabs.Tab>
+                    </Tabs.List>
 
-                {/* ── Wiki tab ── */}
-                {tab === 0 && (
-                    <>
-                        <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap", alignItems: "center" }}>
-                            <TextField
-                                size="small" placeholder="Search titles, content, excerpts…" value={search}
-                                onChange={e => setSearch(e.target.value)}
-                                sx={{ flex: 1, minWidth: 200 }}
+                    {/* ── Wiki tab ── */}
+                    <Tabs.Panel value="wiki">
+                        <Group gap="sm" mb="sm" wrap="wrap">
+                            <TextInput
+                                placeholder="Search titles, content, excerpts…"
+                                value={search} onChange={e => setSearch(e.target.value)}
+                                style={{ flex: 1, minWidth: 200 }}
+                                styles={{ input: { background: T.cardBg, borderColor: T.border, color: T.cream } }}
                             />
-                            <Button variant="outlined" startIcon={<Upload size={16} />}
-                                component={Link} href={`/tabletop/worlds/${worldId}/import`}
-                                sx={{ borderColor: "primary.main", color: "primary.main", whiteSpace: "nowrap" }}>
+                            <Button component={Link} href={`/tabletop/worlds/${worldId}/import`}
+                                variant="outline" size="sm" leftSection={<Upload size={14} />}
+                                style={{ borderColor: T.border, color: T.amber }}>
                                 Import
                             </Button>
                             {bbcodeArticles.length > 0 && (
-                                <Button variant="outlined" color="warning" startIcon={<Wand2 size={16} />}
-                                    onClick={() => setFixDialog(true)}
-                                    sx={{ whiteSpace: "nowrap" }}>
+                                <Button variant="outline" size="sm" color="orange"
+                                    leftSection={<Wand2 size={14} />} onClick={openFix}>
                                     Fix Formatting ({bbcodeArticles.length})
                                 </Button>
                             )}
-                            <Button variant="outlined" startIcon={<Link2 size={16} />}
-                                component={Link} href={`/tabletop/worlds/${worldId}/autolink`}
-                                sx={{ borderColor: "primary.main", color: "primary.main", whiteSpace: "nowrap" }}>
+                            <Button component={Link} href={`/tabletop/worlds/${worldId}/autolink`}
+                                variant="outline" size="sm" leftSection={<Link2 size={14} />}
+                                style={{ borderColor: T.border, color: T.amber }}>
                                 Auto-link
                             </Button>
-                            <Button variant="contained" startIcon={<Plus size={16} />}
-                                component={Link} href={`/tabletop/worlds/${worldId}/wiki/new`}
-                                sx={{ backgroundColor: "primary.main", whiteSpace: "nowrap" }}>
+                            <Button component={Link} href={`/tabletop/worlds/${worldId}/wiki/new`}
+                                size="sm" leftSection={<Plus size={14} />}
+                                style={{ background: T.accent, color: T.pageBg }}>
                                 New Article
                             </Button>
-                        </Box>
+                        </Group>
 
-                        {/* Filter chips — types, categories, and tags all unified */}
-                        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 3 }}>
+                        <Group gap={6} mb="md" wrap="wrap">
                             {filterOptions.map(opt => (
-                                <Chip key={opt} label={opt} size="small"
-                                    variant={catFilter === opt ? "filled" : "outlined"}
+                                <Badge key={opt} size="sm"
                                     onClick={() => setCatFilter(opt)}
-                                    sx={catFilter === opt ? { backgroundColor: "primary.main", color: "#fff" } : {}}
-                                />
+                                    style={{
+                                        cursor: "pointer",
+                                        background: catFilter === opt ? T.accent : T.cardBg,
+                                        color: catFilter === opt ? T.pageBg : T.amber,
+                                        border: `1px solid ${catFilter === opt ? T.accent : T.border}`,
+                                    }}>
+                                    {opt}
+                                </Badge>
                             ))}
-                        </Box>
+                        </Group>
 
                         {filtered.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <BookOpen size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    {articles.length === 0
-                                        ? "No articles yet. Create your first wiki entry."
-                                        : "No articles match your search."}
-                                </Typography>
-                            </Box>
+                            <Center py={64}>
+                                <Stack align="center" gap="xs">
+                                    <BookOpen size={40} style={{ color: T.dimmed }} />
+                                    <Text style={{ color: T.dimmed }}>
+                                        {articles.length === 0 ? "No articles yet. Create your first wiki entry." : "No articles match your search."}
+                                    </Text>
+                                </Stack>
+                            </Center>
                         ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                            <Stack gap="xs">
                                 {filtered.map(a => (
-                                    <Card key={a.id} sx={{ borderLeft: "3px solid", borderColor: "primary.light" }}>
-                                        <Box sx={{ display: "flex", alignItems: "stretch" }}>
-                                            {(articleThumbs[a.id] || a.coverImageUrl) && (
-                                                <Box component="img" src={articleThumbs[a.id] || a.coverImageUrl!} alt=""
-                                                    sx={{ width: 56, objectFit: "cover", flexShrink: 0 }} />
-                                            )}
-                                            <CardActionArea component={Link}
-                                                href={`/tabletop/worlds/${worldId}/wiki/${a.id}`} sx={{ flex: 1 }}>
-                                                <CardContent sx={{ py: 1.5 }}>
-                                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
-                                                        <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", fontSize: "1rem" }}>
-                                                            {a.title}
-                                                        </Typography>
-                                                        {a.articleType && (
-                                                            <Chip label={a.articleType} size="small"
-                                                                sx={{ height: 18, fontSize: "0.65rem",
-                                                                      backgroundColor: ARTICLE_TYPE_COLORS[a.articleType] ?? undefined,
-                                                                      color: ARTICLE_TYPE_COLORS[a.articleType] ? "#fff" : undefined }} />
-                                                        )}
-                                                        {a.status && a.status !== "published" && (
-                                                            <Chip label={STATUS_LABEL[a.status] ?? a.status} size="small"
-                                                                sx={{ height: 18, fontSize: "0.6rem",
-                                                                    backgroundColor: STATUS_COLOR[a.status] ?? "#555", color: "#fff" }} />
-                                                        )}
-                                                        {a.visibleToPlayers === false && (
-                                                            <Chip icon={<EyeOff size={11} />} label="GM Only" size="small"
-                                                                sx={{ height: 18, fontSize: "0.6rem", backgroundColor: "#6a1b9a", color: "#fff" }} />
-                                                        )}
-                                                        {(a.tags ?? []).slice(0, 3).map(tag => (
-                                                            <Chip key={tag} label={tag} size="small" variant="outlined"
-                                                                sx={{ height: 18, fontSize: "0.6rem" }} />
-                                                        ))}
-                                                    </Box>
-                                                    {(a.excerpt || a.content) && (
-                                                        <Typography variant="caption" sx={{
-                                                            color: "text.secondary", display: "block", mt: 0.25,
-                                                            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                                                        }}>
-                                                            {a.excerpt || a.content?.slice(0, 120)}
-                                                        </Typography>
-                                                    )}
-                                                </CardContent>
-                                            </CardActionArea>
-                                            <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
-                                                <Tooltip title="Delete">
-                                                    <IconButton size="small" color="error" onClick={() => setDeleteId(a.id)}>
-                                                        <Trash2 size={14} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
-                                        </Box>
-                                    </Card>
+                                    <ArticleRow key={a.id} a={a} worldId={worldId}
+                                        onDelete={() => setDeleteId(a.id)} />
                                 ))}
-                            </Box>
+                            </Stack>
                         )}
-                    </>
-                )}
+                    </Tabs.Panel>
 
-                {/* ── Campaigns tab ── */}
-                {tab === 1 && (
-                    <>
-                        <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
+                    {/* ── Campaigns tab ── */}
+                    <Tabs.Panel value="campaigns">
+                        <Text size="sm" style={{ color: T.dimmed }} mb="md">
                             Campaigns linked to this world. Link campaigns from the{" "}
-                            <Link href="/tabletop/campaigns" style={{ color: "inherit" }}>Campaigns</Link> page.
-                        </Typography>
+                            <Anchor component={Link} href="/tabletop/campaigns" style={{ color: T.accent }}>
+                                Campaigns
+                            </Anchor>{" "}page.
+                        </Text>
                         {campaigns.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <ScrollText size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary", mb: 2 }}>
-                                    No campaigns linked to this world yet.
-                                </Typography>
-                                <Button variant="outlined" component={Link} href="/tabletop/campaigns"
-                                    sx={{ borderColor: "primary.main", color: "primary.main" }}>
-                                    Go to Campaigns
-                                </Button>
-                            </Box>
+                            <Center py={64}>
+                                <Stack align="center" gap="xs">
+                                    <ScrollText size={40} style={{ color: T.dimmed }} />
+                                    <Text style={{ color: T.dimmed }} mb="sm">No campaigns linked yet.</Text>
+                                    <Button component={Link} href="/tabletop/campaigns" variant="outline"
+                                        style={{ borderColor: T.border, color: T.amber }}>
+                                        Go to Campaigns
+                                    </Button>
+                                </Stack>
+                            </Center>
                         ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                            <Stack gap="sm">
                                 {campaigns.map(c => (
-                                    <Card key={c.id} sx={{ borderLeft: "3px solid", borderColor: "secondary.main" }}>
-                                        <CardActionArea component={Link} href={`/tabletop/campaigns/${c.id}`}>
-                                            <CardContent>
-                                                <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark" }}>
-                                                    {c.name}
-                                                </Typography>
-                                                {c.status && <Chip label={c.status} size="small" sx={{ mr: 1 }} />}
-                                                {c.description && (
-                                                    <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
-                                                        {c.description}
-                                                    </Typography>
+                                    <Anchor key={c.id} component={Link} href={`/tabletop/campaigns/${c.id}`} underline="never">
+                                        <Box style={{
+                                            background: T.cardBg, border: `1px solid ${T.border}`,
+                                            borderLeft: `3px solid #d97706`, borderRadius: 6, padding: "0.75rem 1rem",
+                                        }}>
+                                            <Group gap="sm" mb={c.description ? 4 : 0}>
+                                                <Text fw={600} style={{ color: T.cream }}>{c.name}</Text>
+                                                {c.status && (
+                                                    <Badge size="xs" style={{ background: T.cardBg, border: `1px solid ${T.border}`, color: T.dimmed }}>
+                                                        {c.status}
+                                                    </Badge>
                                                 )}
-                                            </CardContent>
-                                        </CardActionArea>
-                                    </Card>
+                                            </Group>
+                                            {c.description && <Text size="xs" style={{ color: T.dimmed }}>{c.description}</Text>}
+                                        </Box>
+                                    </Anchor>
                                 ))}
-                            </Box>
+                            </Stack>
                         )}
-                    </>
-                )}
+                    </Tabs.Panel>
 
-                {/* ── Maps tab ── */}
-                {tab === 2 && (
-                    <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                            <Button variant="contained" startIcon={<Upload size={16} />}
+                    {/* ── Maps tab ── */}
+                    <Tabs.Panel value="maps">
+                        <Group justify="flex-end" mb="md">
+                            <Button size="sm" leftSection={<Upload size={14} />}
                                 onClick={() => mapFileRef.current?.click()}
-                                sx={{ backgroundColor: "primary.main" }}>
+                                style={{ background: T.accent, color: T.pageBg }}>
                                 Upload Map
                             </Button>
-                            <input ref={mapFileRef} type="file" accept="image/*" hidden
-                                onChange={handleMapFileSelect} />
-                        </Box>
+                            <input ref={mapFileRef} type="file" accept="image/*" hidden onChange={handleMapFileSelect} />
+                        </Group>
 
                         {maps.length === 0 ? (
-                            <Box sx={{ textAlign: "center", py: 8 }}>
-                                <MapIcon size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
-                                <Typography sx={{ color: "text.secondary", mb: 2 }}>
-                                    No maps yet. Upload an image to create your first world map.
-                                </Typography>
-                            </Box>
+                            <Center py={64}>
+                                <Stack align="center" gap="xs">
+                                    <MapIcon size={40} style={{ color: T.dimmed }} />
+                                    <Text style={{ color: T.dimmed }}>No maps yet. Upload an image to get started.</Text>
+                                </Stack>
+                            </Center>
                         ) : (
-                            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 2 }}>
+                            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
                                 {maps.map(m => (
-                                    <Card key={m.id} sx={{ position: "relative", overflow: "hidden" }}>
-                                        <CardActionArea component={Link}
-                                            href={`/tabletop/worlds/${worldId}/maps/${m.id}`}>
-                                            {mapThumbs[m.id] ? (
-                                                <Box component="img" src={mapThumbs[m.id]} alt={m.name}
-                                                    sx={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} />
-                                            ) : (
-                                                <Box sx={{ width: "100%", height: 160, backgroundColor: "rgba(0,0,0,0.08)",
-                                                           display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                    <MapIcon size={32} color="#c9a87c" />
-                                                </Box>
-                                            )}
-                                            <CardContent sx={{ py: 1.5 }}>
-                                                <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark", fontSize: "0.95rem" }}>
-                                                    {m.name}
-                                                </Typography>
-                                                {m.pinsJson && (
-                                                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                                                        {(JSON.parse(m.pinsJson) as unknown[]).length} pins
-                                                    </Typography>
+                                    <Box key={m.id} style={{ position: "relative" }}>
+                                        <Anchor component={Link}
+                                            href={`/tabletop/worlds/${worldId}/maps/${m.id}`} underline="never">
+                                            <Box style={{
+                                                background: T.cardBg, border: `1px solid ${T.border}`,
+                                                borderRadius: 8, overflow: "hidden",
+                                            }}>
+                                                {mapThumbs[m.id] ? (
+                                                    <Box component="img" src={mapThumbs[m.id]} alt={m.name}
+                                                        style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} />
+                                                ) : (
+                                                    <Center style={{ width: "100%", height: 160, background: T.cardBg }}>
+                                                        <MapIcon size={32} style={{ color: T.dimmed }} />
+                                                    </Center>
                                                 )}
-                                            </CardContent>
-                                        </CardActionArea>
-                                        <Tooltip title="Delete map">
-                                            <IconButton size="small" color="error"
-                                                onClick={() => setDeleteMapId(m.id)}
-                                                sx={{ position: "absolute", top: 6, right: 6,
-                                                      backgroundColor: "rgba(0,0,0,0.5)",
-                                                      "&:hover": { backgroundColor: "rgba(180,0,0,0.7)" } }}>
-                                                <Trash2 size={14} color="#fff" />
-                                            </IconButton>
+                                                <Box p="sm">
+                                                    <Text fw={600} size="sm" style={{ color: T.cream }}>{m.name}</Text>
+                                                    {m.pinsJson && (
+                                                        <Text size="xs" style={{ color: T.dimmed }}>
+                                                            {(JSON.parse(m.pinsJson) as unknown[]).length} pins
+                                                        </Text>
+                                                    )}
+                                                </Box>
+                                            </Box>
+                                        </Anchor>
+                                        <Tooltip label="Delete map">
+                                            <ActionIcon size="sm" color="red" variant="filled"
+                                                style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.6)" }}
+                                                onClick={() => setDeleteMapId(m.id)}>
+                                                <Trash2 size={13} />
+                                            </ActionIcon>
                                         </Tooltip>
-                                    </Card>
-                                ))}
-                            </Box>
-                        )}
-
-                        {/* New map dialog */}
-                        <Dialog open={newMapDialog} onClose={() => !mapUploading && setNewMapDialog(false)} maxWidth="xs" fullWidth>
-                            <DialogTitle>New Map</DialogTitle>
-                            <DialogContent sx={{ pt: 1 }}>
-                                <TextField label="Map name" fullWidth autoFocus size="small"
-                                    value={mapName} onChange={e => setMapName(e.target.value)}
-                                    sx={{ mt: 1 }} />
-                                {pendingFile && (
-                                    <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 1 }}>
-                                        File: {pendingFile.name} ({Math.round(pendingFile.size / 1024)} KB)
-                                    </Typography>
-                                )}
-                                {mapUploading && (
-                                    <Box sx={{ mt: 2 }}>
-                                        <LinearProgress variant="determinate" value={mapUploadProgress}
-                                            sx={{ height: 6, borderRadius: 3,
-                                                  "& .MuiLinearProgress-bar": { backgroundColor: "primary.main" } }} />
-                                        <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                                            Uploading… {mapUploadProgress}%
-                                        </Typography>
                                     </Box>
-                                )}
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => setNewMapDialog(false)} disabled={mapUploading}>Cancel</Button>
-                                <Button variant="contained" onClick={uploadMap}
-                                    disabled={mapUploading || !mapName.trim()}
-                                    sx={{ backgroundColor: "primary.main" }}>
-                                    {mapUploading ? <CircularProgress size={18} /> : "Upload"}
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                                ))}
+                            </SimpleGrid>
+                        )}
+                    </Tabs.Panel>
 
-                        {/* Delete map confirmation */}
-                        <Dialog open={!!deleteMapId} onClose={() => setDeleteMapId(null)}>
-                            <DialogTitle>Delete map?</DialogTitle>
-                            <DialogContent>
-                                <Typography>The image and all pins will be removed. This cannot be undone.</Typography>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => setDeleteMapId(null)}>Cancel</Button>
-                                <Button color="error" variant="contained" onClick={deleteMap}>Delete</Button>
-                            </DialogActions>
-                        </Dialog>
-                    </>
-                )}
-
-                {/* ── Broken Links tab ── */}
-                {tab === 3 && (
-                    <>
+                    {/* ── Broken Links tab ── */}
+                    <Tabs.Panel value="broken">
                         {brokenByTarget.length === 0 ? (
-                            <Alert severity="success">
-                                No broken links — every <code>{"[[reference]]"}</code> in this wiki resolves to an existing article.
+                            <Alert color="green" mt="md">
+                                No broken links — every <code>{"[[reference]]"}</code> resolves to an existing article.
                             </Alert>
                         ) : (
                             <>
-                                <Alert severity="warning" sx={{ mb: 3 }}>
+                                <Alert color="yellow" mt="md" mb="lg">
                                     {brokenByTarget.length} unresolved reference{brokenByTarget.length !== 1 ? "s" : ""} found.
                                     Create the missing articles or correct the link text.
                                 </Alert>
-                                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                <Stack gap="md">
                                     {brokenByTarget.map(({ link, articles: arts }) => (
-                                        <Box key={link} sx={{
-                                            border: "1px solid", borderColor: "warning.light",
-                                            borderRadius: 1.5, p: 2,
-                                            backgroundColor: "rgba(245,158,11,0.04)",
+                                        <Box key={link} style={{
+                                            border: `1px solid rgba(245,158,11,0.4)`, borderRadius: 6, padding: "0.875rem",
+                                            background: "rgba(245,158,11,0.04)",
                                         }}>
-                                            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                                                <Typography sx={{ fontWeight: 700, color: "#ea580c", fontFamily: "monospace" }}>
+                                            <Group justify="space-between" mb={8}>
+                                                <Text fw={700} style={{ color: "#ea580c", fontFamily: "monospace" }}>
                                                     [[{link}]]
-                                                </Typography>
-                                                <Button size="small" variant="outlined" component={Link}
+                                                </Text>
+                                                <Button component={Link}
                                                     href={`/tabletop/worlds/${worldId}/wiki/new`}
-                                                    sx={{ borderColor: "primary.main", color: "primary.main", fontSize: "0.7rem" }}>
+                                                    size="xs" variant="outline"
+                                                    style={{ borderColor: T.border, color: T.amber }}>
                                                     Create article
                                                 </Button>
-                                            </Box>
-                                            <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.5 }}>
-                                                Referenced in:
-                                            </Typography>
-                                            <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
+                                            </Group>
+                                            <Text size="xs" style={{ color: T.dimmed }} mb={6}>Referenced in:</Text>
+                                            <Group gap={6} wrap="wrap">
                                                 {arts.map(a => (
-                                                    <Chip key={a.id} label={a.title} size="small" clickable
-                                                        component={Link}
+                                                    <Badge key={a.id} component={Link}
                                                         href={`/tabletop/worlds/${worldId}/wiki/${a.id}`}
-                                                        sx={{ fontSize: "0.65rem" }} />
+                                                        size="sm" style={{ cursor: "pointer",
+                                                            background: T.cardBg, border: `1px solid ${T.border}`, color: T.amber }}>
+                                                        {a.title}
+                                                    </Badge>
                                                 ))}
-                                            </Box>
+                                            </Group>
                                         </Box>
                                     ))}
-                                </Box>
+                                </Stack>
                             </>
                         )}
-                    </>
+                    </Tabs.Panel>
+                </Tabs>
+            </Box>
+
+            {/* ── Dialogs ── */}
+            <Modal opened={!!deleteId} onClose={() => setDeleteId(null)} title="Delete Article?"
+                styles={{ content: { background: T.cardBg, border: `1px solid ${T.border}` },
+                          header: { background: T.cardBg }, title: { color: T.cream } }}>
+                <Text style={{ color: T.amber }} mb="lg">This cannot be undone.</Text>
+                <Group justify="flex-end" gap="sm">
+                    <Button variant="subtle" style={{ color: T.dimmed }} onClick={() => setDeleteId(null)}>Cancel</Button>
+                    <Button color="red" onClick={deleteArticle}>Delete</Button>
+                </Group>
+            </Modal>
+
+            <Modal opened={!!deleteMapId} onClose={() => setDeleteMapId(null)} title="Delete map?"
+                styles={{ content: { background: T.cardBg, border: `1px solid ${T.border}` },
+                          header: { background: T.cardBg }, title: { color: T.cream } }}>
+                <Text style={{ color: T.amber }} mb="lg">The image and all pins will be removed.</Text>
+                <Group justify="flex-end" gap="sm">
+                    <Button variant="subtle" style={{ color: T.dimmed }} onClick={() => setDeleteMapId(null)}>Cancel</Button>
+                    <Button color="red" onClick={deleteMap}>Delete</Button>
+                </Group>
+            </Modal>
+
+            <Modal opened={newMapDialog} onClose={() => !mapUploading && closeNewMap()} title="New Map"
+                styles={{ content: { background: T.cardBg, border: `1px solid ${T.border}` },
+                          header: { background: T.cardBg }, title: { color: T.cream } }}>
+                <TextInput label="Map name" autoFocus value={mapName} onChange={e => setMapName(e.target.value)} mb="sm"
+                    styles={{ input: { background: T.pageBg, borderColor: T.border, color: T.cream },
+                              label: { color: T.amber } }} />
+                {pendingFile && (
+                    <Text size="xs" style={{ color: T.dimmed }} mb="sm">
+                        {pendingFile.name} ({Math.round(pendingFile.size / 1024)} KB)
+                    </Text>
                 )}
+                {mapUploading && (
+                    <Box mb="sm">
+                        <Progress value={mapUploadProgress} size="sm" mb={4}
+                            style={{ "--progress-color": T.accent } as React.CSSProperties} />
+                        <Text size="xs" style={{ color: T.dimmed }}>Uploading… {mapUploadProgress}%</Text>
+                    </Box>
+                )}
+                <Group justify="flex-end" gap="sm" mt="md">
+                    <Button variant="subtle" style={{ color: T.dimmed }}
+                        onClick={closeNewMap} disabled={mapUploading}>Cancel</Button>
+                    <Button onClick={uploadMap} disabled={mapUploading || !mapName.trim()}
+                        style={{ background: T.accent, color: T.pageBg }}>
+                        {mapUploading ? "Uploading…" : "Upload"}
+                    </Button>
+                </Group>
+            </Modal>
 
-                {/* Fix formatting confirmation / progress */}
-                <Dialog open={fixDialog} onClose={() => !fixing && setFixDialog(false)} maxWidth="xs" fullWidth>
-                    <DialogTitle>Fix Formatting?</DialogTitle>
-                    <DialogContent>
-                        {!fixing ? (
-                            <Typography>
-                                {bbcodeArticles.length} article{bbcodeArticles.length !== 1 ? "s" : ""} still
-                                {" "}contain{bbcodeArticles.length === 1 ? "s" : ""} raw BBCode tags (e.g. <code>[p]</code>, <code>[b]</code>)
-                                from an older import. This will convert them to Markdown in place.
-                            </Typography>
-                        ) : (
-                            <Box sx={{ pt: 1 }}>
-                                <Typography sx={{ mb: 1.5 }}>
-                                    Fixing… {fixProgress.done} / {fixProgress.total}
-                                </Typography>
-                                <LinearProgress
-                                    variant="determinate"
-                                    value={fixProgress.total ? (fixProgress.done / fixProgress.total) * 100 : 0}
-                                    sx={{ height: 6, borderRadius: 3,
-                                          "& .MuiLinearProgress-bar": { backgroundColor: "primary.main" } }}
-                                />
-                            </Box>
-                        )}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setFixDialog(false)} disabled={fixing}>Cancel</Button>
-                        <Button variant="contained" onClick={fixFormatting} disabled={fixing}
-                            sx={{ backgroundColor: "primary.main" }}>
-                            {fixing ? <CircularProgress size={18} /> : "Fix Now"}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
-                {/* Delete article confirmation */}
-                <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
-                    <DialogTitle>Delete Article?</DialogTitle>
-                    <DialogContent>
-                        <Typography>This cannot be undone.</Typography>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setDeleteId(null)}>Cancel</Button>
-                        <Button color="error" variant="contained" onClick={deleteArticle}>Delete</Button>
-                    </DialogActions>
-                </Dialog>
-            </Container>
+            <Modal opened={fixDialog} onClose={() => !fixing && closeFix()} title="Fix Formatting?"
+                styles={{ content: { background: T.cardBg, border: `1px solid ${T.border}` },
+                          header: { background: T.cardBg }, title: { color: T.cream } }}>
+                {!fixing ? (
+                    <Text style={{ color: T.amber }} mb="lg">
+                        {bbcodeArticles.length} article{bbcodeArticles.length !== 1 ? "s" : ""} contain raw BBCode
+                        tags from an older import. This will convert them to Markdown in place.
+                    </Text>
+                ) : (
+                    <Box pt="xs" mb="lg">
+                        <Text style={{ color: T.amber }} mb="sm">
+                            Fixing… {fixProgress.done} / {fixProgress.total}
+                        </Text>
+                        <Progress
+                            value={fixProgress.total ? (fixProgress.done / fixProgress.total) * 100 : 0}
+                            size="sm" style={{ "--progress-color": T.accent } as React.CSSProperties} />
+                    </Box>
+                )}
+                <Group justify="flex-end" gap="sm">
+                    <Button variant="subtle" style={{ color: T.dimmed }} onClick={closeFix} disabled={fixing}>Cancel</Button>
+                    <Button onClick={fixFormatting} disabled={fixing}
+                        style={{ background: T.accent, color: T.pageBg }}>
+                        {fixing ? "Fixing…" : "Fix Now"}
+                    </Button>
+                </Group>
+            </Modal>
         </Box>
     );
 }

@@ -3,7 +3,8 @@
 import { Box, Button, Container } from "@mui/material";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, FolderOpen } from "lucide-react";
+import { ArrowLeft, FolderOpen, SwatchBook } from "lucide-react";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import { suggestedTags, useGalleryData } from "../../_lib/useGalleryData";
 import { GalleryView } from "../../_components/GalleryView";
 
@@ -12,6 +13,7 @@ export default function SubGalleryPage() {
     const { photos, subGalleries, urls, loading, reload } = useGalleryData();
 
     const subGallery = subGalleries.find(g => g.id === subGalleryId);
+    useDocumentTitle(subGallery?.name ?? null);
     const galleryPhotos = photos.filter(p => p.subGalleryIds?.includes(subGalleryId));
 
     return (
@@ -34,6 +36,12 @@ export default function SubGalleryPage() {
                     reload={reload}
                     defaultSubGalleryId={subGalleryId}
                     emptyMessage="No photos in this sub-gallery yet."
+                    headerActions={
+                        <Button component={Link} href={`/personal/gallery/swipe?source=${subGalleryId}`}
+                            variant="outlined" startIcon={<SwatchBook size={16} />}>
+                            Swipe to Narrow
+                        </Button>
+                    }
                 />
             </Container>
         </Box>

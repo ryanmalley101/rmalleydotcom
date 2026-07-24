@@ -43,6 +43,9 @@ export default function NewArticlePage() {
     const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
     const coverInputRef = useRef<HTMLInputElement>(null);
     const galleryInputRef = useRef<HTMLInputElement>(null);
+    const createdIdRef = useRef<string | null>(null);
+    const [autoSaved, setAutoSaved] = useState<Date | null>(null);
+    const [autoSaving, setAutoSaving] = useState(false);
 
     useEffect(() => {
         client.models.WikiArticle.list().then(({ data }) => {
@@ -80,45 +83,81 @@ export default function NewArticlePage() {
     }
     const galleryDrop = useFileDrop(addGalleryFiles);
 
+    // Silently create or update the draft whenever any content is entered
+    useEffect(() => {
+        const hasContent = title.trim() || content.trim() || excerpt.trim() || parentTitle.trim() || coverImageUrl.trim();
+        if (!hasContent) return;
+        const timer = setTimeout(async () => {
+            setAutoSaving(true);
+            try {
+                const effectiveTitle = title.trim() || "Untitled";
+                if (!createdIdRef.current) {
+                    const { data } = await client.models.WikiArticle.create({
+                        worldId, title: effectiveTitle, articleType, status, visibleToPlayers,
+                        content: content || undefined, excerpt: excerpt.trim() || undefined,
+                        coverImageUrl: coverImageUrl.trim() || undefined, parentTitle: parentTitle.trim() || undefined,
+                    });
+                    if (data) createdIdRef.current = data.id;
+                } else {
+                    await client.models.WikiArticle.update({
+                        id: createdIdRef.current, title: effectiveTitle, articleType, status, visibleToPlayers,
+                        content: content || undefined, excerpt: excerpt.trim() || undefined,
+                        coverImageUrl: coverImageUrl.trim() || undefined, parentTitle: parentTitle.trim() || undefined,
+                    });
+                }
+                setAutoSaved(new Date());
+            } finally {
+                setAutoSaving(false);
+            }
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, [title, articleType, status, visibleToPlayers, excerpt, coverImageUrl, parentTitle, content, worldId]);
+
     async function save() {
         if (!title.trim()) return;
         setSaving(true);
-        const { data } = await client.models.WikiArticle.create({
-            worldId,
-            title:         title.trim(),
-            articleType,
-            status,
-            visibleToPlayers,
-            excerpt:       excerpt.trim() || undefined,
-            coverImageUrl: coverImageUrl.trim() || undefined,
-            parentTitle:   parentTitle.trim() || undefined,
-            content,
-        });
+        let articleId = createdIdRef.current;
+        if (!articleId) {
+            const { data } = await client.models.WikiArticle.create({
+                worldId, title: title.trim(), articleType, status, visibleToPlayers,
+                excerpt: excerpt.trim() || undefined, coverImageUrl: coverImageUrl.trim() || undefined,
+                parentTitle: parentTitle.trim() || undefined, content,
+            });
+            if (!data) { setSaving(false); return; }
+            articleId = data.id;
+            createdIdRef.current = articleId;
+        } else {
+            await client.models.WikiArticle.update({
+                id: articleId, title: title.trim(), articleType, status, visibleToPlayers,
+                excerpt: excerpt.trim() || undefined, coverImageUrl: coverImageUrl.trim() || undefined,
+                parentTitle: parentTitle.trim() || undefined, content,
+            });
+        }
         // Upload cover image if a file was selected
-        if (data && pendingFile) {
+        if (pendingFile) {
             const ext = pendingFile.name.split(".").pop() ?? "jpg";
-            const key = `wiki-covers/${worldId}/${data.id}.${ext}`;
+            const key = `wiki-covers/${worldId}/${articleId}.${ext}`;
             try {
                 await uploadData({ path: key, data: pendingFile, options: { contentType: pendingFile.type } }).result;
-                await client.models.WikiArticle.update({ id: data.id, coverImageKey: key, coverImageUrl: undefined });
-            } catch { /* cover upload failed — article still created */ }
+                await client.models.WikiArticle.update({ id: articleId, coverImageKey: key, coverImageUrl: undefined });
+            } catch { /* cover upload failed — article still saved */ }
         }
         // Upload any staged gallery images
-        if (data && galleryFiles.length) {
+        if (galleryFiles.length) {
             const keys: string[] = [];
             for (let i = 0; i < galleryFiles.length; i++) {
                 const file = galleryFiles[i];
                 const ext = file.name.split(".").pop() ?? "jpg";
-                const key = `wiki-gallery/${worldId}/${data.id}/${Date.now()}-${i}.${ext}`;
+                const key = `wiki-gallery/${worldId}/${articleId}/${Date.now()}-${i}.${ext}`;
                 try {
                     await uploadData({ path: key, data: file, options: { contentType: file.type } }).result;
                     keys.push(key);
                 } catch { /* skip failed upload */ }
             }
-            if (keys.length) await client.models.WikiArticle.update({ id: data.id, galleryImageKeys: keys });
+            if (keys.length) await client.models.WikiArticle.update({ id: articleId, galleryImageKeys: keys });
         }
         setSaving(false);
-        if (data) router.push(`/tabletop/worlds/${worldId}/wiki/${data.id}`);
+        router.push(`/tabletop/worlds/${worldId}/wiki/${articleId}`);
     }
 
     return (
@@ -294,7 +333,15 @@ export default function NewArticlePage() {
                         Tip: Write <strong>[[Article Title]]</strong> anywhere in your content to create a clickable link, or select text and press <strong>Ctrl+K</strong> to search for an article.
                     </Typography>
 
-                    <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+                    <Box sx={{ display: "flex", gap: 2, alignItems: "center", justifyContent: "flex-end" }}>
+                        {autoSaving && (
+                            <Typography variant="caption" sx={{ color: "text.disabled" }}>Saving…</Typography>
+                        )}
+                        {!autoSaving && autoSaved && (
+                            <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                                Draft saved at {autoSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </Typography>
+                        )}
                         <Button component={Link} href={`/tabletop/worlds/${worldId}`}>Cancel</Button>
                         <Button variant="contained" onClick={save} disabled={saving || !title.trim()}
                             sx={{ backgroundColor: "primary.main" }}>

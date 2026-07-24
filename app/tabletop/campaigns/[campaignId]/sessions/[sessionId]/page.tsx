@@ -9,10 +9,13 @@ import {
     Chip, InputAdornment, Switch,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Save, X, Trash2, CalendarDays, BookOpen, Search, Plus } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Trash2, CalendarDays, BookOpen, Search, Plus, Image } from "lucide-react";
+import { MarkdownContent } from "@/lib/MarkdownContent";
+import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { useAutosaveDefault } from "@/lib/useAutosaveDefault";
+import { NoteImages } from "../../_dashboard-shared/NoteImages";
 
 const client = generateClient<Schema>();
 type Session = Schema["CampaignSession"]["type"];
@@ -28,6 +31,9 @@ export default function SessionPage() {
     const router = useRouter();
 
     const [session, setSession]       = useState<Session | null>(null);
+    useDocumentTitle(session
+        ? `Session #${session.sessionNumber ?? "?"}: ${session.title || "Untitled Session"}`
+        : null);
     const [pinned, setPinned]         = useState<Article[]>([]);
     const [allArticles, setAll]       = useState<Article[]>([]);
     const [editing, setEditing]       = useState(false);
@@ -56,6 +62,7 @@ export default function SessionPage() {
     const [prepNotes, setPrep]     = useState("");
     const [sessionNotes, setNotes] = useState("");
     const [playerSummary, setPlayerSummary] = useState("");
+    const [imageKeys, setImageKeys] = useState<string[]>([]);
 
     const isDirty = useMemo(() => {
         if (!session || !editing) return false;
@@ -94,6 +101,7 @@ export default function SessionPage() {
             setPrep(s.prepNotes ?? "");
             setNotes(s.sessionNotes ?? "");
             setPlayerSummary(s.playerSummary ?? "");
+            setImageKeys((s.imageKeys ?? []).filter((k): k is string => !!k));
 
             // Load campaign → worldIds → articles
             const { data: campaign } = await client.models.Campaign.get({ id: campaignId });
@@ -158,6 +166,12 @@ export default function SessionPage() {
         if (!session) return;
         await client.models.CampaignSession.delete({ id: session.id });
         router.push(`/tabletop/campaigns/${campaignId}`);
+    }
+
+    async function updateImageKeys(keys: string[]) {
+        if (!session) return;
+        setImageKeys(keys); // optimistic
+        await client.models.CampaignSession.update({ id: session.id, imageKeys: keys });
     }
 
     async function togglePin(article: Article) {
@@ -317,10 +331,9 @@ export default function SessionPage() {
                             Prep Notes
                         </Typography>
                         {session.prepNotes ? (
-                            <Typography component="div" variant="body1"
-                                sx={{ whiteSpace: "pre-wrap", lineHeight: 1.8, color: "text.primary", mb: 4 }}>
-                                {session.prepNotes}
-                            </Typography>
+                            <Box sx={{ mb: 4 }}>
+                                <MarkdownContent>{session.prepNotes}</MarkdownContent>
+                            </Box>
                         ) : (
                             <Typography sx={{ color: "text.secondary", fontStyle: "italic", mb: 4 }}>
                                 No prep notes.
@@ -334,10 +347,7 @@ export default function SessionPage() {
                             Session Recap
                         </Typography>
                         {session.sessionNotes ? (
-                            <Typography component="div" variant="body1"
-                                sx={{ whiteSpace: "pre-wrap", lineHeight: 1.8, color: "text.primary" }}>
-                                {session.sessionNotes}
-                            </Typography>
+                            <MarkdownContent>{session.sessionNotes}</MarkdownContent>
                         ) : (
                             <Box sx={{ textAlign: "center", py: 4 }}>
                                 <Typography sx={{ color: "text.secondary", fontStyle: "italic", mb: 2 }}>
@@ -361,10 +371,7 @@ export default function SessionPage() {
                             Shared with all campaign members
                         </Typography>
                         {session.playerSummary ? (
-                            <Typography component="div" variant="body1"
-                                sx={{ whiteSpace: "pre-wrap", lineHeight: 1.8, color: "text.primary" }}>
-                                {session.playerSummary}
-                            </Typography>
+                            <MarkdownContent>{session.playerSummary}</MarkdownContent>
                         ) : (
                             <Typography sx={{ color: "text.secondary", fontStyle: "italic" }}>
                                 No player summary yet.
@@ -449,6 +456,24 @@ export default function SessionPage() {
                         )}
                     </>
                 )}
+
+                {/* ── Attachments ── */}
+                <Divider sx={{ my: 3 }} />
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+                    <Image size={18} color="#8C5A3A" />
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark" }}>
+                        Attachments
+                    </Typography>
+                    {imageKeys.length > 0 && (
+                        <Chip label={imageKeys.length} size="small"
+                            sx={{ backgroundColor: "primary.main", color: "#fff", height: 18, fontSize: "0.7rem" }} />
+                    )}
+                </Box>
+                <NoteImages
+                    imageKeys={imageKeys}
+                    storagePath={`session-notes/${campaignId}/${sessionId}`}
+                    onKeysChange={updateImageKeys}
+                />
 
                 {/* ── Pin Article dialog ── */}
                 <Dialog open={pinDialogOpen} onClose={() => setPinDialog(false)}
