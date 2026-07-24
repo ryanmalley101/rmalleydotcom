@@ -91,6 +91,11 @@ export interface SolutionInputs {
   truckRollsPerSiteYr: number;
   adminHrsPerCamYr: number;
   investigationHrsPerIncident: number;
+  // Frames per second per camera. Per-solution since each side's cameras can
+  // run at a different rate; scales on-prem storage sizing relative to the
+  // 24fps baseline (bitrate is already a full encoded rate, so this is a
+  // secondary adjustment on top of it, not a replacement for it).
+  framerateFps: number;
 
   // Cloud/hybrid only
   migrationStrategy: CloudMigrationStrategy;
@@ -155,7 +160,7 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
   // serves, you can't split one across sites), or more if total camera count demands it.
   const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.applianceCapacity))) : 0;
   const nSrv = sol.model === "onprem" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.serverCapacity))) + 1 : 0;
-  const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * 1.3;
+  const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * 1.3 * (sol.framerateFps / 24);
   // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
   // mirrored RAID 1/10). Power draw scales with physical drives too, more disks spinning.
   const tbPhysical = sol.model === "onprem" ? tbUsable * RAID_STORAGE_MULTIPLIER[sol.raidLevel] : tbUsable;

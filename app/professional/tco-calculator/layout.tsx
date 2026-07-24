@@ -5,6 +5,9 @@ export const metadata: Metadata = {
     title: "Video Surveillance TCO Calculator | Ryan Malley",
     description:
         "Compare total cost of ownership for video surveillance deployments: cloud vs. on-prem, or either against itself. An independent estimate tool, not affiliated with or endorsed by any vendor it names.",
+    // Inherited from /professional/layout.tsx too, repeated here so it holds even if this
+    // layout's metadata is read on its own. Not secret, just not meant to be indexed/crawled.
+    robots: { index: false, follow: false },
 };
 
 export default function TcoCalculatorLayout({ children }: { children: React.ReactNode }) {

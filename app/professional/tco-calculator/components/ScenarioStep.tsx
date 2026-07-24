@@ -1,6 +1,7 @@
 "use client";
 
 import { Accordion, NumberInput, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Activity, Building2, Camera, CalendarRange, Database, DollarSign, Percent, Search, TrendingUp, Truck, Zap } from "lucide-react";
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
@@ -11,6 +12,15 @@ const RETENTION_LABEL = (
     help="How many days of footage are kept before it's overwritten. Longer retention needs more storage, which raises cost, but not in a straight line: storage is only part of what a license or server covers, and tends to get cheaper per unit at higher volumes."
   />
 );
+
+const ESCALATION_LABEL = (
+  <InfoLabel
+    label="Annual cost escalation (%)"
+    help="How much recurring costs (subscriptions, labor, truck rolls, refreshes) grow each year. NPV discounting alone only accounts for the time value of money, not that prices themselves tend to rise over a long horizon."
+  />
+);
+
+const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
 export default function ScenarioStep({ value, onChange }: { value: ScenarioInputs; onChange: (v: ScenarioInputs) => void }) {
   const set = <K extends keyof ScenarioInputs>(key: K, v: ScenarioInputs[K]) => onChange({ ...value, [key]: v });
@@ -24,23 +34,22 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
           Shared facts for both solutions. Defaults are placeholders, adjust as needed.
         </Text>
       </div>
-      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
-        <NumberInput label="Camera count" value={value.cameras} min={1} thousandSeparator=","
+      <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="lg">
+        <NumberInput label="Camera count" leftSection={icon(Camera)} value={value.cameras} min={1} thousandSeparator=","
           onChange={(v) => set("cameras", num(v))} />
-        <NumberInput label="Sites / buildings" value={value.sites} min={1} thousandSeparator=","
+        <NumberInput label="Sites / buildings" leftSection={icon(Building2)} value={value.sites} min={1} thousandSeparator=","
           onChange={(v) => set("sites", num(v))} />
-        <NumberInput label={RETENTION_LABEL} value={value.retentionDays} min={1}
+        <NumberInput label={RETENTION_LABEL} leftSection={icon(Database)} value={value.retentionDays} min={1}
           onChange={(v) => set("retentionDays", num(v))} />
-        <NumberInput label="Horizon (years)" value={value.horizonYears} min={1} max={30}
+        <NumberInput label="Horizon (years)" leftSection={icon(CalendarRange)} value={value.horizonYears} min={1} max={30}
           onChange={(v) => set("horizonYears", num(v))} />
-        <NumberInput label="Avg bitrate per camera (Mbps)" value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
+        <NumberInput label="Bitrate/cam (Mbps)" leftSection={icon(Activity)} value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
           onChange={(v) => set("bitrateMbps", num(v))} />
-        <NumberInput label="Investigations per month" value={value.investigationsPerMonth} min={0}
+        <NumberInput label="Investigations/mo" leftSection={icon(Search)} value={value.investigationsPerMonth} min={0}
           onChange={(v) => set("investigationsPerMonth", num(v))} />
-        <NumberInput label="NPV discount rate (%)" value={value.npvDiscountPct} min={0} max={100} step={0.5} decimalScale={1}
+        <NumberInput label="NPV discount (%)" leftSection={icon(Percent)} value={value.npvDiscountPct} min={0} max={100} step={0.5} decimalScale={1}
           onChange={(v) => set("npvDiscountPct", num(v))} />
-        <NumberInput
-          label={<InfoLabel label="Annual cost escalation (%)" help="How much recurring costs (subscriptions, labor, truck rolls, refreshes) grow each year. NPV discounting alone only accounts for the time value of money, not that prices themselves tend to rise over a long horizon." />}
+        <NumberInput label={ESCALATION_LABEL} leftSection={icon(TrendingUp)}
           value={value.annualEscalationPct} min={0} max={100} step={0.5} decimalScale={1}
           onChange={(v) => set("annualEscalationPct", num(v))} />
       </SimpleGrid>
@@ -51,11 +60,11 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
             <Text size="sm" fw={500}>Market rates (labor, truck rolls, electricity)</Text>
           </Accordion.Control>
           <Accordion.Panel>
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-              <NumberInput label="Admin labor rate ($/hr)" value={value.adminRate} min={0} onChange={(v) => set("adminRate", num(v))} />
-              <NumberInput label="Investigator rate ($/hr)" value={value.investigatorRate} min={0} onChange={(v) => set("investigatorRate", num(v))} />
-              <NumberInput label="Cost per truck roll ($)" value={value.truckRollCost} min={0} onChange={(v) => set("truckRollCost", num(v))} />
-              <NumberInput label="Electricity ($/kWh)" value={value.electricityRate} min={0} step={0.01} decimalScale={2}
+            <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
+              <NumberInput label="Admin ($/hr)" leftSection={icon(DollarSign)} value={value.adminRate} min={0} onChange={(v) => set("adminRate", num(v))} />
+              <NumberInput label="Investigator ($/hr)" leftSection={icon(DollarSign)} value={value.investigatorRate} min={0} onChange={(v) => set("investigatorRate", num(v))} />
+              <NumberInput label="Truck roll ($)" leftSection={icon(Truck)} value={value.truckRollCost} min={0} onChange={(v) => set("truckRollCost", num(v))} />
+              <NumberInput label="Electricity ($/kWh)" leftSection={icon(Zap)} value={value.electricityRate} min={0} step={0.01} decimalScale={2}
                 onChange={(v) => set("electricityRate", num(v))} />
             </SimpleGrid>
           </Accordion.Panel>

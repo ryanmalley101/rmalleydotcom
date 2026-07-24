@@ -18,6 +18,20 @@ const RAID_OPTIONS: { value: RaidLevel; label: string }[] = [
   { value: "raid10", label: "RAID 10 (striped mirrors)" },
 ];
 
+const FRAMERATE_HELP =
+  "Frames per second recorded per camera. Storage scales proportionally relative to the 24fps default; bitrate already captures most of the storage cost, this is a secondary adjustment on top of it.";
+
+const LICENSE_HELP =
+  "Before the retention multiplier. Other ongoing costs, like support, software updates, and analytics, are assumed bundled into the license.";
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ gridColumn: "1 / -1" }}>
+    <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }} mt="xs">
+      {children}
+    </Text>
+  </div>
+);
+
 export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInputs; onChange: (v: SolutionInputs) => void }) {
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
   const num = (
@@ -37,18 +51,22 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
   const perYear = sol.tierPrice / Math.max(1, sol.tierYears);
 
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+    <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
       {num("Discount off list (%)", "discountPct", { min: 0 })}
       {num("Replacement camera ($/cam)", "cameraCost")}
-      {num("Bulk install labor ($/cam, year 0)", "bulkInstallLaborCost")}
+      {num("Bulk install labor ($/cam)", "bulkInstallLaborCost")}
       {num("Replacement install labor ($/cam)", "replacementInstallLaborCost")}
       {num(
-        <InfoLabel label="Camera fleet half-life (yrs)" help="A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life." />,
+        <InfoLabel label="Fleet half-life (yrs)" help="A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life." />,
         "fleetHalfLifeYears", { step: 0.5, decimalScale: 1, min: 0.5 }
       )}
       {num(
-        <InfoLabel label="Warranty period (yrs)" help="How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself." />,
+        <InfoLabel label="Warranty (yrs)" help="How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself." />,
         "warrantyYears", { step: 0.5, decimalScale: 1 }
+      )}
+      {num(
+        <InfoLabel label="Framerate (fps)" help={FRAMERATE_HELP} />,
+        "framerateFps", { step: 1, min: 1 }
       )}
       {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1 })}
       {num("Admin labor (hrs/cam/yr)", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1 })}
@@ -71,16 +89,13 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
             />
           </div>
           {num("License term (years)", "tierYears", { min: 1 })}
-          {num("License cost for that term ($/cam)", "tierPrice")}
+          {num("License cost for term ($/cam)", "tierPrice")}
           <div style={{ gridColumn: "1 / -1" }}>
-            <Text size="xs" c={TEXT_MUTED}>
-              &asymp; ${perYear.toFixed(2)}/yr per camera before the retention multiplier. Other ongoing costs
-              are assumed bundled into the license.
-            </Text>
+            <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
           </div>
           {sol.migrationStrategy === "connector" && (
             <>
-              {num("Cloud connector appliance ($/unit)", "applianceCost")}
+              {num("Connector appliance ($/unit)", "applianceCost")}
               {num("Cameras per appliance", "applianceCapacity", { min: 1 })}
             </>
           )}
@@ -89,9 +104,9 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
         <>
           {num("Base license ($, owned)", "baseLicense")}
           {num("Device license ($/cam, owned)", "deviceLicense")}
-          {num("Support renewal (% of license/yr)", "carePct")}
+          {num("Support renewal (%/yr)", "carePct")}
           {num("Recording server ($/unit)", "serverCost")}
-          {num("Cameras per recording server", "serverCapacity", { min: 1 })}
+          {num("Cameras per server", "serverCapacity", { min: 1 })}
           {num("Storage ($/TB usable)", "storageCostPerTB")}
           <Select
             label={<InfoLabel label="Storage redundancy" help={RAID_HELP} />}
@@ -100,10 +115,12 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
             allowDeselect={false}
             onChange={(v) => v && set("raidLevel", v as RaidLevel)}
           />
-          {num("Analytics appliance hardware ($)", "analyticsApplianceCost")}
-          {num("Analytics software ($/yr)", "analyticsSoftwareCost")}
-          {num("Hardware refresh cycle (yrs)", "refreshCycleYears", { min: 1 })}
+          {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1 })}
           {num("Years until next refresh", "yearsUntilNextRefresh", { min: 0 })}
+
+          <SectionLabel>Analytics</SectionLabel>
+          {num("Analytics appliance ($)", "analyticsApplianceCost")}
+          {num("Analytics software ($/yr)", "analyticsSoftwareCost")}
         </>
       )}
     </SimpleGrid>
