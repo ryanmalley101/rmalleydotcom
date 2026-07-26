@@ -41,9 +41,11 @@ function selectData(options: string[]) {
 // How much of a picked vendor's pre-filled data is a real source vs. an
 // estimate — the fieldMeta this reads already exists per-field, this just
 // surfaces it at a glance instead of it sitting invisible in the data file.
-function ConfidenceBadge({ vendorName, table }: { vendorName: string; table: Record<string, VendorDefaultEntry> }) {
-  const summary = confidenceSummary(vendorName, table);
-  if (summary.total === 0) return null;
+function ConfidenceBadge({
+  vendorName, table, headlineField,
+}: { vendorName: string; table: Record<string, VendorDefaultEntry>; headlineField?: keyof SolutionInputs }) {
+  const summary = confidenceSummary(vendorName, table, headlineField);
+  if (summary.total === 0 && summary.tone !== "estimated") return null;
   const color = summary.tone === "sourced" ? "teal" : summary.tone === "mixed" ? "yellow" : "gray";
   return (
     <Tooltip
@@ -83,7 +85,7 @@ function CloudNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: Sol
           onChange({ ...withVendorDefaults(sol, v, CLOUD_VENDOR_DEFAULTS), name: v });
         }}
       />
-      {selectValue && selectValue !== OTHER && <ConfidenceBadge vendorName={selectValue} table={CLOUD_VENDOR_DEFAULTS} />}
+      {selectValue && selectValue !== OTHER && <ConfidenceBadge vendorName={selectValue} table={CLOUD_VENDOR_DEFAULTS} headlineField="tierPrice" />}
       {selectValue === OTHER && (
         <TextInput
           placeholder="Type a provider name"
@@ -121,7 +123,7 @@ function OnPremNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: So
         value={vmsSelectValue}
         onChange={(v) => { if (v) updateVms(v === OTHER ? "" : v); }}
       />
-      {vmsSelectValue && vmsSelectValue !== OTHER && <ConfidenceBadge vendorName={vmsSelectValue} table={ONPREM_VMS_VENDOR_DEFAULTS} />}
+      {vmsSelectValue && vmsSelectValue !== OTHER && <ConfidenceBadge vendorName={vmsSelectValue} table={ONPREM_VMS_VENDOR_DEFAULTS} headlineField="deviceLicense" />}
       {vmsSelectValue === OTHER && (
         <TextInput placeholder="Type a VMS name" value={vms ?? ""} onChange={(e) => updateVms(e.currentTarget.value)} />
       )}
@@ -132,7 +134,7 @@ function OnPremNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: So
         value={cameraSelectValue}
         onChange={(v) => { if (v) updateCamera(v === OTHER ? "" : v); }}
       />
-      {cameraSelectValue && cameraSelectValue !== OTHER && <ConfidenceBadge vendorName={cameraSelectValue} table={ONPREM_CAMERA_VENDOR_DEFAULTS} />}
+      {cameraSelectValue && cameraSelectValue !== OTHER && <ConfidenceBadge vendorName={cameraSelectValue} table={ONPREM_CAMERA_VENDOR_DEFAULTS} headlineField="cameraCost" />}
       {cameraSelectValue === OTHER && (
         <TextInput placeholder="Type a camera vendor" value={camera ?? ""} onChange={(e) => updateCamera(e.currentTarget.value)} />
       )}

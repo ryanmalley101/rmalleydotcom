@@ -1,6 +1,9 @@
-// Common vendor names offered in the wizard's naming dropdowns, purely for
-// labeling. None of these drive different default numbers yet ("Other" lets
-// the user type any name; per-provider default pricing is a later pass).
+// Vendor names offered in the wizard's naming dropdowns. Most of these now
+// also drive different default numbers via lib/vendorDefaults.ts, keyed by
+// these exact strings — "Other" still lets the user type any name, and any
+// vendor listed here without a matching vendorDefaults entry just falls
+// through to the generic defaultSolution() values (see that file's own
+// comments for which vendors that's still true of).
 
 export const CLOUD_PROVIDERS = [
   "Verkada",

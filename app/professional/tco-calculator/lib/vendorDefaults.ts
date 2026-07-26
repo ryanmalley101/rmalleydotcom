@@ -77,12 +77,27 @@ export interface ConfidenceSummary {
 // wants it, this just makes "how much of this is real vs. a guess" visible
 // without reading the data file. `total: 0` (no entry at all, or "Other")
 // means generic, not-vendor-specific defaults, not zero sourced fields.
-export function confidenceSummary(vendorName: string, table: Record<string, VendorDefaultEntry>): ConfidenceSummary {
+//
+// `headlineField`, if given, is checked for presence in `values` first and
+// short-circuits to a distinct "not researched" state if it's missing —
+// otherwise a vendor whose price field was never researched (e.g. Turing AI
+// and Arcules's tierPrice, silently falling through to the generic default)
+// could still show a reassuring "3/3 sourced" based only on the fields that
+// *are* present, which is a worse, more confident-looking lie than showing
+// nothing at all.
+export function confidenceSummary(
+  vendorName: string,
+  table: Record<string, VendorDefaultEntry>,
+  headlineField?: keyof SolutionInputs
+): ConfidenceSummary {
   const entry = table[vendorName];
   if (!entry) return { sourced: 0, total: 0, label: "Generic defaults, not vendor-specific", tone: "none" };
   const metas = Object.values(entry.fieldMeta);
   const total = metas.length;
   const sourced = metas.filter((m) => m.status === "sourced").length;
+  if (headlineField !== undefined && !(headlineField in entry.values)) {
+    return { sourced, total, label: "Price not researched, using generic default", tone: "estimated" };
+  }
   const tone: ConfidenceSummary["tone"] = total === 0 ? "none" : sourced === total ? "sourced" : sourced === 0 ? "estimated" : "mixed";
   return { sourced, total, label: total === 0 ? "Generic defaults, not vendor-specific" : `${sourced}/${total} fields sourced`, tone };
 }
