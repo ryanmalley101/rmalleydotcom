@@ -4,11 +4,20 @@ import { Badge, Box, Card, ColorInput, Group, NumberInput, Select, SegmentedCont
 import type { CloudMigrationStrategy, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
+import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, type VendorDefaultEntry } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import InfoLabel from "./InfoLabel";
 
 const OTHER = "other";
 const PLACEHOLDER_NAMES = ["Solution A (Cloud)", "Solution A (On-Prem)", "Solution B (Cloud)", "Solution B (On-Prem)"];
+
+// Picking a vendor with researched data seeds its own numbers on top of
+// whatever's already filled in; vendors without an entry here (including
+// "Other") fall through untouched to the generic defaultSolution() values.
+function withVendorDefaults(sol: SolutionInputs, vendorName: string, table: Record<string, VendorDefaultEntry>): SolutionInputs {
+  const entry = table[vendorName];
+  return entry ? { ...sol, ...entry.values } : sol;
+}
 
 const HALF_LIFE_LABEL = (
   <InfoLabel
@@ -52,7 +61,8 @@ function CloudNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: Sol
         value={selectValue}
         onChange={(v) => {
           if (!v) return;
-          onChange({ ...sol, name: v === OTHER ? "" : v });
+          if (v === OTHER) { onChange({ ...sol, name: "" }); return; }
+          onChange({ ...withVendorDefaults(sol, v, CLOUD_VENDOR_DEFAULTS), name: v });
         }}
       />
       {selectValue === OTHER && (
@@ -75,10 +85,12 @@ function OnPremNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: So
   const cameraSelectValue = camera === undefined ? null : cameraKnown ? camera : OTHER;
 
   function updateVms(v: string) {
-    onChange({ ...sol, vmsProvider: v, name: composeOnPremName(sol.id, v, camera ?? "") });
+    const withDefaults = withVendorDefaults(sol, v, ONPREM_VMS_VENDOR_DEFAULTS);
+    onChange({ ...withDefaults, vmsProvider: v, name: composeOnPremName(sol.id, v, camera ?? "") });
   }
   function updateCamera(v: string) {
-    onChange({ ...sol, cameraProvider: v, name: composeOnPremName(sol.id, vms ?? "", v) });
+    const withDefaults = withVendorDefaults(sol, v, ONPREM_CAMERA_VENDOR_DEFAULTS);
+    onChange({ ...withDefaults, cameraProvider: v, name: composeOnPremName(sol.id, vms ?? "", v) });
   }
 
   return (

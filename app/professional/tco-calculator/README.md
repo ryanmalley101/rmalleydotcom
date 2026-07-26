@@ -12,8 +12,20 @@ the `<meta name="robots">` tag in rendered HTML, not just the source, if
 this ever needs re-checking): deliberately not indexed, not full
 auth-gated, "dampened" on purpose.
 
-## Cost model (`lib/model.ts`, `lib/defaults.ts`)
+## Cost model (`lib/model.ts`, `lib/defaults.ts`, `lib/vendorDefaults.ts`)
 
+- **Per-vendor defaults**: `lib/vendorDefaults.ts` holds three lookup tables
+  (`CLOUD_VENDOR_DEFAULTS`, `ONPREM_VMS_VENDOR_DEFAULTS`,
+  `ONPREM_CAMERA_VENDOR_DEFAULTS`) keyed by the exact strings in
+  `lib/providers.ts`'s dropdown lists. `SolutionsStep.tsx`'s provider
+  `Select`s merge a matched vendor's `values` on top of whatever's already
+  filled in when picked, so switching vendors layers new numbers in without
+  wiping unrelated fields; a vendor without an entry (or "Other") just keeps
+  today's generic `defaultSolution()` values. Each entry's `fieldMeta` keeps
+  per-field source URLs, sourced/estimated status, and confidence for future
+  audit — not surfaced in the UI today, but there for whoever revisits a
+  given number later. Not every listed provider has an entry yet; unresearched
+  ones fall through silently, same as before this existed.
 - A deployment-model abstraction (`"cloud" | "onprem"`) drives the cost
   formulas (`computeSolution`/`computeComparison`) instead of hardcoded
   vendor formulas, so on-prem-vs-on-prem, cloud-vs-cloud, and one-of-each
@@ -82,13 +94,17 @@ single-vendor version rather than independently researched per competitor,
 which creates some real, not-yet-fixed asymmetries worth knowing about
 before trusting an unedited comparison:
 
-- The numeric cloud defaults (`cameraCost: 1200`, `applianceCost: 9999`,
-  `applianceCapacity: 50`, `tierPrice: 1099`/`tierYears: 5`) are one specific vendor's
-  real published pricing, not researched
-  numbers for the other providers listed in `CLOUD_PROVIDERS` (Rhombus,
-  Meraki, Eagle Eye, Ava, Arcules). Picking any of those today silently
-  starts from that vendor's numbers until edited, since only one vendor's
-  numbers here have real provenance.
+- Partially fixed: `lib/vendorDefaults.ts` now seeds real per-vendor numbers
+  (with source URLs and sourced/estimated confidence per field, see the file
+  itself) for most `CLOUD_PROVIDERS`, `ONPREM_VMS_PROVIDERS`, and
+  `ONPREM_CAMERA_PROVIDERS` entries, wired into `SolutionsStep.tsx`'s
+  provider `Select`s. Rhombus and Eagle Eye Networks weren't part of that
+  research pass and still fall through to the numeric cloud defaults
+  (`cameraCost: 1200`, `applianceCost: 9999`, `applianceCapacity: 50`,
+  `tierPrice: 1099`/`tierYears: 5`) inherited from the earlier single-vendor
+  tool. Solink was researched but deliberately excluded: it prices per
+  location ($175/mo), not per camera, which the model's fields can't
+  represent without a real per-location pricing dimension.
 - The "connector" migration strategy assumes every cloud vendor needs a
   dedicated appliance to reuse existing cameras. Some real cloud VMS
   competitors are more camera-agnostic, software-first platforms that can
