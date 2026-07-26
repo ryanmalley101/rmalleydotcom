@@ -65,6 +65,28 @@ export function withVendorDefaults(sol: SolutionInputs, vendorName: string, tabl
   return entry ? { ...sol, ...entry.values } : sol;
 }
 
+export interface ConfidenceSummary {
+  sourced: number;
+  total: number;
+  label: string;
+  tone: "sourced" | "mixed" | "estimated" | "none";
+}
+
+// Collapses a vendor's per-field fieldMeta into a single at-a-glance figure —
+// the underlying source/confidence detail stays in fieldMeta for anyone who
+// wants it, this just makes "how much of this is real vs. a guess" visible
+// without reading the data file. `total: 0` (no entry at all, or "Other")
+// means generic, not-vendor-specific defaults, not zero sourced fields.
+export function confidenceSummary(vendorName: string, table: Record<string, VendorDefaultEntry>): ConfidenceSummary {
+  const entry = table[vendorName];
+  if (!entry) return { sourced: 0, total: 0, label: "Generic defaults, not vendor-specific", tone: "none" };
+  const metas = Object.values(entry.fieldMeta);
+  const total = metas.length;
+  const sourced = metas.filter((m) => m.status === "sourced").length;
+  const tone: ConfidenceSummary["tone"] = total === 0 ? "none" : sourced === total ? "sourced" : sourced === 0 ? "estimated" : "mixed";
+  return { sourced, total, label: total === 0 ? "Generic defaults, not vendor-specific" : `${sourced}/${total} fields sourced`, tone };
+}
+
 export interface VendorDefaultEntry {
   values: Partial<SolutionInputs>;
   fieldMeta: Record<string, FieldMeta>;

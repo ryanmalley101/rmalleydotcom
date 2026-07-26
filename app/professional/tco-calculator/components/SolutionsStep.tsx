@@ -1,10 +1,13 @@
 "use client";
 
-import { Badge, Box, Card, ColorInput, Group, NumberInput, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Badge, Box, Card, ColorInput, Group, NumberInput, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
 import type { CloudMigrationStrategy, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
-import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, withVendorDefaults } from "../lib/vendorDefaults";
+import {
+  CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS,
+  withVendorDefaults, confidenceSummary, type VendorDefaultEntry,
+} from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import InfoLabel from "./InfoLabel";
 
@@ -35,6 +38,26 @@ function selectData(options: string[]) {
   return [...options.map((p) => ({ value: p, label: p })), { value: OTHER, label: "Other…" }];
 }
 
+// How much of a picked vendor's pre-filled data is a real source vs. an
+// estimate — the fieldMeta this reads already exists per-field, this just
+// surfaces it at a glance instead of it sitting invisible in the data file.
+function ConfidenceBadge({ vendorName, table }: { vendorName: string; table: Record<string, VendorDefaultEntry> }) {
+  const summary = confidenceSummary(vendorName, table);
+  if (summary.total === 0) return null;
+  const color = summary.tone === "sourced" ? "teal" : summary.tone === "mixed" ? "yellow" : "gray";
+  return (
+    <Tooltip
+      multiline w={260} withArrow
+      events={{ hover: true, focus: true, touch: true }}
+      label="How many of this vendor's pre-filled fields come from a real published/reseller source vs. an estimate. Every field is still fully editable either way, worth double-checking the estimated ones before trusting a close comparison."
+    >
+      <Badge variant="light" color={color} size="sm" style={{ cursor: "help", width: "fit-content" }}>
+        {summary.label}
+      </Badge>
+    </Tooltip>
+  );
+}
+
 function composeOnPremName(id: "a" | "b", vms: string, camera: string) {
   if (vms && camera) return `${vms} · ${camera} cameras`;
   if (vms) return `${vms} VMS`;
@@ -60,6 +83,7 @@ function CloudNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: Sol
           onChange({ ...withVendorDefaults(sol, v, CLOUD_VENDOR_DEFAULTS), name: v });
         }}
       />
+      {selectValue && selectValue !== OTHER && <ConfidenceBadge vendorName={selectValue} table={CLOUD_VENDOR_DEFAULTS} />}
       {selectValue === OTHER && (
         <TextInput
           placeholder="Type a provider name"
@@ -97,6 +121,7 @@ function OnPremNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: So
         value={vmsSelectValue}
         onChange={(v) => { if (v) updateVms(v === OTHER ? "" : v); }}
       />
+      {vmsSelectValue && vmsSelectValue !== OTHER && <ConfidenceBadge vendorName={vmsSelectValue} table={ONPREM_VMS_VENDOR_DEFAULTS} />}
       {vmsSelectValue === OTHER && (
         <TextInput placeholder="Type a VMS name" value={vms ?? ""} onChange={(e) => updateVms(e.currentTarget.value)} />
       )}
@@ -107,6 +132,7 @@ function OnPremNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: So
         value={cameraSelectValue}
         onChange={(v) => { if (v) updateCamera(v === OTHER ? "" : v); }}
       />
+      {cameraSelectValue && cameraSelectValue !== OTHER && <ConfidenceBadge vendorName={cameraSelectValue} table={ONPREM_CAMERA_VENDOR_DEFAULTS} />}
       {cameraSelectValue === OTHER && (
         <TextInput placeholder="Type a camera vendor" value={camera ?? ""} onChange={(e) => updateCamera(e.currentTarget.value)} />
       )}
