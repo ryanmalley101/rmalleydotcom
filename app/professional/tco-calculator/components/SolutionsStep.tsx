@@ -9,27 +9,30 @@ import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
 import {
   CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS,
-  withVendorDefaults, confidenceSummary, type VendorDefaultEntry,
+  withVendorDefaults, confidenceSummary, fieldSourceInfo, type VendorDefaultEntry,
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import InfoLabel from "./InfoLabel";
+import SourceDot from "./SourceDot";
+
+// Same per-field entries a solution's current values could have come from
+// as AssumptionsPanel uses — duplicated rather than shared since this file
+// and AssumptionsPanel.tsx don't otherwise share a common parent for it.
+function vendorEntriesFor(sol: SolutionInputs) {
+  return sol.model === "cloud"
+    ? [CLOUD_VENDOR_DEFAULTS[sol.name]]
+    : [sol.vmsProvider ? ONPREM_VMS_VENDOR_DEFAULTS[sol.vmsProvider] : undefined,
+       sol.cameraProvider ? ONPREM_CAMERA_VENDOR_DEFAULTS[sol.cameraProvider] : undefined];
+}
 
 const OTHER = "other";
 const PLACEHOLDER_NAMES = ["Solution A (Cloud)", "Solution A (On-Prem)", "Solution B (Cloud)", "Solution B (On-Prem)"];
 
-const HALF_LIFE_LABEL = (
-  <InfoLabel
-    label="Camera fleet half-life (yrs)"
-    help="A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life."
-  />
-);
+const HALF_LIFE_HELP =
+  "A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life.";
 
-const WARRANTY_LABEL = (
-  <InfoLabel
-    label="Warranty period (yrs)"
-    help="How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself."
-  />
-);
+const WARRANTY_HELP =
+  "How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself.";
 
 const MIGRATION_STRATEGY_HELP =
   "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead.";
@@ -154,6 +157,7 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
   const num = (v: unknown) => (typeof v === "number" ? v : 0);
   const perYear = sol.tierPrice / Math.max(1, sol.tierYears);
+  const entries = vendorEntriesFor(sol);
 
   return (
     <>
@@ -161,7 +165,10 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
         <Box mb={4}>
           <Group gap={6}>
             {icon(ArrowRightLeft)}
-            <InfoLabel label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-sm)" />
+            <InfoLabel
+              label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-sm)"
+              extra={<SourceDot meta={fieldSourceInfo("migrationStrategy", sol.migrationStrategy, ...entries)} />}
+            />
           </Group>
         </Box>
         <SegmentedControl
@@ -176,14 +183,14 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
       </div>
       <Group grow align="flex-start">
         <NumberInput
-          label="License term (years)"
+          label={<Group gap={4} wrap="nowrap">License term (years)<SourceDot meta={fieldSourceInfo("tierYears", sol.tierYears, ...entries)} /></Group>}
           leftSection={icon(CalendarRange)}
           value={sol.tierYears}
           min={1}
           onChange={(v) => set("tierYears", num(v) || 1)}
         />
         <NumberInput
-          label="License cost for that term ($/cam)"
+          label={<Group gap={4} wrap="nowrap">License cost for that term ($/cam)<SourceDot meta={fieldSourceInfo("tierPrice", sol.tierPrice, ...entries)} /></Group>}
           leftSection={icon(DollarSign)}
           value={sol.tierPrice}
           min={0}
@@ -199,7 +206,12 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
         />
       </Box>
       <NumberInput
-        label={<InfoLabel label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} size="var(--mantine-font-size-sm)" />}
+        label={
+          <InfoLabel
+            label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} size="var(--mantine-font-size-sm)"
+            extra={<SourceDot meta={fieldSourceInfo("supportAddonPerCamYr", sol.supportAddonPerCamYr, ...entries)} />}
+          />
+        }
         leftSection={icon(Headset)}
         value={sol.supportAddonPerCamYr}
         min={0}
@@ -207,7 +219,7 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
       />
       {sol.migrationStrategy === "connector" && (
         <NumberInput
-          label="Cloud connector appliance ($/unit)"
+          label={<Group gap={4} wrap="nowrap">Cloud connector appliance ($/unit)<SourceDot meta={fieldSourceInfo("applianceCost", sol.applianceCost, ...entries)} /></Group>}
           leftSection={icon(Router)}
           value={sol.applianceCost}
           min={0}
@@ -225,6 +237,7 @@ function SolutionCard({
 }) {
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
   const num = (v: unknown) => (typeof v === "number" ? v : 0);
+  const entries = vendorEntriesFor(sol);
 
   return (
     <Card withBorder padding="lg" radius="md" style={{ borderTopColor: color, borderTopWidth: 3 }}>
@@ -251,14 +264,14 @@ function SolutionCard({
 
         <Group grow align="flex-start">
           <NumberInput
-            label="Discount off list (%)"
+            label={<Group gap={4} wrap="nowrap">Discount off list (%)<SourceDot meta={fieldSourceInfo("discountPct", sol.discountPct, ...entries)} /></Group>}
             leftSection={icon(Percent)}
             value={sol.discountPct}
             min={0} max={100}
             onChange={(v) => set("discountPct", num(v))}
           />
           <NumberInput
-            label={HALF_LIFE_LABEL}
+            label={<InfoLabel label="Camera fleet half-life (yrs)" help={HALF_LIFE_HELP} extra={<SourceDot meta={fieldSourceInfo("fleetHalfLifeYears", sol.fleetHalfLifeYears, ...entries)} />} />}
             leftSection={icon(Hourglass)}
             value={sol.fleetHalfLifeYears}
             min={0.5} step={0.5} decimalScale={1}
@@ -268,14 +281,14 @@ function SolutionCard({
 
         <Group grow align="flex-start">
           <NumberInput
-            label="Replacement camera ($/cam)"
+            label={<Group gap={4} wrap="nowrap">Replacement camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
             leftSection={icon(Camera)}
             value={sol.cameraCost}
             min={0}
             onChange={(v) => set("cameraCost", num(v))}
           />
           <NumberInput
-            label={WARRANTY_LABEL}
+            label={<InfoLabel label="Warranty period (yrs)" help={WARRANTY_HELP} extra={<SourceDot meta={fieldSourceInfo("warrantyYears", sol.warrantyYears, ...entries)} />} />}
             leftSection={icon(ShieldCheck)}
             value={sol.warrantyYears}
             min={0} step={0.5} decimalScale={1}
@@ -288,7 +301,7 @@ function SolutionCard({
         ) : (
           <>
             <NumberInput
-              label={<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" />}
+              label={<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" extra={<SourceDot meta={fieldSourceInfo("baseLicense", sol.baseLicense, ...entries)} />} />}
               leftSection={icon(FileText)}
               value={sol.baseLicense}
               min={0}
@@ -296,14 +309,14 @@ function SolutionCard({
             />
             <Group grow>
               <NumberInput
-                label={<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" />}
+                label={<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" extra={<SourceDot meta={fieldSourceInfo("deviceLicense", sol.deviceLicense, ...entries)} />} />}
                 leftSection={icon(Tag)}
                 value={sol.deviceLicense}
                 min={0}
                 onChange={(v) => set("deviceLicense", num(v))}
               />
               <NumberInput
-                label="Support renewal (% of license/yr)"
+                label={<Group gap={4} wrap="nowrap">Support renewal (% of license/yr)<SourceDot meta={fieldSourceInfo("carePct", sol.carePct, ...entries)} /></Group>}
                 leftSection={icon(ShieldCheck)}
                 value={sol.carePct}
                 min={0}
@@ -315,7 +328,7 @@ function SolutionCard({
 
         <Group grow>
           <NumberInput
-            label="Truck rolls / site / yr"
+            label={<Group gap={4} wrap="nowrap">Truck rolls / site / yr<SourceDot meta={fieldSourceInfo("truckRollsPerSiteYr", sol.truckRollsPerSiteYr, ...entries)} /></Group>}
             leftSection={icon(Truck)}
             value={sol.truckRollsPerSiteYr}
             min={0}
@@ -324,7 +337,7 @@ function SolutionCard({
             onChange={(v) => set("truckRollsPerSiteYr", num(v))}
           />
           <NumberInput
-            label="Admin hrs / cam / yr"
+            label={<Group gap={4} wrap="nowrap">Admin hrs / cam / yr<SourceDot meta={fieldSourceInfo("adminHrsPerCamYr", sol.adminHrsPerCamYr, ...entries)} /></Group>}
             leftSection={icon(UserCog)}
             value={sol.adminHrsPerCamYr}
             min={0}

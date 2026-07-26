@@ -8,7 +8,9 @@ import {
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
+import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, fieldSourceInfo } from "../lib/vendorDefaults";
 import InfoLabel from "./InfoLabel";
+import SourceDot from "./SourceDot";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -51,21 +53,41 @@ const SectionLabel = ({ children, first }: { children: React.ReactNode; first?: 
 
 export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInputs; onChange: (v: SolutionInputs) => void }) {
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
+
+  // Whichever vendor entries could plausibly have set a given field's current
+  // value — on-prem splits license/server fields (VMS vendor) from camera
+  // fields (camera vendor); cloud is a single vendor. fieldSourceInfo checks
+  // each in turn and only returns metadata if the field wasn't edited away
+  // from what that vendor's research actually produced.
+  const vendorEntries =
+    sol.model === "cloud"
+      ? [CLOUD_VENDOR_DEFAULTS[sol.name]]
+      : [sol.vmsProvider ? ONPREM_VMS_VENDOR_DEFAULTS[sol.vmsProvider] : undefined,
+         sol.cameraProvider ? ONPREM_CAMERA_VENDOR_DEFAULTS[sol.cameraProvider] : undefined];
+
   const num = (
     label: React.ReactNode,
     key: keyof SolutionInputs,
     opts?: { step?: number; decimalScale?: number; min?: number; icon?: React.ElementType; help?: string }
-  ) => (
-    <NumberInput
-      label={opts?.help ? <InfoLabel label={label as string} help={opts.help} /> : label}
-      leftSection={opts?.icon ? icon(opts.icon) : undefined}
-      value={sol[key] as number}
-      min={opts?.min ?? 0}
-      step={opts?.step}
-      decimalScale={opts?.decimalScale}
-      onChange={(v) => set(key, (Number(v) || 0) as SolutionInputs[typeof key])}
-    />
-  );
+  ) => {
+    const meta = fieldSourceInfo(key, sol[key], ...vendorEntries);
+    const dot = <SourceDot meta={meta} />;
+    return (
+      <NumberInput
+        label={
+          opts?.help
+            ? <InfoLabel label={label as string} help={opts.help} extra={dot} />
+            : <Group gap={4} wrap="nowrap">{label}{dot}</Group>
+        }
+        leftSection={opts?.icon ? icon(opts.icon) : undefined}
+        value={sol[key] as number}
+        min={opts?.min ?? 0}
+        step={opts?.step}
+        decimalScale={opts?.decimalScale}
+        onChange={(v) => set(key, (Number(v) || 0) as SolutionInputs[typeof key])}
+      />
+    );
+  };
   const perYear = sol.tierPrice / Math.max(1, sol.tierYears);
 
   return (
@@ -97,7 +119,10 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
             <Box mb={4}>
               <Group gap={6}>
                 {icon(ArrowRightLeft)}
-                <InfoLabel label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
+                <InfoLabel
+                  label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED}
+                  extra={<SourceDot meta={fieldSourceInfo("migrationStrategy", sol.migrationStrategy, ...vendorEntries)} />}
+                />
               </Group>
             </Box>
             <SegmentedControl
@@ -141,7 +166,7 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
           {num("Cameras per server", "serverCapacity", { min: 1, icon: Layers })}
           {num("Storage ($/TB usable)", "storageCostPerTB", { icon: HardDrive })}
           <Select
-            label={<InfoLabel label="Storage redundancy" help={RAID_HELP} />}
+            label={<InfoLabel label="Storage redundancy" help={RAID_HELP} extra={<SourceDot meta={fieldSourceInfo("raidLevel", sol.raidLevel, ...vendorEntries)} />} />}
             leftSection={icon(HardDrive)}
             data={RAID_OPTIONS}
             value={sol.raidLevel}

@@ -65,6 +65,28 @@ export function withVendorDefaults(sol: SolutionInputs, vendorName: string, tabl
   return entry ? { ...sol, ...entry.values } : sol;
 }
 
+// Looks up a single field's provenance across whichever vendor entries could
+// have set it (on-prem has a separate VMS-vendor entry and camera-vendor
+// entry; cloud has just the one). Only returns metadata if the field's
+// CURRENT value still matches what that vendor's research produced — if the
+// user has since edited it, showing "sourced" next to a number they typed
+// themselves would be a worse lie than showing nothing, so it deliberately
+// goes stale the moment the value changes rather than tracking edits some
+// other way.
+export function fieldSourceInfo(
+  key: keyof SolutionInputs,
+  currentValue: unknown,
+  ...entries: (VendorDefaultEntry | undefined)[]
+): FieldMeta | null {
+  for (const entry of entries) {
+    if (!entry) continue;
+    if (!(key in entry.values)) continue;
+    if ((entry.values as Record<string, unknown>)[key] !== currentValue) continue;
+    return entry.fieldMeta[key] ?? null;
+  }
+  return null;
+}
+
 export interface ConfidenceSummary {
   sourced: number;
   total: number;
