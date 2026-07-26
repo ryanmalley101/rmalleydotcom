@@ -4,11 +4,11 @@ import { Box, Tooltip } from "@mantine/core";
 import type { FieldMeta } from "../lib/vendorDefaults";
 
 // Answers "which fields are actually sourced?" per-field, not just the
-// aggregate "N/M fields sourced" badge on the provider Select — that badge
+// aggregate "N/M fields sourced" badge on the provider Select; that badge
 // tells you how much of a vendor's data is real, this tells you which
 // specific number in front of you is one of them. Renders nothing when
 // there's no vendor-researched value behind the current field (including
-// when the user has edited it away from that value — see fieldSourceInfo).
+// when the user has edited it away from that value; see fieldSourceInfo).
 export default function SourceDot({ meta }: { meta: FieldMeta | null }) {
   if (!meta) return null;
   const sourced = meta.status === "sourced";
@@ -18,10 +18,20 @@ export default function SourceDot({ meta }: { meta: FieldMeta | null }) {
     meta.reasoning,
     sourced && meta.sources.length ? meta.sources[0] : null,
     `Checked ${meta.checkedOn}`,
-  ].filter(Boolean);
+  ].filter((p): p is string => Boolean(p));
+
+  const label = (
+    <Box>
+      {parts.map((part, i) => (
+        <Box key={i} mt={i > 0 ? 4 : 0}>
+          {part}
+        </Box>
+      ))}
+    </Box>
+  );
 
   return (
-    <Tooltip multiline w={280} withArrow events={{ hover: true, focus: true, touch: true }} label={parts.join(" — ")}>
+    <Tooltip multiline w={280} withArrow events={{ hover: true, focus: true, touch: true }} label={label}>
       <Box
         component="span"
         role="img"
