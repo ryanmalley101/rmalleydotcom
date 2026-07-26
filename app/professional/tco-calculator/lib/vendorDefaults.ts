@@ -26,6 +26,24 @@ import type { SolutionInputs } from "./model";
 //
 // `fieldMeta` carries source/confidence/reasoning per field for future audit;
 // it isn't surfaced in the UI today, only `values` is applied on selection.
+//
+// On "Verkada parity" (matching Verkada's all-inclusive bundle for a fair
+// total-cost comparison, since most real usage of this calculator is Verkada
+// vs. one competitor): a third research pass proposed doing this by
+// re-pricing every vendor's tierPrice/deviceLicense to a normalized,
+// support+analytics-bundled "parity" figure. That was rejected — it
+// contradicts this model's whole point (tierPrice is base license only;
+// supportAddonPerCamYr and analyticsSoftwareCost exist specifically so a
+// bundled-vs-unbundled gap stays visible instead of getting silently folded
+// into one number), and in Meraki's case it substituted an unverified,
+// differently-scoped "Enterprise" SKU figure for one already confirmed live.
+// The right way to close a real parity gap is to populate the existing
+// separate add-on field with the actual cost of the missing piece, which the
+// calculator already sums into the total — see Meraki's supportAddonPerCamYr
+// (MV Sense analytics, confirmed live) for the template. Apply this pattern
+// to another vendor only with equally direct evidence that something
+// Verkada bundles for free is a real, separately-priced SKU for that vendor;
+// don't infer a gap without a citation for the missing piece specifically.
 
 export type FieldStatus = "sourced" | "estimated";
 export type Confidence = "high" | "medium" | "low";
@@ -56,16 +74,16 @@ export interface VendorDefaultEntry {
 // ---------- CLOUD / HYBRID VMS ----------
 export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
   "Meraki (Cisco)": {
-    values: { migrationStrategy: "ripReplace", tierPrice: 900, tierYears: 5, cameraCost: 1299, supportAddonPerCamYr: 0, discountPct: 10 },
+    values: { migrationStrategy: "ripReplace", tierPrice: 900, tierYears: 5, cameraCost: 1299, supportAddonPerCamYr: 110.59, discountPct: 10 },
     fieldMeta: {
       migrationStrategy: { value: "ripReplace", status: "sourced", confidence: "high", sources: ["https://documentation.meraki.com/Platform_Management/Product_Information/Licensing/Meraki_Licensing_FAQs"], reasoning: "Meraki MV cameras are proprietary with on-camera storage; no third-party connector.", checkedOn: "2026-07-26" },
-      tierPrice: { value: 900, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch", "https://documentation.meraki.com/Platform_Management/Product_Information/Licensing/Meraki_Licensing_FAQs"], reasoning: "5-yr MV license (SKU LIC-MV-5YR) $900 MSRP; confirmed directly ($300/1yr, $600/3yr, $900/5yr).", checkedOn: "2026-07-26" },
+      tierPrice: { value: 900, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch", "https://documentation.meraki.com/Platform_Management/Product_Information/Licensing/Meraki_Licensing_FAQs"], reasoning: "5-yr MV license (SKU LIC-MV-5YR) $900 MSRP; confirmed directly ($300/1yr, $600/3yr, $900/5yr). This is the base license only — 24x7 support is bundled at this price, but it does NOT include MV Sense analytics (see supportAddonPerCamYr).", checkedOn: "2026-07-26" },
       tierYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], checkedOn: "2026-07-26" },
       cameraCost: { value: 1299, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Indoor MV MSRP $1,299 (outdoor $1,499).", checkedOn: "2026-07-26" },
-      supportAddonPerCamYr: { value: 0, status: "sourced", confidence: "medium", sources: ["https://www.rhinonetworks.com/product/license/meraki-mv-license"], reasoning: "24x7 enterprise support bundled into license.", checkedOn: "2026-07-26" },
+      supportAddonPerCamYr: { value: 110.59, status: "sourced", confidence: "medium", sources: ["https://www.cdw.com/product/cisco-meraki-mv-sense-subscription-license-3-years-1-license/5388198", "https://www.lttpartners.com/products/cisco-meraki-mv-sense-license"], reasoning: "24x7 enterprise SUPPORT is bundled into the base license (confirmed), but Meraki's base MV license does not include camera analytics comparable to what Verkada bundles by default (people/vehicle search) — that requires the separately-sold MV Sense license. 3yr MV Sense list price confirmed directly at $331.16 (LIC-MV-SEN-3YR); the matching 5yr list figure ($552.93, to align with this entry's tierYears:5) comes from the same distributor ladder, not independently reconfirmed at 5yr specifically. Annualized: $552.93 / 5 = $110.59/cam/yr. Without this, an unedited comparison understates Meraki's cost to actually match Verkada's out-of-the-box capability.", checkedOn: "2026-07-27" },
       discountPct: { value: 10, status: "sourced", confidence: "medium", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Integrator street ~10% below MSRP.", checkedOn: "2026-07-26" },
     },
-    notes: "Per-device license, one-time (no RMR). On-camera storage; no cloud storage tier, no connector.",
+    notes: "Per-device license, one-time (no RMR). On-camera storage; no cloud storage tier, no connector. supportAddonPerCamYr captures MV Sense (the analytics parity gap vs. Verkada's bundled analytics) rather than folding it into tierPrice, so the base license stays comparable across vendors and the add-on stays visible/editable on its own line.",
   },
   "Avigilon Alta (Motorola Solutions)": {
     values: { migrationStrategy: "connector", tierPrice: 179, tierYears: 1, cameraCost: 700, applianceCost: 500, applianceCapacity: 20, supportAddonPerCamYr: 0 },
