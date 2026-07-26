@@ -108,6 +108,11 @@ export interface SolutionInputs {
   // one part of this model a user can't adjust to their own assumptions.
   applianceRefreshCycleYears: number;
   yearsUntilNextApplianceRefresh: number;
+  // Defaults to 0 ("bundled into the license"). Not every cloud vendor bundles
+  // support/analytics/extended retention into one flat price the way this
+  // tool's own defaults assume; this makes that assumption visible and
+  // overridable per solution instead of a silent, hardcoded universal.
+  supportAddonPerCamYr: number;
 
   // On-prem only
   baseLicense: number;
@@ -160,7 +165,12 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
   const disc = 1 - sol.discountPct / 100;
   const tierYears = Math.max(1, sol.tierYears); // guard against a cleared/zeroed input
 
-  const licAnnual = sol.model === "cloud" ? (sol.tierPrice / tierYears) * retentionMultiplier(ret) * disc : 0;
+  // The add-on isn't storage-driven, so it doesn't scale with retentionMultiplier the way
+  // the base license does, but the vendor's own negotiated discount still applies to it.
+  const licAnnual =
+    sol.model === "cloud"
+      ? (sol.tierPrice / tierYears) * retentionMultiplier(ret) * disc + sol.supportAddonPerCamYr * disc
+      : 0;
   // At least one box per site (a connector/NVR is physically local to the cameras it
   // serves, you can't split one across sites), or more if total camera count demands it.
   const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.applianceCapacity))) : 0;

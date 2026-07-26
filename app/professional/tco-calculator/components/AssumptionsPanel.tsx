@@ -22,7 +22,10 @@ const FRAMERATE_HELP =
   "Frames per second recorded per camera. Storage scales proportionally relative to the 24fps default; bitrate already captures most of the storage cost, this is a secondary adjustment on top of it.";
 
 const LICENSE_HELP =
-  "Before the retention multiplier. Other ongoing costs, like support, software updates, and analytics, are assumed bundled into the license.";
+  "Before the retention multiplier. Support, software updates, and analytics are assumed bundled into the license by default; use the add-on field below if this vendor prices any of that separately.";
+
+const ADDON_HELP =
+  "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div style={{ gridColumn: "1 / -1" }}>
@@ -93,6 +96,7 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
           <div style={{ gridColumn: "1 / -1" }}>
             <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
           </div>
+          {num(<InfoLabel label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} />, "supportAddonPerCamYr")}
           {sol.migrationStrategy === "connector" && (
             <>
               {num("Connector appliance ($/unit)", "applianceCost")}

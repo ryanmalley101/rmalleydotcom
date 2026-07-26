@@ -27,7 +27,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       fleetHalfLifeYears: 7,
       warrantyYears: 3,
       truckRollsPerSiteYr: 1,
-      adminHrsPerCamYr: 0.5,
+      adminHrsPerCamYr: 1,
       investigationHrsPerIncident: 0.75,
       framerateFps: 24,
       migrationStrategy: "connector",
@@ -37,6 +37,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       applianceCapacity: 50,
       applianceRefreshCycleYears: 7,
       yearsUntilNextApplianceRefresh: 2,
+      supportAddonPerCamYr: 0,
       // on-prem-only fields, unused by the cloud formula but kept populated,
       // so switching a solution's model later doesn't lose prior edits
       baseLicense: 1500,
@@ -83,6 +84,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     applianceCapacity: 50,
     applianceRefreshCycleYears: 7,
     yearsUntilNextApplianceRefresh: 2,
+    supportAddonPerCamYr: 0,
   };
 }
 

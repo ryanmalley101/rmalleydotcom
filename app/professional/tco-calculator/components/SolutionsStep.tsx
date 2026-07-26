@@ -143,7 +143,7 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
       <Box mt={-8}>
         <InfoLabel
           label={`≈ $${perYear.toFixed(2)}/yr per camera`}
-          help="Before the retention multiplier. Other ongoing costs, like support, software updates, and analytics, are assumed bundled into the license."
+          help="Before the retention multiplier. Support, software updates, and analytics are assumed bundled into the license by default; a per-camera add-on field for vendors that charge separately is on the results page."
           size="var(--mantine-font-size-xs)"
           color={TEXT_MUTED}
         />
