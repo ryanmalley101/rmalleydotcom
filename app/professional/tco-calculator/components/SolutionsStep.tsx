@@ -34,6 +34,9 @@ const MIGRATION_STRATEGY_HELP =
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, same as the hardware, unless this solution is marked incumbent below (already owned, not charged again). Only the support renewal recurs afterward.";
 
+const ADDON_HELP =
+  "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
+
 function selectData(options: string[]) {
   return [...options.map((p) => ({ value: p, label: p })), { value: OTHER, label: "Other…" }];
 }
@@ -178,11 +181,17 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
       <Box mt={-8}>
         <InfoLabel
           label={`≈ $${perYear.toFixed(2)}/yr per camera`}
-          help="Before the retention multiplier. Support, software updates, and analytics are assumed bundled into the license by default; a per-camera add-on field for vendors that charge separately is on the results page."
+          help="Before the retention multiplier. Support, software updates, and analytics are assumed bundled into the license by default; use the add-on field below if this vendor prices any of that separately."
           size="var(--mantine-font-size-xs)"
           color={TEXT_MUTED}
         />
       </Box>
+      <NumberInput
+        label={<InfoLabel label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} size="var(--mantine-font-size-sm)" />}
+        value={sol.supportAddonPerCamYr}
+        min={0}
+        onChange={(v) => set("supportAddonPerCamYr", num(v))}
+      />
       {sol.migrationStrategy === "connector" && (
         <NumberInput
           label="Cloud connector appliance ($/unit)"
