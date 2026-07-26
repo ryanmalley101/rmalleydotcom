@@ -201,6 +201,12 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
             sol.model === "cloud"
               ? sol.applianceCost * disc * applianceUnits
               : sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbPhysical + sol.analyticsApplianceCost * disc;
+          // A fresh (non-incumbent) on-prem deployment has to buy its perpetual
+          // license too, not just the hardware — only the incumbent's license is
+          // already owned/sunk. Only the ongoing care/SUP renewal recurs after this.
+          if (sol.model === "onprem") {
+            yearCosts["Licenses/subscription"] = (sol.baseLicense + sol.deviceLicense * cams) * disc;
+          }
         }
       }
     } else {

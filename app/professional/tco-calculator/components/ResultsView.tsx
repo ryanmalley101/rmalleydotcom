@@ -163,8 +163,9 @@ export default function ResultsView({
         ((days/30)<sup>0.4</sup>), reflecting that storage is only part of what a license covers and gets
         cheaper per unit at higher volumes; on-prem storage scales the same way, before RAID overhead. On-prem
         storage cost accounts for RAID redundancy: RAID 1 and RAID 10 roughly double the raw capacity bought
-        versus RAID 0 or no RAID, to survive a drive failure. On-prem perpetual licenses are sunk; only support
-        renewals are counted. Appliance/server counts assume at least one unit per site.
+        versus RAID 0 or no RAID, to survive a drive failure. On-prem perpetual licenses are charged once at
+        year 0 like the hardware, unless that side is marked incumbent (already owned); support renewals are
+        counted every year regardless. Appliance/server counts assume at least one unit per site.
         Annual cost escalation compounds every recurring cost; NPV discounting is separate and applied on top.
         Investigation labor is a soft cost, kept as its own category so it can be zeroed out independently.
         Defaults are directional placeholders, not quotes. This tool is not affiliated with or endorsed by any

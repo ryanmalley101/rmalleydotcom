@@ -27,6 +27,9 @@ const LICENSE_HELP =
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
 
+const ONPREM_LICENSE_HELP =
+  "Charged once at year 0, same as the hardware, unless this solution is marked incumbent above (already owned, not charged again). Only the support/care renewal below recurs afterward.";
+
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div style={{ gridColumn: "1 / -1" }}>
     <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }} mt="xs">
@@ -108,8 +111,8 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
         </>
       ) : (
         <>
-          {num("Base license ($, owned)", "baseLicense")}
-          {num("Device license ($/cam, owned)", "deviceLicense")}
+          {num(<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} />, "baseLicense")}
+          {num(<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} />, "deviceLicense")}
           {num("Support renewal (%/yr)", "carePct")}
           {num("Recording server ($/unit)", "serverCost")}
           {num("Cameras per server", "serverCapacity", { min: 1 })}

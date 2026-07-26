@@ -28,6 +28,9 @@ const WARRANTY_LABEL = (
 const MIGRATION_STRATEGY_HELP =
   "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead.";
 
+const ONPREM_LICENSE_HELP =
+  "Charged once at year 0, same as the hardware, unless this solution is marked incumbent below (already owned, not charged again). Only the support renewal recurs afterward.";
+
 function selectData(options: string[]) {
   return [...options.map((p) => ({ value: p, label: p })), { value: OTHER, label: "Other…" }];
 }
@@ -230,14 +233,14 @@ function SolutionCard({
         ) : (
           <>
             <NumberInput
-              label="Base license ($, owned)"
+              label={<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" />}
               value={sol.baseLicense}
               min={0}
               onChange={(v) => set("baseLicense", num(v))}
             />
             <Group grow>
               <NumberInput
-                label="Device license ($/cam, owned)"
+                label={<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" />}
                 value={sol.deviceLicense}
                 min={0}
                 onChange={(v) => set("deviceLicense", num(v))}

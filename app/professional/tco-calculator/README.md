@@ -33,7 +33,16 @@ auth-gated, "dampened" on purpose.
 - **Incumbent**: `ScenarioInputs.incumbent` zeroes one side's year-0
   buildout cost when it represents an already-deployed system (its later
   hardware refreshes still apply on schedule). Both sides pay their own
-  year-0 cost symmetrically otherwise.
+  year-0 cost symmetrically otherwise. This includes an on-prem side's
+  perpetual license purchase (`baseLicense` + `deviceLicense * cameras`),
+  charged once at year 0 alongside the hardware for a non-incumbent side —
+  not a recurring cost, and not charged at all for the incumbent, whose
+  license really is already owned. Only the ongoing support/care renewal
+  (`carePct`) recurs every year regardless of incumbent status. An earlier
+  version of this model charged the renewal but never the underlying
+  license purchase for either side, which understated a fresh on-prem
+  deployment's cost any time neither side (or the *other* side) was
+  incumbent — fixed since it contradicted this same symmetry principle.
 - **Per-solution, not scenario-level**: `fleetHalfLifeYears`, `warrantyYears`,
   `framerateFps` all live on `SolutionInputs` since each side's camera
   hardware can have its own reliability/warranty/frame rate, even when
