@@ -74,12 +74,12 @@ export interface VendorDefaultEntry {
 // ---------- CLOUD / HYBRID VMS ----------
 export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
   "Meraki (Cisco)": {
-    values: { migrationStrategy: "ripReplace", tierPrice: 900, tierYears: 5, cameraCost: 1299, supportAddonPerCamYr: 110.59, discountPct: 10 },
+    values: { migrationStrategy: "ripReplace", tierPrice: 900, tierYears: 5, cameraCost: 1499, supportAddonPerCamYr: 110.59, discountPct: 10 },
     fieldMeta: {
       migrationStrategy: { value: "ripReplace", status: "sourced", confidence: "high", sources: ["https://documentation.meraki.com/Platform_Management/Product_Information/Licensing/Meraki_Licensing_FAQs"], reasoning: "Meraki MV cameras are proprietary with on-camera storage; no third-party connector.", checkedOn: "2026-07-26" },
       tierPrice: { value: 900, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch", "https://documentation.meraki.com/Platform_Management/Product_Information/Licensing/Meraki_Licensing_FAQs"], reasoning: "5-yr MV license (SKU LIC-MV-5YR) $900 MSRP; confirmed directly ($300/1yr, $600/3yr, $900/5yr). This is the base license only — 24x7 support is bundled at this price, but it does NOT include MV Sense analytics (see supportAddonPerCamYr).", checkedOn: "2026-07-26" },
       tierYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], checkedOn: "2026-07-26" },
-      cameraCost: { value: 1299, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Indoor MV MSRP $1,299 (outdoor $1,499).", checkedOn: "2026-07-26" },
+      cameraCost: { value: 1499, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Outdoor MV MSRP $1,499 (indoor is cheaper at $1,299) — switched to outdoor for consistency with the outdoor-rated spec used across the on-prem camera table.", checkedOn: "2026-07-27" },
       supportAddonPerCamYr: { value: 110.59, status: "sourced", confidence: "medium", sources: ["https://www.cdw.com/product/cisco-meraki-mv-sense-subscription-license-3-years-1-license/5388198", "https://www.lttpartners.com/products/cisco-meraki-mv-sense-license"], reasoning: "24x7 enterprise SUPPORT is bundled into the base license (confirmed), but Meraki's base MV license does not include camera analytics comparable to what Verkada bundles by default (people/vehicle search) — that requires the separately-sold MV Sense license. 3yr MV Sense list price confirmed directly at $331.16 (LIC-MV-SEN-3YR); the matching 5yr list figure ($552.93, to align with this entry's tierYears:5) comes from the same distributor ladder, not independently reconfirmed at 5yr specifically. Annualized: $552.93 / 5 = $110.59/cam/yr. Without this, an unedited comparison understates Meraki's cost to actually match Verkada's out-of-the-box capability.", checkedOn: "2026-07-27" },
       discountPct: { value: 10, status: "sourced", confidence: "medium", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Integrator street ~10% below MSRP.", checkedOn: "2026-07-26" },
     },
@@ -307,96 +307,104 @@ export const ONPREM_VMS_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
 };
 
 // ---------- ON-PREM CAMERA HARDWARE ----------
-// Each anchored to a representative mid-tier ~4-5MP fixed dome/turret.
+// Standardized to a consistent spec envelope — 5MP, outdoor/exterior-rated
+// (IP66/67+IK10), varifocal IR dome — wherever a vendor has one, rather than
+// each vendor's easiest-to-find price regardless of resolution/rating/form
+// factor. An earlier pass mixed indoor and outdoor models (Axis, Pelco,
+// Hanwha were indoor-only against everyone else's outdoor rating), which
+// understated those three vendors' real matched-spec cost. Where no clean
+// outdoor 5MP sibling exists (Avigilon's is EOL and lacks IR — a real
+// functional gap for a security camera, not just a paperwork difference),
+// the prior anchor was kept rather than swap to a lesser-featured "match."
 export const ONPREM_CAMERA_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
   Hikvision: {
-    values: { cameraCost: 130, warrantyYears: 3 },
+    values: { cameraCost: 364.87, warrantyYears: 3 },
     fieldMeta: {
-      cameraCost: { value: 130, status: "sourced", confidence: "high", sources: ["https://www.hikdistribution.com/products/4-mp-powered-by-darkfighter-fixed-dome-network-camera-hikvision-ds-2cd2145fwd-is"], reasoning: "DS-2CD2145FWD-IS (4MP fixed dome, EXIR, IP67/IK10) $130 reseller; street $120-160 by lens.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 364.87, status: "sourced", confidence: "medium", sources: ["https://www.compsource.com/buy/DS2CD2755FWDIZS/Hikvision-Usa-4273/5-MP-WDR-Varifocal-Network-Dome-Camera-DS2CD2755FWDIZS/3241"], reasoning: "DS-2CD2755FWD-IZS (5MP WDR varifocal outdoor dome) $364.87, confirmed directly (a second reseller showed $376.64, same ballpark). EOL and NDAA-banned — Hikvision has no current, non-banned 5MP outdoor varifocal dome sold new in the US; this is the closest real price point for the matched spec.", checkedOn: "2026-07-27" },
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Hikvision US warranty commonly 3-yr.", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: DS-2CD2145FWD-IS. NDAA-restricted (US federal).",
+    notes: "Priced model: DS-2CD2755FWD-IZS (5MP outdoor). NDAA-restricted (US federal) and this specific SKU is EOL — treat as a historical price point, not a current quote.",
   },
   "Dahua Technology": {
-    values: { cameraCost: 159, warrantyYears: 3 },
+    values: { cameraCost: 164, warrantyYears: 3 },
     fieldMeta: {
-      cameraCost: { value: 159, status: "sourced", confidence: "medium", sources: ["https://www.icctvzone.com/ipc-hdbw3441r-as-p.html"], reasoning: "IPC-HDBW3441R-AS-P (4MP WizSense starlight fixed dome) ~$159 street.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 164, status: "sourced", confidence: "high", sources: ["https://www.cctv-mall.com/products/dahua_ipc-hdbw3541r-zas-s2_5mp_ir_vari-focal_dome_wizsense_network_camera"], reasoning: "IPC-HDBW3541R-ZAS-S2 (5MP IR varifocal outdoor WizSense dome) $164.00, confirmed directly (variant -ZS-S2 seen at $156, same family). EOL and NDAA-banned, same caveat as Hikvision.", checkedOn: "2026-07-27" },
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Dahua standard ~3-yr.", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: IPC-HDBW3441R-AS-P. NDAA-restricted. Variants $100-330 by lens/seller.",
+    notes: "Priced model: IPC-HDBW3541R-ZAS-S2 (5MP outdoor). NDAA-restricted; this SKU is EOL — treat as a historical price point.",
   },
   Uniview: {
-    values: { cameraCost: 135, warrantyYears: 3 },
+    values: { cameraCost: 529, warrantyYears: 3 },
     fieldMeta: {
-      cameraCost: { value: 135, status: "sourced", confidence: "medium", sources: ["https://lowvoltagedealer.com/products/uniview-ipc3614sr3-adf28km-g"], reasoning: "IPC3614SR3-ADF28KM-G (4MP LightHunter turret/eyeball) $125-150 street.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 529, status: "sourced", confidence: "medium", sources: ["https://www.tritekelectronics.com/uncategorized-products/2024-03-28-02-18-58701418312"], reasoning: "IPC3535SR4-ADZK-H (5MP outdoor varifocal dome) $529.00. Not independently re-verified beyond this single reseller listing.", checkedOn: "2026-07-27" },
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Uniview standard ~3-yr.", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: IPC3614SR3-ADF28KM-G. NDAA-compliant (unlike Hikvision/Dahua) — relevant for US federal/education buyers.",
+    notes: "Priced model: IPC3535SR4-ADZK-H (5MP outdoor, NDAA-compliant — unlike Hikvision/Dahua, still current for US federal/education buyers).",
   },
   "Bosch Security": {
     values: { cameraCost: 562, warrantyYears: 3 },
     fieldMeta: {
-      cameraCost: { value: 562, status: "sourced", confidence: "high", sources: ["https://www.bhphotovideo.com/c/product/1363699-REG/bosch_nde_5503_al_flexidome_ip_outdoor_5000i.html"], reasoning: "FLEXIDOME IP outdoor 5000i (NDE-5503-AL, 5MP, IP66/IK10) $562.49 street at B&H; MSRP ~$1,027.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 562, status: "sourced", confidence: "high", sources: ["https://www.bhphotovideo.com/c/product/1363699-REG/bosch_nde_5503_al_flexidome_ip_outdoor_5000i.html"], reasoning: "FLEXIDOME IP outdoor 5000i (NDE-5503-AL, 5MP, IP66/IK10) $562.49 street at B&H; MSRP ~$1,027-1,108 depending on source.", checkedOn: "2026-07-26" },
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Bosch standard 3-yr (extendable).", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: NDE-5503-AL. Built-in Essential Video Analytics. Large list-to-street gap ($1,027 MSRP vs $562 street).",
+    notes: "Priced model: NDE-5503-AL (already the outdoor-rated spec — no change needed here). Built-in Essential Video Analytics. Large list-to-street gap.",
   },
   "i-PRO (ex-Panasonic)": {
-    values: { cameraCost: 700, warrantyYears: 5 },
+    values: { cameraCost: 839.95, warrantyYears: 5 },
     fieldMeta: {
-      cameraCost: { value: 700, status: "estimated", confidence: "low", sources: ["https://cookandboardman.com/i-pro-extreme-wv-s2250l-5-mp-dome-network-camera-discontinued/"], reasoning: "WV-S2250L (5MP vandal dome) discontinued; listed MSRP ~$1,199, now ~$1,007; mid-tier street estimate ~$600-800.", checkedOn: "2026-07-26" },
-      warrantyYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://cookandboardman.com/i-pro-extreme-wv-s2250l-5-mp-dome-network-camera-discontinued/"], reasoning: "5-year limited warranty on spec.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 839.95, status: "sourced", confidence: "high", sources: ["https://www.bhphotovideo.com/c/product/1719263-REG/i_pro_s_series_wv_s25500_v3ln_5mp_outdoor.html"], reasoning: "WV-S25500-V3LN (5MP outdoor, current S-Series successor to the discontinued WV-S2250L/WV-S2252L) $839.95, confirmed directly at B&H. Replaces the prior estimate on a doubly-discontinued model with a real current-generation price.", checkedOn: "2026-07-27" },
+      warrantyYears: { value: 5, status: "sourced", confidence: "medium", sources: ["https://cookandboardman.com/i-pro-extreme-wv-s2250l-5-mp-dome-network-camera-discontinued/"], reasoning: "5-year limited warranty on the prior-generation spec; carried forward as the vendor's standard program, not re-confirmed for this exact SKU.", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model discontinued (WV-S2250L; successor WV-S2252L) — SPOT-CHECK against a live quote before trusting cameraCost.",
+    notes: "Priced model: WV-S25500-V3LN (5MP outdoor, current). Premium-priced vs. Asian OEMs, consistent with i-PRO's market position.",
   },
   Vivotek: {
-    values: { cameraCost: 300, warrantyYears: 5 },
+    values: { cameraCost: 329.64, warrantyYears: 5 },
     fieldMeta: {
-      cameraCost: { value: 300, status: "estimated", confidence: "low", sources: ["https://www.vivotek.com/en-US/products/network-cameras/dome"], reasoning: "FD9367 (2MP) street $200-260; 5MP sibling FD9388-HTV typically ~$300-350.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 329.64, status: "sourced", confidence: "high", sources: ["https://www.connection.com/product/vivotek-5mp-outdoor-network-dome-camera-with-2.8-12mm-lens/fd9388-htv/38345303"], reasoning: "FD9388-HTV (5MP outdoor network dome, 2.8-12mm) $329.64, confirmed directly — upgrades the prior sibling-extrapolated estimate (~$300) to a real quoted price for the same SKU.", checkedOn: "2026-07-27" },
       warrantyYears: { value: 5, status: "estimated", confidence: "low", sources: [], reasoning: "Vivotek pro cameras 3-5yr; upper bound used.", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: FD9388-HTV (swapped in for the 2MP FD9367 to hit the 4-5MP anchor tier).",
+    notes: "Priced model: FD9388-HTV (5MP outdoor — already the right spec, now sourced directly instead of estimated).",
   },
   Pelco: {
-    values: { cameraCost: 530, warrantyYears: 3 },
+    values: { cameraCost: 660.7, warrantyYears: 3 },
     fieldMeta: {
-      cameraCost: { value: 530, status: "sourced", confidence: "high", sources: ["https://www.bhphotovideo.com"], reasoning: "Sarix Professional 4 SRXP4-5V10-IMD-IR (5MP indoor dome) street $533.99 (Surveillance-Video), $562.49 (B&H), $504 sale (Tech-America).", checkedOn: "2026-07-26" },
+      cameraCost: { value: 660.7, status: "sourced", confidence: "high", sources: ["https://www.bhphotovideo.com/c/product/1963950-REG/pelco_sarix_pro_4_series.html"], reasoning: "Switched from the indoor SRXP4-5V10-IMD-IR to its outdoor sibling SRXP4-5V10-EMD-IR (5MP, IP67/NEMA4X/IK10) — same family, same resolution, IR, and lens (3.4-10.5mm), confirmed directly at $660.70 (street as low as $504-534 at other resellers).", checkedOn: "2026-07-27" },
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Pelco standard ~3-yr.", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: SRXP4-5V10-IMD-IR. Motorola/Pelco channel.",
+    notes: "Priced model: SRXP4-5V10-EMD-IR (5MP outdoor; was priced via the indoor -IMD-IR sibling before). Motorola/Pelco channel.",
   },
   Honeywell: {
-    values: { cameraCost: 760, warrantyYears: 3 },
+    values: { cameraCost: 503.5, warrantyYears: 3 },
     fieldMeta: {
-      cameraCost: { value: 760, status: "sourced", confidence: "medium", sources: ["https://www.multioculus.com/Products/overview/M020807531"], reasoning: "HC30WB5R2 (5MP, 30 Series bullet) MSRP $760; dome sibling HC30WE5R2 is same series/class but not individually confirmed.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 503.5, status: "sourced", confidence: "high", sources: ["https://www.bhphotovideo.com/c/product/1524634-REG/honeywell_hc30we5r2_5mp_wdr_ir_ip.html"], reasoning: "HC30WE5R2 (5MP WDR IR outdoor) $503.50, confirmed directly for the exact SKU — replaces the prior estimate that had anchored this same model off an unconfirmed bullet sibling's price ($760).", checkedOn: "2026-07-27" },
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Honeywell standard multi-year.", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: 30 Series HC30WE5R2 (MSRP anchored to bullet sibling HC30WB5R2, not confirmed individually). NDAA-compliant.",
+    notes: "Priced model: 30 Series HC30WE5R2 (5MP outdoor). Correction: this is a turret/\"ball\" form factor, not a dome as previously described. NDAA-compliant.",
   },
   "Avigilon (Cameras)": {
     values: { cameraCost: 850, warrantyYears: 3 },
     fieldMeta: {
-      cameraCost: { value: 850, status: "estimated", confidence: "low", sources: ["https://www.newegg.com"], reasoning: "Exact 5.0 H5A dome is quote-only; nearest published anchors are the value-line 5MP H5SL dome (5.0C-H5SL-DO1-IR, confirmed $579 on Newegg) and the 6MP H5A ($879); mid estimate ~$850 for the analytics-heavy H5A.", checkedOn: "2026-07-26" },
+      cameraCost: { value: 850, status: "estimated", confidence: "low", sources: ["https://www.newegg.com"], reasoning: "Exact 5.0 H5A dome is quote-only; nearest published anchors are the value-line 5MP H5SL dome (5.0C-H5SL-DO1-IR, confirmed $579 on Newegg, has IR) and the 6MP H5A ($879, has IR); mid estimate ~$850 for the analytics-heavy H5A. A cheaper 5MP H5A-DO2 anchor exists (~$650 est., extrapolated from a $656.56 4MP sibling) but that line is EOL and lacks IR entirely — a real functional gap for an outdoor security camera, not just a paperwork difference — so the IR-equipped H5SL/H5A anchor was kept instead of chasing the lower number.", checkedOn: "2026-07-26" },
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Avigilon standard ~3-yr (extendable).", checkedOn: "2026-07-26" },
     },
-    notes: "Priced model: H5A dome (5.0C-H5A-DO1-IR). Distinct from Avigilon Control Center VMS — this is the camera-hardware brand. H5A is the premium analytics line; H5SL is the value line ($579, confirmed). SPOT-CHECK cameraCost before trusting.",
+    notes: "Priced model: H5A dome (5.0C-H5A-DO1-IR, 5MP outdoor, IR). Distinct from Avigilon Control Center VMS — this is the camera-hardware brand. H5A is the premium analytics line; H5SL is the value line ($579, confirmed). SPOT-CHECK cameraCost before trusting — still an estimate.",
   },
   "Axis Communications": {
-    values: { cameraCost: 750, warrantyYears: 3, fleetHalfLifeYears: 12 },
+    values: { cameraCost: 999, warrantyYears: 3, fleetHalfLifeYears: 12 },
     fieldMeta: {
-      cameraCost: { value: 750, status: "sourced", confidence: "medium", sources: ["https://www.ebay.com/p/27076682133", "https://www.cdw.com/product/axis-p3267-lv-cpnt-5mp-network-camera/6906298"], reasoning: "AXIS P3267-LV (02329-001, 5MP indoor fixed dome, ARTPEC-8, varifocal 3-8mm, IK10) street mid-point. Open-box $721.98 (eBay); 5MP predecessor P3247-LV $500 new; authorized resellers (CDW, Full Compass, A1 Security) list the SKU without public price. Axis doesn't publish MSRP openly; list runs somewhat higher than this street mid-point. Note: P3267-LV is being phased out by Axis, a current-gen equivalent may reprice.", checkedOn: "2026-07-25" },
+      cameraCost: { value: 999, status: "sourced", confidence: "high", sources: ["https://www.surveillance-video.com/camera-02330-001.html", "https://www.cdwg.com/product/axis-p3267-lve-repl-5mp-network-camera/6906306"], reasoning: "Switched from the indoor P3267-LV to its outdoor sibling P3267-LVE (same 5MP sensor, ARTPEC-8, varifocal lens, IP66/IK10 outdoor housing) — same family, only the environmental rating differs. Confirmed directly at $999.00.", checkedOn: "2026-07-27" },
       warrantyYears: { value: 3, status: "sourced", confidence: "medium", sources: ["https://www.axis.com/products/axis-p3265-lv/support"], reasoning: "Axis standard hardware warranty is 3 years, extendable to 5 via registration/extension. Changes when replacement cost (vs. labor-only) kicks in — spot-check whether 3 or 5 fits the deal.", checkedOn: "2026-07-25" },
       fleetHalfLifeYears: { value: 12, status: "estimated", confidence: "low", sources: [], reasoning: "Axis's reliability reputation supports a longer-than-generic half-life; anchored above the 10 used elsewhere, not sourced.", checkedOn: "2026-07-25" },
     },
-    notes: "Priced model: AXIS P3267-LV. The 2MP P3265-LV sibling runs ~$500-600 street if a matched-resolution comparison against a cheaper competitor is wanted instead.",
+    notes: "Priced model: AXIS P3267-LVE (5MP outdoor; was priced via the indoor P3267-LV before). P3267-LV/-LVE is being phased out by Axis, a current-gen equivalent may reprice.",
   },
   "Hanwha Vision": {
-    values: { cameraCost: 850, warrantyYears: 5, fleetHalfLifeYears: 10 },
+    values: { cameraCost: 1103.76, warrantyYears: 5, fleetHalfLifeYears: 10 },
     fieldMeta: {
-      cameraCost: { value: 850, status: "sourced", confidence: "medium", sources: ["https://www.bhphotovideo.com/c/product/1336781-REG/hanwha_techwin_xnd_8080rv_5mp_indoor_ir_vandal.html", "https://www.a1securitycameras.com/samsung-xnd-8080rv.html"], reasoning: "Hanwha Wisenet XND-8080RV (5MP indoor vandal dome, Wisenet 5, varifocal 3.9-9.4mm, IK08) street $819 (B&H) to $972-996 (other resellers) against a $1,350 MSRP; $850 sits near the low street end. This is a Wisenet-5-generation model — the current Wisenet-7 equivalent (XND-8082 family) may reprice.", checkedOn: "2026-07-25" },
-      warrantyYears: { value: 5, status: "estimated", confidence: "medium", sources: ["https://www.a1securitycameras.com/samsung-xnd-8080rv.html"], reasoning: "Hanwha's North America Wisenet warranty program is commonly 5 years, though one reseller listing showed \"3 Year Warranty\" for this exact SKU — flagged discrepancy, confirm against Hanwha's current terms for the target region before trusting closely.", checkedOn: "2026-07-25" },
+      cameraCost: { value: 1103.76, status: "sourced", confidence: "high", sources: ["https://www.a1securitycameras.com/samsung-xnv-8080r-5mp-vandal-ir-dome-ip-security-camera.html"], reasoning: "Switched from the indoor XND-8080RV to its outdoor counterpart XNV-8080R (5MP, same Wisenet-5 generation and \"8080\" line, vandal-resistant outdoor dome) — confirmed directly at $1,103.76.", checkedOn: "2026-07-27" },
+      warrantyYears: { value: 5, status: "estimated", confidence: "medium", sources: [], reasoning: "Hanwha's North America Wisenet warranty program is commonly 5 years; one reseller listing for the indoor sibling showed 3yr instead — unresolved discrepancy, confirm against current terms for the target region.", checkedOn: "2026-07-25" },
       fleetHalfLifeYears: { value: 10, status: "estimated", confidence: "low", sources: [], reasoning: "Generic; roughly on par with commodity-premium IP domes.", checkedOn: "2026-07-25" },
     },
-    notes: "Priced model: XND-8080RV. Distinct from the \"Hanwha Wisenet WAVE\" entry in ONPREM_VMS_VENDOR_DEFAULTS — that's the VMS software, this is the camera-hardware brand. Country of origin listed as China for this model, which matters for NDAA/procurement filtering in some federal/education contexts even though Hanwha itself is South Korean.",
+    notes: "Priced model: XNV-8080R (5MP outdoor; was priced via the indoor XND-8080RV before). Distinct from the \"Hanwha Wisenet WAVE\" entry in ONPREM_VMS_VENDOR_DEFAULTS — that's the VMS software, this is the camera-hardware brand. Country of origin listed as China for this model, which matters for NDAA/procurement filtering in some federal/education contexts even though Hanwha itself is South Korean.",
   },
 };
