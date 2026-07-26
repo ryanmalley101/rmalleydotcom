@@ -1,13 +1,15 @@
-// Deliberately generic hues (blue/violet) rather than any real vendor's brand
-// colors, and neither reads as "the good one" the way green/red would.
-// These are just the starting defaults; the wizard lets the user change them.
-export const SOLUTION_A_COLOR = "#3b82f6";
-export const SOLUTION_B_COLOR = "#a855f7";
+// These are just the starting defaults for the two chart/accordion lines —
+// the wizard lets the user change them freely, and neither the charts nor
+// the accordion badges attach any meaning to which is which (unlike the
+// results summary's teal/gray, which is computed from which solution is
+// actually cheaper, not from these).
+export const SOLUTION_A_COLOR = "#ffffff";
+export const SOLUTION_B_COLOR = "#10b981";
 
 // Quick-pick swatches offered in the color pickers, in addition to full custom hex entry.
 export const COLOR_SWATCHES = [
-  "#3b82f6", "#a855f7", "#0d9488", "#f59e0b",
-  "#ef4444", "#10b981", "#eab308", "#64748b",
+  "#ffffff", "#10b981", "#3b82f6", "#a855f7",
+  "#f59e0b", "#ef4444", "#eab308", "#64748b",
 ];
 
 // Bright enough to stay readable as secondary/dimmed text against this route's

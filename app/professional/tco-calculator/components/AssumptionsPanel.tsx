@@ -37,9 +37,13 @@ const ADDON_HELP =
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, same as the hardware, unless this solution is marked incumbent above (already owned, not charged again). Only the support/care renewal below recurs afterward.";
 
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+// Groups related fields under a shared heading, since a flat list of ~25
+// fields (this panel's old shape) reads as one undifferentiated wall of
+// inputs. `first` drops the top margin so the very first section doesn't
+// float away from the panel's top edge.
+const SectionLabel = ({ children, first }: { children: React.ReactNode; first?: boolean }) => (
   <div style={{ gridColumn: "1 / -1" }}>
-    <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }} mt="xs">
+    <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }} mt={first ? 0 : "sm"}>
       {children}
     </Text>
   </div>
@@ -50,10 +54,10 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
   const num = (
     label: React.ReactNode,
     key: keyof SolutionInputs,
-    opts?: { step?: number; decimalScale?: number; min?: number; icon?: React.ElementType }
+    opts?: { step?: number; decimalScale?: number; min?: number; icon?: React.ElementType; help?: string }
   ) => (
     <NumberInput
-      label={label}
+      label={opts?.help ? <InfoLabel label={label as string} help={opts.help} /> : label}
       leftSection={opts?.icon ? icon(opts.icon) : undefined}
       value={sol[key] as number}
       min={opts?.min ?? 0}
@@ -66,26 +70,27 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
 
   return (
     <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
-      {num("Discount off list (%)", "discountPct", { min: 0, icon: Percent })}
+      <SectionLabel first>Pricing</SectionLabel>
+      {num("Discount off list (%)", "discountPct", {
+        min: 0, icon: Percent,
+        help: "This vendor's own negotiated discount off list price. Applied broadly — camera, license, appliance/server, and analytics costs below are all discounted by this same percentage.",
+      })}
+
+      <SectionLabel>Camera hardware</SectionLabel>
       {num("Replacement camera ($/cam)", "cameraCost", { icon: Camera })}
       {num("Bulk install labor ($/cam)", "bulkInstallLaborCost", { icon: Wrench })}
       {num("Replacement install labor ($/cam)", "replacementInstallLaborCost", { icon: Hammer })}
-      {num(
-        <InfoLabel label="Fleet half-life (yrs)" help="A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life." />,
-        "fleetHalfLifeYears", { step: 0.5, decimalScale: 1, min: 0.5, icon: Hourglass }
-      )}
-      {num(
-        <InfoLabel label="Warranty (yrs)" help="How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself." />,
-        "warrantyYears", { step: 0.5, decimalScale: 1, icon: ShieldCheck }
-      )}
-      {num(
-        <InfoLabel label="Framerate (fps)" help={FRAMERATE_HELP} />,
-        "framerateFps", { step: 1, min: 1, icon: Film }
-      )}
-      {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1, icon: Truck })}
-      {num("Admin labor (hrs/cam/yr)", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1, icon: UserCog })}
-      {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2, icon: Search })}
+      {num("Fleet half-life (yrs)", "fleetHalfLifeYears", {
+        step: 0.5, decimalScale: 1, min: 0.5, icon: Hourglass,
+        help: "A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life.",
+      })}
+      {num("Warranty (yrs)", "warrantyYears", {
+        step: 0.5, decimalScale: 1, icon: ShieldCheck,
+        help: "How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself.",
+      })}
+      {num("Framerate (fps)", "framerateFps", { step: 1, min: 1, icon: Film, help: FRAMERATE_HELP })}
 
+      <SectionLabel>Licensing</SectionLabel>
       {sol.model === "cloud" ? (
         <>
           <div style={{ gridColumn: "1 / -1" }}>
@@ -110,21 +115,28 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
           <div style={{ gridColumn: "1 / -1" }}>
             <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
           </div>
-          {num(<InfoLabel label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} />, "supportAddonPerCamYr", { icon: Headset })}
-          {sol.migrationStrategy === "connector" && (
-            <>
-              {num("Connector appliance ($/unit)", "applianceCost", { icon: Router })}
-              {num("Cameras per appliance", "applianceCapacity", { min: 1, icon: Layers })}
-              {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, icon: RefreshCw })}
-              {num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, icon: Clock })}
-            </>
-          )}
+          {num("Support/analytics add-on ($/cam/yr)", "supportAddonPerCamYr", { icon: Headset, help: ADDON_HELP })}
         </>
       ) : (
         <>
-          {num(<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} />, "baseLicense", { icon: FileText })}
-          {num(<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} />, "deviceLicense", { icon: Tag })}
+          {num("Base license ($, one-time)", "baseLicense", { icon: FileText, help: ONPREM_LICENSE_HELP })}
+          {num("Device license ($/cam, one-time)", "deviceLicense", { icon: Tag, help: ONPREM_LICENSE_HELP })}
           {num("Support renewal (%/yr)", "carePct", { icon: ShieldCheck })}
+        </>
+      )}
+
+      <SectionLabel>Infrastructure</SectionLabel>
+      {sol.model === "cloud" ? (
+        sol.migrationStrategy === "connector" && (
+          <>
+            {num("Connector appliance ($/unit)", "applianceCost", { icon: Router })}
+            {num("Cameras per appliance", "applianceCapacity", { min: 1, icon: Layers })}
+            {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, icon: RefreshCw })}
+            {num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, icon: Clock })}
+          </>
+        )
+      ) : (
+        <>
           {num("Recording server ($/unit)", "serverCost", { icon: Server })}
           {num("Cameras per server", "serverCapacity", { min: 1, icon: Layers })}
           {num("Storage ($/TB usable)", "storageCostPerTB", { icon: HardDrive })}
@@ -138,7 +150,16 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
           />
           {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, icon: RefreshCw })}
           {num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, icon: Clock })}
+        </>
+      )}
 
+      <SectionLabel>Operations</SectionLabel>
+      {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1, icon: Truck })}
+      {num("Admin labor (hrs/cam/yr)", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1, icon: UserCog })}
+      {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2, icon: Search })}
+
+      {sol.model === "onprem" && (
+        <>
           <SectionLabel>Analytics</SectionLabel>
           {num("Analytics appliance ($)", "analyticsApplianceCost", { icon: Cpu })}
           {num("Analytics software ($/yr)", "analyticsSoftwareCost", { icon: BrainCircuit })}
