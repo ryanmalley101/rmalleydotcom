@@ -1,15 +1,28 @@
 import type { SolutionInputs } from "./model";
 
 // Per-vendor researched defaults, produced by RESEARCH_PROMPT.md and reviewed
-// before merging (a handful of claims were spot-checked live; the Meraki 5yr
-// license and exacqVision/Avigilon H5SL prices all confirmed). Two researched
-// vendors were deliberately left out:
+// before merging across two research passes (a handful of claims from each
+// were spot-checked live; Meraki, exacqVision, Avigilon H5SL, Milestone
+// XPCODL/XPCOBT, and Genetec Omnicast Enterprise all confirmed exactly).
+// Two researched vendors were deliberately left out:
 // - Solink: priced per-location ($175/mo), not per-camera — genuinely
 //   incompatible with this model's per-camera fields rather than just
 //   unresearched, so it's dropped instead of force-fit.
 // - BriefCam: an analytics add-on layered on top of another vendor's VMS, not
 //   a VMS itself — no matching slot in the wizard's vmsProvider/cameraProvider
 //   pickers to wire it into.
+//
+// Verkada is also deliberately absent from CLOUD_VENDOR_DEFAULTS: the generic
+// defaults in lib/defaults.ts already ARE Verkada's numbers (see
+// README.md's "Known softball risks"), sourced with better provenance than
+// this file's secondary/reseller citations can match. A second research pass
+// proposed a conflicting Verkada entry (applianceCost 6999/25ch — the real
+// CC500 tier — vs. the existing 9999/50ch CC700 tier already baked into the
+// generic defaults; tierPrice 899/5yr vs. the existing 1099/5yr, neither
+// directly confirmable since Verkada's own pricing page doesn't publish
+// per-channel license cost). Rather than silently overwrite known-good
+// numbers with lower-confidence ones, it was left out; revisit only with a
+// primary-sourced number.
 //
 // `fieldMeta` carries source/confidence/reasoning per field for future audit;
 // it isn't surfaced in the UI today, only `values` is applied on selection.
@@ -24,6 +37,14 @@ export interface FieldMeta {
   sources: string[];
   reasoning?: string;
   checkedOn: string;
+}
+
+// Picking (or pre-seeding) a vendor with researched data merges its values
+// on top of whatever's already filled in; vendors without an entry here
+// (including "Other") pass `sol` through untouched.
+export function withVendorDefaults(sol: SolutionInputs, vendorName: string, table: Record<string, VendorDefaultEntry>): SolutionInputs {
+  const entry = table[vendorName];
+  return entry ? { ...sol, ...entry.values } : sol;
 }
 
 export interface VendorDefaultEntry {
@@ -113,6 +134,35 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
     },
     notes: "Usage-based; cost scales up with search/storage/labeling beyond the base tier. 30-day cloud history included in base.",
   },
+  Rhombus: {
+    values: { migrationStrategy: "ripReplace", tierPrice: 699, tierYears: 5, supportAddonPerCamYr: 0, cameraCost: 648, warrantyYears: 10, fleetHalfLifeYears: 10 },
+    fieldMeta: {
+      migrationStrategy: { value: "ripReplace", status: "sourced", confidence: "high", sources: ["https://www.rhombus.com/pricing/"], reasoning: "Camera-native, on-camera recording; no third-party-camera connector product, so onboarding means native cameras.", checkedOn: "2026-07-25" },
+      tierPrice: { value: 699, status: "sourced", confidence: "high", sources: ["https://getsafeandsound.com/blog/rhombus-pricing/", "https://www.rhombus.com/pricing/"], reasoning: "Enterprise tier, 5yr per camera ($140/yr). Enterprise: $199/1yr, $699/5yr, $1,399/10yr; Professional $149/1yr; R600 multisensor license is 3x.", checkedOn: "2026-07-25" },
+      tierYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://getsafeandsound.com/blog/rhombus-pricing/"], checkedOn: "2026-07-25" },
+      supportAddonPerCamYr: { value: 0, status: "estimated", confidence: "medium", sources: ["https://www.rhombus.com/license-comparison/"], reasoning: "Enterprise license covers management/firmware/support/AI; cloud archiving and some AI are add-ons only on the lower Professional tier.", checkedOn: "2026-07-25" },
+      cameraCost: { value: 648, status: "sourced", confidence: "medium", sources: ["https://butterflymx.com/blog/rhombus-camera-review/", "https://www.rhombus.com/pricing/"], reasoning: "Mid-range dome (R170/R200 band $499-648); entry R100/R120 $200-498, 4K/fisheye $899-1,648. Some listings bundle hardware + first license, so treat as hardware-only approximation.", checkedOn: "2026-07-25" },
+      warrantyYears: { value: 10, status: "sourced", confidence: "high", sources: ["https://www.rhombus.com/pricing/"], reasoning: "\"All cameras include 10-year warranties.\"", checkedOn: "2026-07-25" },
+      fleetHalfLifeYears: { value: 10, status: "estimated", confidence: "low", sources: [], reasoning: "Generic modern-IP-camera assumption.", checkedOn: "2026-07-25" },
+    },
+    notes: "No NVR/DVR, no on-prem storage line — applianceCost left unset (n/a for the ripReplace path). Multi-year licensing saves up to ~30%, but that's a term discount, not negotiated off-list.",
+  },
+  "Eagle Eye Networks": {
+    values: { migrationStrategy: "connector", tierPrice: 240, tierYears: 1, applianceCost: 1000, applianceCapacity: 20, applianceRefreshCycleYears: 5, supportAddonPerCamYr: 0, cameraCost: 400, warrantyYears: 3, fleetHalfLifeYears: 10 },
+    fieldMeta: {
+      migrationStrategy: { value: "connector", status: "sourced", confidence: "high", sources: ["https://www.een.com/product/cloud-vms-subscriptions/"], reasoning: "Requires an on-site Bridge or CMVR appliance; reuses the existing ONVIF/PoE camera fleet.", checkedOn: "2026-07-25" },
+      tierPrice: { value: 240, status: "sourced", confidence: "medium", sources: ["https://getsafeandsound.com/blog/eagle-eye-networks-pricing/"], reasoning: "Native billing is per-camera-per-month, varying by resolution + retention (~$15-50/cam/mo band; ~$20/mo mid annualized to $240/yr). M10 ($5/mo) is the no-cloud-retention plan. Re-check against a current EEN price sheet before trusting in isolation.", checkedOn: "2026-07-25" },
+      tierYears: { value: 1, status: "estimated", confidence: "high", sources: [], reasoning: "Native billing is monthly; 1yr chosen so tierPrice is a clean annualization.", checkedOn: "2026-07-25" },
+      applianceCost: { value: 1000, status: "sourced", confidence: "medium", sources: ["https://getsafeandsound.com/blog/eagle-eye-networks-pricing/"], reasoning: "Bridges/CMVRs run $500-2,000 by capacity; Bridge 303 ~$800-1,200 up to 20 cameras. CMVRs (with local storage) cost more.", checkedOn: "2026-07-25" },
+      applianceCapacity: { value: 20, status: "sourced", confidence: "medium", sources: ["https://getsafeandsound.com/blog/eagle-eye-networks-pricing/"], reasoning: "Bridge 303 supports up to 20 cameras; models offer 5/8/16/24 PoE ports.", checkedOn: "2026-07-25" },
+      applianceRefreshCycleYears: { value: 5, status: "estimated", confidence: "low", sources: [], reasoning: "Appliance replacement warranties run ~2yr; 5yr is a reasonable refresh anchor.", checkedOn: "2026-07-25" },
+      supportAddonPerCamYr: { value: 0, status: "estimated", confidence: "medium", sources: ["https://www.een.com/product/cloud-vms-subscriptions/"], reasoning: "24/7 operational monitoring, web/mobile, and alerts included in the per-camera subscription.", checkedOn: "2026-07-25" },
+      cameraCost: { value: 400, status: "estimated", confidence: "medium", sources: ["https://getsafeandsound.com/blog/eagle-eye-networks-pricing/"], reasoning: "Camera-agnostic; native/first-party cameras run $150-800. In a connector deployment cameraCost is really whichever third-party camera the operator chose.", checkedOn: "2026-07-25" },
+      warrantyYears: { value: 3, status: "estimated", confidence: "low", sources: [], reasoning: "Depends on the third-party camera paired with it, not Eagle Eye itself.", checkedOn: "2026-07-25" },
+      fleetHalfLifeYears: { value: 10, status: "estimated", confidence: "low", sources: [], reasoning: "Generic modern-IP-camera assumption.", checkedOn: "2026-07-25" },
+    },
+    notes: "Fundamentally OpEx/monthly pricing; the annualization above is the main thing to re-check against a current price sheet. Camera-direct (no appliance) is allowed only for ≤6 cameras.",
+  },
 };
 
 // ---------- ON-PREM VMS SOFTWARE ----------
@@ -194,6 +244,48 @@ export const ONPREM_VMS_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
     },
     notes: "Flex-Channel licensing (analog/HD-analog/IP interchangeable). Also sold via ADI (IA-VS1IP).",
   },
+  "Milestone XProtect": {
+    values: { deviceLicense: 329, baseLicense: 3342, carePct: 18, serverCost: 10000, serverCapacity: 100, storageCostPerTB: 30, raidLevel: "raid1", refreshCycleYears: 5 },
+    fieldMeta: {
+      deviceLicense: { value: 329, status: "sourced", confidence: "high", sources: ["https://telecomcreations.com/products/milestone-xpcodl-xprotect-corporate-device-license-stock-xpcodl"], reasoning: "XPCODL per-device one-time perpetual license, confirmed directly at $329. List/street varies by reseller.", checkedOn: "2026-07-26" },
+      baseLicense: { value: 3342, status: "sourced", confidence: "high", sources: ["https://www.affinitechstore.com/milestone-xprotect-corporate-base-license-xpcobt/"], reasoning: "XPCOBT Corporate base server license, confirmed directly at $3,342 MSRP (education/REMC pricing seen as low as $2,406.24).", checkedOn: "2026-07-26" },
+      carePct: { value: 18, status: "estimated", confidence: "medium", sources: ["https://www.bhphotovideo.com/c/product/1145408-REG/milestone_yxpcodl_xprotect_corporate_device_channel.html"], reasoning: "Milestone Care Plus (the SUP) is mandatory for Corporate for at least year 1, priced as a separate per-device SKU. Industry pattern for Milestone SUP is ~15-20% of license MSRP/yr; Care Premium (24/7) is an additional layer on top.", checkedOn: "2026-07-25" },
+      serverCost: { value: 10000, status: "estimated", confidence: "low", sources: [], reasoning: "XProtect Corporate runs on generic/customer server hardware (no Milestone-branded server SKU); generic enterprise recording-server anchor.", checkedOn: "2026-07-25" },
+      serverCapacity: { value: 100, status: "estimated", confidence: "low", sources: [], reasoning: "Generic; heavily bitrate-dependent.", checkedOn: "2026-07-25" },
+      storageCostPerTB: { value: 30, status: "estimated", confidence: "low", sources: [], reasoning: "Generic surveillance-storage market number, not vendor-specific.", checkedOn: "2026-07-25" },
+      raidLevel: { value: "raid1", status: "estimated", confidence: "medium", sources: [], reasoning: "Default assumption; Corporate supports failover recording servers for mission-critical builds.", checkedOn: "2026-07-25" },
+      refreshCycleYears: { value: 5, status: "estimated", confidence: "low", sources: [], reasoning: "Typical server/appliance refresh.", checkedOn: "2026-07-25" },
+    },
+    notes: "Perpetual license + SUP model; Care Plus is effectively non-optional for Corporate. Device-license count follows Milestone's supported-hardware rules (multi-sensor/encoder devices can need more than one license). Analytics are largely partner/marketplace, not a single first-party SKU — left unset.",
+  },
+  "Genetec Security Center": {
+    values: { deviceLicense: 250, baseLicense: 3650, carePct: 19, serverCost: 10000, serverCapacity: 100, storageCostPerTB: 30, raidLevel: "raid1", refreshCycleYears: 5 },
+    fieldMeta: {
+      deviceLicense: { value: 250, status: "sourced", confidence: "high", sources: ["https://docrack.me/genetec-security-center-license-calculator.html"], reasoning: "Omnicast Enterprise per-camera connection license, confirmed directly at $250 (Standard $150/cam, Professional $230/cam; Enterprise offers unlimited cameras, the right tier for a large fleet).", checkedOn: "2026-07-26" },
+      baseLicense: { value: 3650, status: "sourced", confidence: "high", sources: ["https://docrack.me/genetec-security-center-license-calculator.html"], reasoning: "Omnicast Enterprise base package (unlimited cameras/servers/clients), confirmed directly at $3,650 (Standard $590, Professional $1,130).", checkedOn: "2026-07-26" },
+      carePct: { value: 19, status: "sourced", confidence: "medium", sources: ["https://www.dhs.gov/sites/default/files/publications/VMS-MSR_1214-508.pdf"], reasoning: "Genetec Advantage (the SMA) is required at initial purchase. DHS VMS market survey lists Enterprise maintenance at $400 base + $48/cam/yr; $48 on a $250/cam license is ~19%. Covers version upgrades + GTAC support.", checkedOn: "2026-07-25" },
+      serverCost: { value: 10000, status: "estimated", confidence: "low", sources: [], reasoning: "Genetec sells Streamvault appliances but pricing is quote-only; generic server-hardware anchor.", checkedOn: "2026-07-25" },
+      serverCapacity: { value: 100, status: "estimated", confidence: "low", sources: [], reasoning: "Generic; bitrate-dependent.", checkedOn: "2026-07-25" },
+      storageCostPerTB: { value: 30, status: "estimated", confidence: "low", sources: [], reasoning: "Generic.", checkedOn: "2026-07-25" },
+      raidLevel: { value: "raid1", status: "estimated", confidence: "medium", sources: [], reasoning: "Default assumption; Genetec supports archiver redundancy/failover.", checkedOn: "2026-07-25" },
+      refreshCycleYears: { value: 5, status: "estimated", confidence: "low", sources: [], reasoning: "Typical.", checkedOn: "2026-07-25" },
+    },
+    notes: "Enterprise tier assumed (right fit for a large fleet). Genetec also has a SaaS/hybrid path (Security Center SaaS: $149-199/cam/yr + Cloudlink appliances $1,395-4,630) — that would be a separate cloud-side entry, not this on-prem one. Analytics are add-on/partner, left unset.",
+  },
+  "Avigilon Control Center (Motorola Solutions)": {
+    values: { deviceLicense: 292, baseLicense: 0, carePct: 10, serverCost: 10155, serverCapacity: 76, storageCostPerTB: 30, raidLevel: "raid1", refreshCycleYears: 5 },
+    fieldMeta: {
+      deviceLicense: { value: 292, status: "sourced", confidence: "medium", sources: ["https://getsafeandsound.com/blog/avigilon-cost/"], reasoning: "ACC7 Enterprise per-camera license MSRP; SLED/cooperative bid pricing seen as low as $212.70. Core tier (entry, 16-cam cap) runs ~$80/ch.", checkedOn: "2026-07-25" },
+      baseLicense: { value: 0, status: "sourced", confidence: "medium", sources: ["https://getsafeandsound.com/blog/avigilon-cost/", "https://ipvm.com/reports/avigilons-price-competitiveness"], reasoning: "ACC is licensed per camera channel; unlike Genetec/Milestone Corporate there's no separate base-license line.", checkedOn: "2026-07-25" },
+      carePct: { value: 10, status: "sourced", confidence: "medium", sources: ["https://getsafeandsound.com/blog/avigilon-cost/"], reasoning: "Smart Assurance Plan runs $21-30/license/yr, ~10% of license. Historically Avigilon had no mandatory maintenance (IPVM 2011); SAP is now the common-but-optional upgrade path, so 10% is the realistic ongoing figure (0% if the customer forgoes upgrades).", checkedOn: "2026-07-25" },
+      serverCost: { value: 10155, status: "sourced", confidence: "low", sources: ["https://www.ebay.de/itm/116441299996"], reasoning: "Avigilon HD NVR4X Standard, 48TB, 76-camera-licensed, seen at $10,155 on the secondary market. Avigilon does sell purpose-built NVR/HD appliances so this is a real anchor, but it's a used-market listing — verify against a current NVR SKU list before trusting closely.", checkedOn: "2026-07-25" },
+      serverCapacity: { value: 76, status: "sourced", confidence: "low", sources: ["https://www.ebay.de/itm/116441299996"], reasoning: "That specific NVR4X unit was 76-camera-licensed; capacity varies by model/bitrate.", checkedOn: "2026-07-25" },
+      storageCostPerTB: { value: 30, status: "estimated", confidence: "low", sources: [], reasoning: "Generic; Avigilon NVRs bundle storage, so per-TB only matters if sizing separately.", checkedOn: "2026-07-25" },
+      raidLevel: { value: "raid1", status: "estimated", confidence: "medium", sources: [], reasoning: "Default assumption; Avigilon NVRs ship RAID-configured.", checkedOn: "2026-07-25" },
+      refreshCycleYears: { value: 5, status: "estimated", confidence: "low", sources: [], reasoning: "Typical.", checkedOn: "2026-07-25" },
+    },
+    notes: "Avigilon Alta is the cloud sibling ($179/1yr, $499/3yr, $799/5yr, $1,599/10yr per camera incl. 30-day storage — see CLOUD_VENDOR_DEFAULTS' \"Avigilon Alta (Motorola Solutions)\" entry, sourced separately). Analytics (Appearance Search, Unusual Activity Detection) are largely built into ACC Enterprise / self-learning cameras, not a separate SKU. SLED buyers save ~27-28% off MSRP via PEPPM/CMAS-type vehicles.",
+  },
 };
 
 // ---------- ON-PREM CAMERA HARDWARE ----------
@@ -270,5 +362,23 @@ export const ONPREM_CAMERA_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> =
       warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Avigilon standard ~3-yr (extendable).", checkedOn: "2026-07-26" },
     },
     notes: "Priced model: H5A dome (5.0C-H5A-DO1-IR). Distinct from Avigilon Control Center VMS — this is the camera-hardware brand. H5A is the premium analytics line; H5SL is the value line ($579, confirmed). SPOT-CHECK cameraCost before trusting.",
+  },
+  "Axis Communications": {
+    values: { cameraCost: 750, warrantyYears: 3, fleetHalfLifeYears: 12 },
+    fieldMeta: {
+      cameraCost: { value: 750, status: "sourced", confidence: "medium", sources: ["https://www.ebay.com/p/27076682133", "https://www.cdw.com/product/axis-p3267-lv-cpnt-5mp-network-camera/6906298"], reasoning: "AXIS P3267-LV (02329-001, 5MP indoor fixed dome, ARTPEC-8, varifocal 3-8mm, IK10) street mid-point. Open-box $721.98 (eBay); 5MP predecessor P3247-LV $500 new; authorized resellers (CDW, Full Compass, A1 Security) list the SKU without public price. Axis doesn't publish MSRP openly; list runs somewhat higher than this street mid-point. Note: P3267-LV is being phased out by Axis, a current-gen equivalent may reprice.", checkedOn: "2026-07-25" },
+      warrantyYears: { value: 3, status: "sourced", confidence: "medium", sources: ["https://www.axis.com/products/axis-p3265-lv/support"], reasoning: "Axis standard hardware warranty is 3 years, extendable to 5 via registration/extension. Changes when replacement cost (vs. labor-only) kicks in — spot-check whether 3 or 5 fits the deal.", checkedOn: "2026-07-25" },
+      fleetHalfLifeYears: { value: 12, status: "estimated", confidence: "low", sources: [], reasoning: "Axis's reliability reputation supports a longer-than-generic half-life; anchored above the 10 used elsewhere, not sourced.", checkedOn: "2026-07-25" },
+    },
+    notes: "Priced model: AXIS P3267-LV. The 2MP P3265-LV sibling runs ~$500-600 street if a matched-resolution comparison against a cheaper competitor is wanted instead.",
+  },
+  "Hanwha Vision": {
+    values: { cameraCost: 850, warrantyYears: 5, fleetHalfLifeYears: 10 },
+    fieldMeta: {
+      cameraCost: { value: 850, status: "sourced", confidence: "medium", sources: ["https://www.bhphotovideo.com/c/product/1336781-REG/hanwha_techwin_xnd_8080rv_5mp_indoor_ir_vandal.html", "https://www.a1securitycameras.com/samsung-xnd-8080rv.html"], reasoning: "Hanwha Wisenet XND-8080RV (5MP indoor vandal dome, Wisenet 5, varifocal 3.9-9.4mm, IK08) street $819 (B&H) to $972-996 (other resellers) against a $1,350 MSRP; $850 sits near the low street end. This is a Wisenet-5-generation model — the current Wisenet-7 equivalent (XND-8082 family) may reprice.", checkedOn: "2026-07-25" },
+      warrantyYears: { value: 5, status: "estimated", confidence: "medium", sources: ["https://www.a1securitycameras.com/samsung-xnd-8080rv.html"], reasoning: "Hanwha's North America Wisenet warranty program is commonly 5 years, though one reseller listing showed \"3 Year Warranty\" for this exact SKU — flagged discrepancy, confirm against Hanwha's current terms for the target region before trusting closely.", checkedOn: "2026-07-25" },
+      fleetHalfLifeYears: { value: 10, status: "estimated", confidence: "low", sources: [], reasoning: "Generic; roughly on par with commodity-premium IP domes.", checkedOn: "2026-07-25" },
+    },
+    notes: "Priced model: XND-8080RV. Distinct from the \"Hanwha Wisenet WAVE\" entry in ONPREM_VMS_VENDOR_DEFAULTS — that's the VMS software, this is the camera-hardware brand. Country of origin listed as China for this model, which matters for NDAA/procurement filtering in some federal/education contexts even though Hanwha itself is South Korean.",
   },
 };
