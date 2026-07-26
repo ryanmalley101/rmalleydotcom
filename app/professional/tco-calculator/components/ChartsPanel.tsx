@@ -1,12 +1,69 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Chart } from "chart.js/auto";
+import { Chart, type Plugin } from "chart.js/auto";
 import { Paper, Stack } from "@mantine/core";
 import type { ComparisonResult } from "../lib/model";
 import { TEXT_MUTED, fmtUsdK } from "../lib/colors";
 
 Chart.defaults.color = TEXT_MUTED;
+
+// Amber, deliberately distinct from either solution's line color (which the
+// user can change) and from the results-summary's teal/gray — a crossover
+// is its own kind of event, not "belonging" to either solution's color.
+const CROSSOVER_COLOR = "#f59e0b";
+
+// Custom draw instead of a plugin dependency (chartjs-plugin-annotation etc.)
+// for one vertical marker — reads from a ref so it always draws the current
+// crossover years even though the chart instance itself is created once and
+// mutated in place via update("none"), not recreated on every data change.
+function makeCrossoverPlugin(yearsRef: { current: number[] }): Plugin<"line"> {
+  return {
+    id: "crossoverMarker",
+    afterDatasetsDraw(chart) {
+      const years = yearsRef.current;
+      if (!years.length) return;
+      const { ctx, chartArea, scales } = chart;
+      const xScale = scales.x;
+      if (!chartArea || !xScale) return;
+      ctx.save();
+      years.forEach((year) => {
+        const x = xScale.getPixelForValue(year);
+        if (x < chartArea.left || x > chartArea.right) return;
+
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = CROSSOVER_COLOR;
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const label = "Crossover";
+        ctx.font = "600 10px system-ui, sans-serif";
+        const textWidth = ctx.measureText(label).width;
+        const padX = 5;
+        const boxW = textWidth + padX * 2;
+        const boxH = 15;
+        let boxX = x - boxW / 2;
+        boxX = Math.max(chartArea.left, Math.min(chartArea.right - boxW, boxX));
+        const boxY = chartArea.top + 4;
+
+        ctx.fillStyle = CROSSOVER_COLOR;
+        ctx.beginPath();
+        ctx.roundRect(boxX, boxY, boxW, boxH, 3);
+        ctx.fill();
+
+        ctx.fillStyle = "#0f1117";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, boxX + boxW / 2, boxY + boxH / 2 + 1);
+      });
+      ctx.restore();
+    },
+  };
+}
 
 export default function ChartsPanel({
   comparison, nameA, nameB, colorA, colorB,
@@ -15,8 +72,12 @@ export default function ChartsPanel({
   const catRef = useRef<HTMLCanvasElement>(null);
   const cumChart = useRef<Chart | null>(null);
   const catChart = useRef<Chart | null>(null);
+  const crossoverYearsRef = useRef<number[]>([]);
 
   useEffect(() => {
+    crossoverYearsRef.current =
+      comparison.crossoverYear === null ? [] : [comparison.crossoverYear, ...comparison.laterCrossoverYears];
+
     if (!cumRef.current) return;
     if (!cumChart.current) {
       cumChart.current = new Chart(cumRef.current, {
@@ -36,6 +97,7 @@ export default function ChartsPanel({
             x: { ticks: { color: TEXT_MUTED }, grid: { display: false } },
           },
         },
+        plugins: [makeCrossoverPlugin(crossoverYearsRef)],
       });
     } else {
       const c = cumChart.current;

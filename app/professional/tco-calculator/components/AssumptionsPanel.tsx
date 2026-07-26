@@ -1,9 +1,16 @@
 "use client";
 
-import { Box, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
+import { Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
+import {
+  ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign, FileText,
+  Film, Hammer, HardDrive, Headset, Hourglass, Layers, Percent, RefreshCw, Router, Search,
+  Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
+} from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
+
+const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
 const MIGRATION_STRATEGY_HELP =
   "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead.";
@@ -43,10 +50,11 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
   const num = (
     label: React.ReactNode,
     key: keyof SolutionInputs,
-    opts?: { step?: number; decimalScale?: number; min?: number }
+    opts?: { step?: number; decimalScale?: number; min?: number; icon?: React.ElementType }
   ) => (
     <NumberInput
       label={label}
+      leftSection={opts?.icon ? icon(opts.icon) : undefined}
       value={sol[key] as number}
       min={opts?.min ?? 0}
       step={opts?.step}
@@ -58,31 +66,34 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
 
   return (
     <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
-      {num("Discount off list (%)", "discountPct", { min: 0 })}
-      {num("Replacement camera ($/cam)", "cameraCost")}
-      {num("Bulk install labor ($/cam)", "bulkInstallLaborCost")}
-      {num("Replacement install labor ($/cam)", "replacementInstallLaborCost")}
+      {num("Discount off list (%)", "discountPct", { min: 0, icon: Percent })}
+      {num("Replacement camera ($/cam)", "cameraCost", { icon: Camera })}
+      {num("Bulk install labor ($/cam)", "bulkInstallLaborCost", { icon: Wrench })}
+      {num("Replacement install labor ($/cam)", "replacementInstallLaborCost", { icon: Hammer })}
       {num(
         <InfoLabel label="Fleet half-life (yrs)" help="A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life." />,
-        "fleetHalfLifeYears", { step: 0.5, decimalScale: 1, min: 0.5 }
+        "fleetHalfLifeYears", { step: 0.5, decimalScale: 1, min: 0.5, icon: Hourglass }
       )}
       {num(
         <InfoLabel label="Warranty (yrs)" help="How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself." />,
-        "warrantyYears", { step: 0.5, decimalScale: 1 }
+        "warrantyYears", { step: 0.5, decimalScale: 1, icon: ShieldCheck }
       )}
       {num(
         <InfoLabel label="Framerate (fps)" help={FRAMERATE_HELP} />,
-        "framerateFps", { step: 1, min: 1 }
+        "framerateFps", { step: 1, min: 1, icon: Film }
       )}
-      {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1 })}
-      {num("Admin labor (hrs/cam/yr)", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1 })}
-      {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2 })}
+      {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1, icon: Truck })}
+      {num("Admin labor (hrs/cam/yr)", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1, icon: UserCog })}
+      {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2, icon: Search })}
 
       {sol.model === "cloud" ? (
         <>
           <div style={{ gridColumn: "1 / -1" }}>
             <Box mb={4}>
-              <InfoLabel label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
+              <Group gap={6}>
+                {icon(ArrowRightLeft)}
+                <InfoLabel label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
+              </Group>
             </Box>
             <SegmentedControl
               fullWidth
@@ -94,42 +105,43 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
               ]}
             />
           </div>
-          {num("License term (years)", "tierYears", { min: 1 })}
-          {num("License cost for term ($/cam)", "tierPrice")}
+          {num("License term (years)", "tierYears", { min: 1, icon: CalendarRange })}
+          {num("License cost for term ($/cam)", "tierPrice", { icon: DollarSign })}
           <div style={{ gridColumn: "1 / -1" }}>
             <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
           </div>
-          {num(<InfoLabel label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} />, "supportAddonPerCamYr")}
+          {num(<InfoLabel label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} />, "supportAddonPerCamYr", { icon: Headset })}
           {sol.migrationStrategy === "connector" && (
             <>
-              {num("Connector appliance ($/unit)", "applianceCost")}
-              {num("Cameras per appliance", "applianceCapacity", { min: 1 })}
-              {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1 })}
-              {num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0 })}
+              {num("Connector appliance ($/unit)", "applianceCost", { icon: Router })}
+              {num("Cameras per appliance", "applianceCapacity", { min: 1, icon: Layers })}
+              {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, icon: RefreshCw })}
+              {num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, icon: Clock })}
             </>
           )}
         </>
       ) : (
         <>
-          {num(<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} />, "baseLicense")}
-          {num(<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} />, "deviceLicense")}
-          {num("Support renewal (%/yr)", "carePct")}
-          {num("Recording server ($/unit)", "serverCost")}
-          {num("Cameras per server", "serverCapacity", { min: 1 })}
-          {num("Storage ($/TB usable)", "storageCostPerTB")}
+          {num(<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} />, "baseLicense", { icon: FileText })}
+          {num(<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} />, "deviceLicense", { icon: Tag })}
+          {num("Support renewal (%/yr)", "carePct", { icon: ShieldCheck })}
+          {num("Recording server ($/unit)", "serverCost", { icon: Server })}
+          {num("Cameras per server", "serverCapacity", { min: 1, icon: Layers })}
+          {num("Storage ($/TB usable)", "storageCostPerTB", { icon: HardDrive })}
           <Select
             label={<InfoLabel label="Storage redundancy" help={RAID_HELP} />}
+            leftSection={icon(HardDrive)}
             data={RAID_OPTIONS}
             value={sol.raidLevel}
             allowDeselect={false}
             onChange={(v) => v && set("raidLevel", v as RaidLevel)}
           />
-          {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1 })}
-          {num("Years until next refresh", "yearsUntilNextRefresh", { min: 0 })}
+          {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, icon: RefreshCw })}
+          {num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, icon: Clock })}
 
           <SectionLabel>Analytics</SectionLabel>
-          {num("Analytics appliance ($)", "analyticsApplianceCost")}
-          {num("Analytics software ($/yr)", "analyticsSoftwareCost")}
+          {num("Analytics appliance ($)", "analyticsApplianceCost", { icon: Cpu })}
+          {num("Analytics software ($/yr)", "analyticsSoftwareCost", { icon: BrainCircuit })}
         </>
       )}
     </SimpleGrid>

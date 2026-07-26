@@ -120,18 +120,25 @@ export default function ResultsView({
                   return (
                     <div key={sol.id}>
                       <Group justify="space-between" mb={6} wrap="nowrap" gap="xs">
-                        <Text size="sm" fw={600} truncate>{sol.name}</Text>
-                        <Group gap={8} wrap="nowrap">
-                          <Text ff="monospace" fw={600} size="sm">{fmtUsd(result.total)}</Text>
+                        <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
+                          <Text size="sm" fw={600} c={isCheaper ? undefined : TEXT_MUTED} truncate>{sol.name}</Text>
+                          {isCheaper && (
+                            <Badge size="xs" variant="light" color="teal" leftSection={<Check size={10} />} style={{ flexShrink: 0 }}>
+                              Lower cost
+                            </Badge>
+                          )}
+                        </Group>
+                        <Group gap={8} wrap="nowrap" style={{ flexShrink: 0 }}>
+                          <Text ff="monospace" fw={700} size="sm" c={isCheaper ? "teal" : TEXT_MUTED}>{fmtUsd(result.total)}</Text>
                           <Text size="xs" c={TEXT_MUTED}>{perCamMo} / cam / mo</Text>
                         </Group>
                       </Group>
-                      <Box style={{ height: 6, borderRadius: 3, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                      <Box style={{ height: isCheaper ? 8 : 5, borderRadius: 4, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
                         <Box
                           style={{
                             height: "100%",
                             width: `${maxTotal > 0 ? (result.total / maxTotal) * 100 : 0}%`,
-                            borderRadius: 3,
+                            borderRadius: 4,
                             background: isCheaper ? CHEAPER_COLOR : PRICIER_COLOR,
                           }}
                         />

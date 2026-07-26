@@ -1,6 +1,9 @@
 "use client";
 
 import { Badge, Box, Card, ColorInput, Group, NumberInput, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
+import {
+  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, Headset, Hourglass, Percent, Router, ShieldCheck, Tag, Truck, UserCog,
+} from "lucide-react";
 import type { CloudMigrationStrategy, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
@@ -36,6 +39,8 @@ const ONPREM_LICENSE_HELP =
 
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
+
+const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
 function selectData(options: string[]) {
   return [...options.map((p) => ({ value: p, label: p })), { value: OTHER, label: "Other…" }];
@@ -153,7 +158,12 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
   return (
     <>
       <div>
-        <Box mb={4}><InfoLabel label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-sm)" /></Box>
+        <Box mb={4}>
+          <Group gap={6}>
+            {icon(ArrowRightLeft)}
+            <InfoLabel label="Migration strategy" help={MIGRATION_STRATEGY_HELP} size="var(--mantine-font-size-sm)" />
+          </Group>
+        </Box>
         <SegmentedControl
           fullWidth
           value={sol.migrationStrategy}
@@ -167,12 +177,14 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
       <Group grow align="flex-start">
         <NumberInput
           label="License term (years)"
+          leftSection={icon(CalendarRange)}
           value={sol.tierYears}
           min={1}
           onChange={(v) => set("tierYears", num(v) || 1)}
         />
         <NumberInput
           label="License cost for that term ($/cam)"
+          leftSection={icon(DollarSign)}
           value={sol.tierPrice}
           min={0}
           onChange={(v) => set("tierPrice", num(v))}
@@ -188,6 +200,7 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
       </Box>
       <NumberInput
         label={<InfoLabel label="Support/analytics add-on ($/cam/yr)" help={ADDON_HELP} size="var(--mantine-font-size-sm)" />}
+        leftSection={icon(Headset)}
         value={sol.supportAddonPerCamYr}
         min={0}
         onChange={(v) => set("supportAddonPerCamYr", num(v))}
@@ -195,6 +208,7 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
       {sol.migrationStrategy === "connector" && (
         <NumberInput
           label="Cloud connector appliance ($/unit)"
+          leftSection={icon(Router)}
           value={sol.applianceCost}
           min={0}
           onChange={(v) => set("applianceCost", num(v))}
@@ -238,12 +252,14 @@ function SolutionCard({
         <Group grow align="flex-start">
           <NumberInput
             label="Discount off list (%)"
+            leftSection={icon(Percent)}
             value={sol.discountPct}
             min={0} max={100}
             onChange={(v) => set("discountPct", num(v))}
           />
           <NumberInput
             label={HALF_LIFE_LABEL}
+            leftSection={icon(Hourglass)}
             value={sol.fleetHalfLifeYears}
             min={0.5} step={0.5} decimalScale={1}
             onChange={(v) => set("fleetHalfLifeYears", num(v))}
@@ -253,12 +269,14 @@ function SolutionCard({
         <Group grow align="flex-start">
           <NumberInput
             label="Replacement camera ($/cam)"
+            leftSection={icon(Camera)}
             value={sol.cameraCost}
             min={0}
             onChange={(v) => set("cameraCost", num(v))}
           />
           <NumberInput
             label={WARRANTY_LABEL}
+            leftSection={icon(ShieldCheck)}
             value={sol.warrantyYears}
             min={0} step={0.5} decimalScale={1}
             onChange={(v) => set("warrantyYears", num(v))}
@@ -271,6 +289,7 @@ function SolutionCard({
           <>
             <NumberInput
               label={<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" />}
+              leftSection={icon(FileText)}
               value={sol.baseLicense}
               min={0}
               onChange={(v) => set("baseLicense", num(v))}
@@ -278,12 +297,14 @@ function SolutionCard({
             <Group grow>
               <NumberInput
                 label={<InfoLabel label="Device license ($/cam, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" />}
+                leftSection={icon(Tag)}
                 value={sol.deviceLicense}
                 min={0}
                 onChange={(v) => set("deviceLicense", num(v))}
               />
               <NumberInput
                 label="Support renewal (% of license/yr)"
+                leftSection={icon(ShieldCheck)}
                 value={sol.carePct}
                 min={0}
                 onChange={(v) => set("carePct", num(v))}
@@ -295,6 +316,7 @@ function SolutionCard({
         <Group grow>
           <NumberInput
             label="Truck rolls / site / yr"
+            leftSection={icon(Truck)}
             value={sol.truckRollsPerSiteYr}
             min={0}
             step={0.5}
@@ -303,6 +325,7 @@ function SolutionCard({
           />
           <NumberInput
             label="Admin hrs / cam / yr"
+            leftSection={icon(UserCog)}
             value={sol.adminHrsPerCamYr}
             min={0}
             step={0.1}
