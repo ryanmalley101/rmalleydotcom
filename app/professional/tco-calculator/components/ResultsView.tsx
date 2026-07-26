@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Accordion, Badge, Box, Button, CopyButton, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { Check, Copy, Download, RotateCcw } from "lucide-react";
+import { Check, Copy, Download, History, RotateCcw } from "lucide-react";
 import type { ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
@@ -114,8 +114,9 @@ export default function ResultsView({
               </Stack>
 
               <Stack gap="md">
-                {[{ sol: solA, result: a }, { sol: solB, result: b }].map(({ sol, result }) => {
+                {[{ sol: solA, result: a, slot: "a" as const }, { sol: solB, result: b, slot: "b" as const }].map(({ sol, result, slot }) => {
                   const isCheaper = sol.id === cheaper.id;
+                  const isIncumbent = scenario.incumbent === slot;
                   const perCamMo = fmtUsd(result.total / (scenario.cameras * scenario.horizonYears * 12));
                   return (
                     <div key={sol.id}>
@@ -125,6 +126,11 @@ export default function ResultsView({
                           {isCheaper && (
                             <Badge size="xs" variant="light" color="teal" leftSection={<Check size={10} />} style={{ flexShrink: 0 }}>
                               Lower cost
+                            </Badge>
+                          )}
+                          {isIncumbent && (
+                            <Badge size="xs" variant="outline" color="gray" leftSection={<History size={10} />} style={{ flexShrink: 0 }}>
+                              Incumbent
                             </Badge>
                           )}
                         </Group>
