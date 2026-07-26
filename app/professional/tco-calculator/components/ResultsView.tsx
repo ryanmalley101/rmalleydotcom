@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Accordion, Badge, Box, Button, CopyButton, Group, Paper, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Badge, Box, Button, CopyButton, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { Check, Copy, Download, RotateCcw } from "lucide-react";
 import type { ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
@@ -12,13 +12,21 @@ import AssumptionsPanel from "./AssumptionsPanel";
 import ChartsPanel from "./ChartsPanel";
 import IncumbentPicker from "./IncumbentPicker";
 
-function StatTile({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
+// Color by meaning (which side actually costs less), not by A/B slot or
+// hardcoded to any vendor — computed fresh from the totals every render, so
+// it's correct regardless of which side wins. Deliberately not colorA/colorB:
+// those stay exactly as the user set them (still fully editable via the
+// ColorInput pickers in the wizard, still what the charts/accordion below
+// use), this is a separate, computed-only accent scoped to this summary.
+const CHEAPER_COLOR = "var(--mantine-color-teal-5)";
+const PRICIER_COLOR = "var(--mantine-color-gray-5)";
+
+function FooterStat({ label, value }: { label: string; value: string }) {
   return (
-    <Paper withBorder p="md" radius="md" style={accent ? { borderLeft: `3px solid ${accent}` } : undefined}>
-      <Text size="xs" c={TEXT_MUTED} mb={4}>{label}</Text>
-      <Text ff="monospace" fw={600} size="xl">{value}</Text>
-      {sub && <Text size="xs" c={TEXT_MUTED} mt={2}>{sub}</Text>}
-    </Paper>
+    <Stack gap={0} align="center">
+      <Text ff="monospace" fw={600} size="sm">{value}</Text>
+      <Text size="xs" c={TEXT_MUTED}>{label}</Text>
+    </Stack>
   );
 }
 
@@ -46,8 +54,9 @@ export default function ResultsView({
   const [exporting, setExporting] = useState(false);
 
   const cheaper = a.total <= b.total ? solA : solB;
-  const pricier = a.total <= b.total ? solB : solA;
   const diff = Math.abs(a.total - b.total);
+  const maxTotal = Math.max(a.total, b.total);
+  const pctSaved = maxTotal > 0 ? Math.round((diff / maxTotal) * 100) : 0;
 
   const fleetPctA = fleetReplacedPct(scenario.horizonYears, solA.fleetHalfLifeYears);
   const fleetPctB = fleetReplacedPct(scenario.horizonYears, solB.fleetHalfLifeYears);
@@ -91,26 +100,55 @@ export default function ResultsView({
 
       <Box ref={snapshotRef} style={{ background: "#0f1117" }}>
         <Stack gap="xl">
-          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-            <StatTile label={`${solA.name} (NPV)`} value={fmtUsd(a.total)} accent={colorA}
-              sub={fmtUsd(a.total / (scenario.cameras * scenario.horizonYears * 12)) + " / cam / mo"} />
-            <StatTile label={`${solB.name} (NPV)`} value={fmtUsd(b.total)} accent={colorB}
-              sub={fmtUsd(b.total / (scenario.cameras * scenario.horizonYears * 12)) + " / cam / mo"} />
-            <StatTile label="Difference" value={fmtUsd(diff)} sub={`${cheaper.name} lower over ${scenario.horizonYears} yrs`} />
-            <StatTile label="Crossover"
-              value={crossoverYear === null ? "N/A" : "Yr " + crossoverYear}
-              sub={
-                crossoverYear === null
-                  ? "No crossover within horizon"
-                  : laterCrossoverYears.length > 0
-                    ? `${pricier.name} overtakes ${cheaper.name}, crosses again at Yr ${laterCrossoverYears.join(", ")}`
-                    : `${pricier.name} overtakes ${cheaper.name}`
-              } />
-            <StatTile label={`Fleet replaced (${solA.name})`} value={fleetPctA + "%"} accent={colorA}
-              sub={`at ${solA.fleetHalfLifeYears.toFixed(1)}-yr half-life`} />
-            <StatTile label={`Fleet replaced (${solB.name})`} value={fleetPctB + "%"} accent={colorB}
-              sub={`at ${solB.fleetHalfLifeYears.toFixed(1)}-yr half-life`} />
-          </SimpleGrid>
+          <Paper withBorder p="xl" radius="md">
+            <Stack gap="xl">
+              <Stack gap={4} align="center" ta="center">
+                <Text ff="monospace" fw={700} size="2.75rem" c="teal" lh={1.1}>
+                  {fmtUsd(diff)}
+                </Text>
+                <Text size="sm" c={TEXT_MUTED}>
+                  {pctSaved}% lower with {cheaper.name} over {scenario.horizonYears} {scenario.horizonYears === 1 ? "year" : "years"}
+                  {crossoverYear !== null && `, overtaken in Yr ${crossoverYear}`}
+                  {laterCrossoverYears.length > 0 && ` (crosses again at Yr ${laterCrossoverYears.join(", ")})`}
+                </Text>
+              </Stack>
+
+              <Stack gap="md">
+                {[{ sol: solA, result: a }, { sol: solB, result: b }].map(({ sol, result }) => {
+                  const isCheaper = sol.id === cheaper.id;
+                  const perCamMo = fmtUsd(result.total / (scenario.cameras * scenario.horizonYears * 12));
+                  return (
+                    <div key={sol.id}>
+                      <Group justify="space-between" mb={6} wrap="nowrap" gap="xs">
+                        <Text size="sm" fw={600} truncate>{sol.name}</Text>
+                        <Group gap={8} wrap="nowrap">
+                          <Text ff="monospace" fw={600} size="sm">{fmtUsd(result.total)}</Text>
+                          <Text size="xs" c={TEXT_MUTED}>{perCamMo} / cam / mo</Text>
+                        </Group>
+                      </Group>
+                      <Box style={{ height: 6, borderRadius: 3, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                        <Box
+                          style={{
+                            height: "100%",
+                            width: `${maxTotal > 0 ? (result.total / maxTotal) * 100 : 0}%`,
+                            borderRadius: 3,
+                            background: isCheaper ? CHEAPER_COLOR : PRICIER_COLOR,
+                          }}
+                        />
+                      </Box>
+                    </div>
+                  );
+                })}
+              </Stack>
+
+              <Group justify="center" gap="xl" pt="md" style={{ borderTop: "1px solid var(--mantine-color-dark-4)" }}>
+                <FooterStat label="Crossover" value={crossoverYear === null ? "None" : "Yr " + crossoverYear} />
+                <FooterStat label={`${solA.name} fleet replaced`} value={fleetPctA + "%"} />
+                <FooterStat label={`${solB.name} fleet replaced`} value={fleetPctB + "%"} />
+                <FooterStat label="Horizon" value={`${scenario.horizonYears} yrs`} />
+              </Group>
+            </Stack>
+          </Paper>
 
           <ChartsPanel comparison={comparison} nameA={solA.name} nameB={solB.name} colorA={colorA} colorB={colorB} />
         </Stack>
