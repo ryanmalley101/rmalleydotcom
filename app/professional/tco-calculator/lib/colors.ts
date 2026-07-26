@@ -18,12 +18,17 @@
 // gray (PRICIER_COLOR in ResultsView.tsx, computed independently from
 // actual cost) — a grayish A default collided with that, two different
 // grays standing in for almost-but-not-quite the same thing.
-export const SOLUTION_A_COLOR = "#6b8cae";
-export const SOLUTION_B_COLOR = "#a855f7";
+// Pushed further apart than a first pass: A more saturated/distinctly blue
+// (less likely to read as a desaturated near-gray at a glance), B a deeper,
+// more saturated purple (less likely to read as adjacent to A on a muted
+// dark background) — the two should be unmistakably different hues, not
+// just different in name.
+export const SOLUTION_A_COLOR = "#4682b4";
+export const SOLUTION_B_COLOR = "#9333ea";
 
 // Quick-pick swatches offered in the color pickers, in addition to full custom hex entry.
 export const COLOR_SWATCHES = [
-  "#6b8cae", "#a855f7", "#10b981", "#f59e0b",
+  "#4682b4", "#9333ea", "#10b981", "#f59e0b",
   "#ef4444", "#eab308", "#64748b", "#94a3b8",
 ];
 
