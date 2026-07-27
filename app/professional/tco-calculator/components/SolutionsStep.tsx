@@ -2,9 +2,9 @@
 
 import { Badge, Box, Card, ColorInput, Group, NumberInput, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
 import {
-  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, Headset, Hourglass, Percent, Router, ShieldCheck, Tag, Truck, UserCog,
+  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Percent, Router, Server, ShieldCheck, Tag, Truck, UserCog,
 } from "lucide-react";
-import type { CloudMigrationStrategy, ScenarioInputs, SolutionInputs } from "../lib/model";
+import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
 import {
@@ -39,6 +39,16 @@ const MIGRATION_STRATEGY_HELP =
 
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, same as the hardware, unless this solution is marked incumbent below (already owned, not charged again). Only the support renewal recurs afterward.";
+
+const RAID_HELP =
+  "How the on-prem storage is protected against a drive failure. No RAID and RAID 0 (striping) need only the usable capacity but have no redundancy, a single drive failure loses data. RAID 1 (mirroring) and RAID 10 (striped mirrors) roughly double the raw storage bought, to survive a drive failure.";
+
+const RAID_OPTIONS: { value: RaidLevel; label: string }[] = [
+  { value: "none", label: "No RAID" },
+  { value: "raid0", label: "RAID 0 (striping)" },
+  { value: "raid1", label: "RAID 1 (mirroring)" },
+  { value: "raid10", label: "RAID 10 (striped mirrors)" },
+];
 
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
@@ -340,6 +350,35 @@ function SolutionCard({
                 onChange={(v) => set("carePct", num(v))}
               />
             </Group>
+            <Group grow align="flex-start">
+              <NumberInput
+                label={<Group gap={4} wrap="nowrap">Recording server ($/unit)<SourceDot meta={fieldSourceInfo("serverCost", sol.serverCost, ...entries)} /></Group>}
+                leftSection={icon(Server)}
+                value={sol.serverCost}
+                min={0}
+                onChange={(v) => set("serverCost", num(v))}
+              />
+              <NumberInput
+                label={<Group gap={4} wrap="nowrap">Storage ($/TB usable)<SourceDot meta={fieldSourceInfo("storageCostPerTB", sol.storageCostPerTB, ...entries)} /></Group>}
+                leftSection={icon(HardDrive)}
+                value={sol.storageCostPerTB}
+                min={0}
+                onChange={(v) => set("storageCostPerTB", num(v))}
+              />
+            </Group>
+            <Select
+              label={
+                <InfoLabel
+                  label="Storage redundancy" help={RAID_HELP} size="var(--mantine-font-size-sm)"
+                  extra={<SourceDot meta={fieldSourceInfo("raidLevel", sol.raidLevel, ...entries)} />}
+                />
+              }
+              leftSection={icon(HardDrive)}
+              data={RAID_OPTIONS}
+              value={sol.raidLevel}
+              allowDeselect={false}
+              onChange={(v) => v && set("raidLevel", v as RaidLevel)}
+            />
           </>
         )}
 
