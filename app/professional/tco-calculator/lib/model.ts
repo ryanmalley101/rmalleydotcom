@@ -160,10 +160,26 @@ function retentionMultiplier(days: number) {
   return Math.pow(Math.max(days, 1) / 30, 0.4);
 }
 
+// End-state hardware footprint, for the results summary's "what do you
+// actually end up owning" line, distinct from totalsByCategory (dollars).
+// Reuses the same unit counts the cost model itself computes rather than
+// re-deriving them, so this can never drift from what was actually costed.
+export interface HardwareFootprint {
+  // Null when the deployment has no local recording/connector box at all
+  // (cloud ripReplace: native cameras record straight to the vendor's cloud).
+  unitsLabel: string | null;
+  units: number;
+  // Physical (post-RAID-overhead) storage bought, TB. On-prem only; cloud/hybrid
+  // storage lives in the vendor's cloud, not something this deployment buys.
+  storageTB: number | null;
+  cameras: number;
+}
+
 export interface SolutionResult {
   totalsByCategory: Record<Category, number>;
   cumulative: number[]; // NPV-discounted running total, index = year
   total: number;
+  hardware: HardwareFootprint;
 }
 
 export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, isIncumbent = false): SolutionResult {
@@ -266,7 +282,14 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
   }
 
   const total = Object.values(totalsByCategory).reduce((a, b) => a + b, 0);
-  return { totalsByCategory, cumulative, total };
+  const hardware: HardwareFootprint = {
+    unitsLabel:
+      sol.model === "onprem" ? "Recording servers" : sol.migrationStrategy === "connector" ? "Connector appliances" : null,
+    units: sol.model === "onprem" ? nSrv : sol.migrationStrategy === "connector" ? applianceUnits : 0,
+    storageTB: sol.model === "onprem" ? tbPhysical : null,
+    cameras: cams,
+  };
+  return { totalsByCategory, cumulative, total, hardware };
 }
 
 export interface ComparisonResult {

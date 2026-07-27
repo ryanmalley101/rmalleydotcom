@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Accordion, Badge, Box, Button, CopyButton, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { Check, Copy, Download, History, RotateCcw } from "lucide-react";
-import type { ScenarioInputs, SolutionInputs } from "../lib/model";
+import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
 import { exportSnapshot } from "../lib/exportSnapshot";
@@ -32,6 +32,19 @@ function FooterStat({ label, value }: { label: string; value: string }) {
 
 function fleetReplacedPct(horizonYears: number, halfLifeYears: number) {
   return Math.min(100, Math.round(100 * (1 - Math.pow(0.5, horizonYears / halfLifeYears))));
+}
+
+// What you actually end up owning/racking, not just what it costs — a cloud
+// ripReplace solution with no local box at all renders nothing rather than a
+// misleading "0 connector appliances".
+function hardwareSummaryText(hw: HardwareFootprint): string | null {
+  const parts: string[] = [];
+  if (hw.unitsLabel && hw.units > 0) parts.push(`${hw.units.toLocaleString()} ${hw.unitsLabel.toLowerCase()}`);
+  if (hw.storageTB !== null && hw.storageTB > 0) {
+    const tb = hw.storageTB >= 100 ? Math.round(hw.storageTB).toLocaleString() : hw.storageTB.toFixed(1);
+    parts.push(`${tb} TB storage`);
+  }
+  return parts.length ? parts.join(" · ") : null;
 }
 
 export default function ResultsView({
@@ -118,6 +131,7 @@ export default function ResultsView({
                   const isCheaper = sol.id === cheaper.id;
                   const isIncumbent = scenario.incumbent === slot;
                   const perCamMo = fmtUsd(result.total / (scenario.cameras * scenario.horizonYears * 12));
+                  const hwText = hardwareSummaryText(result.hardware);
                   return (
                     <div key={sol.id}>
                       <Group justify="space-between" mb={6} wrap="nowrap" gap="xs">
@@ -149,6 +163,7 @@ export default function ResultsView({
                           }}
                         />
                       </Box>
+                      {hwText && <Text size="xs" c={TEXT_MUTED} mt={4}>{hwText}</Text>}
                     </div>
                   );
                 })}
