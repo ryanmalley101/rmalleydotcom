@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Accordion, Badge, Box, Button, CopyButton, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
-import { Check, Copy, Download, History, RotateCcw } from "lucide-react";
+import { Accordion, Badge, Box, Button, CopyButton, Group, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { Check, Copy, Download, History, RotateCcw, Save } from "lucide-react";
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
 import { exportSnapshot } from "../lib/exportSnapshot";
+import { saveComparison } from "../lib/savedComparisons";
 import ScenarioStep from "./ScenarioStep";
 import AssumptionsPanel from "./AssumptionsPanel";
 import ChartsPanel from "./ChartsPanel";
@@ -49,8 +50,9 @@ function hardwareSummaryText(hw: HardwareFootprint): string | null {
 }
 
 export default function ResultsView({
-  scenario, solA, solB, colorA, colorB, shareUrl, onScenarioChange, onSolAChange, onSolBChange, onEditSetup,
+  shapeId, scenario, solA, solB, colorA, colorB, shareUrl, onScenarioChange, onSolAChange, onSolBChange, onEditSetup,
 }: {
+  shapeId: string;
   scenario: ScenarioInputs;
   solA: SolutionInputs;
   solB: SolutionInputs;
@@ -66,6 +68,9 @@ export default function ResultsView({
   const { a, b, crossoverYear, laterCrossoverYears } = comparison;
   const snapshotRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState(false);
+  const [saveModalOpen, { open: openSaveModal, close: closeSaveModal }] = useDisclosure(false);
+  const [saveName, setSaveName] = useState("");
+  const [justSaved, setJustSaved] = useState(false);
   // Below this width the assumptions accordion is too cramped to sit beside the
   // chart, so it drops back to today's single stacked column instead; sticky
   // positioning is skipped entirely there rather than fighting a column that's
@@ -91,6 +96,18 @@ export default function ResultsView({
     }
   }
 
+  function handleOpenSaveModal() {
+    setSaveName(`${solA.name} vs. ${solB.name}`);
+    openSaveModal();
+  }
+
+  function handleConfirmSave() {
+    saveComparison(saveName, { shapeId, scenario, solA, solB, colorA, colorB });
+    closeSaveModal();
+    setJustSaved(true);
+    setTimeout(() => setJustSaved(false), 2000);
+  }
+
   return (
     <Stack gap="xl">
       <Group justify="space-between" align="flex-start">
@@ -102,6 +119,9 @@ export default function ResultsView({
           </Text>
         </div>
         <Group gap="xs">
+          <Button variant="default" leftSection={justSaved ? <Check size={14} /> : <Save size={14} />} onClick={handleOpenSaveModal}>
+            {justSaved ? "Saved" : "Save"}
+          </Button>
           <CopyButton value={shareUrl}>
             {({ copied, copy }) => (
               <Button variant="default" leftSection={copied ? <Check size={14} /> : <Copy size={14} />} onClick={copy}>
@@ -117,6 +137,26 @@ export default function ResultsView({
           </Button>
         </Group>
       </Group>
+
+      <Modal opened={saveModalOpen} onClose={closeSaveModal} title="Save this comparison" centered>
+        <Stack gap="md">
+          <Text size="sm" c={TEXT_MUTED}>
+            Saved locally in this browser only, no account needed. It won&apos;t survive clearing site data, and won&apos;t
+            show up on another device.
+          </Text>
+          <TextInput
+            label="Name"
+            value={saveName}
+            onChange={(e) => setSaveName(e.currentTarget.value)}
+            data-autofocus
+            onKeyDown={(e) => e.key === "Enter" && handleConfirmSave()}
+          />
+          <Group justify="flex-end">
+            <Button variant="default" onClick={closeSaveModal}>Cancel</Button>
+            <Button onClick={handleConfirmSave} leftSection={<Save size={14} />}>Save</Button>
+          </Group>
+        </Stack>
+      </Modal>
 
       <Box style={{ display: "flex", flexDirection: isDesktop ? "row" : "column", gap: "var(--mantine-spacing-xl)", alignItems: "flex-start" }}>
         <Box

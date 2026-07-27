@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "./lib/colors";
 import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution, type ShapeOption } from "./lib/defaults";
 import type { IncumbentChoice, ScenarioInputs, SolutionInputs } from "./lib/model";
-import { decodeShareState, encodeShareState } from "./lib/shareState";
+import { decodeShareState, encodeShareState, type SharedState } from "./lib/shareState";
 import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, withVendorDefaults } from "./lib/vendorDefaults";
 import IntroScreen from "./components/IntroScreen";
 import ShapeStep from "./components/ShapeStep";
@@ -110,6 +110,16 @@ function TcoCalculatorInner() {
     setStepIndex((i) => Math.max(0, i - 1));
   }
 
+  function handleLoadSaved(state: SharedState) {
+    setShapeId(state.shapeId);
+    setScenario(state.scenario);
+    setSolA(state.solA);
+    setSolB(state.solB);
+    setColorA(state.colorA);
+    setColorB(state.colorB);
+    setPhase("results");
+  }
+
   const canProceed = stepIndex === 0 ? shapeId !== null : true;
 
   if (phase === "intro") {
@@ -119,7 +129,7 @@ function TcoCalculatorInner() {
           <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
             Back
           </Button>
-          <IntroScreen onStart={() => setPhase("wizard")} />
+          <IntroScreen onStart={() => setPhase("wizard")} onLoadSaved={handleLoadSaved} />
         </Container>
       </Box>
     );
@@ -133,6 +143,7 @@ function TcoCalculatorInner() {
             Back
           </Button>
           <ResultsView
+            shapeId={shapeId ?? ""}
             scenario={scenario}
             solA={solA}
             solB={solB}
