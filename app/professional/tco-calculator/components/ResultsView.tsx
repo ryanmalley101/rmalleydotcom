@@ -208,7 +208,12 @@ export default function ResultsView({
         </Box>
 
         <Box style={{ flex: "1 1 0%", minWidth: 0, width: "100%" }}>
-          <Accordion variant="separated" multiple defaultValue={["scenario", "solA", "solB"]}>
+          {/* Scenario (camera count, sites, horizon, ...) is system-agnostic and stays
+              open, since it's what the reviewer is most likely to want to check or tweak
+              first; the two per-solution assumption panels are dense vendor-specific data
+              that's more useful collapsed by default on this results/review screen, unlike
+              the wizard's own editing steps where those same fields need to stay discoverable. */}
+          <Accordion variant="separated" multiple defaultValue={["scenario"]}>
             <Accordion.Item value="scenario">
               <Accordion.Control>
                 <Text fw={500}>Scenario</Text>
