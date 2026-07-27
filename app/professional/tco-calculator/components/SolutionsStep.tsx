@@ -306,27 +306,30 @@ function SolutionCard({
           />
         </Group>
 
-        <Group grow align="flex-start">
-          <NumberInput
-            label={<Group gap={4} wrap="nowrap">Replacement camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
-            leftSection={icon(Camera)}
-            value={sol.cameraCost}
-            min={0}
-            onChange={(v) => set("cameraCost", num(v))}
-          />
-          <NumberInput
-            label={<InfoLabel label="Warranty period (yrs)" help={WARRANTY_HELP} extra={<SourceDot meta={fieldSourceInfo("warrantyYears", sol.warrantyYears, ...entries)} />} />}
-            leftSection={icon(ShieldCheck)}
-            value={sol.warrantyYears}
-            min={0} step={0.5} decimalScale={1}
-            onChange={(v) => set("warrantyYears", num(v))}
-          />
-        </Group>
-
         {sol.model === "cloud" ? (
-          <CloudLicenseFields sol={sol} onChange={onChange} />
+          <>
+            <Group grow align="flex-start">
+              <NumberInput
+                label={<Group gap={4} wrap="nowrap">Replacement camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
+                leftSection={icon(Camera)}
+                value={sol.cameraCost}
+                min={0}
+                onChange={(v) => set("cameraCost", num(v))}
+              />
+              <NumberInput
+                label={<InfoLabel label="Warranty period (yrs)" help={WARRANTY_HELP} extra={<SourceDot meta={fieldSourceInfo("warrantyYears", sol.warrantyYears, ...entries)} />} />}
+                leftSection={icon(ShieldCheck)}
+                value={sol.warrantyYears}
+                min={0} step={0.5} decimalScale={1}
+                onChange={(v) => set("warrantyYears", num(v))}
+              />
+            </Group>
+            <CloudLicenseFields sol={sol} onChange={onChange} />
+          </>
         ) : (
           <>
+            {/* VMS-vendor fields first, camera-vendor fields second, matching the
+                order the two provider pickers are shown in above (OnPremNaming). */}
             <NumberInput
               label={<InfoLabel label="Base license ($, one-time)" help={ONPREM_LICENSE_HELP} size="var(--mantine-font-size-sm)" extra={<SourceDot meta={fieldSourceInfo("baseLicense", sol.baseLicense, ...entries)} />} />}
               leftSection={icon(FileText)}
@@ -379,6 +382,22 @@ function SolutionCard({
               allowDeselect={false}
               onChange={(v) => v && set("raidLevel", v as RaidLevel)}
             />
+            <Group grow align="flex-start">
+              <NumberInput
+                label={<Group gap={4} wrap="nowrap">Replacement camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
+                leftSection={icon(Camera)}
+                value={sol.cameraCost}
+                min={0}
+                onChange={(v) => set("cameraCost", num(v))}
+              />
+              <NumberInput
+                label={<InfoLabel label="Warranty period (yrs)" help={WARRANTY_HELP} extra={<SourceDot meta={fieldSourceInfo("warrantyYears", sol.warrantyYears, ...entries)} />} />}
+                leftSection={icon(ShieldCheck)}
+                value={sol.warrantyYears}
+                min={0} step={0.5} decimalScale={1}
+                onChange={(v) => set("warrantyYears", num(v))}
+              />
+            </Group>
           </>
         )}
 
