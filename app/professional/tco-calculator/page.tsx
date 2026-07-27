@@ -128,7 +128,7 @@ function TcoCalculatorInner() {
   if (phase === "results" && solA && solB) {
     return (
       <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
-        <Container size="lg">
+        <Container size="xl">
           <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
             Back
           </Button>

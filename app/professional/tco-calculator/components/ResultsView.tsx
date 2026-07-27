@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Accordion, Badge, Box, Button, CopyButton, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { Check, Copy, Download, History, RotateCcw } from "lucide-react";
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
@@ -65,6 +66,12 @@ export default function ResultsView({
   const { a, b, crossoverYear, laterCrossoverYears } = comparison;
   const snapshotRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState(false);
+  // Below this width the assumptions accordion is too cramped to sit beside the
+  // chart, so it drops back to today's single stacked column instead; sticky
+  // positioning is skipped entirely there rather than fighting a column that's
+  // no longer meaningfully "beside" anything, which would just make the summary
+  // float oddly over the fields as you scroll past it on a narrow screen.
+  const isDesktop = useMediaQuery("(min-width: 75em)");
 
   const cheaper = a.total <= b.total ? solA : solB;
   const diff = Math.abs(a.total - b.total);
@@ -111,112 +118,133 @@ export default function ResultsView({
         </Group>
       </Group>
 
-      <Box ref={snapshotRef} style={{ background: "#0f1117" }}>
-        <Stack gap="xl">
-          <Paper withBorder p="xl" radius="md">
+      <Box style={{ display: "flex", flexDirection: isDesktop ? "row" : "column", gap: "var(--mantine-spacing-xl)", alignItems: "flex-start" }}>
+        <Box
+          style={{
+            flex: isDesktop ? "0 0 44%" : "1 1 auto",
+            minWidth: 0,
+            width: "100%",
+            position: isDesktop ? "sticky" : "static",
+            top: isDesktop ? 16 : undefined,
+            // Capped and internally scrollable rather than left to clip against the
+            // viewport edge: the summary card (the numbers this whole layout exists to
+            // keep visible) sits first, so an uncapped sticky block taller than the
+            // viewport would scroll the hero figure itself off the top well before the
+            // chart below it did, the opposite of the point.
+            maxHeight: isDesktop ? "calc(100vh - 32px)" : undefined,
+            overflowY: isDesktop ? "auto" : undefined,
+          }}
+        >
+          <Box ref={snapshotRef} style={{ background: "#0f1117" }}>
             <Stack gap="xl">
-              <Stack gap={4} align="center" ta="center">
-                <Text ff="monospace" fw={700} size="2.75rem" c="teal" lh={1.1}>
-                  {fmtUsd(diff)}
-                </Text>
-                <Text size="sm" c={TEXT_MUTED}>
-                  {pctSaved}% lower with {cheaper.name} over {scenario.horizonYears} {scenario.horizonYears === 1 ? "year" : "years"}
-                  {crossoverYear !== null && `, overtaken in Yr ${crossoverYear}`}
-                  {laterCrossoverYears.length > 0 && ` (crosses again at Yr ${laterCrossoverYears.join(", ")})`}
-                </Text>
-              </Stack>
+              <Paper withBorder p="xl" radius="md">
+                <Stack gap="xl">
+                  <Stack gap={4} align="center" ta="center">
+                    <Text ff="monospace" fw={700} size="2.75rem" c="teal" lh={1.1}>
+                      {fmtUsd(diff)}
+                    </Text>
+                    <Text size="sm" c={TEXT_MUTED}>
+                      {pctSaved}% lower with {cheaper.name} over {scenario.horizonYears} {scenario.horizonYears === 1 ? "year" : "years"}
+                      {crossoverYear !== null && `, overtaken in Yr ${crossoverYear}`}
+                      {laterCrossoverYears.length > 0 && ` (crosses again at Yr ${laterCrossoverYears.join(", ")})`}
+                    </Text>
+                  </Stack>
 
-              <Stack gap="md">
-                {[{ sol: solA, result: a, slot: "a" as const }, { sol: solB, result: b, slot: "b" as const }].map(({ sol, result, slot }) => {
-                  const isCheaper = sol.id === cheaper.id;
-                  const isIncumbent = scenario.incumbent === slot;
-                  const perCamMo = fmtUsd(result.total / (scenario.cameras * scenario.horizonYears * 12));
-                  const hwText = hardwareSummaryText(result.hardware);
-                  return (
-                    <div key={sol.id}>
-                      <Group justify="space-between" mb={6} wrap="nowrap" gap="xs">
-                        <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
-                          <Text size="sm" fw={600} c={isCheaper ? undefined : TEXT_MUTED} truncate>{sol.name}</Text>
-                          {isCheaper && (
-                            <Badge size="xs" variant="light" color="teal" leftSection={<Check size={10} />} style={{ flexShrink: 0 }}>
-                              Lower cost
-                            </Badge>
-                          )}
-                          {isIncumbent && (
-                            <Badge size="xs" variant="outline" color="gray" leftSection={<History size={10} />} style={{ flexShrink: 0 }}>
-                              Incumbent
-                            </Badge>
-                          )}
-                        </Group>
-                        <Group gap={8} wrap="nowrap" style={{ flexShrink: 0 }}>
-                          <Text ff="monospace" fw={700} size="sm" c={isCheaper ? "teal" : TEXT_MUTED}>{fmtUsd(result.total)}</Text>
-                          <Text size="xs" c={TEXT_MUTED}>{perCamMo} / cam / mo</Text>
-                        </Group>
-                      </Group>
-                      <Box style={{ height: isCheaper ? 8 : 5, borderRadius: 4, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
-                        <Box
-                          style={{
-                            height: "100%",
-                            width: `${maxTotal > 0 ? (result.total / maxTotal) * 100 : 0}%`,
-                            borderRadius: 4,
-                            background: isCheaper ? CHEAPER_COLOR : PRICIER_COLOR,
-                          }}
-                        />
-                      </Box>
-                      {hwText && <Text size="xs" c={TEXT_MUTED} mt={4}>{hwText}</Text>}
-                    </div>
-                  );
-                })}
-              </Stack>
+                  <Stack gap="md">
+                    {[{ sol: solA, result: a, slot: "a" as const }, { sol: solB, result: b, slot: "b" as const }].map(({ sol, result, slot }) => {
+                      const isCheaper = sol.id === cheaper.id;
+                      const isIncumbent = scenario.incumbent === slot;
+                      const perCamMo = fmtUsd(result.total / (scenario.cameras * scenario.horizonYears * 12));
+                      const hwText = hardwareSummaryText(result.hardware);
+                      return (
+                        <div key={sol.id}>
+                          <Group justify="space-between" mb={6} wrap="nowrap" gap="xs">
+                            <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
+                              <Text size="sm" fw={600} c={isCheaper ? undefined : TEXT_MUTED} truncate>{sol.name}</Text>
+                              {isCheaper && (
+                                <Badge size="xs" variant="light" color="teal" leftSection={<Check size={10} />} style={{ flexShrink: 0 }}>
+                                  Lower cost
+                                </Badge>
+                              )}
+                              {isIncumbent && (
+                                <Badge size="xs" variant="outline" color="gray" leftSection={<History size={10} />} style={{ flexShrink: 0 }}>
+                                  Incumbent
+                                </Badge>
+                              )}
+                            </Group>
+                            <Group gap={8} wrap="nowrap" style={{ flexShrink: 0 }}>
+                              <Text ff="monospace" fw={700} size="sm" c={isCheaper ? "teal" : TEXT_MUTED}>{fmtUsd(result.total)}</Text>
+                              <Text size="xs" c={TEXT_MUTED}>{perCamMo} / cam / mo</Text>
+                            </Group>
+                          </Group>
+                          <Box style={{ height: isCheaper ? 8 : 5, borderRadius: 4, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                            <Box
+                              style={{
+                                height: "100%",
+                                width: `${maxTotal > 0 ? (result.total / maxTotal) * 100 : 0}%`,
+                                borderRadius: 4,
+                                background: isCheaper ? CHEAPER_COLOR : PRICIER_COLOR,
+                              }}
+                            />
+                          </Box>
+                          {hwText && <Text size="xs" c={TEXT_MUTED} mt={4}>{hwText}</Text>}
+                        </div>
+                      );
+                    })}
+                  </Stack>
 
-              <Group justify="center" gap="xl" pt="md" style={{ borderTop: "1px solid var(--mantine-color-dark-4)" }}>
-                <FooterStat label="Crossover" value={crossoverYear === null ? "None" : "Yr " + crossoverYear} />
-                <FooterStat label={`${solA.name} fleet replaced`} value={fleetPctA + "%"} />
-                <FooterStat label={`${solB.name} fleet replaced`} value={fleetPctB + "%"} />
-                <FooterStat label="Horizon" value={`${scenario.horizonYears} yrs`} />
-              </Group>
+                  <Group justify="center" gap="xl" pt="md" style={{ borderTop: "1px solid var(--mantine-color-dark-4)" }}>
+                    <FooterStat label="Crossover" value={crossoverYear === null ? "None" : "Yr " + crossoverYear} />
+                    <FooterStat label={`${solA.name} fleet replaced`} value={fleetPctA + "%"} />
+                    <FooterStat label={`${solB.name} fleet replaced`} value={fleetPctB + "%"} />
+                    <FooterStat label="Horizon" value={`${scenario.horizonYears} yrs`} />
+                  </Group>
+                </Stack>
+              </Paper>
+
+              <ChartsPanel comparison={comparison} nameA={solA.name} nameB={solB.name} colorA={colorA} colorB={colorB} />
             </Stack>
-          </Paper>
+          </Box>
+        </Box>
 
-          <ChartsPanel comparison={comparison} nameA={solA.name} nameB={solB.name} colorA={colorA} colorB={colorB} />
-        </Stack>
+        <Box style={{ flex: "1 1 0%", minWidth: 0, width: "100%" }}>
+          <Accordion variant="separated" multiple defaultValue={["scenario", "solA", "solB"]}>
+            <Accordion.Item value="scenario">
+              <Accordion.Control>
+                <Text fw={500}>Scenario</Text>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Stack gap="lg">
+                  <IncumbentPicker scenario={scenario} onScenarioChange={onScenarioChange} nameA={solA.name} nameB={solB.name} />
+                  <ScenarioStep value={scenario} onChange={onScenarioChange} />
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="solA">
+              <Accordion.Control>
+                <Group gap="xs">
+                  <Badge variant="dot" color={colorA}>{solA.name}</Badge>
+                  <Text fw={500} size="sm">assumptions</Text>
+                </Group>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <AssumptionsPanel sol={solA} onChange={onSolAChange} />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="solB">
+              <Accordion.Control>
+                <Group gap="xs">
+                  <Badge variant="dot" color={colorB}>{solB.name}</Badge>
+                  <Text fw={500} size="sm">assumptions</Text>
+                </Group>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <AssumptionsPanel sol={solB} onChange={onSolBChange} />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        </Box>
       </Box>
-
-      <Accordion variant="separated" multiple defaultValue={["scenario", "solA", "solB"]}>
-        <Accordion.Item value="scenario">
-          <Accordion.Control>
-            <Text fw={500}>Scenario</Text>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <Stack gap="lg">
-              <IncumbentPicker scenario={scenario} onScenarioChange={onScenarioChange} nameA={solA.name} nameB={solB.name} />
-              <ScenarioStep value={scenario} onChange={onScenarioChange} />
-            </Stack>
-          </Accordion.Panel>
-        </Accordion.Item>
-        <Accordion.Item value="solA">
-          <Accordion.Control>
-            <Group gap="xs">
-              <Badge variant="dot" color={colorA}>{solA.name}</Badge>
-              <Text fw={500} size="sm">assumptions</Text>
-            </Group>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <AssumptionsPanel sol={solA} onChange={onSolAChange} />
-          </Accordion.Panel>
-        </Accordion.Item>
-        <Accordion.Item value="solB">
-          <Accordion.Control>
-            <Group gap="xs">
-              <Badge variant="dot" color={colorB}>{solB.name}</Badge>
-              <Text fw={500} size="sm">assumptions</Text>
-            </Group>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <AssumptionsPanel sol={solB} onChange={onSolBChange} />
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
 
       <Text size="xs" c={TEXT_MUTED} maw={860}>
         <Text span fw={700} size="xs">Methodology notes.</Text> Unless one solution is marked incumbent above,
