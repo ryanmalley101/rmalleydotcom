@@ -103,6 +103,14 @@ export interface SolutionInputs {
   tierYears: number;
   applianceCost: number; // connector/NVR-style appliance, only used when migrationStrategy is "connector"
   applianceCapacity: number;
+  // Manufacturer's hardware warranty on the connector/appliance itself, separate
+  // from `warrantyYears` (camera hardware only) since the two commonly differ for
+  // the same vendor (e.g. a 10-year camera warranty against a 5-year connector
+  // one). Reference/comparison data only: unlike camera warranty, it doesn't
+  // reduce a cost line, because the appliance's replacement cost above is driven
+  // by a scheduled refresh cycle the buyer chooses, not a failure event a
+  // warranty would cover.
+  applianceWarrantyYears: number;
   // Editable, matching on-prem's refreshCycleYears/yearsUntilNextRefresh, rather
   // than a hardcoded cadence: there's no reason the appliance side should be the
   // one part of this model a user can't adjust to their own assumptions.

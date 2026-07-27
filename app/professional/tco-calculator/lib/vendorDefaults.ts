@@ -12,17 +12,22 @@ import type { SolutionInputs } from "./model";
 //   a VMS itself, so there's no matching slot in the wizard's
 //   vmsProvider/cameraProvider pickers to wire it into.
 //
-// Verkada is also deliberately absent from CLOUD_VENDOR_DEFAULTS: the generic
-// defaults in lib/defaults.ts already ARE Verkada's numbers (see
+// Verkada has a deliberately narrow entry in CLOUD_VENDOR_DEFAULTS: the
+// generic defaults in lib/defaults.ts already ARE Verkada's numbers (see
 // README.md's "Known softball risks"), sourced with better provenance than
-// this file's secondary/reseller citations can match. A second research pass
-// proposed a conflicting Verkada entry (applianceCost 6999/25ch, the real
-// CC500 tier, vs. the existing 9999/50ch CC700 tier already baked into the
-// generic defaults; tierPrice 899/5yr vs. the existing 1099/5yr, neither
-// directly confirmable since Verkada's own pricing page doesn't publish
-// per-channel license cost). Rather than silently overwrite known-good
-// numbers with lower-confidence ones, it was left out; revisit only with a
-// primary-sourced number.
+// this file's secondary/reseller citations can match, so tierPrice/tierYears/
+// cameraCost are intentionally left unset here rather than re-priced. A
+// second research pass proposed a conflicting entry for those fields
+// (applianceCost 6999/25ch, the real CC500 tier, vs. the existing 9999/50ch
+// CC700 tier already baked into the generic defaults; tierPrice 899/5yr vs.
+// the existing 1099/5yr, neither directly confirmable since Verkada's own
+// pricing page doesn't publish per-channel license cost). Rather than
+// silently overwrite known-good numbers with lower-confidence ones, that
+// pass was rejected; revisit only with a primary-sourced number. The entry
+// that does exist only adds fieldMeta provenance to the already-baked-in
+// applianceCost/applianceCapacity, plus warrantyYears and the
+// connector-specific applianceWarrantyYears, both confirmed directly against
+// Verkada's own warranty documentation.
 //
 // `fieldMeta` carries source/confidence/reasoning per field for future audit;
 // it isn't surfaced in the UI today, only `values` is applied on selection.
@@ -224,6 +229,17 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
     },
     notes: "No NVR/DVR, no on-prem storage line; applianceCost left unset (n/a for the ripReplace path). Multi-year licensing saves up to ~30%, but that's a term discount, not negotiated off-list.",
   },
+  Verkada: {
+    values: { migrationStrategy: "connector", applianceCost: 9999, applianceCapacity: 50, applianceWarrantyYears: 5, warrantyYears: 10, supportAddonPerCamYr: 0 },
+    fieldMeta: {
+      applianceCost: { value: 9999, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing"], reasoning: "Command Connector CC700 (the tier already baked into this vendor's generic defaults) confirmed directly on Verkada's public pricing page at $9,999 MSRP.", checkedOn: "2026-07-25" },
+      applianceCapacity: { value: 50, status: "estimated", confidence: "medium", sources: [], reasoning: "CC700 is the top connector tier by channel count; 50 carried forward from the generic defaults, not independently re-confirmed against a current spec sheet this pass.", checkedOn: "2026-07-25" },
+      applianceWarrantyYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty", "https://docs.verkada.com/docs/command-connector-faq.pdf"], reasoning: "Verkada's own warranty documentation: \"Each model of Command Connector comes with a 5-year warranty.\"", checkedOn: "2026-07-25" },
+      warrantyYears: { value: 10, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty"], reasoning: "Verkada's own warranty documentation: most cameras carry a 10-year product warranty; PTZ models are the exception at 5 years. 10yr used here as the representative default across the dome/bullet/mini lineup used elsewhere in this tool.", checkedOn: "2026-07-25" },
+      supportAddonPerCamYr: { value: 0, status: "estimated", confidence: "medium", sources: [], reasoning: "Support/analytics are Verkada's own all-inclusive baseline this tool's generic defaults are built around; not a separate researched SKU, so left as an assumption rather than a citation.", checkedOn: "2026-07-25" },
+    },
+    notes: "Deliberately mirrors the generic cloud defaults (see the top-of-file comment on why Verkada is excluded from a from-scratch re-pricing here) rather than introducing new tierPrice/cameraCost numbers; this entry only adds fieldMeta provenance to what was already the tool's baseline, plus the connector-specific warranty figure that didn't otherwise have a home. tierPrice/tierYears/cameraCost intentionally left unset here since a prior research pass's numbers for those weren't directly confirmable (see top-of-file comment) and re-pricing them isn't this entry's purpose.",
+  },
   "Eagle Eye Networks": {
     values: { migrationStrategy: "connector", tierPrice: 240, tierYears: 1, applianceCost: 1000, applianceCapacity: 20, applianceRefreshCycleYears: 5, supportAddonPerCamYr: 0, cameraCost: 400, warrantyYears: 3, fleetHalfLifeYears: 10 },
     fieldMeta: {
@@ -402,10 +418,10 @@ export const ONPREM_CAMERA_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> =
     notes: "Priced model: IPC3535SR4-ADZK-H (5MP outdoor, NDAA-compliant, unlike Hikvision/Dahua, still current for US federal/education buyers).",
   },
   "Bosch Security": {
-    values: { cameraCost: 562, warrantyYears: 3 },
+    values: { cameraCost: 562, warrantyYears: 5 },
     fieldMeta: {
       cameraCost: { value: 562, status: "sourced", confidence: "high", sources: ["https://www.bhphotovideo.com/c/product/1363699-REG/bosch_nde_5503_al_flexidome_ip_outdoor_5000i.html"], reasoning: "FLEXIDOME IP outdoor 5000i (NDE-5503-AL, 5MP, IP66/IK10) $562.49 street at B&H; MSRP ~$1,027-1,108 depending on source.", checkedOn: "2026-07-26" },
-      warrantyYears: { value: 3, status: "estimated", confidence: "medium", sources: [], reasoning: "Bosch standard 3-yr (extendable).", checkedOn: "2026-07-26" },
+      warrantyYears: { value: 5, status: "estimated", confidence: "medium", sources: [], reasoning: "Bosch's standard hardware warranty is most commonly 5 years; some lines/regions are shorter, but 5yr is the representative default.", checkedOn: "2026-07-26" },
     },
     notes: "Priced model: NDE-5503-AL (already the outdoor-rated spec, no change needed here). Built-in Essential Video Analytics. Large list-to-street gap.",
   },

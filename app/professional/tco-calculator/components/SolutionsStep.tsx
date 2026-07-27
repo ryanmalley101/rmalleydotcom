@@ -43,6 +43,9 @@ const ONPREM_LICENSE_HELP =
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
 
+const CONNECTOR_WARRANTY_HELP =
+  "The manufacturer's hardware warranty on the connector/appliance itself, separate from the camera warranty above since the two commonly differ for the same vendor. Reference only, doesn't change the refresh cost below.";
+
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
 function selectData(options: string[]) {
@@ -218,13 +221,27 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
         onChange={(v) => set("supportAddonPerCamYr", num(v))}
       />
       {sol.migrationStrategy === "connector" && (
-        <NumberInput
-          label={<Group gap={4} wrap="nowrap">Cloud connector appliance ($/unit)<SourceDot meta={fieldSourceInfo("applianceCost", sol.applianceCost, ...entries)} /></Group>}
-          leftSection={icon(Router)}
-          value={sol.applianceCost}
-          min={0}
-          onChange={(v) => set("applianceCost", num(v))}
-        />
+        <Group grow align="flex-start">
+          <NumberInput
+            label={<Group gap={4} wrap="nowrap">Cloud connector appliance ($/unit)<SourceDot meta={fieldSourceInfo("applianceCost", sol.applianceCost, ...entries)} /></Group>}
+            leftSection={icon(Router)}
+            value={sol.applianceCost}
+            min={0}
+            onChange={(v) => set("applianceCost", num(v))}
+          />
+          <NumberInput
+            label={
+              <InfoLabel
+                label="Connector warranty (yrs)" help={CONNECTOR_WARRANTY_HELP} size="var(--mantine-font-size-sm)"
+                extra={<SourceDot meta={fieldSourceInfo("applianceWarrantyYears", sol.applianceWarrantyYears, ...entries)} />}
+              />
+            }
+            leftSection={icon(ShieldCheck)}
+            value={sol.applianceWarrantyYears}
+            min={0} step={0.5} decimalScale={1}
+            onChange={(v) => set("applianceWarrantyYears", num(v))}
+          />
+        </Group>
       )}
     </>
   );
