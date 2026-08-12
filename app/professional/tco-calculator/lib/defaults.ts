@@ -13,7 +13,6 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
-  electricityRate: 0.15,
 };
 
 export function defaultSolution(id: "a" | "b", name: string, model: DeploymentModel): SolutionInputs {

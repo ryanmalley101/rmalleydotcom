@@ -1,7 +1,7 @@
 "use client";
 
 import { Accordion, NumberInput, SimpleGrid, Stack, Text, Title } from "@mantine/core";
-import { Activity, Building2, Camera, CalendarRange, Database, DollarSign, Percent, Search, TrendingUp, Truck, Zap } from "lucide-react";
+import { Activity, Building2, Camera, CalendarRange, Database, DollarSign, Percent, Search, TrendingUp, Truck } from "lucide-react";
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
@@ -64,15 +64,13 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
       <Accordion variant="separated" defaultValue="rates">
         <Accordion.Item value="rates">
           <Accordion.Control>
-            <Text size="sm" fw={500}>Market rates (labor, truck rolls, electricity)</Text>
+            <Text size="sm" fw={500}>Market rates (labor, truck rolls)</Text>
           </Accordion.Control>
           <Accordion.Panel>
             <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
               <NumberInput label="Admin ($/hr)" leftSection={icon(DollarSign)} value={value.adminRate} min={0} onChange={(v) => set("adminRate", num(v))} />
               <NumberInput label="Investigator ($/hr)" leftSection={icon(DollarSign)} value={value.investigatorRate} min={0} onChange={(v) => set("investigatorRate", num(v))} />
               <NumberInput label="Truck roll ($)" leftSection={icon(Truck)} value={value.truckRollCost} min={0} onChange={(v) => set("truckRollCost", num(v))} />
-              <NumberInput label="Electricity ($/kWh)" leftSection={icon(Zap)} value={value.electricityRate} min={0} step={0.01} decimalScale={2}
-                onChange={(v) => set("electricityRate", num(v))} />
             </SimpleGrid>
           </Accordion.Panel>
         </Accordion.Item>

@@ -55,7 +55,7 @@ smaller types it references), copied verbatim including its comments —
 several fields are ambiguous without them (e.g. whether a price is a
 one-time cost or annual, per-camera or per-appliance). Do not invent field
 names beyond what's shown here, and do not fill in `ScenarioInputs` fields
-(`adminRate`, `investigatorRate`, `truckRollCost`, `electricityRate`,
+(`adminRate`, `investigatorRate`, `truckRollCost`,
 `cameras`, `sites`, etc.) — those are the *operator's own* shared market
 rates, not vendor-specific, and are out of scope for this research.
 
@@ -95,7 +95,6 @@ export interface ScenarioInputs {
   adminRate: number;
   investigatorRate: number;
   truckRollCost: number;
-  electricityRate: number;
 }
 
 export interface SolutionInputs {

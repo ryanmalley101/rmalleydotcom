@@ -56,7 +56,6 @@ export interface ScenarioInputs {
   adminRate: number;
   investigatorRate: number;
   truckRollCost: number;
-  electricityRate: number;
 }
 
 export interface SolutionInputs {
@@ -161,7 +160,6 @@ export const CATEGORIES = [
   "Truck rolls",
   "Admin labor",
   "Investigations",
-  "Power/facilities",
   "Misc / other",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
@@ -272,9 +270,8 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
       yearCosts["Misc / other"] = sol.miscAnnualCost * disc;
 
       if (sol.model === "cloud") {
-        // ripReplace has no connector appliance, so no ongoing hardware refresh or its power draw.
+        // ripReplace has no connector appliance, so no ongoing hardware refresh.
         if (sol.migrationStrategy === "connector") {
-          yearCosts["Power/facilities"] = applianceUnits * 0.06 * 8760 * scenario.electricityRate;
           if (
             y >= sol.yearsUntilNextApplianceRefresh &&
             (y - sol.yearsUntilNextApplianceRefresh) % sol.applianceRefreshCycleYears === 0 &&
@@ -284,7 +281,6 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
           }
         }
       } else {
-        yearCosts["Power/facilities"] = (nSrv * 0.5 + tbPhysical * 0.01 + 0.3) * 8760 * scenario.electricityRate;
         if (y >= sol.yearsUntilNextRefresh && (y - sol.yearsUntilNextRefresh) % sol.refreshCycleYears === 0 && y < yrs) {
           yearCosts["Hardware (initial & refresh)"] =
             sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbPhysical + sol.analyticsApplianceCost * disc;
