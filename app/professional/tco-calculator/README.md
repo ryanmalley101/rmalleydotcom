@@ -90,6 +90,18 @@ auth-gated, "dampened" on purpose.
 - **Site-driven hardware minimums**: appliance/server unit counts assume at
   least one per site, not just enough for total camera count, since a
   connector/NVR box is physically local.
+- **Misc / other**: two catch-all fields per solution, `miscUpfrontCost`
+  (one-time, year 0 only — e.g. professional services for initial setup) and
+  `miscAnnualCost` (recurring every year after year 0 — e.g. a compliance
+  audit fee or monitoring contract), for whatever a real quote contains that
+  doesn't fit any category above, without inventing a new category/formula
+  for every oddball line item. Both default to $0 for every model/shape and
+  are purely additive. `miscUpfrontCost` follows the same incumbent-zeroing
+  and vendor discount as the rest of year 0's buildout cost; `miscAnnualCost`
+  escalates/discounts like the other recurring lines. Both feed a single
+  "Misc / other" category (`CATEGORIES` in `lib/model.ts`), not their own
+  vendor-researched fields, so `vendorDefaults.ts`/`SourceDot` correctly show
+  no source for them.
 - **Crossover detection**: `computeComparison`'s search starts its baseline
   at whichever year first has a nonzero cost gap (usually year 0, not year
   1, since an incumbent's side often starts at $0) and reports every later

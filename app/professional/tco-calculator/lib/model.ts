@@ -134,6 +134,23 @@ export interface SolutionInputs {
   analyticsSoftwareCost: number;
   refreshCycleYears: number;
   yearsUntilNextRefresh: number;
+
+  // Misc modifiers: an escape valve for costs that don't fit any category
+  // above (professional services, custom integration work, a one-off
+  // migration fee, a compliance/audit line item, etc.) without inventing a
+  // new named category or formula for every oddball line item a real quote
+  // might contain. Both default to $0 and are purely additive — they never
+  // change any other category's math.
+  // One-time, year-0 only (e.g. professional services for initial setup).
+  // Subject to the same incumbent-zeroing and vendor discount as the rest of
+  // year 0's buildout cost, since it represents work done as part of that
+  // same rollout.
+  miscUpfrontCost: number;
+  // Recurring, charged every year after year 0 (e.g. a compliance audit fee,
+  // a monitoring contract, anything ongoing that isn't admin labor, truck
+  // rolls, or a license renewal). Escalates and discounts the same as every
+  // other recurring line.
+  miscAnnualCost: number;
 }
 
 export const CATEGORIES = [
@@ -145,6 +162,7 @@ export const CATEGORIES = [
   "Admin labor",
   "Investigations",
   "Power/facilities",
+  "Misc / other",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
@@ -232,6 +250,9 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
             yearCosts["Licenses/subscription"] = (sol.baseLicense + sol.deviceLicense * cams) * disc;
           }
         }
+        // Flat, not per-camera: professional-services/setup fees are typically
+        // a project-level line item, not priced per unit installed.
+        yearCosts["Misc / other"] = sol.miscUpfrontCost * disc;
       }
     } else {
       const surv0 = Math.pow(0.5, (y - 1) / sol.fleetHalfLifeYears);
@@ -248,6 +269,7 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate;
       yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate;
+      yearCosts["Misc / other"] = sol.miscAnnualCost * disc;
 
       if (sol.model === "cloud") {
         // ripReplace has no connector appliance, so no ongoing hardware refresh or its power draw.

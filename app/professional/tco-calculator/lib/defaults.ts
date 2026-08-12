@@ -52,6 +52,8 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       analyticsSoftwareCost: 8000,
       refreshCycleYears: 5,
       yearsUntilNextRefresh: 2,
+      miscUpfrontCost: 0,
+      miscAnnualCost: 0,
     };
   }
   return {
@@ -87,6 +89,8 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     applianceRefreshCycleYears: 7,
     yearsUntilNextApplianceRefresh: 2,
     supportAddonPerCamYr: 0,
+    miscUpfrontCost: 0,
+    miscAnnualCost: 0,
   };
 }
 
