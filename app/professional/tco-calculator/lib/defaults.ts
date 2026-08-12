@@ -7,13 +7,29 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   horizonYears: 10,
   bitrateMbps: 2,
   investigationsPerMonth: 20,
-  npvDiscountPct: 0,
   annualEscalationPct: 3,
   incumbent: "none",
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
 };
+
+// Backfills any fields missing from a SolutionInputs decoded from an older
+// share link or saved comparison (created before a field like miscUpfrontCost
+// existed) with this model's current defaults, rather than leaving them
+// `undefined`. That matters more than a typical missing-field bug: an
+// undefined number anywhere in the per-year cost math turns that whole
+// year's total (and every category, since they're summed together) into
+// NaN, which then poisons the running cumulative total for every later year
+// too. Existing values always win; only genuinely absent keys fall back.
+export function normalizeSolution(sol: SolutionInputs): SolutionInputs {
+  return { ...defaultSolution(sol.id, sol.name, sol.model), ...sol };
+}
+
+// Same idea for ScenarioInputs.
+export function normalizeScenario(scenario: ScenarioInputs): ScenarioInputs {
+  return { ...DEFAULT_SCENARIO, ...scenario };
+}
 
 export function defaultSolution(id: "a" | "b", name: string, model: DeploymentModel): SolutionInputs {
   if (model === "cloud") {

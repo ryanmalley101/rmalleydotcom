@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "./lib/colors";
 import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution, type ShapeOption } from "./lib/defaults";
 import type { IncumbentChoice, ScenarioInputs, SolutionInputs } from "./lib/model";
-import { decodeShareState, encodeShareState, type SharedState } from "./lib/shareState";
+import { decodeShareState, encodeShareState, normalizeSharedState, type SharedState } from "./lib/shareState";
 import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, withVendorDefaults } from "./lib/vendorDefaults";
 import IntroScreen from "./components/IntroScreen";
 import ShapeStep from "./components/ShapeStep";
@@ -111,12 +111,17 @@ function TcoCalculatorInner() {
   }
 
   function handleLoadSaved(state: SharedState) {
-    setShapeId(state.shapeId);
-    setScenario(state.scenario);
-    setSolA(state.solA);
-    setSolB(state.solB);
-    setColorA(state.colorA);
-    setColorB(state.colorB);
+    // Saved comparisons (localStorage) don't go through decodeShareState, so
+    // they need the same missing-field backfill applied here explicitly —
+    // a save made before a newer field existed would otherwise leave it
+    // undefined and NaN out the whole comparison once loaded.
+    const normalized = normalizeSharedState(state);
+    setShapeId(normalized.shapeId);
+    setScenario(normalized.scenario);
+    setSolA(normalized.solA);
+    setSolB(normalized.solB);
+    setColorA(normalized.colorA);
+    setColorB(normalized.colorB);
     setPhase("results");
   }
 

@@ -1,5 +1,6 @@
 import LZString from "lz-string";
 import type { ScenarioInputs, SolutionInputs } from "./model";
+import { normalizeScenario, normalizeSolution } from "./defaults";
 
 export interface SharedState {
   shapeId: string;
@@ -8,6 +9,21 @@ export interface SharedState {
   solB: SolutionInputs;
   colorA: string;
   colorB: string;
+}
+
+// Backfills any fields missing from a SharedState produced by an older
+// version of the app — a share link or a locally-saved comparison, both of
+// which are just JSON that can predate a newer field — with current
+// defaults. Called by decodeShareState below for share links; saved
+// comparisons load from localStorage directly (see savedComparisons.ts), so
+// callers on that path need to run this themselves before applying the state.
+export function normalizeSharedState(state: SharedState): SharedState {
+  return {
+    ...state,
+    scenario: normalizeScenario(state.scenario),
+    solA: normalizeSolution(state.solA),
+    solB: normalizeSolution(state.solB),
+  };
 }
 
 // LZ-string's compressToEncodedURIComponent is synchronous (unlike the
@@ -26,7 +42,7 @@ export function decodeShareState(raw: string): SharedState | null {
     const parsed = JSON.parse(json);
     if (!parsed || typeof parsed !== "object") return null;
     if (!parsed.shapeId || !parsed.scenario || !parsed.solA || !parsed.solB) return null;
-    return parsed as SharedState;
+    return normalizeSharedState(parsed as SharedState);
   } catch {
     return null;
   }

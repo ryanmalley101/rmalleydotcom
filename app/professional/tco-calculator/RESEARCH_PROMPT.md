@@ -87,7 +87,6 @@ export interface ScenarioInputs {
   horizonYears: number;
   bitrateMbps: number;
   investigationsPerMonth: number;
-  npvDiscountPct: number;
   annualEscalationPct: number;
   incumbent: IncumbentChoice;
   // Shared market rates: the operator's own costs, independent of vendor.

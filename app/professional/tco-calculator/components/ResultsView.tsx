@@ -305,7 +305,7 @@ export default function ResultsView({
         versus RAID 0 or no RAID, to survive a drive failure. On-prem perpetual licenses are charged once at
         year 0 like the hardware, unless that side is marked incumbent (already owned); support renewals are
         counted every year regardless. Appliance/server counts assume at least one unit per site.
-        Annual cost escalation compounds every recurring cost; NPV discounting is separate and applied on top.
+        Annual cost escalation compounds every recurring cost year over year.
         Investigation labor is a soft cost, kept as its own category so it can be zeroed out independently.
         Defaults are directional placeholders, not quotes. This tool is not affiliated with or endorsed by any
         vendor named here.

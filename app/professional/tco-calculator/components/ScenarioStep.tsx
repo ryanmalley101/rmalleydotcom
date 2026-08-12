@@ -1,7 +1,7 @@
 "use client";
 
 import { Accordion, NumberInput, SimpleGrid, Stack, Text, Title } from "@mantine/core";
-import { Activity, Building2, Camera, CalendarRange, Database, DollarSign, Percent, Search, TrendingUp, Truck } from "lucide-react";
+import { Activity, Building2, Camera, CalendarRange, Database, DollarSign, Search, TrendingUp, Truck } from "lucide-react";
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
@@ -13,17 +13,10 @@ const RETENTION_LABEL = (
   />
 );
 
-const NPV_LABEL = (
-  <InfoLabel
-    label="NPV discount (%)"
-    help="How much future spending is discounted to reflect that a dollar spent later is worth less than a dollar spent today. Higher rates shrink the weight of costs further out in the horizon; 0% treats every year's dollars the same."
-  />
-);
-
 const ESCALATION_LABEL = (
   <InfoLabel
     label="Annual cost escalation (%)"
-    help="How much recurring costs (subscriptions, labor, truck rolls, refreshes) grow each year. NPV discounting alone only accounts for the time value of money, not that prices themselves tend to rise over a long horizon."
+    help="How much recurring costs (subscriptions, labor, truck rolls, refreshes) grow each year, since prices don't tend to hold flat over a long horizon."
   />
 );
 
@@ -54,8 +47,6 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
           onChange={(v) => set("bitrateMbps", num(v))} />
         <NumberInput label="Investigations/mo" leftSection={icon(Search)} value={value.investigationsPerMonth} min={0}
           onChange={(v) => set("investigationsPerMonth", num(v))} />
-        <NumberInput label={NPV_LABEL} leftSection={icon(Percent)} value={value.npvDiscountPct} min={0} max={100} step={0.5} decimalScale={1}
-          onChange={(v) => set("npvDiscountPct", num(v))} />
         <NumberInput label={ESCALATION_LABEL} leftSection={icon(TrendingUp)}
           value={value.annualEscalationPct} min={0} max={100} step={0.5} decimalScale={1}
           onChange={(v) => set("annualEscalationPct", num(v))} />

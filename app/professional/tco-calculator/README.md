@@ -84,9 +84,21 @@ auth-gated, "dampened" on purpose.
   `SectionLabel` div spanning the grid), separate from the flat field list,
   since cloud's equivalent cost is bundled into its license price by
   default and it wasn't obvious those two on-prem fields existed otherwise.
-- **Escalation vs. discounting**: `annualEscalationPct` compounds every
-  recurring cost year over year; NPV discounting (`npvDiscountPct`) is
-  separate and applied on top, not a substitute for it.
+- **Escalation, no NPV discounting**: `annualEscalationPct` compounds every
+  recurring cost year over year. An earlier version also had a separate NPV
+  discount rate (`npvDiscountPct`) applied on top, standard financial-model
+  vocabulary but not something this tool needed: at its shipped default (0%)
+  it did nothing, and even cranked up it barely moved the comparison itself —
+  shrinking both sides' totals by a large, roughly equal fraction (checked
+  directly against the model: ~44% at a 12% rate over the default 10-year
+  horizon) without changing the crossover year or the relative gap by more
+  than a couple points. Since the same factor discounts both solutions
+  identically in the same year, it can only reweight a solution by its own
+  cost timing, never manufacture a winner — for a two-line-comparison tool
+  like this one, that reweighting effect wasn't worth the added assumption
+  (a discount rate) and the ambiguity it invites (real NPV analysis is
+  usually a whole-portfolio decision, not something to bolt onto a two-line
+  comparison), so it was removed rather than left in unused at its default.
 - **Site-driven hardware minimums**: appliance/server unit counts assume at
   least one per site, not just enough for total camera count, since a
   connector/NVR box is physically local.

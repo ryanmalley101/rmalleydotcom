@@ -43,11 +43,9 @@ export interface ScenarioInputs {
   horizonYears: number;
   bitrateMbps: number;
   investigationsPerMonth: number;
-  npvDiscountPct: number;
   // Compounding annual growth applied to every recurring cost (subscriptions,
   // labor, truck rolls, refreshes...). Real prices don't hold flat for a
-  // 10-15 year horizon; NPV discounting alone only accounts for the time
-  // value of money, not that costs themselves tend to rise.
+  // 10-15 year horizon.
   annualEscalationPct: number;
   // Which solution (if either) is already deployed. The incumbent skips its
   // year-0 buildout cost; the other solution pays it as a fresh deployment.
@@ -193,14 +191,13 @@ export interface HardwareFootprint {
 
 export interface SolutionResult {
   totalsByCategory: Record<Category, number>;
-  cumulative: number[]; // NPV-discounted running total, index = year
+  cumulative: number[]; // escalated running total, index = year
   total: number;
   hardware: HardwareFootprint;
 }
 
 export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, isIncumbent = false): SolutionResult {
   const { cameras: cams, sites, retentionDays: ret, horizonYears: yrs, bitrateMbps: br, investigationsPerMonth: invMo } = scenario;
-  const r = scenario.npvDiscountPct / 100;
   const esc = scenario.annualEscalationPct / 100;
   const disc = 1 - sol.discountPct / 100;
   const tierYears = Math.max(1, sol.tierYears); // guard against a cleared/zeroed input
@@ -226,7 +223,6 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
   let running = 0;
 
   for (let y = 0; y <= yrs; y++) {
-    const df = 1 / Math.pow(1 + r, y);
     const escalation = Math.pow(1 + esc, y);
     const yearCosts = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
 
@@ -249,8 +245,12 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
           }
         }
         // Flat, not per-camera: professional-services/setup fees are typically
-        // a project-level line item, not priced per unit installed.
-        yearCosts["Misc / other"] = sol.miscUpfrontCost * disc;
+        // a project-level line item, not priced per unit installed. Coerced
+        // through Number(...) || 0 (not just used raw) since sol can come from
+        // an older share link/saved comparison predating this field — an
+        // undefined here would poison this whole year's total, and every
+        // later year's cumulative total, with NaN.
+        yearCosts["Misc / other"] = (Number(sol.miscUpfrontCost) || 0) * disc;
       }
     } else {
       const surv0 = Math.pow(0.5, (y - 1) / sol.fleetHalfLifeYears);
@@ -267,7 +267,7 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate;
       yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate;
-      yearCosts["Misc / other"] = sol.miscAnnualCost * disc;
+      yearCosts["Misc / other"] = (Number(sol.miscAnnualCost) || 0) * disc;
 
       if (sol.model === "cloud") {
         // ripReplace has no connector appliance, so no ongoing hardware refresh.
@@ -291,9 +291,9 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
     let yearTotal = 0;
     CATEGORIES.forEach((c) => {
       // Year-0 costs are today's dollars already (escalation factor is 1 at y=0 anyway).
-      const discounted = yearCosts[c] * escalation * df;
-      totalsByCategory[c] += discounted;
-      yearTotal += discounted;
+      const escalated = yearCosts[c] * escalation;
+      totalsByCategory[c] += escalated;
+      yearTotal += escalated;
     });
     running += yearTotal;
     cumulative.push(running);
