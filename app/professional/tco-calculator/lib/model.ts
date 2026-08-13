@@ -212,14 +212,25 @@ export interface SolutionInputs {
   serverCapacity: number;
   storageCostPerTB: number;
   raidLevel: RaidLevel;
-  // Per-site, not fleet-wide: an on-prem analytics appliance/license is
-  // deployed at each site individually (it runs against that site's own
-  // recording servers), not once for the whole comparison. Both multiply by
-  // `sites` wherever they're charged. analyticsApplianceCost recurs on the
-  // same refresh cycle as the recording servers/storage; analyticsSoftwareCost
-  // is the ongoing per-year license, alongside the care/SUP renewal.
+  // Per-site, not fleet-wide: an on-prem analytics appliance is deployed at
+  // each site individually (it runs against that site's own recording
+  // servers), not once for the whole comparison. Multiplies by `sites`
+  // wherever it's charged, and recurs on the same refresh cycle as the
+  // recording servers/storage.
   analyticsApplianceCost: number;
-  analyticsSoftwareCost: number;
+  // The analytics *software* license, by contrast, is per-camera, not
+  // per-site — it's licensed per device analyzed, not per piece of
+  // infrastructure. analyticsSoftwareCostPerCam is a one-time purchase,
+  // charged alongside baseLicense/deviceLicense at year 0 (same
+  // incumbent-zeroing: already-owned for the incumbent, not charged again),
+  // and does *not* recur at hardware refresh cycles the way
+  // analyticsApplianceCost does — a software license isn't tied to the
+  // server hardware it happens to run on. analyticsSoftwareCostPerCamYr is
+  // a separate, purely additive ongoing per-camera-per-year cost (defaults
+  // to $0), for vendors that also charge a recurring analytics subscription
+  // on top of the one-time license.
+  analyticsSoftwareCostPerCam: number;
+  analyticsSoftwareCostPerCamYr: number;
   refreshCycleYears: number;
   yearsUntilNextRefresh: number;
 
@@ -373,9 +384,11 @@ export function computeSolution(
               : sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
           // A fresh (non-incumbent) on-prem deployment has to buy its perpetual
           // license too, not just the hardware — only the incumbent's license is
-          // already owned/sunk. Only the ongoing care/SUP renewal recurs after this.
+          // already owned/sunk. Only the ongoing care/SUP renewal (and the separate
+          // analyticsSoftwareCostPerCamYr below) recur after this.
           if (sol.model === "onprem") {
-            yearCosts["Licenses/subscription"] = (sol.baseLicense + sol.deviceLicense * cams) * disc;
+            yearCosts["Licenses/subscription"] =
+              (sol.baseLicense + sol.deviceLicense * cams + sol.analyticsSoftwareCostPerCam * cams) * disc;
           }
         }
         // Flat, not per-camera: professional-services/setup fees are typically
@@ -398,7 +411,7 @@ export function computeSolution(
       yearCosts["Camera replacements"] = fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
 
       yearCosts["Licenses/subscription"] =
-        sol.model === "cloud" ? licAnnual * cams : careCost + sol.analyticsSoftwareCost * disc * sites;
+        sol.model === "cloud" ? licAnnual * cams : careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc;
 
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate;

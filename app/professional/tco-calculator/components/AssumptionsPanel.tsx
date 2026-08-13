@@ -200,9 +200,13 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
             icon: Cpu,
             help: "Per site, not per fleet: an on-prem analytics appliance runs against that site's own recording servers, so a multi-site deployment needs one at each site. Recurs on the same refresh cycle as the servers/storage above.",
           })}
-          {num("Analytics software ($/site/yr)", "analyticsSoftwareCost", {
+          {num("Analytics software license ($/cam, one-time)", "analyticsSoftwareCostPerCam", {
             icon: BrainCircuit,
-            help: "Per site, not per fleet, same reasoning as the appliance cost above — charged every year alongside the support/care renewal.",
+            help: "Per camera, not per site — analytics software is licensed per device analyzed, not per piece of infrastructure. Charged once at year 0, same as the base/device license, unless this solution is marked incumbent above (already owned, not charged again), and unlike the analytics appliance above, doesn't recur at hardware refresh — a software license isn't tied to the server hardware it happens to run on.",
+          })}
+          {num("Analytics software ($/cam/yr)", "analyticsSoftwareCostPerCamYr", {
+            icon: BrainCircuit,
+            help: "A separate, purely additive ongoing per-camera annual cost, for vendors that also charge a recurring analytics subscription on top of the one-time license above. Defaults to $0 (\"bundled into the one-time license\").",
           })}
         </>
       )}

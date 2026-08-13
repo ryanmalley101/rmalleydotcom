@@ -132,15 +132,26 @@ auth-gated, "dampened" on purpose.
   behind them at all — real assumptions, not fixed facts like a unit
   conversion, so they got the same `ScenarioInputs` + `DEFAULT_*` +
   `Number(scenario.x) || DEFAULT_X` treatment as the wattage fields above.
-- **Analytics**: on-prem's `analyticsApplianceCost`/`analyticsSoftwareCost`
-  get their own labeled "Analytics" sub-section in `AssumptionsPanel` (a
-  `SectionLabel` div spanning the grid), separate from the flat field list,
-  since cloud's equivalent cost is bundled into its license price by
-  default and it wasn't obvious those two on-prem fields existed otherwise.
-  Both are per-site, not fleet-wide (`* sites` wherever they're charged in
-  `lib/model.ts`) — an on-prem analytics appliance runs against that site's
-  own recording servers, so a multi-site deployment needs one at each site,
-  not one for the whole comparison.
+- **Analytics**: on-prem's `analyticsApplianceCost`/`analyticsSoftwareCostPerCam`/
+  `analyticsSoftwareCostPerCamYr` get their own labeled "Analytics"
+  sub-section in `AssumptionsPanel` (a `SectionLabel` div spanning the
+  grid), separate from the flat field list, since cloud's equivalent cost
+  is bundled into its license price by default and it wasn't obvious those
+  fields existed otherwise. The appliance and the software license are
+  billed on different bases, deliberately: `analyticsApplianceCost` is
+  per-site (`* sites` wherever it's charged) — it's a physical box running
+  against that site's own recording servers, so a multi-site deployment
+  needs one at each site — and recurs on the refresh cycle, same as the
+  servers/storage it's bundled with in "Hardware (initial & refresh)".
+  Analytics *software*, by contrast, is licensed per camera analyzed, not
+  per site: `analyticsSoftwareCostPerCam` (default $100) is a one-time
+  purchase charged at year 0 alongside `baseLicense`/`deviceLicense` (same
+  incumbent-zeroing, and — unlike the appliance — doesn't recur at
+  hardware refresh, since a software license isn't tied to the server
+  hardware it happens to run on); `analyticsSoftwareCostPerCamYr` (default
+  $0) is a separate, purely additive ongoing per-camera cost for vendors
+  that also charge a recurring analytics subscription on top of the
+  one-time license.
 - **Escalation, no NPV discounting**: `annualEscalationPct` compounds every
   recurring cost year over year. An earlier version also had a separate NPV
   discount rate (`npvDiscountPct`) applied on top, standard financial-model
