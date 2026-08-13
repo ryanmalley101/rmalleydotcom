@@ -36,6 +36,64 @@ const RAID_STORAGE_MULTIPLIER: Record<RaidLevel, number> = {
   raid10: 2,
 };
 
+// Minimum physical drives a valid array of this level needs, regardless of
+// how little raw capacity is actually required — you can't build a mirrored
+// array on one drive, and RAID 10 specifically needs at least two mirrored
+// pairs (4 drives) to actually stripe across; a "2-drive RAID 10" is just
+// RAID 1 under a bigger name. Only matters for the drive *count* used by the
+// power-draw and storage-billing math below — the $/TB assumption itself
+// (storageCostPerTB) intentionally stays continuous per-TB (see README's
+// "avoiding artificial cost cliffs"), this doesn't change that, it changes
+// how many TB actually get billed.
+const RAID_MIN_DRIVES: Record<RaidLevel, number> = {
+  none: 1,
+  raid0: 2,
+  raid1: 2,
+  raid10: 4,
+};
+
+// Converts a raw physical TB figure into a whole number of real drives — you
+// can't buy or power a fractional drive. RAID 1/RAID 10 mirror in pairs, so
+// the count is rounded up to an even number before the RAID_MIN_DRIVES floor
+// is applied. driveCapacityTb is a scenario-level assumption (user-editable),
+// clamped to a sane positive minimum so a cleared/zeroed input can't divide
+// by zero.
+function driveCountFor(tbPhysical: number, raidLevel: RaidLevel, driveCapacityTb: number): number {
+  const raw = tbPhysical / Math.max(1, driveCapacityTb);
+  const isMirrored = raidLevel === "raid1" || raidLevel === "raid10";
+  const rounded = isMirrored ? Math.ceil(raw / 2) * 2 : Math.ceil(raw);
+  return Math.max(RAID_MIN_DRIVES[raidLevel], rounded);
+}
+
+// Per-device wattage assumptions behind the "Power/facilities" category.
+// Deliberately real per-unit figures (a server chassis, a PoE camera, a
+// hard drive, a connector appliance) rather than a flat kW-per-category
+// guess, on the theory that numbers close to a real datasheet are more
+// defensible than a made-up round one — though the exact figures below are
+// still assumptions, not a specific vendor's spec sheet. All six are
+// editable ScenarioInputs fields (see below); these are just the fallback
+// values used when a field is missing (an older share link/saved comparison
+// from before it existed), exported so lib/defaults.ts's DEFAULT_SCENARIO
+// can seed the same numbers instead of duplicating them.
+export const DEFAULT_SERVER_WATTS = 75; // per recording server/NVR
+export const DEFAULT_CAMERA_WATTS = 8; // per IP camera (PoE draw); applies to both
+// deployment models since a physical camera draws power regardless of which
+// backend it's recording to.
+export const DEFAULT_DRIVE_WATTS = 8; // per physical hard drive
+// Needed to convert tbPhysical (TB) into a drive count; assumed as a
+// current-gen surveillance/enterprise HDD capacity.
+export const DEFAULT_DRIVE_CAPACITY_TB = 16;
+export const DEFAULT_APPLIANCE_WATTS = 60; // connector/NVR-style cloud appliance chassis
+// A connector appliance is functionally an NVR — it records locally, then
+// syncs to the vendor's cloud — so it gets its own drive power term too, the
+// same shape as on-prem's. It's not assumed to hold the full retention
+// window locally the way an on-prem NVR does, though: most real connector
+// products keep a short rolling local buffer (for cloud-outage resilience)
+// rather than a full local copy, so this uses its own shorter window
+// instead of the scenario's cloud retention days. Assumed unRAIDed (a
+// single local drive, not a mirrored array), unlike the on-prem side.
+export const DEFAULT_CONNECTOR_BUFFER_DAYS = 3;
+
 export interface ScenarioInputs {
   cameras: number;
   sites: number;
@@ -54,6 +112,19 @@ export interface ScenarioInputs {
   adminRate: number;
   investigatorRate: number;
   truckRollCost: number;
+  electricityRate: number;
+  // Per-device wattage assumptions behind the "Power/facilities" category
+  // (see the DEFAULT_* constants above for what each means). Resolved via
+  // `Number(scenario.x) || DEFAULT_X` in computeSolution, so a missing value
+  // (older share link/saved comparison) falls back to the original built-in
+  // assumption instead of zeroing out a whole cost line or, for
+  // driveCapacityTb specifically, dividing by zero.
+  serverWatts: number;
+  cameraWatts: number;
+  driveWatts: number;
+  driveCapacityTb: number;
+  applianceWatts: number;
+  connectorBufferDays: number;
 }
 
 export interface SolutionInputs {
@@ -127,6 +198,12 @@ export interface SolutionInputs {
   serverCapacity: number;
   storageCostPerTB: number;
   raidLevel: RaidLevel;
+  // Per-site, not fleet-wide: an on-prem analytics appliance/license is
+  // deployed at each site individually (it runs against that site's own
+  // recording servers), not once for the whole comparison. Both multiply by
+  // `sites` wherever they're charged. analyticsApplianceCost recurs on the
+  // same refresh cycle as the recording servers/storage; analyticsSoftwareCost
+  // is the ongoing per-year license, alongside the care/SUP renewal.
   analyticsApplianceCost: number;
   analyticsSoftwareCost: number;
   refreshCycleYears: number;
@@ -158,6 +235,7 @@ export const CATEGORIES = [
   "Truck rolls",
   "Admin labor",
   "Investigations",
+  "Power/facilities",
   "Misc / other",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
@@ -202,6 +280,15 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
   const disc = 1 - sol.discountPct / 100;
   const tierYears = Math.max(1, sol.tierYears); // guard against a cleared/zeroed input
 
+  // Resolved wattage assumptions for the "Power/facilities" category — see
+  // the ScenarioInputs comment for why the fallback pattern.
+  const serverWatts = Number(scenario.serverWatts) || DEFAULT_SERVER_WATTS;
+  const cameraWatts = Number(scenario.cameraWatts) || DEFAULT_CAMERA_WATTS;
+  const driveWatts = Number(scenario.driveWatts) || DEFAULT_DRIVE_WATTS;
+  const driveCapacityTb = Number(scenario.driveCapacityTb) || DEFAULT_DRIVE_CAPACITY_TB;
+  const applianceWatts = Number(scenario.applianceWatts) || DEFAULT_APPLIANCE_WATTS;
+  const connectorBufferDays = Number(scenario.connectorBufferDays) || DEFAULT_CONNECTOR_BUFFER_DAYS;
+
   // The add-on isn't storage-driven, so it doesn't scale with retentionMultiplier the way
   // the base license does, but the vendor's own negotiated discount still applies to it.
   const licAnnual =
@@ -216,6 +303,20 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
   // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
   // mirrored RAID 1/10). Power draw scales with physical drives too, more disks spinning.
   const tbPhysical = sol.model === "onprem" ? tbUsable * RAID_STORAGE_MULTIPLIER[sol.raidLevel] : tbUsable;
+  // Storage is billed for the whole drives actually bought (respecting each RAID level's
+  // drive-count floor via driveCountFor — a small RAID 10 array still needs 4 real drives,
+  // and costs like it) rather than the continuous tbPhysical figure. Only matters on-prem;
+  // cloud has no drives-you-buy line for this to apply to.
+  const tbBilled =
+    sol.model === "onprem" ? driveCountFor(tbPhysical, sol.raidLevel, driveCapacityTb) * driveCapacityTb : tbPhysical;
+  // A connector appliance's own local buffer (see connectorBufferDays above), not the
+  // full cloud retention window, and not RAID-redundant. Only feeds the power-draw
+  // model's drive term below — the dollar cost model still prices the appliance as one
+  // flat per-unit SKU (applianceCost).
+  const connectorBufferTb =
+    sol.model === "cloud" && sol.migrationStrategy === "connector"
+      ? (cams * (br / 8) * 86400 * connectorBufferDays) / 1e6 * 1.3 * (sol.framerateFps / 24)
+      : 0;
   const careCost = sol.model === "onprem" ? (sol.baseLicense + sol.deviceLicense * cams) * disc * (sol.carePct / 100) : 0;
 
   const totalsByCategory = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
@@ -236,7 +337,7 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
           yearCosts["Hardware (initial & refresh)"] =
             sol.model === "cloud"
               ? sol.applianceCost * disc * applianceUnits
-              : sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbPhysical + sol.analyticsApplianceCost * disc;
+              : sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
           // A fresh (non-incumbent) on-prem deployment has to buy its perpetual
           // license too, not just the hardware — only the incumbent's license is
           // already owned/sunk. Only the ongoing care/SUP renewal recurs after this.
@@ -262,16 +363,25 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
       yearCosts["Camera replacements"] = fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
 
       yearCosts["Licenses/subscription"] =
-        sol.model === "cloud" ? licAnnual * cams : careCost + sol.analyticsSoftwareCost * disc;
+        sol.model === "cloud" ? licAnnual * cams : careCost + sol.analyticsSoftwareCost * disc * sites;
 
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate;
       yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate;
       yearCosts["Misc / other"] = (Number(sol.miscAnnualCost) || 0) * disc;
 
+      // Camera wattage applies to both models and both cloud migration strategies — a
+      // physical camera draws power regardless of which backend it's recording to.
+      const cameraPowerKw = (cams * cameraWatts) / 1000;
       if (sol.model === "cloud") {
-        // ripReplace has no connector appliance, so no ongoing hardware refresh.
+        // ripReplace has no connector appliance, so no ongoing hardware refresh, but it
+        // still pays for the cameras themselves.
         if (sol.migrationStrategy === "connector") {
+          const appliancePowerKw = (applianceUnits * applianceWatts) / 1000;
+          // "none" here, not sol.raidLevel: the connector's local buffer is assumed
+          // unRAIDed (see connectorBufferDays above), unlike on-prem's array.
+          const connectorDrivePowerKw = (driveCountFor(connectorBufferTb, "none", driveCapacityTb) * driveWatts) / 1000;
+          yearCosts["Power/facilities"] = (cameraPowerKw + appliancePowerKw + connectorDrivePowerKw) * 8760 * scenario.electricityRate;
           if (
             y >= sol.yearsUntilNextApplianceRefresh &&
             (y - sol.yearsUntilNextApplianceRefresh) % sol.applianceRefreshCycleYears === 0 &&
@@ -279,11 +389,16 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
           ) {
             yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits;
           }
+        } else {
+          yearCosts["Power/facilities"] = cameraPowerKw * 8760 * scenario.electricityRate;
         }
       } else {
+        const serverPowerKw = (nSrv * serverWatts) / 1000;
+        const drivePowerKw = (driveCountFor(tbPhysical, sol.raidLevel, driveCapacityTb) * driveWatts) / 1000;
+        yearCosts["Power/facilities"] = (cameraPowerKw + serverPowerKw + drivePowerKw) * 8760 * scenario.electricityRate;
         if (y >= sol.yearsUntilNextRefresh && (y - sol.yearsUntilNextRefresh) % sol.refreshCycleYears === 0 && y < yrs) {
           yearCosts["Hardware (initial & refresh)"] =
-            sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbPhysical + sol.analyticsApplianceCost * disc;
+            sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
         }
       }
     }
@@ -304,7 +419,9 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
     unitsLabel:
       sol.model === "onprem" ? "Recording servers" : sol.migrationStrategy === "connector" ? "Connector appliances" : null,
     units: sol.model === "onprem" ? nSrv : sol.migrationStrategy === "connector" ? applianceUnits : 0,
-    storageTB: sol.model === "onprem" ? tbPhysical : null,
+    // tbBilled (not tbPhysical) so this never drifts from what the cost lines above
+    // actually charged for — the whole-drive figure, not the continuous one.
+    storageTB: sol.model === "onprem" ? tbBilled : null,
     cameras: cams,
   };
   return { totalsByCategory, cumulative, total, hardware };

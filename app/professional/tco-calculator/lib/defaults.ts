@@ -1,4 +1,8 @@
 import type { ScenarioInputs, SolutionInputs, DeploymentModel } from "./model";
+import {
+  DEFAULT_SERVER_WATTS, DEFAULT_CAMERA_WATTS, DEFAULT_DRIVE_WATTS,
+  DEFAULT_DRIVE_CAPACITY_TB, DEFAULT_APPLIANCE_WATTS, DEFAULT_CONNECTOR_BUFFER_DAYS,
+} from "./model";
 
 export const DEFAULT_SCENARIO: ScenarioInputs = {
   cameras: 100,
@@ -12,6 +16,16 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
+  electricityRate: 0.15,
+  // Seeded from the same constants computeSolution() falls back to for
+  // missing values, so a fresh scenario and an old one missing these fields
+  // start from identical numbers either way.
+  serverWatts: DEFAULT_SERVER_WATTS,
+  cameraWatts: DEFAULT_CAMERA_WATTS,
+  driveWatts: DEFAULT_DRIVE_WATTS,
+  driveCapacityTb: DEFAULT_DRIVE_CAPACITY_TB,
+  applianceWatts: DEFAULT_APPLIANCE_WATTS,
+  connectorBufferDays: DEFAULT_CONNECTOR_BUFFER_DAYS,
 };
 
 // Backfills any fields missing from a SolutionInputs decoded from an older

@@ -76,14 +76,44 @@ auth-gated, "dampened" on purpose.
 - **RAID**: on-prem storage cost applies a redundancy multiplier
   (`SolutionInputs.raidLevel`, defaults to RAID 1). RAID 0 and no RAID need
   only the usable capacity; RAID 1 and RAID 10 roughly double the raw
-  capacity bought. That multiplied ("physical") capacity, not the raw
-  usable figure, feeds both the storage cost and the on-prem power-draw
-  estimate.
+  capacity bought (striping alone adds no capacity overhead, so RAID 10
+  costs the same raw TB as RAID 1 for the same usable TB — the multiplier is
+  identical for both). That multiplied ("physical") capacity feeds the
+  power-draw estimate below directly, and feeds the storage *dollar* cost
+  after one more step: `driveCountFor()` (`lib/model.ts`) converts it into a
+  whole number of real drives — you can't buy a fraction of one — respecting
+  each RAID level's minimum drive count (`RAID_MIN_DRIVES`: `none`/`raid1`
+  need at least 1/2, `raid0` needs 2, `raid10` needs at least *4*, since it's
+  two mirrored pairs striped together, not one). That floor matters most at
+  small scale: a tiny fleet on RAID 10 with large drives can be forced to
+  buy far more raw capacity than the continuous multiplier alone would
+  suggest, and both the storage cost and the `storageTB` hardware-footprint
+  stat reflect that (`tbBilled`, not the continuous `tbPhysical`).
+- **Power/facilities**: real per-device wattages (`serverWatts`,
+  `cameraWatts`, `driveWatts`, `driveCapacityTb`, `applianceWatts`,
+  `connectorBufferDays`, all editable `ScenarioInputs` fields, defaults in
+  `lib/model.ts`'s `DEFAULT_*` constants) drive this category instead of a
+  flat kW-per-category guess — an earlier version of this line item used
+  unsourced flat figures (kW/server, kW/TB, kW/appliance) that got removed
+  entirely for being too speculative; this replacement was built specifically
+  to answer that objection with numbers closer to a real datasheet. Camera
+  power (PoE draw) applies to *both* deployment models and every cloud
+  migration strategy, previously unmodeled on either side — a physical
+  camera draws power regardless of which backend records it. A cloud
+  connector appliance is functionally an NVR (records locally, syncs to the
+  vendor's cloud), so it gets its own drive-power term too, the same shape
+  as on-prem's server+drive terms, sized off a short local buffer
+  (`connectorBufferDays`, default 3) rather than the full cloud retention
+  window, and assumed unRAIDed unlike on-prem's array.
 - **Analytics**: on-prem's `analyticsApplianceCost`/`analyticsSoftwareCost`
   get their own labeled "Analytics" sub-section in `AssumptionsPanel` (a
   `SectionLabel` div spanning the grid), separate from the flat field list,
   since cloud's equivalent cost is bundled into its license price by
   default and it wasn't obvious those two on-prem fields existed otherwise.
+  Both are per-site, not fleet-wide (`* sites` wherever they're charged in
+  `lib/model.ts`) — an on-prem analytics appliance runs against that site's
+  own recording servers, so a multi-site deployment needs one at each site,
+  not one for the whole comparison.
 - **Escalation, no NPV discounting**: `annualEscalationPct` compounds every
   recurring cost year over year. An earlier version also had a separate NPV
   discount rate (`npvDiscountPct`) applied on top, standard financial-model
@@ -181,6 +211,12 @@ before trusting an unedited comparison:
   a `leftSection` icon per field in `ScenarioStep`; values here top out in
   the tens of thousands, they don't need full-width inputs, and the icons
   help anchor a dense grid.
+- `ScenarioStep`'s top-level "Key variables" grid only holds the handful of
+  facts that actually define a comparison (camera count, sites, retention,
+  horizon, bitrate, investigations/mo); escalation, market rates,
+  electricity, and the per-device wattage assumptions all live in one
+  collapsed-by-default "Advanced" accordion instead, so a first pass at a
+  comparison doesn't need to see them.
 
 ## Platform notes
 

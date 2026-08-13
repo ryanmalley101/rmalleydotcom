@@ -196,8 +196,14 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
       {sol.model === "onprem" && (
         <>
           <SectionLabel>Analytics</SectionLabel>
-          {num("Analytics appliance ($)", "analyticsApplianceCost", { icon: Cpu })}
-          {num("Analytics software ($/yr)", "analyticsSoftwareCost", { icon: BrainCircuit })}
+          {num("Analytics appliance ($/site)", "analyticsApplianceCost", {
+            icon: Cpu,
+            help: "Per site, not per fleet: an on-prem analytics appliance runs against that site's own recording servers, so a multi-site deployment needs one at each site. Recurs on the same refresh cycle as the servers/storage above.",
+          })}
+          {num("Analytics software ($/site/yr)", "analyticsSoftwareCost", {
+            icon: BrainCircuit,
+            help: "Per site, not per fleet, same reasoning as the appliance cost above — charged every year alongside the support/care renewal.",
+          })}
         </>
       )}
 
