@@ -2,6 +2,7 @@ import type { ScenarioInputs, SolutionInputs, DeploymentModel } from "./model";
 import {
   DEFAULT_SERVER_WATTS, DEFAULT_CAMERA_WATTS, DEFAULT_DRIVE_WATTS,
   DEFAULT_DRIVE_CAPACITY_TB, DEFAULT_APPLIANCE_WATTS, DEFAULT_CONNECTOR_BUFFER_DAYS,
+  DEFAULT_STORAGE_OVERHEAD_MULTIPLIER, DEFAULT_SPARE_SERVERS,
 } from "./model";
 
 export const DEFAULT_SCENARIO: ScenarioInputs = {
@@ -26,6 +27,8 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   driveCapacityTb: DEFAULT_DRIVE_CAPACITY_TB,
   applianceWatts: DEFAULT_APPLIANCE_WATTS,
   connectorBufferDays: DEFAULT_CONNECTOR_BUFFER_DAYS,
+  storageOverheadMultiplier: DEFAULT_STORAGE_OVERHEAD_MULTIPLIER,
+  spareServers: DEFAULT_SPARE_SERVERS,
 };
 
 // Backfills any fields missing from a SolutionInputs decoded from an older

@@ -122,6 +122,16 @@ auth-gated, "dampened" on purpose.
   as on-prem's server+drive terms, sized off a short local buffer
   (`connectorBufferDays`, default 3) rather than the full cloud retention
   window, and assumed unRAIDed unlike on-prem's array.
+- **Storage overhead and spare servers, also editable**: `storageOverheadMultiplier`
+  (default 1.3, i.e. 30%) is the metadata/audio/keyframe-indexing overhead on
+  top of the raw video-bitrate math in `tbUsable`, feeding on-prem storage
+  sizing and the connector's local-buffer sizing; `spareServers` (default 1)
+  is the hot-spare recording-server headroom added to `nSrv` beyond whatever
+  capacity actually requires, once per solution, not once per site. Both were
+  previously bare, un-editable constants (`1.3` and `+ 1`) with no field
+  behind them at all — real assumptions, not fixed facts like a unit
+  conversion, so they got the same `ScenarioInputs` + `DEFAULT_*` +
+  `Number(scenario.x) || DEFAULT_X` treatment as the wattage fields above.
 - **Analytics**: on-prem's `analyticsApplianceCost`/`analyticsSoftwareCost`
   get their own labeled "Analytics" sub-section in `AssumptionsPanel` (a
   `SectionLabel` div spanning the grid), separate from the flat field list,

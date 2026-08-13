@@ -3,7 +3,7 @@
 import { Accordion, NumberInput, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import {
   Activity, Building2, Camera, CalendarClock, CalendarRange, Database, DollarSign,
-  HardDrive, Router, Search, Server, TrendingUp, Truck, Zap,
+  HardDrive, Layers, Router, Search, Server, TrendingUp, Truck, Zap,
 } from "lucide-react";
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
@@ -25,6 +25,12 @@ const ESCALATION_LABEL = (
 
 const CONNECTOR_BUFFER_HELP =
   "How many days of footage a cloud connector/NVR-style appliance is assumed to hold locally before/regardless of cloud sync — not the full cloud retention window, just a short rolling buffer for outage resilience. Drives the connector's own drive-power cost in \"Power/facilities\".";
+
+const STORAGE_OVERHEAD_HELP =
+  "Multiplier on top of the raw video-bitrate math for metadata/audio/keyframe-indexing overhead beyond the encoded video stream itself. Feeds on-prem storage sizing (cost and power draw) and the cloud connector's local-buffer sizing. 1.3 (30% overhead) is a general placeholder — some VMSes run leaner or heavier than this.";
+
+const SPARE_SERVERS_HELP =
+  "On-prem recording servers bought beyond whatever capacity actually requires, as hot-spare/headroom. Applies once per solution, not once per site.";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -88,6 +94,16 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
                 label={<InfoLabel label="Connector local buffer (days)" help={CONNECTOR_BUFFER_HELP} />}
                 leftSection={icon(CalendarClock)} value={value.connectorBufferDays} min={0}
                 onChange={(v) => set("connectorBufferDays", num(v))}
+              />
+              <NumberInput
+                label={<InfoLabel label="Storage overhead (x)" help={STORAGE_OVERHEAD_HELP} />}
+                leftSection={icon(Layers)} value={value.storageOverheadMultiplier} min={1} step={0.05} decimalScale={2}
+                onChange={(v) => set("storageOverheadMultiplier", num(v))}
+              />
+              <NumberInput
+                label={<InfoLabel label="Spare recording servers" help={SPARE_SERVERS_HELP} />}
+                leftSection={icon(Server)} value={value.spareServers} min={0}
+                onChange={(v) => set("spareServers", num(v))}
               />
             </SimpleGrid>
           </Accordion.Panel>

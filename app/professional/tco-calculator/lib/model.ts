@@ -93,6 +93,16 @@ export const DEFAULT_APPLIANCE_WATTS = 60; // connector/NVR-style cloud applianc
 // instead of the scenario's cloud retention days. Assumed unRAIDed (a
 // single local drive, not a mirrored array), unlike the on-prem side.
 export const DEFAULT_CONNECTOR_BUFFER_DAYS = 3;
+// Multiplier on top of the raw video-bitrate math in tbUsable below, for
+// metadata/audio/keyframe-indexing overhead beyond the encoded video stream
+// itself. Previously a bare, un-editable constant; some VMSes genuinely run
+// leaner or heavier overhead than this default, so it's a real assumption
+// worth exposing rather than a fixed fact like a unit conversion.
+export const DEFAULT_STORAGE_OVERHEAD_MULTIPLIER = 1.3;
+// On-prem recording servers bought beyond whatever capacity actually
+// requires — hot-spare/headroom, not a fixed technical fact (some
+// deployments run leaner, some want more than one spare).
+export const DEFAULT_SPARE_SERVERS = 1;
 
 export interface ScenarioInputs {
   cameras: number;
@@ -125,6 +135,10 @@ export interface ScenarioInputs {
   driveCapacityTb: number;
   applianceWatts: number;
   connectorBufferDays: number;
+  // See DEFAULT_STORAGE_OVERHEAD_MULTIPLIER/DEFAULT_SPARE_SERVERS above.
+  // Same resolution/fallback pattern as the wattage fields.
+  storageOverheadMultiplier: number;
+  spareServers: number;
 }
 
 export interface SolutionInputs {
@@ -304,6 +318,8 @@ export function computeSolution(
   const driveCapacityTb = Number(scenario.driveCapacityTb) || DEFAULT_DRIVE_CAPACITY_TB;
   const applianceWatts = Number(scenario.applianceWatts) || DEFAULT_APPLIANCE_WATTS;
   const connectorBufferDays = Number(scenario.connectorBufferDays) || DEFAULT_CONNECTOR_BUFFER_DAYS;
+  const storageOverheadMultiplier = Number(scenario.storageOverheadMultiplier) || DEFAULT_STORAGE_OVERHEAD_MULTIPLIER;
+  const spareServers = Number(scenario.spareServers) || DEFAULT_SPARE_SERVERS;
 
   // The add-on isn't storage-driven, so it doesn't scale with retentionMultiplier the way
   // the base license does, but the vendor's own negotiated discount still applies to it.
@@ -314,8 +330,9 @@ export function computeSolution(
   // At least one box per site (a connector/NVR is physically local to the cameras it
   // serves, you can't split one across sites), or more if total camera count demands it.
   const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.applianceCapacity))) : 0;
-  const nSrv = sol.model === "onprem" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.serverCapacity))) + 1 : 0;
-  const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * 1.3 * (sol.framerateFps / 24);
+  const nSrv =
+    sol.model === "onprem" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.serverCapacity))) + spareServers : 0;
+  const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * storageOverheadMultiplier * (sol.framerateFps / 24);
   // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
   // mirrored RAID 1/10). Power draw scales with physical drives too, more disks spinning.
   const tbPhysical = sol.model === "onprem" ? tbUsable * RAID_STORAGE_MULTIPLIER[sol.raidLevel] : tbUsable;
@@ -331,7 +348,7 @@ export function computeSolution(
   // flat per-unit SKU (applianceCost).
   const connectorBufferTb =
     sol.model === "cloud" && sol.migrationStrategy === "connector"
-      ? (cams * (br / 8) * 86400 * connectorBufferDays) / 1e6 * 1.3 * (sol.framerateFps / 24)
+      ? (cams * (br / 8) * 86400 * connectorBufferDays) / 1e6 * storageOverheadMultiplier * (sol.framerateFps / 24)
       : 0;
   const careCost = sol.model === "onprem" ? (sol.baseLicense + sol.deviceLicense * cams) * disc * (sol.carePct / 100) : 0;
 
