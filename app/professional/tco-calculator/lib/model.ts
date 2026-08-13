@@ -274,11 +274,27 @@ export interface SolutionResult {
   hardware: HardwareFootprint;
 }
 
-export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, isIncumbent = false): SolutionResult {
+export function computeSolution(
+  scenario: ScenarioInputs,
+  sol: SolutionInputs,
+  isIncumbent = false,
+  existingFleet?: SolutionInputs
+): SolutionResult {
   const { cameras: cams, sites, retentionDays: ret, horizonYears: yrs, bitrateMbps: br, investigationsPerMonth: invMo } = scenario;
   const esc = scenario.annualEscalationPct / 100;
   const disc = 1 - sol.discountPct / 100;
   const tierYears = Math.max(1, sol.tierYears); // guard against a cleared/zeroed input
+
+  // "connector" reuses the *other* side's already-installed camera fleet, not this
+  // solution's own hardware, until each unit dies and gets swapped for a native
+  // camera (see the CloudMigrationStrategy comment up top). So which cameras are
+  // actually failing — and on what schedule — is the *incumbent* fleet's own
+  // reliability, not this cloud solution's assumed numbers, whenever there's a
+  // real incumbent fleet on the other side to draw that from (computeComparison
+  // only passes `existingFleet` when that's true). The replacement unit going in
+  // is still this solution's own native camera, though, so its cost/install labor
+  // stay `sol.cameraCost`/`sol.replacementInstallLaborCost` below, unchanged.
+  const failureSource = sol.model === "cloud" && sol.migrationStrategy === "connector" && existingFleet ? existingFleet : sol;
 
   // Resolved wattage assumptions for the "Power/facilities" category — see
   // the ScenarioInputs comment for why the fallback pattern.
@@ -354,12 +370,14 @@ export function computeSolution(scenario: ScenarioInputs, sol: SolutionInputs, i
         yearCosts["Misc / other"] = (Number(sol.miscUpfrontCost) || 0) * disc;
       }
     } else {
-      const surv0 = Math.pow(0.5, (y - 1) / sol.fleetHalfLifeYears);
-      const surv1 = Math.pow(0.5, y / sol.fleetHalfLifeYears);
+      const surv0 = Math.pow(0.5, (y - 1) / failureSource.fleetHalfLifeYears);
+      const surv1 = Math.pow(0.5, y / failureSource.fleetHalfLifeYears);
       const fails = cams * (surv0 - surv1);
       // Cameras fail at year `y` counted from the year-0 install, so `y` doubles as
       // years-since-install for the warranty check. In warranty: labor only, no hardware cost.
-      const inWarranty = y <= sol.warrantyYears;
+      // Both use failureSource (the fleet actually failing), not sol, for a "connector"
+      // solution reusing another fleet — see the comment on failureSource above.
+      const inWarranty = y <= failureSource.warrantyYears;
       yearCosts["Camera replacements"] = fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
 
       yearCosts["Licenses/subscription"] =
@@ -438,8 +456,14 @@ export interface ComparisonResult {
 }
 
 export function computeComparison(scenario: ScenarioInputs, solA: SolutionInputs, solB: SolutionInputs): ComparisonResult {
-  const a = computeSolution(scenario, solA, scenario.incumbent === "a");
-  const b = computeSolution(scenario, solB, scenario.incumbent === "b");
+  // A "connector" solution reuses the *other* side's fleet, but only when that
+  // other side is a real incumbent — otherwise there's no actual installed fleet
+  // to draw reliability numbers from, and it falls back to its own (see
+  // computeSolution's failureSource).
+  const existingFleetForA = solA.model === "cloud" && solA.migrationStrategy === "connector" && scenario.incumbent === "b" ? solB : undefined;
+  const existingFleetForB = solB.model === "cloud" && solB.migrationStrategy === "connector" && scenario.incumbent === "a" ? solA : undefined;
+  const a = computeSolution(scenario, solA, scenario.incumbent === "a", existingFleetForA);
+  const b = computeSolution(scenario, solB, scenario.incumbent === "b", existingFleetForB);
   const labels = Array.from({ length: scenario.horizonYears + 1 }, (_, y) => "Yr " + y);
 
   // Find the first year with a nonzero gap to use as the baseline side, then

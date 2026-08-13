@@ -53,6 +53,23 @@ auth-gated, "dampened" on purpose.
   replacement for it, and like bitrate it only has a computed effect on the
   on-prem branch (cloud storage is priced into the license, not derived
   from bitrate/framerate at all).
+- **Connector reuses the incumbent's fleet, not its own**: a cloud
+  `migrationStrategy: "connector"` solution's ongoing "Camera replacements"
+  cost is driven by `failureSource` in `computeSolution` — the *other*
+  side's `fleetHalfLifeYears`/`warrantyYears`, not its own, whenever the
+  other side is a real incumbent (`computeComparison` only passes
+  `existingFleet` in that case). This matters: "connector" means reusing
+  cameras that are physically still the *incumbent's* hardware until each
+  one dies and gets swapped for a native camera, so it's the incumbent's own
+  reliability/warranty that determines when that swap happens, not the
+  cloud vendor's assumed numbers for hardware it doesn't even own yet. The
+  swapped-in replacement is still priced at the cloud solution's own
+  `cameraCost`/`replacementInstallLaborCost`, unchanged — only the failure
+  *timing* moves. Without a real incumbent on the other side (a fresh
+  comparison, or the cloud solution being incumbent itself), there's no
+  actual installed fleet to draw numbers from, so it falls back to its own
+  `fleetHalfLifeYears`/`warrantyYears` same as before this existed. Doesn't
+  apply to `ripReplace` (buys the full native fleet at year 0 regardless).
 - **Cloud licensing**: free-form term/price per solution (not a fixed
   vendor's pricing tiers), plus a `supportAddonPerCamYr` field (default 0,
   "bundled into the license") for vendors that price support/analytics/
