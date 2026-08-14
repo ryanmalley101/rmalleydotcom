@@ -76,6 +76,19 @@ auth-gated, "dampened" on purpose.
   extended retention separately instead of bundling everything into one
   flat number, that assumption is this tool's default, not a universal
   truth about every cloud vendor, so it's editable rather than hardcoded.
+  `tierPrice` is billed as a lump sum at purchase and at every renewal —
+  year 0, then every `tierYears` thereafter (`y % tierYears === 0`, skipped
+  in the horizon's final year, same convention as the on-prem/appliance
+  refresh cycles) — not smoothed evenly across each year of the term the
+  way an earlier version of this model did (`tierPrice / tierYears`,
+  charged every single year regardless of where the actual renewal falls).
+  A 5-year license is a single 5-year payment, not a de-facto annual
+  subscription at a fifth the price. `supportAddonPerCamYr`, by contrast,
+  genuinely is annual (it's named and priced that way), so it's charged
+  every year regardless of the term-renewal cycle, separate from
+  `tierPrice`. Renewals recur regardless of incumbent status, same as the
+  on-prem support/care renewal — only the *first* term purchase is skipped
+  for an incumbent (already owned).
   `migrationStrategy` (`"connector" | "ripReplace"`): "connector" reuses the
   existing camera fleet behind a connector/NVR-style appliance, with
   cameras swapped for native ones only as they fail; "ripReplace" buys out

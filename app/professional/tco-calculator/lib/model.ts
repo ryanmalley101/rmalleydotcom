@@ -332,12 +332,16 @@ export function computeSolution(
   const storageOverheadMultiplier = Number(scenario.storageOverheadMultiplier) || DEFAULT_STORAGE_OVERHEAD_MULTIPLIER;
   const spareServers = Number(scenario.spareServers) || DEFAULT_SPARE_SERVERS;
 
-  // The add-on isn't storage-driven, so it doesn't scale with retentionMultiplier the way
-  // the base license does, but the vendor's own negotiated discount still applies to it.
-  const licAnnual =
-    sol.model === "cloud"
-      ? (sol.tierPrice / tierYears) * retentionMultiplier(ret) * disc + sol.supportAddonPerCamYr * disc
-      : 0;
+  // Charged as a lump sum at purchase/renewal (year 0, then every `tierYears`
+  // thereafter), not smoothed evenly across every year of the term — a 5-year
+  // license is a single 5-year payment, not a de-facto annual subscription at
+  // 1/5th the price. The add-on isn't storage-driven, so it doesn't scale with
+  // retentionMultiplier the way the base license does, but the vendor's own
+  // negotiated discount still applies to it; unlike the term price, it's
+  // named/priced as a genuinely annual cost, so it's charged every year
+  // regardless of where the term-renewal cycle is.
+  const licenseTermCost = sol.model === "cloud" ? sol.tierPrice * retentionMultiplier(ret) * disc : 0;
+  const supportAddonAnnual = sol.model === "cloud" ? sol.supportAddonPerCamYr * disc : 0;
   // At least one box per site (a connector/NVR is physically local to the cameras it
   // serves, you can't split one across sites), or more if total camera count demands it.
   const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.applianceCapacity))) : 0;
@@ -391,6 +395,12 @@ export function computeSolution(
               (sol.baseLicense + sol.deviceLicense * cams + sol.analyticsSoftwareCostPerCam * cams) * disc;
           }
         }
+        // Cloud's first license term is bought up front at year 0 regardless of
+        // migrationStrategy (ripReplace's branch above doesn't touch
+        // Licenses/subscription at all, so this doesn't clobber anything there).
+        if (sol.model === "cloud") {
+          yearCosts["Licenses/subscription"] = licenseTermCost * cams;
+        }
         // Flat, not per-camera: professional-services/setup fees are typically
         // a project-level line item, not priced per unit installed. Coerced
         // through Number(...) || 0 (not just used raw) since sol can come from
@@ -410,8 +420,19 @@ export function computeSolution(
       const inWarranty = y <= failureSource.warrantyYears;
       yearCosts["Camera replacements"] = fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
 
-      yearCosts["Licenses/subscription"] =
-        sol.model === "cloud" ? licAnnual * cams : careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc;
+      if (sol.model === "cloud") {
+        // The support/analytics add-on is genuinely annual, charged every year;
+        // the term price itself only lands on renewal years (a lump sum, not
+        // smoothed), same cadence as an on-prem hardware refresh — skipped in
+        // the horizon's final year, no benefit renewing a term you won't use.
+        let cloudLicenseCost = supportAddonAnnual * cams;
+        if (y % tierYears === 0 && y < yrs) {
+          cloudLicenseCost += licenseTermCost * cams;
+        }
+        yearCosts["Licenses/subscription"] = cloudLicenseCost;
+      } else {
+        yearCosts["Licenses/subscription"] = careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc;
+      }
 
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate;

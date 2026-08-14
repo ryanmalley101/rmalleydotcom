@@ -31,7 +31,7 @@ const FRAMERATE_HELP =
   "Frames per second recorded per camera. Storage scales proportionally relative to the 24fps default; bitrate already captures most of the storage cost, this is a secondary adjustment on top of it.";
 
 const LICENSE_HELP =
-  "Before the retention multiplier. Support, software updates, and analytics are assumed bundled into the license by default; use the add-on field below if this vendor prices any of that separately.";
+  "Before the retention multiplier. Billed as a lump sum at purchase and at every renewal (year 0, then every term-length years), not smoothed evenly across each year in between — the $/yr figure below is just an average for reference. Support, software updates, and analytics are assumed bundled into the license by default; use the add-on field below if this vendor prices any of that separately.";
 
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
