@@ -55,10 +55,9 @@ smaller types it references), copied verbatim including its comments —
 several fields are ambiguous without them (e.g. whether a price is a
 one-time cost or annual, per-camera or per-appliance). Do not invent field
 names beyond what's shown here, and do not fill in `ScenarioInputs` fields
-(`adminRate`, `investigatorRate`, `truckRollCost`, `electricityRate`,
-`serverWatts`, `cameraWatts`, `driveWatts`, `driveCapacityTb`,
-`applianceWatts`, `connectorBufferDays`, `cameras`, `sites`, etc.) — those
-are the *operator's own* shared market rates and generic hardware-wattage
+(`adminRate`, `investigatorRate`, `truckRollCost`, `driveCapacityTb`,
+`storageOverheadMultiplier`, `spareServers`, `cameras`, `sites`, etc.) — those
+are the *operator's own* shared market rates and generic storage-sizing
 assumptions, not vendor-specific, and are out of scope for this research.
 
 ```ts
@@ -91,19 +90,15 @@ export interface ScenarioInputs {
   investigationsPerMonth: number;
   annualEscalationPct: number;
   incumbent: IncumbentChoice;
-  // Shared market rates and hardware-wattage assumptions: the operator's own
-  // costs/generic hardware, independent of vendor.
+  // Shared market rates and generic storage-sizing assumptions: the
+  // operator's own costs/generic hardware, independent of vendor.
   // OUT OF SCOPE for this research pass — do not fill these in.
   adminRate: number;
   investigatorRate: number;
   truckRollCost: number;
-  electricityRate: number;
-  serverWatts: number;
-  cameraWatts: number;
-  driveWatts: number;
   driveCapacityTb: number;
-  applianceWatts: number;
-  connectorBufferDays: number;
+  storageOverheadMultiplier: number;
+  spareServers: number;
 }
 
 export interface SolutionInputs {

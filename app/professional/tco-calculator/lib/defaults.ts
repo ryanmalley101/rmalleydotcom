@@ -1,9 +1,5 @@
-import type { ScenarioInputs, SolutionInputs, DeploymentModel } from "./model";
-import {
-  DEFAULT_SERVER_WATTS, DEFAULT_CAMERA_WATTS, DEFAULT_DRIVE_WATTS,
-  DEFAULT_DRIVE_CAPACITY_TB, DEFAULT_APPLIANCE_WATTS, DEFAULT_CONNECTOR_BUFFER_DAYS,
-  DEFAULT_STORAGE_OVERHEAD_MULTIPLIER, DEFAULT_SPARE_SERVERS,
-} from "./model";
+import type { ScenarioInputs, SolutionInputs, DeploymentModel, MiscCostItem } from "./model";
+import { DEFAULT_DRIVE_CAPACITY_TB, DEFAULT_STORAGE_OVERHEAD_MULTIPLIER, DEFAULT_SPARE_SERVERS } from "./model";
 
 export const DEFAULT_SCENARIO: ScenarioInputs = {
   cameras: 100,
@@ -17,30 +13,41 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
-  electricityRate: 0.15,
   // Seeded from the same constants computeSolution() falls back to for
   // missing values, so a fresh scenario and an old one missing these fields
   // start from identical numbers either way.
-  serverWatts: DEFAULT_SERVER_WATTS,
-  cameraWatts: DEFAULT_CAMERA_WATTS,
-  driveWatts: DEFAULT_DRIVE_WATTS,
   driveCapacityTb: DEFAULT_DRIVE_CAPACITY_TB,
-  applianceWatts: DEFAULT_APPLIANCE_WATTS,
-  connectorBufferDays: DEFAULT_CONNECTOR_BUFFER_DAYS,
   storageOverheadMultiplier: DEFAULT_STORAGE_OVERHEAD_MULTIPLIER,
   spareServers: DEFAULT_SPARE_SERVERS,
 };
 
 // Backfills any fields missing from a SolutionInputs decoded from an older
-// share link or saved comparison (created before a field like miscUpfrontCost
-// existed) with this model's current defaults, rather than leaving them
-// `undefined`. That matters more than a typical missing-field bug: an
-// undefined number anywhere in the per-year cost math turns that whole
-// year's total (and every category, since they're summed together) into
-// NaN, which then poisons the running cumulative total for every later year
-// too. Existing values always win; only genuinely absent keys fall back.
+// share link or saved comparison (created before a field existed) with this
+// model's current defaults, rather than leaving them `undefined`. That
+// matters more than a typical missing-field bug: an undefined number
+// anywhere in the per-year cost math turns that whole year's total (and
+// every category, since they're summed together) into NaN, which then
+// poisons the running cumulative total for every later year too. Existing
+// values always win; only genuinely absent keys fall back.
 export function normalizeSolution(sol: SolutionInputs): SolutionInputs {
-  return { ...defaultSolution(sol.id, sol.name, sol.model), ...sol };
+  const merged = { ...defaultSolution(sol.id, sol.name, sol.model), ...sol };
+  // Migrate the old flat miscUpfrontCost/miscAnnualCost fields (replaced by
+  // the free-form miscItems list) into equivalent named items, so an older
+  // share link/saved comparison's misc costs aren't silently dropped. Only
+  // runs when miscItems itself is genuinely absent — an explicit empty (or
+  // populated) array means this is already new-schema data.
+  const legacy = sol as SolutionInputs & { miscUpfrontCost?: number; miscAnnualCost?: number };
+  if (!Array.isArray(sol.miscItems) && (legacy.miscUpfrontCost || legacy.miscAnnualCost)) {
+    const migrated: MiscCostItem[] = [];
+    if (legacy.miscUpfrontCost) {
+      migrated.push({ id: "legacy-upfront", label: "Misc (upfront)", amount: legacy.miscUpfrontCost, timing: "upfront" });
+    }
+    if (legacy.miscAnnualCost) {
+      migrated.push({ id: "legacy-annual", label: "Misc (annual)", amount: legacy.miscAnnualCost, timing: "recurring" });
+    }
+    merged.miscItems = migrated;
+  }
+  return merged;
 }
 
 // Same idea for ScenarioInputs.
@@ -85,8 +92,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       analyticsSoftwareCostPerCamYr: 0,
       refreshCycleYears: 5,
       yearsUntilNextRefresh: 2,
-      miscUpfrontCost: 0,
-      miscAnnualCost: 0,
+      miscItems: [],
     };
   }
   return {
@@ -123,8 +129,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     applianceRefreshCycleYears: 7,
     yearsUntilNextApplianceRefresh: 2,
     supportAddonPerCamYr: 0,
-    miscUpfrontCost: 0,
-    miscAnnualCost: 0,
+    miscItems: [],
   };
 }
 

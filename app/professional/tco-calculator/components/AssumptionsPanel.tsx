@@ -2,8 +2,8 @@
 
 import { Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
 import {
-  ArrowRightLeft, BrainCircuit, CalendarClock, CalendarRange, Camera, Clock, Cpu, DollarSign,
-  FileText, Film, Hammer, HardDrive, Headset, Hourglass, Layers, PackagePlus, Percent,
+  ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
+  FileText, Film, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
   RefreshCw, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, SolutionInputs } from "../lib/model";
@@ -11,6 +11,7 @@ import { TEXT_MUTED } from "../lib/colors";
 import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, fieldSourceInfo } from "../lib/vendorDefaults";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
+import MiscItemsEditor from "./MiscItemsEditor";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -38,12 +39,6 @@ const ADDON_HELP =
 
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, same as the hardware, unless this solution is marked incumbent above (already owned, not charged again). Only the support/care renewal below recurs afterward.";
-
-const MISC_UPFRONT_HELP =
-  "A catch-all for any one-time cost that doesn't fit a category above — professional services for initial setup, a custom integration, a one-off migration fee, etc. Flat, not per-camera. Zeroed out for the incumbent side and discounted like the rest of year 0's buildout cost, same as the fields above. Defaults to $0.";
-
-const MISC_ANNUAL_HELP =
-  "A catch-all for any recurring cost that doesn't fit a category above — a compliance/audit fee, a monitoring contract, anything ongoing that isn't admin labor, truck rolls, or a license renewal. Charged every year after year 0, escalating and discounting the same as the other recurring lines. Defaults to $0.";
 
 // Groups related fields under a shared heading, since a flat list of ~25
 // fields (this panel's old shape) reads as one undifferentiated wall of
@@ -212,8 +207,7 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
       )}
 
       <SectionLabel>Misc / other</SectionLabel>
-      {num("Upfront, one-time ($)", "miscUpfrontCost", { icon: PackagePlus, help: MISC_UPFRONT_HELP })}
-      {num("Ongoing, per year ($)", "miscAnnualCost", { icon: CalendarClock, help: MISC_ANNUAL_HELP })}
+      <MiscItemsEditor items={sol.miscItems} onChange={(miscItems) => onChange({ ...sol, miscItems })} />
     </SimpleGrid>
   );
 }

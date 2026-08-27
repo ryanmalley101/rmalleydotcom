@@ -109,42 +109,36 @@ auth-gated, "dampened" on purpose.
   capacity bought (striping alone adds no capacity overhead, so RAID 10
   costs the same raw TB as RAID 1 for the same usable TB — the multiplier is
   identical for both). That multiplied ("physical") capacity feeds the
-  power-draw estimate below directly, and feeds the storage *dollar* cost
-  after one more step: `driveCountFor()` (`lib/model.ts`) converts it into a
-  whole number of real drives — you can't buy a fraction of one — respecting
-  each RAID level's minimum drive count (`RAID_MIN_DRIVES`: `none`/`raid1`
-  need at least 1/2, `raid0` needs 2, `raid10` needs at least *4*, since it's
-  two mirrored pairs striped together, not one). That floor matters most at
-  small scale: a tiny fleet on RAID 10 with large drives can be forced to
-  buy far more raw capacity than the continuous multiplier alone would
-  suggest, and both the storage cost and the `storageTB` hardware-footprint
-  stat reflect that (`tbBilled`, not the continuous `tbPhysical`).
-- **Power/facilities**: real per-device wattages (`serverWatts`,
-  `cameraWatts`, `driveWatts`, `driveCapacityTb`, `applianceWatts`,
-  `connectorBufferDays`, all editable `ScenarioInputs` fields, defaults in
-  `lib/model.ts`'s `DEFAULT_*` constants) drive this category instead of a
-  flat kW-per-category guess — an earlier version of this line item used
-  unsourced flat figures (kW/server, kW/TB, kW/appliance) that got removed
-  entirely for being too speculative; this replacement was built specifically
-  to answer that objection with numbers closer to a real datasheet. Camera
-  power (PoE draw) applies to *both* deployment models and every cloud
-  migration strategy, previously unmodeled on either side — a physical
-  camera draws power regardless of which backend records it. A cloud
-  connector appliance is functionally an NVR (records locally, syncs to the
-  vendor's cloud), so it gets its own drive-power term too, the same shape
-  as on-prem's server+drive terms, sized off a short local buffer
-  (`connectorBufferDays`, default 3) rather than the full cloud retention
-  window, and assumed unRAIDed unlike on-prem's array.
-- **Storage overhead and spare servers, also editable**: `storageOverheadMultiplier`
+  storage *dollar* cost after one more step: `driveCountFor()`
+  (`lib/model.ts`) converts it into a whole number of real drives — you
+  can't buy a fraction of one — respecting each RAID level's minimum drive
+  count (`RAID_MIN_DRIVES`: `none`/`raid1` need at least 1/2, `raid0` needs
+  2, `raid10` needs at least *4*, since it's two mirrored pairs striped
+  together, not one). That floor matters most at small scale: a tiny fleet
+  on RAID 10 with large drives can be forced to buy far more raw capacity
+  than the continuous multiplier alone would suggest, and both the storage
+  cost and the `storageTB` hardware-footprint stat reflect that (`tbBilled`,
+  not the continuous `tbPhysical`).
+- **Storage overhead and spare servers, editable**: `storageOverheadMultiplier`
   (default 1.3, i.e. 30%) is the metadata/audio/keyframe-indexing overhead on
   top of the raw video-bitrate math in `tbUsable`, feeding on-prem storage
-  sizing and the connector's local-buffer sizing; `spareServers` (default 1)
-  is the hot-spare recording-server headroom added to `nSrv` beyond whatever
-  capacity actually requires, once per solution, not once per site. Both were
-  previously bare, un-editable constants (`1.3` and `+ 1`) with no field
-  behind them at all — real assumptions, not fixed facts like a unit
-  conversion, so they got the same `ScenarioInputs` + `DEFAULT_*` +
-  `Number(scenario.x) || DEFAULT_X` treatment as the wattage fields above.
+  sizing; `spareServers` (default 1) is the hot-spare recording-server
+  headroom added to `nSrv` beyond whatever capacity actually requires, once
+  per solution, not once per site. Both were previously bare, un-editable
+  constants (`1.3` and `+ 1`) with no field behind them at all — real
+  assumptions, not fixed facts like a unit conversion, so they're real
+  `ScenarioInputs` fields with a `DEFAULT_*` constant and
+  `Number(scenario.x) || DEFAULT_X` fallback for older share links/saves
+  missing them.
+- **No electricity/power-draw modeling**: an earlier version priced a
+  "Power/facilities" category two different ways in turn — first flat,
+  unsourced kW-per-category guesses, then real per-device wattages
+  (server/camera/drive/appliance). Both were removed for good: the flat
+  version for being too speculative, and the wattage version — even though
+  more defensible — for not moving the comparison enough to be worth the
+  added fields and complexity. `driveCapacityTb` survived that removal
+  because it also drives whole-drive storage *billing* (see RAID above),
+  independent of power draw.
 - **Analytics**: on-prem's `analyticsApplianceCost`/`analyticsSoftwareCostPerCam`/
   `analyticsSoftwareCostPerCamYr` get their own labeled "Analytics"
   sub-section in `AssumptionsPanel` (a `SectionLabel` div spanning the
@@ -183,18 +177,24 @@ auth-gated, "dampened" on purpose.
 - **Site-driven hardware minimums**: appliance/server unit counts assume at
   least one per site, not just enough for total camera count, since a
   connector/NVR box is physically local.
-- **Misc / other**: two catch-all fields per solution, `miscUpfrontCost`
-  (one-time, year 0 only — e.g. professional services for initial setup) and
-  `miscAnnualCost` (recurring every year after year 0 — e.g. a compliance
-  audit fee or monitoring contract), for whatever a real quote contains that
-  doesn't fit any category above, without inventing a new category/formula
-  for every oddball line item. Both default to $0 for every model/shape and
-  are purely additive. `miscUpfrontCost` follows the same incumbent-zeroing
-  and vendor discount as the rest of year 0's buildout cost; `miscAnnualCost`
-  escalates/discounts like the other recurring lines. Both feed a single
-  "Misc / other" category (`CATEGORIES` in `lib/model.ts`), not their own
-  vendor-researched fields, so `vendorDefaults.ts`/`SourceDot` correctly show
-  no source for them.
+- **Misc / other**: `SolutionInputs.miscItems` is a free-form list
+  (`MiscCostItem[]`, `lib/model.ts`) rather than the two fixed
+  `miscUpfrontCost`/`miscAnnualCost` fields this replaced — each item has its
+  own `label`, `amount`, and `timing` (`"upfront"` | `"recurring"`), edited
+  via `MiscItemsEditor` (its own component, since it's a repeatable
+  add/remove list rather than a flat field). This exists specifically so a
+  user can justify value with their own named line items (e.g. "Workers comp
+  claim reduction") without this tool having to name/model every possible
+  one in advance — `amount` can be negative, a cost *offset*/credit is just
+  a misc item with a negative amount, the same mechanism as a misc cost.
+  Applied at face value (no vendor `discountPct`) — these are user-authored
+  numbers unrelated to vendor pricing, not a vendor SKU. `"upfront"` items
+  follow the same incumbent-zeroing as the rest of year 0's buildout cost;
+  `"recurring"` items are charged every year regardless of incumbent status
+  (same as the support/care renewal) and escalate like the other recurring
+  lines. `normalizeSolution()` (`lib/defaults.ts`) migrates an older
+  share link/saved comparison's flat `miscUpfrontCost`/`miscAnnualCost` into
+  equivalent named items on load, so old data isn't silently dropped.
 - **Crossover detection**: `computeComparison`'s search starts its baseline
   at whichever year first has a nonzero cost gap (usually year 0, not year
   1, since an incumbent's side often starts at $0) and reports every later
@@ -264,10 +264,10 @@ before trusting an unedited comparison:
   help anchor a dense grid.
 - `ScenarioStep`'s top-level "Key variables" grid only holds the handful of
   facts that actually define a comparison (camera count, sites, retention,
-  horizon, bitrate, investigations/mo); escalation, market rates,
-  electricity, and the per-device wattage assumptions all live in one
-  collapsed-by-default "Advanced" accordion instead, so a first pass at a
-  comparison doesn't need to see them.
+  horizon, bitrate, investigations/mo); escalation, market rates, and the
+  storage-sizing assumptions (`driveCapacityTb`, `storageOverheadMultiplier`,
+  `spareServers`) all live in one collapsed-by-default "Advanced" accordion
+  instead, so a first pass at a comparison doesn't need to see them.
 
 ## Platform notes
 

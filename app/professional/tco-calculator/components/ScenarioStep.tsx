@@ -2,8 +2,8 @@
 
 import { Accordion, NumberInput, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import {
-  Activity, Building2, Camera, CalendarClock, CalendarRange, Database, DollarSign,
-  HardDrive, Layers, Router, Search, Server, TrendingUp, Truck, Zap,
+  Activity, Building2, Camera, CalendarRange, Database, DollarSign,
+  HardDrive, Layers, Search, Server, TrendingUp, Truck,
 } from "lucide-react";
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
@@ -23,11 +23,8 @@ const ESCALATION_LABEL = (
   />
 );
 
-const CONNECTOR_BUFFER_HELP =
-  "How many days of footage a cloud connector/NVR-style appliance is assumed to hold locally before/regardless of cloud sync — not the full cloud retention window, just a short rolling buffer for outage resilience. Drives the connector's own drive-power cost in \"Power/facilities\".";
-
 const STORAGE_OVERHEAD_HELP =
-  "Multiplier on top of the raw video-bitrate math for metadata/audio/keyframe-indexing overhead beyond the encoded video stream itself. Feeds on-prem storage sizing (cost and power draw) and the cloud connector's local-buffer sizing. 1.3 (30% overhead) is a general placeholder — some VMSes run leaner or heavier than this.";
+  "Multiplier on top of the raw video-bitrate math for metadata/audio/keyframe-indexing overhead beyond the encoded video stream itself. Feeds on-prem storage sizing. 1.3 (30% overhead) is a general placeholder — some VMSes run leaner or heavier than this.";
 
 const SPARE_SERVERS_HELP =
   "On-prem recording servers bought beyond whatever capacity actually requires, as hot-spare/headroom. Applies once per solution, not once per site.";
@@ -61,14 +58,14 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
           onChange={(v) => set("investigationsPerMonth", num(v))} />
       </SimpleGrid>
 
-      {/* Collapsed by default, deliberately: escalation, market rates, electricity, and
-          the per-device wattage assumptions are all real inputs, but not ones a first
-          pass at a comparison needs — burying them behind one accordion keeps the main
-          form to the handful of facts that actually define the comparison. */}
+      {/* Collapsed by default, deliberately: escalation, market rates, and the
+          storage-sizing assumptions are all real inputs, but not ones a first
+          pass at a comparison needs — burying them behind one accordion keeps the
+          main form to the handful of facts that actually define the comparison. */}
       <Accordion variant="separated">
         <Accordion.Item value="advanced">
           <Accordion.Control>
-            <Text size="sm" fw={500}>Advanced (escalation, market rates, electricity)</Text>
+            <Text size="sm" fw={500}>Advanced (escalation, market rates, storage sizing)</Text>
           </Accordion.Control>
           <Accordion.Panel>
             <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
@@ -78,23 +75,8 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
               <NumberInput label="Admin ($/hr)" leftSection={icon(DollarSign)} value={value.adminRate} min={0} onChange={(v) => set("adminRate", num(v))} />
               <NumberInput label="Investigator ($/hr)" leftSection={icon(DollarSign)} value={value.investigatorRate} min={0} onChange={(v) => set("investigatorRate", num(v))} />
               <NumberInput label="Truck roll ($)" leftSection={icon(Truck)} value={value.truckRollCost} min={0} onChange={(v) => set("truckRollCost", num(v))} />
-              <NumberInput label="Electricity ($/kWh)" leftSection={icon(Zap)} value={value.electricityRate} min={0} step={0.01} decimalScale={2}
-                onChange={(v) => set("electricityRate", num(v))} />
-              <NumberInput label="Server watts (W/server)" leftSection={icon(Server)} value={value.serverWatts} min={0}
-                onChange={(v) => set("serverWatts", num(v))} />
-              <NumberInput label="Camera watts (W/cam)" leftSection={icon(Camera)} value={value.cameraWatts} min={0}
-                onChange={(v) => set("cameraWatts", num(v))} />
-              <NumberInput label="Drive watts (W/drive)" leftSection={icon(HardDrive)} value={value.driveWatts} min={0}
-                onChange={(v) => set("driveWatts", num(v))} />
               <NumberInput label="Drive capacity (TB/drive)" leftSection={icon(HardDrive)} value={value.driveCapacityTb} min={1}
                 onChange={(v) => set("driveCapacityTb", num(v))} />
-              <NumberInput label="Appliance watts (W/appliance)" leftSection={icon(Router)} value={value.applianceWatts} min={0}
-                onChange={(v) => set("applianceWatts", num(v))} />
-              <NumberInput
-                label={<InfoLabel label="Connector local buffer (days)" help={CONNECTOR_BUFFER_HELP} />}
-                leftSection={icon(CalendarClock)} value={value.connectorBufferDays} min={0}
-                onChange={(v) => set("connectorBufferDays", num(v))}
-              />
               <NumberInput
                 label={<InfoLabel label="Storage overhead (x)" help={STORAGE_OVERHEAD_HELP} />}
                 leftSection={icon(Layers)} value={value.storageOverheadMultiplier} min={1} step={0.05} decimalScale={2}
