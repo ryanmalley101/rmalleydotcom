@@ -365,8 +365,14 @@ export function computeSolution(
           // already owned/sunk. Only the ongoing care/SUP renewal (and the separate
           // analyticsSoftwareCostPerCamYr below) recur after this.
           if (sol.model === "onprem") {
+            // Number(...) || 0: analyticsSoftwareCostPerCam replaced the old flat
+            // analyticsSoftwareCost field — an older share link/saved comparison
+            // predating the split would leave it undefined, which would otherwise
+            // NaN out this whole year's total (and every later year's cumulative
+            // total). Normalization backfills the real default (100) before this
+            // ever runs in practice; this is just a last-resort guard.
             yearCosts["Licenses/subscription"] =
-              (sol.baseLicense + sol.deviceLicense * cams + sol.analyticsSoftwareCostPerCam * cams) * disc;
+              (sol.baseLicense + sol.deviceLicense * cams + (Number(sol.analyticsSoftwareCostPerCam) || 0) * cams) * disc;
           }
         }
         // Cloud's first license term is bought up front at year 0 regardless of
@@ -402,7 +408,7 @@ export function computeSolution(
         }
         yearCosts["Licenses/subscription"] = cloudLicenseCost;
       } else {
-        yearCosts["Licenses/subscription"] = careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc;
+        yearCosts["Licenses/subscription"] = careCost + (Number(sol.analyticsSoftwareCostPerCamYr) || 0) * cams * disc;
       }
 
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;

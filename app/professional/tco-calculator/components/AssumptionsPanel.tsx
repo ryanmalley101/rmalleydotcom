@@ -1,12 +1,12 @@
 "use client";
 
-import { Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
+import { Alert, Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
 import {
-  ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
+  AlertTriangle, ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
   FileText, Film, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
   RefreshCw, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
 } from "lucide-react";
-import type { CloudMigrationStrategy, RaidLevel, SolutionInputs } from "../lib/model";
+import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, fieldSourceInfo } from "../lib/vendorDefaults";
 import InfoLabel from "./InfoLabel";
@@ -52,8 +52,36 @@ const SectionLabel = ({ children, first }: { children: React.ReactNode; first?: 
   </div>
 );
 
-export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInputs; onChange: (v: SolutionInputs) => void }) {
+// Warns when a solution's hardware-refresh timing means its whole refresh
+// line (server/storage/analytics appliance, or the connector appliance) can
+// never actually be charged within this comparison: an incumbent skips the
+// year-0 buildout entirely (nothing new deployed for it), so refresh cycles
+// are the *only* place that cost can still appear — and if the next refresh
+// falls at or beyond the horizon, it never does. Silent otherwise, since a
+// non-incumbent always pays at year 0 regardless of refresh timing, and a
+// refresh past the horizon for it is a legitimate, harmless scenario, not a
+// cost line quietly disappearing.
+function StaleRefreshWarning({ isIncumbent, yearsUntilNextRefresh, horizonYears, what }: {
+  isIncumbent: boolean; yearsUntilNextRefresh: number; horizonYears: number; what: string;
+}) {
+  if (!isIncumbent || yearsUntilNextRefresh < horizonYears) return null;
+  return (
+    <div style={{ gridColumn: "1 / -1" }}>
+      <Alert color="yellow" variant="light" icon={<AlertTriangle size={16} />} p="xs">
+        <Text size="xs">
+          This solution is marked incumbent and its next refresh ({yearsUntilNextRefresh}yr) falls at or beyond the{" "}
+          {horizonYears}-year horizon — {what} won&apos;t appear anywhere in this comparison.
+        </Text>
+      </Alert>
+    </div>
+  );
+}
+
+export default function AssumptionsPanel({ sol, onChange, scenario }: {
+  sol: SolutionInputs; onChange: (v: SolutionInputs) => void; scenario: ScenarioInputs;
+}) {
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
+  const isIncumbent = scenario.incumbent === sol.id;
 
   // Whichever vendor entries could plausibly have set a given field's current
   // value — on-prem splits license/server fields (VMS vendor) from camera
@@ -163,6 +191,10 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
             })}
             {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, icon: RefreshCw })}
             {num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, icon: Clock })}
+            <StaleRefreshWarning
+              isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextApplianceRefresh}
+              horizonYears={scenario.horizonYears} what="the connector appliance cost"
+            />
           </>
         )
       ) : (
@@ -180,6 +212,10 @@ export default function AssumptionsPanel({ sol, onChange }: { sol: SolutionInput
           />
           {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, icon: RefreshCw })}
           {num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, icon: Clock })}
+          <StaleRefreshWarning
+            isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextRefresh}
+            horizonYears={scenario.horizonYears} what="server, storage, and analytics appliance costs"
+          />
         </>
       )}
 

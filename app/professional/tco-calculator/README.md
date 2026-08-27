@@ -43,6 +43,20 @@ auth-gated, "dampened" on purpose.
   license purchase for either side, which understated a fresh on-prem
   deployment's cost any time neither side (or the *other* side) was
   incumbent — fixed since it contradicted this same symmetry principle.
+- **Silent-zero warning for stale refresh timing**: an incumbent's *only*
+  path to ever charging server/storage/analytics-appliance cost (or the
+  connector appliance cost) is a hardware refresh landing inside the
+  horizon (year 0 is always skipped for it). If `yearsUntilNextRefresh` (or
+  `yearsUntilNextApplianceRefresh`) is set to the horizon length or beyond,
+  that whole cost line silently never appears anywhere in the comparison —
+  discovered when incrementing `analyticsApplianceCost` visibly did nothing.
+  `AssumptionsPanel`'s `StaleRefreshWarning` surfaces this inline (an
+  `Alert` under the relevant "Years until next refresh" field) exactly when
+  `isIncumbent && yearsUntilNextRefresh >= horizonYears`, so it's visible
+  rather than a silent gap. Never fires for a non-incumbent: it always pays
+  the full cost at year 0 regardless of refresh timing, so a refresh
+  falling past the horizon there is a legitimate, harmless scenario, not a
+  cost line quietly disappearing.
 - **Per-solution, not scenario-level**: `fleetHalfLifeYears`, `warrantyYears`,
   `framerateFps` all live on `SolutionInputs` since each side's camera
   hardware can have its own reliability/warranty/frame rate, even when
@@ -158,7 +172,13 @@ auth-gated, "dampened" on purpose.
   hardware it happens to run on); `analyticsSoftwareCostPerCamYr` (default
   $0) is a separate, purely additive ongoing per-camera cost for vendors
   that also charge a recurring analytics subscription on top of the
-  one-time license.
+  one-time license. Both usages in `computeSolution` coerce through
+  `Number(sol.x) || 0`, not the raw field — this pair replaced the single
+  older `analyticsSoftwareCost` field, and an un-normalized old
+  solution object (missing the new names entirely) would otherwise NaN out
+  that whole year's total. `normalizeSolution()` backfills the real default
+  (100/0) before this ever runs in the actual app; this is a last-resort
+  guard in case some future path ever calls `computeSolution` without it.
 - **Escalation, no NPV discounting**: `annualEscalationPct` compounds every
   recurring cost year over year. An earlier version also had a separate NPV
   discount rate (`npvDiscountPct`) applied on top, standard financial-model

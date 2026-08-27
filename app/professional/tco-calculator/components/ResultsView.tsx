@@ -273,7 +273,7 @@ export default function ResultsView({
                 </Group>
               </Accordion.Control>
               <Accordion.Panel>
-                <AssumptionsPanel sol={solA} onChange={onSolAChange} />
+                <AssumptionsPanel sol={solA} onChange={onSolAChange} scenario={scenario} />
               </Accordion.Panel>
             </Accordion.Item>
             <Accordion.Item value="solB">
@@ -284,7 +284,7 @@ export default function ResultsView({
                 </Group>
               </Accordion.Control>
               <Accordion.Panel>
-                <AssumptionsPanel sol={solB} onChange={onSolBChange} />
+                <AssumptionsPanel sol={solB} onChange={onSolBChange} scenario={scenario} />
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
