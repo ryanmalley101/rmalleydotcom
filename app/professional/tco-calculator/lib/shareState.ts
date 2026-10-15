@@ -1,5 +1,5 @@
 import LZString from "lz-string";
-import type { ScenarioInputs, SolutionInputs } from "./model";
+import { MODEL_VERSION, type ScenarioInputs, type SolutionInputs } from "./model";
 import { normalizeScenario, normalizeSolution } from "./defaults";
 
 export interface SharedState {
@@ -9,6 +9,15 @@ export interface SharedState {
   solB: SolutionInputs;
   colorA: string;
   colorB: string;
+  // Cost-model version this state was created under (see MODEL_VERSION).
+  // Absent on links/saves from before versioning, which count as version 1.
+  modelVersion?: number;
+}
+
+// True when the state was created under an older cost model than the one
+// now running, so its totals may differ from what the sender saw.
+export function isStaleModel(state: Pick<SharedState, "modelVersion">): boolean {
+  return (state.modelVersion ?? 1) < MODEL_VERSION;
 }
 
 // Backfills any fields missing from a SharedState produced by an older
@@ -32,7 +41,7 @@ export function normalizeSharedState(state: SharedState): SharedState {
 // API isn't usable. Typically shrinks a two-on-prem-solution payload from
 // ~2.7KB to under 1KB, well clear of old link-unfurler/SMS/proxy URL limits.
 export function encodeShareState(state: SharedState): string {
-  return LZString.compressToEncodedURIComponent(JSON.stringify(state));
+  return LZString.compressToEncodedURIComponent(JSON.stringify({ ...state, modelVersion: MODEL_VERSION }));
 }
 
 export function decodeShareState(raw: string): SharedState | null {

@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "./lib/colors";
 import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution, type ShapeOption } from "./lib/defaults";
 import type { IncumbentChoice, ScenarioInputs, SolutionInputs } from "./lib/model";
-import { decodeShareState, encodeShareState, normalizeSharedState, type SharedState } from "./lib/shareState";
+import { decodeShareState, encodeShareState, isStaleModel, normalizeSharedState, type SharedState } from "./lib/shareState";
 import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, withVendorDefaults } from "./lib/vendorDefaults";
 import IntroScreen from "./components/IntroScreen";
 import ShapeStep from "./components/ShapeStep";
@@ -73,6 +73,10 @@ function TcoCalculatorInner() {
   const [solB, setSolB] = useState<SolutionInputs | null>(initial?.solB ?? null);
   const [colorA, setColorA] = useState(initial?.colorA ?? SOLUTION_A_COLOR);
   const [colorB, setColorB] = useState(initial?.colorB ?? SOLUTION_B_COLOR);
+  // A shared link or saved comparison made under an older cost model gets a
+  // one-line notice that its totals were recalculated, rather than silently
+  // showing numbers that differ from what its sender saw.
+  const [staleModel, setStaleModel] = useState(initial ? isStaleModel(initial) : false);
 
   const shareUrl = useMemo(() => {
     if (typeof window === "undefined" || !shapeId || !solA || !solB) return "";
@@ -122,6 +126,7 @@ function TcoCalculatorInner() {
     setSolB(normalized.solB);
     setColorA(normalized.colorA);
     setColorB(normalized.colorB);
+    setStaleModel(isStaleModel(state));
     setPhase("results");
   }
 
@@ -155,6 +160,8 @@ function TcoCalculatorInner() {
             colorA={colorA}
             colorB={colorB}
             shareUrl={shareUrl}
+            staleModel={staleModel}
+            onDismissStaleModel={() => setStaleModel(false)}
             onScenarioChange={setScenario}
             onSolAChange={setSolA}
             onSolBChange={setSolB}

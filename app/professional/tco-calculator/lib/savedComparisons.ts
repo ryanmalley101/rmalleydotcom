@@ -1,4 +1,5 @@
 import type { SharedState } from "./shareState";
+import { MODEL_VERSION } from "./model";
 
 // Local-only "saved TCOs" list: no login, so this is deliberately just
 // localStorage rather than a backend model. Losing it to a cache purge or a
@@ -77,7 +78,7 @@ export function saveComparison(name: string, state: SharedState): SavedCompariso
     id: crypto.randomUUID(),
     name: name.trim() || "Untitled comparison",
     savedAt: new Date().toISOString(),
-    state,
+    state: { ...state, modelVersion: MODEL_VERSION },
   };
   const next = [entry, ...readRaw()].slice(0, MAX_SAVED);
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));

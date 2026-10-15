@@ -11,6 +11,13 @@
 // full camera fleet replacement, since most such products are designed to
 // reuse the customer's existing cameras.
 
+// Bumped whenever a change to this file (or to the defaults it's fed) changes
+// what an existing share link or saved comparison would compute. Stamped into
+// every share link/save, so a link created under an older model can say its
+// totals were recalculated instead of silently showing different numbers.
+// Links from before versioning existed decode as version 1.
+export const MODEL_VERSION = 2;
+
 export type DeploymentModel = "cloud" | "onprem";
 export type IncumbentChoice = "none" | "a" | "b";
 // How a cloud/hybrid solution's cameras get onto the new platform:

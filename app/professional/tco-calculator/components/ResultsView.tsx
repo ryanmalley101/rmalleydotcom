@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Accordion, Badge, Box, Button, CopyButton, Group, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Accordion, Alert, Badge, Box, Button, CopyButton, Group, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { Check, Copy, Download, History, RotateCcw, Save } from "lucide-react";
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
@@ -50,7 +50,8 @@ function hardwareSummaryText(hw: HardwareFootprint): string | null {
 }
 
 export default function ResultsView({
-  shapeId, scenario, solA, solB, colorA, colorB, shareUrl, onScenarioChange, onSolAChange, onSolBChange, onEditSetup,
+  shapeId, scenario, solA, solB, colorA, colorB, shareUrl, staleModel = false, onDismissStaleModel,
+  onScenarioChange, onSolAChange, onSolBChange, onEditSetup,
 }: {
   shapeId: string;
   scenario: ScenarioInputs;
@@ -59,6 +60,8 @@ export default function ResultsView({
   colorA: string;
   colorB: string;
   shareUrl: string;
+  staleModel?: boolean;
+  onDismissStaleModel?: () => void;
   onScenarioChange: (v: ScenarioInputs) => void;
   onSolAChange: (v: SolutionInputs) => void;
   onSolBChange: (v: SolutionInputs) => void;
@@ -137,6 +140,15 @@ export default function ResultsView({
           </Button>
         </Group>
       </Group>
+
+      {staleModel && (
+        <Alert color="blue" variant="light" withCloseButton onClose={onDismissStaleModel} p="sm">
+          <Text size="sm">
+            This comparison was created with an earlier version of the cost model. Its totals have been recalculated
+            with the current one, so they may differ from what was originally shared.
+          </Text>
+        </Alert>
+      )}
 
       <Modal opened={saveModalOpen} onClose={closeSaveModal} title="Save this comparison" centered>
         <Stack gap="md">
