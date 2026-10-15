@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Accordion, Alert, Badge, Box, Button, CopyButton, Group, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Accordion, Alert, Badge, Box, Button, CopyButton, Group, Menu, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import { Check, Copy, Download, History, RotateCcw, Save } from "lucide-react";
+import { Check, ChevronDown, Copy, Download, FileSpreadsheet, FileText, History, Image as ImageIcon, RotateCcw, Save } from "lucide-react";
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
@@ -16,6 +16,9 @@ import AssumptionsPanel from "./AssumptionsPanel";
 import ChartsPanel from "./ChartsPanel";
 import MethodologyNotes from "./MethodologyNotes";
 import GapDrivers from "./GapDrivers";
+import YearTable from "./YearTable";
+import { buildCsv, buildReportHtml } from "../lib/report";
+import { METHODOLOGY_NOTES } from "../lib/methodology";
 import IncumbentPicker from "./IncumbentPicker";
 
 // Color by meaning (which side actually costs less), not by A/B slot or
@@ -114,6 +117,29 @@ export default function ResultsView({
     }
   }
 
+  const fileBase = `${solA.name}-vs-${solB.name}-tco`.replace(/[^\w.-]+/g, "-");
+  const exportState = { shapeId, scenario, solA, solB, colorA, colorB };
+
+  function handleCsv() {
+    const blob = new Blob([buildCsv(exportState, comparison)], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${fileBase}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  // Opens a plain, light-themed report in a new tab and starts printing, so
+  // it can be saved as a PDF from the browser's print dialog.
+  function handlePrintable() {
+    const win = window.open("", "_blank");
+    if (!win) return;
+    win.document.write(buildReportHtml(exportState, comparison, METHODOLOGY_NOTES));
+    win.document.close();
+    win.focus();
+    win.print();
+  }
+
   function handleOpenSaveModal() {
     setSaveName(`${solA.name} vs. ${solB.name}`);
     openSaveModal();
@@ -147,9 +173,18 @@ export default function ResultsView({
               </Button>
             )}
           </CopyButton>
-          <Button variant="default" leftSection={<Download size={14} />} onClick={handleDownload} loading={exporting}>
-            Download snapshot
-          </Button>
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target>
+              <Button variant="default" leftSection={<Download size={14} />} rightSection={<ChevronDown size={14} />} loading={exporting}>
+                Export
+              </Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item leftSection={<ImageIcon size={14} />} onClick={handleDownload}>Snapshot image (PNG)</Menu.Item>
+              <Menu.Item leftSection={<FileSpreadsheet size={14} />} onClick={handleCsv}>Data and inputs (CSV)</Menu.Item>
+              <Menu.Item leftSection={<FileText size={14} />} onClick={handlePrintable}>Printable report (PDF)</Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
           <Button variant="default" leftSection={<RotateCcw size={14} />} onClick={onEditSetup}>
             Edit setup
           </Button>
@@ -285,6 +320,9 @@ export default function ResultsView({
               <ChartsPanel comparison={comparison} nameA={solA.name} nameB={solB.name} colorA={colorA} colorB={colorB} />
               <GapDrivers comparison={comparison} scenario={scenario} solA={solA} solB={solB} colorA={colorA} colorB={colorB} />
             </Stack>
+          </Box>
+          <Box mt="xl">
+            <YearTable comparison={comparison} nameA={solA.name} nameB={solB.name} />
           </Box>
         </Box>
 

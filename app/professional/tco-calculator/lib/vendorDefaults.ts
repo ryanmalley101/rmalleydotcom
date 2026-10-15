@@ -533,3 +533,12 @@ export const ONPREM_CAMERA_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> =
     notes: "Priced model: XNV-8080R (5MP outdoor; was priced via the indoor XND-8080RV before). Distinct from the \"Hanwha Wisenet WAVE\" entry in ONPREM_VMS_VENDOR_DEFAULTS: that's the VMS software, this is the camera-hardware brand. Country of origin listed as China for this model, which matters for NDAA/procurement filtering in some federal/education contexts even though Hanwha itself is South Korean.",
   },
 };
+
+// Every vendor entry a solution's current values could have come from:
+// one cloud vendor, or an on-prem VMS vendor plus a camera vendor.
+export function vendorEntriesFor(sol: SolutionInputs): (VendorDefaultEntry | undefined)[] {
+  return sol.model === "cloud"
+    ? [CLOUD_VENDOR_DEFAULTS[sol.name]]
+    : [sol.vmsProvider ? ONPREM_VMS_VENDOR_DEFAULTS[sol.vmsProvider] : undefined,
+       sol.cameraProvider ? ONPREM_CAMERA_VENDOR_DEFAULTS[sol.cameraProvider] : undefined];
+}

@@ -9,7 +9,7 @@ import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
 import {
   CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS,
-  switchVendor, confidenceSummary, fieldSourceInfo, type VendorDefaultEntry,
+  switchVendor, confidenceSummary, fieldSourceInfo, vendorEntriesFor, type VendorDefaultEntry,
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import CameraStrategyControl from "./CameraStrategyControl";
@@ -18,15 +18,6 @@ import { withWarranty } from "../lib/defaults";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 
-// Same per-field entries a solution's current values could have come from
-// as AssumptionsPanel uses — duplicated rather than shared since this file
-// and AssumptionsPanel.tsx don't otherwise share a common parent for it.
-function vendorEntriesFor(sol: SolutionInputs) {
-  return sol.model === "cloud"
-    ? [CLOUD_VENDOR_DEFAULTS[sol.name]]
-    : [sol.vmsProvider ? ONPREM_VMS_VENDOR_DEFAULTS[sol.vmsProvider] : undefined,
-       sol.cameraProvider ? ONPREM_CAMERA_VENDOR_DEFAULTS[sol.cameraProvider] : undefined];
-}
 
 const OTHER = "other";
 const PLACEHOLDER_NAMES = ["Solution A (Cloud)", "Solution A (On-Prem)", "Solution B (Cloud)", "Solution B (On-Prem)"];

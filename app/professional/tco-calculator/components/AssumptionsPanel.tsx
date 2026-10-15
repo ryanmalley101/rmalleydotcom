@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
-import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, fieldSourceInfo } from "../lib/vendorDefaults";
+import { fieldSourceInfo, vendorEntriesFor } from "../lib/vendorDefaults";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 import MiscItemsEditor from "./MiscItemsEditor";
@@ -91,11 +91,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
   // fields (camera vendor); cloud is a single vendor. fieldSourceInfo checks
   // each in turn and only returns metadata if the field wasn't edited away
   // from what that vendor's research actually produced.
-  const vendorEntries =
-    sol.model === "cloud"
-      ? [CLOUD_VENDOR_DEFAULTS[sol.name]]
-      : [sol.vmsProvider ? ONPREM_VMS_VENDOR_DEFAULTS[sol.vmsProvider] : undefined,
-         sol.cameraProvider ? ONPREM_CAMERA_VENDOR_DEFAULTS[sol.cameraProvider] : undefined];
+  const vendorEntries = vendorEntriesFor(sol);
 
   const num = (
     label: React.ReactNode,
