@@ -93,6 +93,22 @@ auth-gated, "dampened" on purpose.
   replacement for it, and like bitrate it only has a computed effect on the
   on-prem branch (cloud storage is priced into the license, not derived
   from bitrate/framerate at all).
+- **Camera failures are tracked by install-year cohort** (`computeSolution`):
+  each cohort loses a constant share per year, `1 - 0.5^(1/halfLife)`, and
+  every failure is replaced at this solution's own `cameraCost` /
+  `replacementInstallLaborCost`, becoming a new cohort with this solution's
+  own half-life and warranty that can fail in turn. A failure costs labor
+  only while its cohort is within its warranty, counted from the cohort's
+  install year. The year-0 cohort is the cameras already on site whenever
+  this side keeps them (the incumbent, or a side reusing them), and is
+  `ScenarioInputs.existingFleetAgeYears` old (default 0, i.e. new), so an
+  old fleet's warranty may already be used up. The earlier model only
+  decayed the original fleet, never letting replacements fail, which
+  undercounted swaps by roughly a quarter to a half over 10-15 years, and
+  treated every incumbent fleet as brand new for warranty. The results
+  summary's "fleet replaced" stat is `hardware.originalFleetReplacedPct`
+  from these same cohorts. Simplification: a warranty replacement gets a
+  fresh warranty rather than the remainder of the original one.
 - **Connector reuses the incumbent's fleet, not its own**: a cloud
   `migrationStrategy: "connector"` solution's ongoing "Camera replacements"
   cost is driven by `failureSource` in `computeSolution` — the *other*

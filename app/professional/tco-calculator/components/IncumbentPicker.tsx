@@ -1,11 +1,14 @@
 "use client";
 
-import { Radio, Group, Stack } from "@mantine/core";
+import { NumberInput, Radio, Group, Stack } from "@mantine/core";
 import type { ScenarioInputs, IncumbentChoice } from "../lib/model";
 import InfoLabel from "./InfoLabel";
 
 const INCUMBENT_HELP =
   "The incumbent skips its year-0 buildout cost, since that hardware is already paid for. The other solution is still costed as a fresh deployment.";
+
+const FLEET_AGE_HELP =
+  "How many years the cameras already on site have been installed. Their warranty is counted from this age, so an older fleet's failures cost the camera as well as the labor sooner. Applies to the incumbent and to any solution that keeps those cameras. 0 treats them as brand new.";
 
 const EXISTING_CAMERAS_HELP =
   "Yes: a newly deployed solution can keep the cameras already on site, through a cloud connector or by adding them to a new on-prem VMS, and each solution's own setting decides whether it does. No: a new site, or cameras that have to go, so every newly deployed solution buys its full camera fleet at year 0.";
@@ -45,6 +48,14 @@ export default function IncumbentPicker({
           </Group>
         </Radio.Group>
       </Stack>
+      {(scenario.incumbent !== "none" || scenario.existingCamerasReusable !== false) && (
+        <NumberInput
+          label={<InfoLabel label="Age of the existing cameras (yrs)" help={FLEET_AGE_HELP} />}
+          value={scenario.existingFleetAgeYears ?? 0}
+          min={0} max={30} step={1} w={220}
+          onChange={(v) => onScenarioChange({ ...scenario, existingFleetAgeYears: typeof v === "number" ? v : 0 })}
+        />
+      )}
     </Stack>
   );
 }

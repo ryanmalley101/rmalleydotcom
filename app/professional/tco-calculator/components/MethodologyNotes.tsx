@@ -12,7 +12,7 @@ const NOTES: string[] = [
   "Hardware refreshes repeat on each solution's refresh cycle. The incumbent's first refresh follows its \"years until next refresh\"; a newly bought system's comes one full cycle after year 0.",
   "Cloud license terms are paid as a lump sum at purchase and at each renewal. The license price scales with retention along a gentle curve, (days/30)^0.4, since storage is only part of what it covers.",
   "On-prem storage is sized from bitrate, retention, and overhead, multiplied for RAID redundancy, and billed in whole drives.",
-  "Cameras fail at a steady rate set by each fleet's half-life. A failure under warranty costs only replacement labor. Replacement cameras are assumed not to fail again within the horizon.",
+  "Cameras fail at a steady rate set by each fleet's half-life, and replacement cameras can fail again. Each batch of cameras has its own warranty, counted from when it was installed; cameras already on site start at the age entered for them. A failure under warranty costs only replacement labor.",
   "On-prem support renewals and all other recurring costs are charged every year, and every recurring cost grows by the annual escalation rate.",
   "Purchases with a fixed service life that runs past the horizon are credited for their unused share in the final year, unless that option is turned off.",
   "Admin and investigation labor are estimates of staff time, shown separately from cash costs.",

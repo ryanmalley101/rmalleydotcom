@@ -116,6 +116,12 @@ export interface ScenarioInputs {
   // buys its full camera fleet at year 0. Defaults to true, which matches how
   // the model behaved before this question existed.
   existingCamerasReusable: boolean;
+  // How old the cameras already on site are at year 0, in years. Applies to
+  // the incumbent's fleet and to any side that keeps those cameras: their
+  // warranty is counted from this age, not from year 0. Defaults to 0, which
+  // treats them as new (the model's behavior before this field existed), so
+  // enter the real age for an existing fleet.
+  existingFleetAgeYears: number;
   // Shared market rates: the operator's own costs, independent of vendor.
   adminRate: number;
   investigatorRate: number;
@@ -301,6 +307,10 @@ export interface HardwareFootprint {
   // storage lives in the vendor's cloud, not something this deployment buys.
   storageTB: number | null;
   cameras: number;
+  // Camera swaps over the horizon, counting replacements that fail again.
+  cameraSwaps: number;
+  // Share of the cameras in place at year 0 that failed within the horizon, 0-100.
+  originalFleetReplacedPct: number;
 }
 
 export interface SolutionResult {
@@ -325,16 +335,6 @@ export function computeSolution(
   const disc = 1 - sol.discountPct / 100;
   const tierYears = Math.max(1, sol.tierYears); // guard against a cleared/zeroed input
 
-  // "connector" reuses the *other* side's already-installed camera fleet, not this
-  // solution's own hardware, until each unit dies and gets swapped for a native
-  // camera (see the CloudMigrationStrategy comment up top). So which cameras are
-  // actually failing — and on what schedule — is the *incumbent* fleet's own
-  // reliability, not this cloud solution's assumed numbers, whenever there's a
-  // real incumbent fleet on the other side to draw that from (computeComparison
-  // only passes `existingFleet` when that's true). The replacement unit going in
-  // is still this solution's own native camera, though, so its cost/install labor
-  // stay `sol.cameraCost`/`sol.replacementInstallLaborCost` below, unchanged.
-  const failureSource = sol.model === "cloud" && sol.migrationStrategy === "connector" && existingFleet ? existingFleet : sol;
 
   // Whether this side buys a camera fleet at year 0 (when it isn't the
   // incumbent): always on a new site, and otherwise only if it chose to
@@ -342,6 +342,31 @@ export function computeSolution(
   const buysCameras =
     scenario.existingCamerasReusable === false ||
     (sol.model === "cloud" ? sol.migrationStrategy === "ripReplace" : sol.onpremCameraStrategy === "replace");
+
+  // Camera fleet, tracked as cohorts by install year. Each camera fails at a
+  // constant yearly rate set by its own fleet's half-life, and a failure
+  // inside that cohort's warranty window costs only replacement labor. Every
+  // failure is replaced at this solution's own camera price and becomes a
+  // new cohort that can fail in turn (the old model only ever decayed the
+  // original fleet, undercounting swaps by a quarter to a half).
+  //
+  // The year-0 fleet is the cameras already on site whenever this side keeps
+  // them: the incumbent, or a side reusing them (a cloud connector, or an
+  // on-prem VMS adding them). Those are `existingFleetAgeYears` old, so their
+  // warranty may already be used up. When the other side is the incumbent
+  // (`existingFleet`), the reused cameras are its hardware, so they fail and
+  // carry warranty on its numbers, not this solution's.
+  const keepsExistingCameras = isIncumbent || !buysCameras;
+  const startSource = keepsExistingCameras && existingFleet ? existingFleet : sol;
+  const fleetAge = keepsExistingCameras ? Math.max(0, Number(scenario.existingFleetAgeYears) || 0) : 0;
+  const startCohort = {
+    size: cams,
+    installedYear: -fleetAge,
+    halfLife: Math.max(0.5, startSource.fleetHalfLifeYears),
+    warrantyYears: startSource.warrantyYears,
+  };
+  const cohorts = [startCohort];
+  let cameraSwaps = 0;
 
   // Resolved storage-billing assumptions — see the ScenarioInputs comment for
   // why the fallback pattern.
@@ -438,15 +463,18 @@ export function computeSolution(
         yearCosts["Misc / other"] = miscUpfrontTotal;
       }
     } else {
-      const surv0 = Math.pow(0.5, (y - 1) / failureSource.fleetHalfLifeYears);
-      const surv1 = Math.pow(0.5, y / failureSource.fleetHalfLifeYears);
-      const fails = cams * (surv0 - surv1);
-      // Cameras fail at year `y` counted from the year-0 install, so `y` doubles as
-      // years-since-install for the warranty check. In warranty: labor only, no hardware cost.
-      // Both use failureSource (the fleet actually failing), not sol, for a "connector"
-      // solution reusing another fleet — see the comment on failureSource above.
-      const inWarranty = y <= failureSource.warrantyYears;
-      yearCosts["Cameras"] = fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
+      let swaps = 0;
+      let cameraCost = 0;
+      for (const cohort of cohorts) {
+        const fails = cohort.size * (1 - Math.pow(0.5, 1 / cohort.halfLife));
+        cohort.size -= fails;
+        swaps += fails;
+        const inWarranty = y - cohort.installedYear <= cohort.warrantyYears;
+        cameraCost += fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
+      }
+      cohorts.push({ size: swaps, installedYear: y, halfLife: Math.max(0.5, sol.fleetHalfLifeYears), warrantyYears: sol.warrantyYears });
+      cameraSwaps += swaps;
+      yearCosts["Cameras"] = cameraCost;
 
       if (sol.model === "cloud") {
         // The support/analytics add-on is genuinely annual, charged every year;
@@ -526,6 +554,8 @@ export function computeSolution(
     // actually charged for — the whole-drive figure, not the continuous one.
     storageTB: sol.model === "onprem" ? tbBilled : null,
     cameras: cams,
+    cameraSwaps,
+    originalFleetReplacedPct: cams > 0 ? Math.min(100, Math.max(0, (100 * (cams - startCohort.size)) / cams)) : 0,
   };
   return { totalsByCategory, cumulative, total, cashTotal: total - staffTimeTotal, staffTimeTotal, hardware };
 }
@@ -541,13 +571,13 @@ export interface ComparisonResult {
 }
 
 export function computeComparison(scenario: ScenarioInputs, solA: SolutionInputs, solB: SolutionInputs): ComparisonResult {
-  // A "connector" solution reuses the *other* side's fleet, but only when that
-  // other side is a real incumbent — otherwise there's no actual installed fleet
-  // to draw reliability numbers from, and it falls back to its own (see
-  // computeSolution's failureSource).
+  // A side that keeps the cameras already on site is keeping the incumbent's
+  // hardware when the other side is the incumbent, so its starting fleet uses
+  // the incumbent's reliability and warranty (see computeSolution's cohorts).
+  // computeSolution ignores this for a side that buys new cameras.
   const reusing = scenario.existingCamerasReusable !== false;
-  const existingFleetForA = reusing && solA.model === "cloud" && solA.migrationStrategy === "connector" && scenario.incumbent === "b" ? solB : undefined;
-  const existingFleetForB = reusing && solB.model === "cloud" && solB.migrationStrategy === "connector" && scenario.incumbent === "a" ? solA : undefined;
+  const existingFleetForA = reusing && scenario.incumbent === "b" ? solB : undefined;
+  const existingFleetForB = reusing && scenario.incumbent === "a" ? solA : undefined;
   const a = computeSolution(scenario, solA, scenario.incumbent === "a", existingFleetForA);
   const b = computeSolution(scenario, solB, scenario.incumbent === "b", existingFleetForB);
   const labels = Array.from({ length: scenario.horizonYears + 1 }, (_, y) => "Yr " + y);

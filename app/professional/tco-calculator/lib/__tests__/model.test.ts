@@ -12,7 +12,7 @@ test("default comparison snapshot", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 1081492, b: 490698, crossover: 2 },
+    { a: 1090144, b: 494495, crossover: 2 },
   );
 });
 
@@ -100,6 +100,30 @@ test("purchases that outlast the horizon are credited for their unused share", (
 test("credits show up in the category breakdown", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.ok(c.activeCategories.includes("Residual value (credit)"));
+});
+
+test("replacement cameras can fail again", () => {
+  const sol = { ...seedOnprem("a"), fleetHalfLifeYears: 7 };
+  const r = computeSolution(scenario({ horizonYears: 10 }), sol, false);
+  const originalOnly = 100 * (1 - Math.pow(0.5, 10 / 7));
+  // Constant hazard with replacement: about 100 * (1 - 0.5^(1/7)) * 10 swaps.
+  assert.ok(r.hardware.cameraSwaps > originalOnly * 1.3);
+  assert.equal(round(r.hardware.originalFleetReplacedPct), round(originalOnly));
+});
+
+test("an old incumbent fleet is out of warranty from year 1", () => {
+  const sol = { ...seedOnprem("a"), warrantyYears: 3 };
+  const fresh = computeSolution(scenario({ horizonYears: 1 }), sol, true);
+  const old = computeSolution(scenario({ horizonYears: 1, existingFleetAgeYears: 5 }), sol, true);
+  assert.ok(old.totalsByCategory["Cameras"] > fresh.totalsByCategory["Cameras"] * 2);
+});
+
+test("a side reusing the incumbent's cameras starts on the incumbent's reliability", () => {
+  const verkada = seedVerkada("b");
+  const shortLived = { ...seedOnprem("a"), fleetHalfLifeYears: 2, warrantyYears: 0 };
+  const c = computeComparison(scenario({ incumbent: "a" }), shortLived, verkada);
+  const ownFleet = computeSolution(scenario(), verkada, false);
+  assert.ok(c.b.hardware.cameraSwaps > ownFleet.hardware.cameraSwaps * 2);
 });
 
 test("incumbent pays nothing at year 0", () => {

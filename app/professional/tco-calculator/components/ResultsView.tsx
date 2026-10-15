@@ -35,10 +35,6 @@ function FooterStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function fleetReplacedPct(horizonYears: number, halfLifeYears: number) {
-  return Math.min(100, Math.round(100 * (1 - Math.pow(0.5, horizonYears / halfLifeYears))));
-}
-
 // What you actually end up owning/racking, not just what it costs — a cloud
 // ripReplace solution with no local box at all renders nothing rather than a
 // misleading "0 connector appliances".
@@ -89,8 +85,10 @@ export default function ResultsView({
   const maxTotal = Math.max(a.total, b.total);
   const pctSaved = maxTotal > 0 ? Math.round((diff / maxTotal) * 100) : 0;
 
-  const fleetPctA = fleetReplacedPct(scenario.horizonYears, solA.fleetHalfLifeYears);
-  const fleetPctB = fleetReplacedPct(scenario.horizonYears, solB.fleetHalfLifeYears);
+  // From the cost model's own camera cohorts, so the stat can't disagree
+  // with what was charged.
+  const fleetPctA = Math.round(a.hardware.originalFleetReplacedPct);
+  const fleetPctB = Math.round(b.hardware.originalFleetReplacedPct);
 
   async function handleDownload() {
     if (!snapshotRef.current) return;

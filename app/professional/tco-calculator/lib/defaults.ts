@@ -11,6 +11,7 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   annualEscalationPct: 3,
   incumbent: "none",
   existingCamerasReusable: true,
+  existingFleetAgeYears: 0,
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
