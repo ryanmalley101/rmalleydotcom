@@ -16,6 +16,14 @@ test("default comparison snapshot", () => {
   );
 });
 
+test("staff time is reported separately and sums back to the total", () => {
+  const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
+  for (const r of [c.a, c.b]) {
+    assert.equal(round(r.cashTotal + r.staffTimeTotal), round(r.total));
+    assert.equal(round(r.staffTimeTotal), round(r.totalsByCategory["Admin labor"] + r.totalsByCategory["Investigations"]));
+  }
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);

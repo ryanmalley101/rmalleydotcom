@@ -12,6 +12,7 @@ import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 import MiscItemsEditor from "./MiscItemsEditor";
+import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -220,9 +221,9 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       )}
 
       <SectionLabel>Operations</SectionLabel>
-      {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1, icon: Truck })}
-      {num("Admin labor (hrs/cam/yr)", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1, icon: UserCog })}
-      {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2, icon: Search })}
+      {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1, icon: Truck, help: TRUCK_ROLLS_HELP })}
+      {num("Admin hrs / cam / yr", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1, icon: UserCog, help: ADMIN_HOURS_HELP })}
+      {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2, icon: Search, help: INVESTIGATION_HOURS_HELP })}
 
       {sol.model === "onprem" && (
         <>

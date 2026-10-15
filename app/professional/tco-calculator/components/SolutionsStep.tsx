@@ -2,7 +2,7 @@
 
 import { Badge, Box, Card, ColorInput, Group, NumberInput, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
 import {
-  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Percent, Router, Server, ShieldCheck, Tag, Truck, UserCog,
+  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Percent, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
@@ -12,6 +12,7 @@ import {
   withVendorDefaults, confidenceSummary, fieldSourceInfo, type VendorDefaultEntry,
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
+import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 
@@ -403,7 +404,7 @@ function SolutionCard({
 
         <Group grow>
           <NumberInput
-            label={<Group gap={4} wrap="nowrap">Truck rolls / site / yr<SourceDot meta={fieldSourceInfo("truckRollsPerSiteYr", sol.truckRollsPerSiteYr, ...entries)} /></Group>}
+            label={<InfoLabel label="Truck rolls / site / yr" help={TRUCK_ROLLS_HELP} extra={<SourceDot meta={fieldSourceInfo("truckRollsPerSiteYr", sol.truckRollsPerSiteYr, ...entries)} />} />}
             leftSection={icon(Truck)}
             value={sol.truckRollsPerSiteYr}
             min={0}
@@ -412,7 +413,7 @@ function SolutionCard({
             onChange={(v) => set("truckRollsPerSiteYr", num(v))}
           />
           <NumberInput
-            label={<Group gap={4} wrap="nowrap">Admin hrs / cam / yr<SourceDot meta={fieldSourceInfo("adminHrsPerCamYr", sol.adminHrsPerCamYr, ...entries)} /></Group>}
+            label={<InfoLabel label="Admin hrs / cam / yr" help={ADMIN_HOURS_HELP} extra={<SourceDot meta={fieldSourceInfo("adminHrsPerCamYr", sol.adminHrsPerCamYr, ...entries)} />} />}
             leftSection={icon(UserCog)}
             value={sol.adminHrsPerCamYr}
             min={0}
@@ -421,6 +422,15 @@ function SolutionCard({
             onChange={(v) => set("adminHrsPerCamYr", num(v))}
           />
         </Group>
+        <NumberInput
+          label={<InfoLabel label="Hrs per investigation" help={INVESTIGATION_HOURS_HELP} extra={<SourceDot meta={fieldSourceInfo("investigationHrsPerIncident", sol.investigationHrsPerIncident, ...entries)} />} />}
+          leftSection={icon(Search)}
+          value={sol.investigationHrsPerIncident}
+          min={0}
+          step={0.25}
+          decimalScale={2}
+          onChange={(v) => set("investigationHrsPerIncident", num(v))}
+        />
       </Stack>
     </Card>
   );

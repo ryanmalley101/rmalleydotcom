@@ -7,6 +7,8 @@ import { Check, Copy, Download, History, RotateCcw, Save } from "lucide-react";
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
+import { STAFF_TIME_NOTE } from "../lib/fieldHelp";
+import InfoLabel from "./InfoLabel";
 import { exportSnapshot } from "../lib/exportSnapshot";
 import { saveComparison } from "../lib/savedComparisons";
 import ScenarioStep from "./ScenarioStep";
@@ -239,7 +241,13 @@ export default function ResultsView({
                               }}
                             />
                           </Box>
-                          {hwText && <Text size="xs" c={TEXT_MUTED} mt={4}>{hwText}</Text>}
+                          <Box mt={4}>
+                            <InfoLabel
+                              label={`${fmtUsd(result.cashTotal)} cash · ${fmtUsd(result.staffTimeTotal)} est. staff time`}
+                              help={STAFF_TIME_NOTE} size="var(--mantine-font-size-xs)" color={TEXT_MUTED}
+                            />
+                          </Box>
+                          {hwText && <Text size="xs" c={TEXT_MUTED}>{hwText}</Text>}
                         </div>
                       );
                     })}

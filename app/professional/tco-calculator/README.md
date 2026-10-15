@@ -252,6 +252,18 @@ before trusting an unedited comparison:
   universalized to every cloud competitor by default, including more open,
   multi-vendor-camera platforms that plausibly need more admin overhead
   than a closed single-hardware ecosystem.
+- `investigationHrsPerIncident` (cloud 0.75 vs. on-prem 3) and
+  `truckRollsPerSiteYr` (cloud 1 vs. on-prem 4) have the same problem and
+  matter more: in the default comparison (Milestone/Axis incumbent vs.
+  Verkada) admin, investigation, and truck-roll labor together make up
+  about 85% of the cloud side's advantage, and investigation hours alone
+  nearly half. None of the three is sourced or vendor-specific; they're
+  per-deployment-model defaults. They're deliberately kept as-is (a
+  decision, not an oversight), but made visible instead of buried: all
+  three are in the wizard with help text saying they're unsourced, and the
+  results summary reports each side's estimated staff time (admin +
+  investigations, `STAFF_TIME_CATEGORIES` in `lib/model.ts`) separately
+  from its cash cost, so a reader can see how much of a gap rests on them.
 
 ## Wizard UX and defaults (`page.tsx`)
 

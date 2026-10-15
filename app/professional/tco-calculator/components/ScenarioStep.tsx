@@ -8,6 +8,7 @@ import {
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
+import { INVESTIGATIONS_PER_MONTH_HELP } from "../lib/fieldHelp";
 
 const RETENTION_LABEL = (
   <InfoLabel
@@ -54,7 +55,7 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
           onChange={(v) => set("horizonYears", num(v))} />
         <NumberInput label="Bitrate/cam (Mbps)" leftSection={icon(Activity)} value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
           onChange={(v) => set("bitrateMbps", num(v))} />
-        <NumberInput label="Investigations/mo" leftSection={icon(Search)} value={value.investigationsPerMonth} min={0}
+        <NumberInput label={<InfoLabel label="Investigations/mo" help={INVESTIGATIONS_PER_MONTH_HELP} />} leftSection={icon(Search)} value={value.investigationsPerMonth} min={0}
           onChange={(v) => set("investigationsPerMonth", num(v))} />
       </SimpleGrid>
 

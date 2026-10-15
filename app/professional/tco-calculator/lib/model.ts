@@ -251,6 +251,12 @@ export const CATEGORIES = [
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
+// Categories that estimate internal staff time rather than money actually
+// paid out to a vendor or contractor. Kept in every total, but reported
+// separately (SolutionResult.staffTimeTotal) because they're the softest,
+// least-verifiable numbers in a comparison and often its biggest driver.
+export const STAFF_TIME_CATEGORIES: readonly Category[] = ["Admin labor", "Investigations"];
+
 // Continuous replacement for the old 5-step (30/60/90/180/365-day) table.
 // Fit as a power curve (days/30)^0.4 against those same reference points
 // (30d=1.0x, 60d=1.35x, 90d=1.6x, 180d=2.0x, 365d=2.6x, all within ~5%), so it
@@ -282,6 +288,10 @@ export interface SolutionResult {
   totalsByCategory: Record<Category, number>;
   cumulative: number[]; // escalated running total, index = year
   total: number;
+  // total split into money paid out vs. estimated internal staff time
+  // (STAFF_TIME_CATEGORIES); cashTotal + staffTimeTotal === total.
+  cashTotal: number;
+  staffTimeTotal: number;
   hardware: HardwareFootprint;
 }
 
@@ -456,6 +466,7 @@ export function computeSolution(
   }
 
   const total = Object.values(totalsByCategory).reduce((a, b) => a + b, 0);
+  const staffTimeTotal = STAFF_TIME_CATEGORIES.reduce((sum, c) => sum + totalsByCategory[c], 0);
   const hardware: HardwareFootprint = {
     unitsLabel:
       sol.model === "onprem" ? "Recording servers" : sol.migrationStrategy === "connector" ? "Connector appliances" : null,
@@ -465,7 +476,7 @@ export function computeSolution(
     storageTB: sol.model === "onprem" ? tbBilled : null,
     cameras: cams,
   };
-  return { totalsByCategory, cumulative, total, hardware };
+  return { totalsByCategory, cumulative, total, cashTotal: total - staffTimeTotal, staffTimeTotal, hardware };
 }
 
 export interface ComparisonResult {
