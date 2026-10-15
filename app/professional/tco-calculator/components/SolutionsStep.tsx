@@ -11,7 +11,6 @@ import {
   CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS,
   switchVendor, confidenceSummary, fieldSourceInfo, vendorEntriesFor, type VendorDefaultEntry,
 } from "../lib/vendorDefaults";
-import IncumbentPicker from "./IncumbentPicker";
 import CameraStrategyControl from "./CameraStrategyControl";
 import { RAID_OPTIONS } from "../lib/fields";
 import { RAID_HELP } from "../lib/fieldHelp";
@@ -268,12 +267,12 @@ function SolutionCard({
 }
 
 export default function SolutionsStep({
-  solA, solB, onChangeA, onChangeB, colorA, colorB, scenario, onScenarioChange,
+  solA, solB, onChangeA, onChangeB, colorA, colorB, scenario,
 }: {
   solA: SolutionInputs; solB: SolutionInputs;
   onChangeA: (v: SolutionInputs) => void; onChangeB: (v: SolutionInputs) => void;
   colorA: string; colorB: string;
-  scenario: ScenarioInputs; onScenarioChange: (v: ScenarioInputs) => void;
+  scenario: ScenarioInputs;
 }) {
   return (
     <Stack gap="md">
@@ -287,9 +286,6 @@ export default function SolutionsStep({
         <SolutionCard sol={solA} onChange={onChangeA} color={colorA} scenario={scenario} />
         <SolutionCard sol={solB} onChange={onChangeB} color={colorB} scenario={scenario} />
       </SimpleGrid>
-      <Card withBorder padding="lg" radius="md">
-        <IncumbentPicker scenario={scenario} onScenarioChange={onScenarioChange} nameA={solA.name} nameB={solB.name} />
-      </Card>
     </Stack>
   );
 }

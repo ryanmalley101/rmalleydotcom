@@ -52,7 +52,7 @@ export default function IncumbentPicker({
         <NumberInput
           label={<InfoLabel label="Age of the existing cameras (yrs)" help={FLEET_AGE_HELP} />}
           value={scenario.existingFleetAgeYears ?? 0}
-          min={0} max={30} step={1} w={220}
+          min={0} max={30} step={1} w={260}
           onChange={(v) => onScenarioChange({ ...scenario, existingFleetAgeYears: typeof v === "number" ? v : 0 })}
         />
       )}

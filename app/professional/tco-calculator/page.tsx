@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Box, Button, Container, Group, Stepper, Text, Title } from "@mantine/core";
+import { Box, Button, Card, Container, Group, Stepper, Text, Title } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "./lib/colors";
 import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution, type ShapeOption } from "./lib/defaults";
@@ -15,6 +15,7 @@ import ShapeStep from "./components/ShapeStep";
 import ScenarioStep from "./components/ScenarioStep";
 import SolutionsStep from "./components/SolutionsStep";
 import ResultsView from "./components/ResultsView";
+import IncumbentPicker from "./components/IncumbentPicker";
 
 type Phase = "intro" | "wizard" | "results";
 
@@ -189,9 +190,17 @@ function TcoCalculatorInner() {
         </Text>
 
         <Stepper active={stepIndex} onStepClick={setStepIndex} allowNextStepsSelect={false} mb="xl">
-          <Stepper.Step label="Comparison" description="Pick a shape">
+          <Stepper.Step label="Comparison" description="What's being compared">
             <Box mt="xl">
               <ShapeStep value={shapeId} onChange={handleShapeChange} />
+              {/* Asked up front, not after the solution cards: incumbency and
+                  camera reuse change how every year-0 cost is treated, and
+                  which fields later steps need to show. */}
+              {solA && solB && shapeId && (
+                <Card withBorder padding="lg" radius="md" mt="lg">
+                  <IncumbentPicker scenario={scenario} onScenarioChange={setScenario} nameA={solA.name} nameB={solB.name} />
+                </Card>
+              )}
             </Box>
           </Stepper.Step>
           <Stepper.Step label="Scenario" description="Key variables">
@@ -205,7 +214,7 @@ function TcoCalculatorInner() {
                 <SolutionsStep
                   solA={solA} solB={solB} onChangeA={setSolA} onChangeB={setSolB}
                   colorA={colorA} colorB={colorB}
-                  scenario={scenario} onScenarioChange={setScenario}
+                  scenario={scenario}
                 />
               )}
             </Box>

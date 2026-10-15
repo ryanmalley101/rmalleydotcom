@@ -395,6 +395,13 @@ before trusting an unedited comparison:
   open placeholder, comparing a vendor against itself by default wouldn't
   make sense. These are workflow conveniences, always overridable, not
   changes to the underlying math, which stays symmetric by default.
+- Step 1 asks, right under the comparison-type cards, whether either
+  solution is already deployed and whether the existing cameras can be
+  reused (`IncumbentPicker`), because both change every year-0 cost and
+  which fields later steps show (refresh offsets and license renewal only
+  for the incumbent, camera age only when existing cameras matter). It
+  used to sit at the bottom of step 3. The results page's Scenario panel
+  shows the same picker.
 - Share links round-trip the whole scenario through a `?s=`-encoded JSON
   query param (`lib/shareState.ts`); the address bar stays in sync via a
   debounced `router.replace`, wrapped in `Suspense` per Next's
