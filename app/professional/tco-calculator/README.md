@@ -402,6 +402,12 @@ before trusting an unedited comparison:
   for the incumbent, camera age only when existing cameras matter). It
   used to sit at the bottom of step 3. The results page's Scenario panel
   shows the same picker.
+- The address bar tracks the wizard too, not just the results: once a
+  comparison type is picked it carries `?s=` plus `&step=N`, so a refresh
+  or browser back returns to the same step, and a link without `step`
+  opens on the results. The top-left link reads "All professional tools"
+  (it used to say "Back", same as the step navigation's Back button, while
+  leaving the calculator) and confirms before leaving an unfinished setup.
 - Share links round-trip the whole scenario through a `?s=`-encoded JSON
   query param (`lib/shareState.ts`); the address bar stays in sync via a
   debounced `router.replace`, wrapped in `Suspense` per Next's

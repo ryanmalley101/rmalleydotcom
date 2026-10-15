@@ -66,8 +66,16 @@ function TcoCalculatorInner() {
     return raw ? decodeShareState(raw) : null;
   });
 
-  const [phase, setPhase] = useState<Phase>(initial ? "results" : "intro");
-  const [stepIndex, setStepIndex] = useState(0);
+  // A link with ?step= is a wizard still in progress (the address bar keeps
+  // it there so a refresh doesn't lose the setup); without it, a link is a
+  // finished comparison and opens on the results.
+  const [initialStep] = useState(() => {
+    const raw = searchParams.get("step");
+    const n = raw === null ? NaN : Number(raw);
+    return Number.isInteger(n) && n >= 0 && n <= 2 ? n : null;
+  });
+  const [phase, setPhase] = useState<Phase>(initial ? (initialStep !== null ? "wizard" : "results") : "intro");
+  const [stepIndex, setStepIndex] = useState(initialStep ?? 0);
   const [shapeId, setShapeId] = useState<string | null>(initial?.shapeId ?? null);
   const [scenario, setScenario] = useState<ScenarioInputs>(initial?.scenario ?? DEFAULT_SCENARIO);
   const [solA, setSolA] = useState<SolutionInputs | null>(initial?.solA ?? null);
@@ -85,15 +93,24 @@ function TcoCalculatorInner() {
     return `${window.location.origin}${window.location.pathname}?s=${encodeURIComponent(json)}`;
   }, [shapeId, scenario, solA, solB, colorA, colorB]);
 
-  // Keep the address bar in sync so copying it directly also works, not just the Share button.
+  // Keep the address bar in sync so copying it directly also works, not just
+  // the Share button, and so a refresh mid-wizard returns to the same step.
   useEffect(() => {
-    if (phase !== "results" || !shareUrl) return;
+    if (phase === "intro" || !shareUrl) return;
     const t = setTimeout(() => {
       const url = new URL(shareUrl);
+      if (phase === "wizard") url.searchParams.set("step", String(stepIndex));
       router.replace(`${url.pathname}${url.search}`, { scroll: false });
     }, 400);
     return () => clearTimeout(t);
-  }, [phase, shareUrl, router]);
+  }, [phase, stepIndex, shareUrl, router]);
+
+  // Leaving from the wizard drops an unfinished setup, so ask first.
+  function confirmLeave(e: React.MouseEvent) {
+    if (phase === "wizard" && shapeId && !window.confirm("Leave the calculator? Your unfinished setup won't be saved.")) {
+      e.preventDefault();
+    }
+  }
 
   function handleShapeChange(id: string) {
     const opt = SHAPE_OPTIONS.find((s) => s.id === id)!;
@@ -138,7 +155,7 @@ function TcoCalculatorInner() {
       <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
         <Container size="lg">
           <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
-            Back
+            All professional tools
           </Button>
           <IntroScreen onStart={() => setPhase("wizard")} onLoadSaved={handleLoadSaved} />
         </Container>
@@ -151,7 +168,7 @@ function TcoCalculatorInner() {
       <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
         <Container size="xl">
           <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
-            Back
+            All professional tools
           </Button>
           <ResultsView
             shapeId={shapeId ?? ""}
@@ -181,8 +198,8 @@ function TcoCalculatorInner() {
   return (
     <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
       <Container size="lg">
-        <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
-          Back
+        <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg" onClick={confirmLeave}>
+          All professional tools
         </Button>
         <Title order={2} mb={4}>TCO Comparison Wizard</Title>
         <Text c={TEXT_MUTED} size="sm" mb="xl">
