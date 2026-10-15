@@ -1,13 +1,14 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { ActionIcon, Divider, Group, Paper, Stack, Text, Title, Button, UnstyledButton } from "@mantine/core";
+import { useState, useSyncExternalStore } from "react";
+import { ActionIcon, Anchor, Divider, Group, List, Modal, Paper, Stack, Text, Title, Button, UnstyledButton } from "@mantine/core";
 import { ArrowRight, CalendarRange, Database, Share2, Trash2 } from "lucide-react";
 import { TEXT_MUTED } from "../lib/colors";
 import {
   getSavedComparisonsSnapshot, getSavedComparisonsServerSnapshot, subscribeSavedComparisons, deleteSavedComparison,
 } from "../lib/savedComparisons";
 import type { SharedState } from "../lib/shareState";
+import { METHODOLOGY_NOTES } from "../lib/methodology";
 
 const HIGHLIGHTS = [
   { icon: Database, text: "Real vendor pricing pre-filled where it's been researched" },
@@ -24,6 +25,8 @@ export default function IntroScreen({
   // takes over post-hydration — avoids the hydration mismatch a populated
   // useState initializer would cause, without a synchronous setState-in-effect.
   const saved = useSyncExternalStore(subscribeSavedComparisons, getSavedComparisonsSnapshot, getSavedComparisonsServerSnapshot);
+
+  const [howOpen, setHowOpen] = useState(false);
 
   function handleDelete(id: string) {
     deleteSavedComparison(id);
@@ -50,6 +53,14 @@ export default function IntroScreen({
       <Button size="lg" rightSection={<ArrowRight size={18} />} onClick={onStart}>
         Start
       </Button>
+      <Anchor component="button" type="button" size="sm" onClick={() => setHowOpen(true)}>
+        How the numbers are calculated
+      </Anchor>
+      <Modal opened={howOpen} onClose={() => setHowOpen(false)} title="How the numbers are calculated" size="lg">
+        <List size="sm" spacing={6}>
+          {METHODOLOGY_NOTES.map((n) => <List.Item key={n}>{n}</List.Item>)}
+        </List>
+      </Modal>
       <Text c={TEXT_MUTED} size="xs" maw={420}>
         Independent estimate tool. Not affiliated with or endorsed by any vendor named here.
       </Text>

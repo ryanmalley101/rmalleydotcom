@@ -1,6 +1,6 @@
 "use client";
 
-import { Accordion, NumberInput, SimpleGrid, Stack, Switch, Text, Title } from "@mantine/core";
+import { Accordion, Button, Group, NumberInput, SimpleGrid, Stack, Switch, Text, Title } from "@mantine/core";
 import {
   Activity, Building2, Camera, CalendarRange, Database, DollarSign,
   HardDrive, Layers, Search, Server, TrendingUp, Truck,
@@ -9,6 +9,7 @@ import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
 import { BITRATE_HELP, INVESTIGATIONS_PER_MONTH_HELP } from "../lib/fieldHelp";
+import { SCENARIO_PRESETS } from "../lib/presets";
 
 const RETENTION_LABEL = (
   <InfoLabel
@@ -54,6 +55,14 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
         <Text size="sm" c={TEXT_MUTED}>
           Shared facts for both solutions. Defaults are placeholders, adjust as needed.
         </Text>
+        <Group gap="xs" mt="sm">
+          <Text size="xs" c={TEXT_MUTED}>Example sizes:</Text>
+          {SCENARIO_PRESETS.map((p) => (
+            <Button key={p.id} size="compact-xs" variant="light" title={p.description} onClick={() => onChange({ ...value, ...p.values })}>
+              {p.label}
+            </Button>
+          ))}
+        </Group>
       </div>
       <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="lg">
         <NumberInput label="Camera count" leftSection={icon(Camera)} allowDecimal={false} value={value.cameras} min={1} thousandSeparator=","

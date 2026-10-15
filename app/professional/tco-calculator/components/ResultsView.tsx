@@ -17,6 +17,7 @@ import ChartsPanel from "./ChartsPanel";
 import MethodologyNotes from "./MethodologyNotes";
 import GapDrivers from "./GapDrivers";
 import YearTable from "./YearTable";
+import ShareChecklist from "./ShareChecklist";
 import { buildCsv, buildReportHtml } from "../lib/report";
 import { METHODOLOGY_NOTES } from "../lib/methodology";
 import IncumbentPicker from "./IncumbentPicker";
@@ -346,6 +347,7 @@ export default function ResultsView({
               first; the two per-solution assumption panels are dense vendor-specific data
               that's more useful collapsed by default on this results/review screen, unlike
               the wizard's own editing steps where those same fields need to stay discoverable. */}
+          <ShareChecklist scenario={scenario} solA={solA} solB={solB} comparison={comparison} />
           <Accordion variant="separated" multiple defaultValue={["scenario"]}>
             <Accordion.Item value="scenario">
               <Accordion.Control>

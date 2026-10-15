@@ -408,6 +408,14 @@ before trusting an unedited comparison:
   opens on the results. The top-left link reads "All professional tools"
   (it used to say "Back", same as the step navigation's Back button, while
   leaving the calculator) and confirms before leaving an unfinished setup.
+- Training aids: the Scenario step offers example sizes
+  (`lib/presets.ts`; they set only cameras, sites, and investigations, not
+  any cost assumption); the results page opens with a "Before you share
+  this" checklist (`lib/checklist.ts`) built from the inputs, flagging key
+  fields still on generic placeholders, estimated vendor values, an
+  incumbent fleet age or refresh/renewal timing left at its default, and a
+  gap driven mostly by estimated staff time; and the intro screen links to
+  the same calculation notes shown under the results (`lib/methodology.ts`).
 - Share links round-trip the whole scenario through a `?s=`-encoded JSON
   query param (`lib/shareState.ts`); the address bar stays in sync via a
   debounced `router.replace`, wrapped in `Suspense` per Next's
