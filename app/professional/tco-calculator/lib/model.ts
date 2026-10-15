@@ -28,6 +28,11 @@ export type IncumbentChoice = "none" | "a" | "b";
 // "ripReplace" swaps every camera for a native one up front - year-0 cost is
 // the full fleet of native cameras instead, and no connector appliance.
 export type CloudMigrationStrategy = "connector" | "ripReplace";
+// The on-prem equivalent: keep the cameras already on site and add them to
+// the new VMS, or buy a new fleet at year 0. Only matters when
+// ScenarioInputs.existingCamerasReusable is true; otherwise every newly
+// deployed side buys cameras regardless.
+export type OnpremCameraStrategy = "reuse" | "replace";
 
 // On-prem storage redundancy. Affects only how much *raw* storage has to be
 // bought to get the fleet's usable/needed TB, not the recording server count.
@@ -105,6 +110,12 @@ export interface ScenarioInputs {
   // Which solution (if either) is already deployed. The incumbent skips its
   // year-0 buildout cost; the other solution pays it as a fresh deployment.
   incumbent: IncumbentChoice;
+  // Whether the cameras already on site can be kept by a newly deployed
+  // solution (a cloud connector, or an on-prem VMS that adds them). false
+  // means a new site or cameras that must go: every newly deployed side then
+  // buys its full camera fleet at year 0. Defaults to true, which matches how
+  // the model behaved before this question existed.
+  existingCamerasReusable: boolean;
   // Shared market rates: the operator's own costs, independent of vendor.
   adminRate: number;
   investigatorRate: number;
@@ -157,7 +168,7 @@ export interface SolutionInputs {
   // Bulk professional install (year-0 buildout, planned rollout across the
   // whole fleet) is typically cheaper per camera than an unplanned one-off
   // truck roll to swap a single failed unit later, hence two separate rates.
-  bulkInstallLaborCost: number; // $/cam, year-0 buildout only
+  bulkInstallLaborCost: number; // $/cam, year-0 install (new cameras) or onboarding (reused cameras)
   replacementInstallLaborCost: number; // $/cam, ongoing decay-driven swaps
   // How long until roughly half of today's cameras have failed and been
   // replaced. Per-solution (not shared) since each side's camera hardware
@@ -204,6 +215,7 @@ export interface SolutionInputs {
   supportAddonPerCamYr: number;
 
   // On-prem only
+  onpremCameraStrategy: OnpremCameraStrategy;
   baseLicense: number;
   deviceLicense: number;
   carePct: number;
@@ -240,7 +252,7 @@ export interface SolutionInputs {
 }
 
 export const CATEGORIES = [
-  "Camera replacements",
+  "Cameras",
   "Hardware (initial & refresh)",
   "Licenses/subscription",
   "Installation",
@@ -317,6 +329,13 @@ export function computeSolution(
   // stay `sol.cameraCost`/`sol.replacementInstallLaborCost` below, unchanged.
   const failureSource = sol.model === "cloud" && sol.migrationStrategy === "connector" && existingFleet ? existingFleet : sol;
 
+  // Whether this side buys a camera fleet at year 0 (when it isn't the
+  // incumbent): always on a new site, and otherwise only if it chose to
+  // replace the existing cameras.
+  const buysCameras =
+    scenario.existingCamerasReusable === false ||
+    (sol.model === "cloud" ? sol.migrationStrategy === "ripReplace" : sol.onpremCameraStrategy === "replace");
+
   // Resolved storage-billing assumptions — see the ScenarioInputs comment for
   // why the fallback pattern.
   const driveCapacityTb = Number(scenario.driveCapacityTb) || DEFAULT_DRIVE_CAPACITY_TB;
@@ -378,40 +397,32 @@ export function computeSolution(
     const yearCosts = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
 
     if (y === 0) {
+      // Nothing new is deployed for the incumbent, so its year 0 is empty.
       if (!isIncumbent) {
-        if (sol.model === "cloud" && sol.migrationStrategy === "ripReplace") {
-          // Full fleet swapped for native cameras up front, at the bulk rate; no connector appliance needed.
-          yearCosts["Camera replacements"] = cams * (sol.cameraCost * disc + sol.bulkInstallLaborCost);
-        } else {
-          yearCosts["Installation"] = sol.bulkInstallLaborCost * cams;
-          yearCosts["Hardware (initial & refresh)"] =
-            sol.model === "cloud"
-              ? sol.applianceCost * disc * applianceUnits
-              : sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
-          // A fresh (non-incumbent) on-prem deployment has to buy its perpetual
-          // license too, not just the hardware — only the incumbent's license is
-          // already owned/sunk. Only the ongoing care/SUP renewal (and the separate
-          // analyticsSoftwareCostPerCamYr below) recur after this.
-          if (sol.model === "onprem") {
-            // Number(...) || 0: analyticsSoftwareCostPerCam replaced the old flat
-            // analyticsSoftwareCost field — an older share link/saved comparison
-            // predating the split would leave it undefined, which would otherwise
-            // NaN out this whole year's total (and every later year's cumulative
-            // total). Normalization backfills the real default (100) before this
-            // ever runs in practice; this is just a last-resort guard.
-            yearCosts["Licenses/subscription"] =
-              (sol.baseLicense + sol.deviceLicense * cams + (Number(sol.analyticsSoftwareCostPerCam) || 0) * cams) * disc;
-          }
-        }
-        // Cloud's first license term is bought up front at year 0 regardless of
-        // migrationStrategy (ripReplace's branch above doesn't touch
-        // Licenses/subscription at all, so this doesn't clobber anything there).
+        // Install labor for a full camera fleet, or onboarding labor when the
+        // existing cameras are kept and added to the new system.
+        yearCosts["Installation"] = sol.bulkInstallLaborCost * cams;
+        if (buysCameras) yearCosts["Cameras"] = cams * sol.cameraCost * disc;
         if (sol.model === "cloud") {
+          // A connector/NVR-style box is needed whenever cameras other than the
+          // vendor's own native ones are in use; native ("ripReplace") cameras
+          // talk to the cloud directly.
+          if (sol.migrationStrategy === "connector") {
+            yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits;
+          }
+          // First license term, bought up front.
           yearCosts["Licenses/subscription"] = licenseTermCost * cams;
+        } else {
+          yearCosts["Hardware (initial & refresh)"] =
+            sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
+          // A fresh on-prem deployment buys its perpetual license too; only the
+          // ongoing care/SUP renewal (and analyticsSoftwareCostPerCamYr) recur
+          // after this. Number(...) || 0 guards an older saved state missing
+          // analyticsSoftwareCostPerCam (normalization normally backfills it).
+          yearCosts["Licenses/subscription"] =
+            (sol.baseLicense + sol.deviceLicense * cams + (Number(sol.analyticsSoftwareCostPerCam) || 0) * cams) * disc;
         }
-        // Sum of "upfront" miscItems (see MiscCostItem above), zeroed for an
-        // incumbent same as the rest of this year-0 block — nothing new is
-        // being deployed for the incumbent, so no one-time item applies.
+        // Sum of "upfront" miscItems (see MiscCostItem above).
         yearCosts["Misc / other"] = miscUpfrontTotal;
       }
     } else {
@@ -423,7 +434,7 @@ export function computeSolution(
       // Both use failureSource (the fleet actually failing), not sol, for a "connector"
       // solution reusing another fleet — see the comment on failureSource above.
       const inWarranty = y <= failureSource.warrantyYears;
-      yearCosts["Camera replacements"] = fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
+      yearCosts["Cameras"] = fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
 
       if (sol.model === "cloud") {
         // The support/analytics add-on is genuinely annual, charged every year;
@@ -501,8 +512,9 @@ export function computeComparison(scenario: ScenarioInputs, solA: SolutionInputs
   // other side is a real incumbent — otherwise there's no actual installed fleet
   // to draw reliability numbers from, and it falls back to its own (see
   // computeSolution's failureSource).
-  const existingFleetForA = solA.model === "cloud" && solA.migrationStrategy === "connector" && scenario.incumbent === "b" ? solB : undefined;
-  const existingFleetForB = solB.model === "cloud" && solB.migrationStrategy === "connector" && scenario.incumbent === "a" ? solA : undefined;
+  const reusing = scenario.existingCamerasReusable !== false;
+  const existingFleetForA = reusing && solA.model === "cloud" && solA.migrationStrategy === "connector" && scenario.incumbent === "b" ? solB : undefined;
+  const existingFleetForB = reusing && solB.model === "cloud" && solB.migrationStrategy === "connector" && scenario.incumbent === "a" ? solA : undefined;
   const a = computeSolution(scenario, solA, scenario.incumbent === "a", existingFleetForA);
   const b = computeSolution(scenario, solB, scenario.incumbent === "b", existingFleetForB);
   const labels = Array.from({ length: scenario.horizonYears + 1 }, (_, y) => "Yr " + y);

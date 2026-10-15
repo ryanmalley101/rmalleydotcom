@@ -12,6 +12,7 @@ import {
   withVendorDefaults, confidenceSummary, fieldSourceInfo, type VendorDefaultEntry,
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
+import CameraStrategyControl from "./CameraStrategyControl";
 import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
@@ -36,7 +37,7 @@ const WARRANTY_HELP =
   "How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself.";
 
 const MIGRATION_STRATEGY_HELP =
-  "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead.";
+  "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead. On a new site with no cameras to reuse, a connector setup still buys its cameras at year 0, plus the connector.";
 
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, same as the hardware, unless this solution is marked incumbent below (already owned, not charged again). Only the support renewal recurs afterward.";
@@ -259,9 +260,10 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
 }
 
 function SolutionCard({
-  sol, onChange, color, onColorChange,
+  sol, onChange, color, onColorChange, scenario,
 }: {
   sol: SolutionInputs; onChange: (v: SolutionInputs) => void; color: string; onColorChange: (v: string) => void;
+  scenario: ScenarioInputs;
 }) {
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
   const num = (v: unknown) => (typeof v === "number" ? v : 0);
@@ -311,7 +313,7 @@ function SolutionCard({
           <>
             <Group grow align="flex-start">
               <NumberInput
-                label={<Group gap={4} wrap="nowrap">Replacement camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
+                label={<Group gap={4} wrap="nowrap">Camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
                 leftSection={icon(Camera)}
                 value={sol.cameraCost}
                 min={0}
@@ -329,6 +331,7 @@ function SolutionCard({
           </>
         ) : (
           <>
+            <CameraStrategyControl sol={sol} scenario={scenario} onChange={onChange} />
             {/* VMS-vendor fields first, camera-vendor fields second, matching the
                 order the two provider pickers are shown in above (OnPremNaming). */}
             <NumberInput
@@ -385,7 +388,7 @@ function SolutionCard({
             />
             <Group grow align="flex-start">
               <NumberInput
-                label={<Group gap={4} wrap="nowrap">Replacement camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
+                label={<Group gap={4} wrap="nowrap">Camera ($/cam)<SourceDot meta={fieldSourceInfo("cameraCost", sol.cameraCost, ...entries)} /></Group>}
                 leftSection={icon(Camera)}
                 value={sol.cameraCost}
                 min={0}
@@ -454,8 +457,8 @@ export default function SolutionsStep({
         </Text>
       </div>
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-        <SolutionCard sol={solA} onChange={onChangeA} color={colorA} onColorChange={onColorAChange} />
-        <SolutionCard sol={solB} onChange={onChangeB} color={colorB} onColorChange={onColorBChange} />
+        <SolutionCard sol={solA} onChange={onChangeA} color={colorA} onColorChange={onColorAChange} scenario={scenario} />
+        <SolutionCard sol={solB} onChange={onChangeB} color={colorB} onColorChange={onColorBChange} scenario={scenario} />
       </SimpleGrid>
       <Card withBorder padding="lg" radius="md">
         <IncumbentPicker scenario={scenario} onScenarioChange={onScenarioChange} nameA={solA.name} nameB={solB.name} />

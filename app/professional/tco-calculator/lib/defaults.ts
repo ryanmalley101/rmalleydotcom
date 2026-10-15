@@ -10,6 +10,7 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   investigationsPerMonth: 20,
   annualEscalationPct: 3,
   incumbent: "none",
+  existingCamerasReusable: true,
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
@@ -80,6 +81,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       supportAddonPerCamYr: 0,
       // on-prem-only fields, unused by the cloud formula but kept populated,
       // so switching a solution's model later doesn't lose prior edits
+      onpremCameraStrategy: "reuse",
       baseLicense: 1500,
       deviceLicense: 250,
       carePct: 20,
@@ -107,6 +109,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     adminHrsPerCamYr: 2.5,
     investigationHrsPerIncident: 3,
     framerateFps: 24,
+    onpremCameraStrategy: "reuse",
     baseLicense: 1500,
     deviceLicense: 250,
     carePct: 20,

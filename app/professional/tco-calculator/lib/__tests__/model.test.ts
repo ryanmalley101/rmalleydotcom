@@ -47,6 +47,42 @@ test("the incumbent still refreshes on its own offset", () => {
   assert.equal(round(inc.totalsByCategory["Hardware (initial & refresh)"]), round(onePurchase * 2)); // years 2 and 7
 });
 
+const yearZero = (sol: Parameters<typeof computeSolution>[1], overrides = {}) =>
+  computeSolution(scenario({ annualEscalationPct: 0, horizonYears: 0, ...overrides }), sol, false).totalsByCategory;
+
+test("on a new site every newly deployed side buys its cameras", () => {
+  const onprem = seedOnprem("a");
+  const verkada = seedVerkada("b");
+  const greenfield = { existingCamerasReusable: false };
+  assert.equal(round(yearZero(onprem, greenfield)["Cameras"]), round(100 * onprem.cameraCost * (1 - onprem.discountPct / 100)));
+  const cloud = yearZero(verkada, greenfield);
+  assert.equal(round(cloud["Cameras"]), round(100 * verkada.cameraCost * (1 - verkada.discountPct / 100)));
+  assert.ok(cloud["Hardware (initial & refresh)"] > 0, "a connector setup still needs its connectors");
+});
+
+test("with reusable cameras, only sides that choose to replace them buy cameras", () => {
+  const onprem = seedOnprem("a");
+  assert.equal(yearZero(onprem)["Cameras"], 0);
+  assert.ok(yearZero({ ...onprem, onpremCameraStrategy: "replace" })["Cameras"] > 0);
+  assert.equal(yearZero(seedVerkada("b"))["Cameras"], 0);
+  const rip = yearZero({ ...seedVerkada("b"), migrationStrategy: "ripReplace" });
+  assert.ok(rip["Cameras"] > 0);
+  assert.equal(rip["Installation"], 100 * seedVerkada("b").bulkInstallLaborCost, "install labor is reported as Installation");
+  assert.equal(rip["Hardware (initial & refresh)"], 0, "native cameras need no connector");
+});
+
+test("a connector only inherits the incumbent's fleet when cameras are reused", () => {
+  const onprem = { ...seedOnprem("a"), fleetHalfLifeYears: 3, warrantyYears: 0 };
+  const verkada = seedVerkada("b");
+  const reused = computeComparison(scenario({ incumbent: "a" }), onprem, verkada);
+  const greenfield = computeComparison(scenario({ incumbent: "a", existingCamerasReusable: false }), onprem, verkada);
+  const purchase = 100 * verkada.cameraCost * (1 - verkada.discountPct / 100);
+  const greenfieldReplacements = greenfield.b.totalsByCategory["Cameras"] - purchase;
+  // Reused: failures follow the incumbent's short half-life and lapsed warranty.
+  // New site: Verkada's own, longer-lived, in-warranty fleet.
+  assert.ok(reused.b.totalsByCategory["Cameras"] > greenfieldReplacements * 2);
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);

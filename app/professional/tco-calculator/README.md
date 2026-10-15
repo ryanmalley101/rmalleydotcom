@@ -30,6 +30,21 @@ auth-gated, "dampened" on purpose.
   formulas (`computeSolution`/`computeComparison`) instead of hardcoded
   vendor formulas, so on-prem-vs-on-prem, cloud-vs-cloud, and one-of-each
   all reuse the same code path.
+- **Cameras at year 0**: `ScenarioInputs.existingCamerasReusable` ("Can the
+  existing cameras be reused?") decides who buys a camera fleet. When false
+  (a new site, or cameras that have to go), every newly deployed side buys
+  its full fleet at year 0 at its own `cameraCost`. When true (the default,
+  matching the model's behavior before this question existed), a newly
+  deployed side buys cameras only if it chose to replace them: cloud
+  `migrationStrategy: "ripReplace"`, or on-prem
+  `onpremCameraStrategy: "replace"` (the on-prem counterpart, shown only in
+  that case). Otherwise it keeps the existing cameras and pays
+  `bulkInstallLaborCost` as onboarding labor. A cloud "connector" side on a
+  new site still buys its cameras plus its connectors. Camera purchases and
+  replacements share the "Cameras" category; year-0 labor is always
+  "Installation". The incumbent pays none of this. Before this existed,
+  on-prem and connector sides never bought cameras even in a "fresh"
+  comparison, while rip-and-replace always did.
 - **Incumbent**: `ScenarioInputs.incumbent` zeroes one side's year-0
   buildout cost when it represents an already-deployed system (its later
   hardware refreshes still apply on schedule). Both sides pay their own

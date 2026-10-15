@@ -12,12 +12,13 @@ import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 import MiscItemsEditor from "./MiscItemsEditor";
+import CameraStrategyControl from "./CameraStrategyControl";
 import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
 const MIGRATION_STRATEGY_HELP =
-  "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead.";
+  "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead. On a new site with no cameras to reuse, a connector setup still buys its cameras at year 0, plus the connector.";
 
 const RAID_HELP =
   "How the on-prem storage is protected against a drive failure. No RAID and RAID 0 (striping) need only the usable capacity but have no redundancy, a single drive failure loses data. RAID 1 (mirroring) and RAID 10 (striped mirrors) roughly double the raw storage bought, to survive a drive failure.";
@@ -132,8 +133,12 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       })}
 
       <SectionLabel>Camera hardware</SectionLabel>
-      {num("Replacement camera ($/cam)", "cameraCost", { icon: Camera })}
-      {num("Bulk install labor ($/cam)", "bulkInstallLaborCost", { icon: Wrench })}
+      <CameraStrategyControl sol={sol} scenario={scenario} onChange={onChange} compact />
+      {num("Camera ($/cam)", "cameraCost", { icon: Camera, help: "Price of one camera, used for a new fleet at year 0 and for out-of-warranty replacements." })}
+      {num("Year-0 install / onboarding ($/cam)", "bulkInstallLaborCost", {
+        icon: Wrench,
+        help: "Labor per camera when this solution is first deployed: a planned install for new cameras, or onboarding existing cameras onto the new system. Not charged for the incumbent.",
+      })}
       {num("Replacement install labor ($/cam)", "replacementInstallLaborCost", { icon: Hammer })}
       {num("Fleet half-life (yrs)", "fleetHalfLifeYears", {
         step: 0.5, decimalScale: 1, min: 0.5, icon: Hourglass,
