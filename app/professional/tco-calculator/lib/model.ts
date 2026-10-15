@@ -262,6 +262,17 @@ export interface SolutionInputs {
   refreshCycleYears: number;
   yearsUntilNextRefresh: number;
 
+  // Extra internet/WAN cost per site per year this solution needs, e.g.
+  // upload bandwidth for a vendor that records to the cloud. Both models;
+  // default 0.
+  networkCostPerSiteYr: number;
+  // On-prem only: server software bought with each server (Windows Server,
+  // SQL Server, other OS/database licensing), and non-recording management
+  // servers (management/SQL/failover) bought alongside the recording
+  // servers. Both default to 0 and recur with every hardware refresh.
+  serverSoftwareCost: number;
+  managementServers: number;
+
   // Free-form list of misc cost/credit line items — see MiscCostItem above.
   // Defaults to an empty array; purely additive, never changes any other
   // category's math.
@@ -276,6 +287,7 @@ export const CATEGORIES = [
   "Truck rolls",
   "Admin labor",
   "Investigations",
+  "Network / bandwidth",
   "Misc / other",
   "Residual value (credit)",
 ] as const;
@@ -316,6 +328,8 @@ export interface HardwareFootprint {
   // Physical (post-RAID-overhead) storage bought, TB. On-prem only; cloud/hybrid
   // storage lives in the vendor's cloud, not something this deployment buys.
   storageTB: number | null;
+  // On-prem management (non-recording) servers, 0 otherwise.
+  managementServers: number;
   cameras: number;
   // Camera swaps over the horizon, counting replacements that fail again.
   cameraSwaps: number;
@@ -409,6 +423,12 @@ export function computeSolution(
   const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / sol.applianceCapacity)) : 0;
   const nSrv =
     sol.model === "onprem" ? Math.max(sites, Math.ceil(cams / sol.serverCapacity)) + spareServers : 0;
+  // Everything an on-prem build (or refresh) buys: recording servers plus any
+  // management servers, each with its server software (OS, database), the
+  // storage, and the analytics appliances.
+  const serverUnits = nSrv + sol.managementServers;
+  const onpremHardwarePurchase = () =>
+    (sol.serverCost + sol.serverSoftwareCost) * disc * serverUnits + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
   const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * storageOverheadMultiplier;
   // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
   // mirrored RAID 1/10).
@@ -487,7 +507,7 @@ export function computeSolution(
           yearCosts["Licenses/subscription"] = licenseTermCost * cams * lic;
         } else {
           yearCosts["Hardware (initial & refresh)"] =
-            (sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites) * hw;
+            onpremHardwarePurchase() * hw;
           // A fresh on-prem deployment buys its perpetual license too; only the
           // ongoing care/SUP renewal (and analyticsSoftwareCostPerCamYr) recur
           // after this. Number(...) || 0 guards an older saved state missing
@@ -525,6 +545,7 @@ export function computeSolution(
       }
 
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost * labor;
+      yearCosts["Network / bandwidth"] = sites * sol.networkCostPerSiteYr * labor;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate * labor;
       yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate * labor;
 
@@ -538,7 +559,7 @@ export function computeSolution(
       } else {
         if (isRefreshYear(y, firstRefresh, refreshCycle)) {
           yearCosts["Hardware (initial & refresh)"] =
-            (sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites) * hw;
+            onpremHardwarePurchase() * hw;
         }
       }
     }
@@ -588,6 +609,7 @@ export function computeSolution(
     units: sol.model === "onprem" ? nSrv : sol.migrationStrategy === "connector" ? applianceUnits : 0,
     // tbBilled, the whole-drive figure the cost lines above actually charged for.
     storageTB: sol.model === "onprem" ? tbBilled : null,
+    managementServers: sol.model === "onprem" ? sol.managementServers : 0,
     cameras: cams,
     cameraSwaps,
     originalFleetReplacedPct: cams > 0 ? Math.min(100, Math.max(0, (100 * (cams - startCohort.size)) / cams)) : 0,

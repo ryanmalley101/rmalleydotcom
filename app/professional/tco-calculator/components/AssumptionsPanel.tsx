@@ -3,7 +3,7 @@
 import { Alert, Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
 import {
   AlertTriangle, ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
-  FileText, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
+  FileText, Globe, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
   RefreshCw, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, RetentionPricing, ScenarioInputs, SolutionInputs } from "../lib/model";
@@ -14,6 +14,7 @@ import SourceDot from "./SourceDot";
 import MiscItemsEditor from "./MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
 import { RAID_OPTIONS } from "../lib/fields";
+import { MANAGEMENT_SERVERS_HELP, NETWORK_HELP, SERVER_SOFTWARE_HELP } from "../lib/fieldHelp";
 import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, RAID_ARRAY_HELP, RAID_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 import { withWarranty } from "../lib/defaults";
 
@@ -231,6 +232,8 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         <>
           {num("Recording server ($/unit)", "serverCost", { icon: Server })}
           {num("Cameras per server", "serverCapacity", { min: 1, int: true, icon: Layers })}
+          {num("Server software ($/server)", "serverSoftwareCost", { icon: FileText, help: SERVER_SOFTWARE_HELP })}
+          {num("Management servers", "managementServers", { int: true, icon: Server, help: MANAGEMENT_SERVERS_HELP })}
           {num("Storage ($/TB raw)", "storageCostPerTB", { icon: HardDrive, help: STORAGE_PRICE_HELP })}
           <Select
             label={<InfoLabel label="Storage redundancy" help={RAID_HELP} extra={<SourceDot meta={fieldSourceInfo("raidLevel", sol.raidLevel, ...vendorEntries)} />} />}
@@ -253,6 +256,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
 
       <SectionLabel>Operations</SectionLabel>
       {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1, icon: Truck, help: TRUCK_ROLLS_HELP })}
+      {num("Internet / WAN ($/site/yr)", "networkCostPerSiteYr", { icon: Globe, help: NETWORK_HELP })}
       {num("Admin hrs / cam / yr", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1, icon: UserCog, help: ADMIN_HOURS_HELP })}
       {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2, icon: Search, help: INVESTIGATION_HOURS_HELP })}
 

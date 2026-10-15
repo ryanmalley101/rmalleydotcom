@@ -31,3 +31,12 @@ export const RAID_HELP =
 
 export const RAID_ARRAY_HELP =
   "How many drives make up one RAID 5 or 6 array. Each array spends one (RAID 5) or two (RAID 6) drives on parity, so bigger arrays have less overhead.";
+
+export const NETWORK_HELP =
+  "Extra internet or WAN cost per site per year that this solution needs and the other may not, such as more upload bandwidth for a vendor that records continuously to the cloud. Leave at 0 if it's the same either way.";
+
+export const SERVER_SOFTWARE_HELP =
+  "Software bought with each server: Windows Server, SQL Server, and any other OS or database licensing the VMS needs. Charged for every recording and management server, and again at each refresh.";
+
+export const MANAGEMENT_SERVERS_HELP =
+  "Servers that don't record video but the VMS needs, such as a management or database server and its failover. Bought at the recording-server price plus server software, and refreshed with them.";

@@ -288,6 +288,15 @@ auth-gated, "dampened" on purpose.
   side pays more up front (a fresh build, a prepaid multi-year term) is
   somewhat penalized relative to one that pays later. Restoring it as an
   optional, off-by-default setting is a reasonable future addition.
+- **Network, server software, management servers**: three optional lines,
+  all defaulting to 0 so they don't change a comparison until filled in.
+  `networkCostPerSiteYr` (both models, its own "Network / bandwidth"
+  category, escalating with labor and services) covers extra internet/WAN
+  cost such as upload bandwidth for a vendor that records to the cloud.
+  On-prem `serverSoftwareCost` (per server: Windows Server, SQL Server)
+  and `managementServers` (non-recording management/database/failover
+  servers at `serverCost`) are bought with the recording servers at year 0
+  and every refresh, inside "Hardware (initial & refresh)".
 - **Site-driven hardware minimums**: appliance/server unit counts assume at
   least one per site, not just enough for total camera count, since a
   connector/NVR box is physically local.

@@ -136,6 +136,9 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       analyticsSoftwareCostPerCamYr: 0,
       refreshCycleYears: 5,
       yearsUntilNextRefresh: 2,
+      networkCostPerSiteYr: 0,
+      serverSoftwareCost: 0,
+      managementServers: 0,
       miscItems: [],
     };
   }
@@ -175,6 +178,9 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     yearsUntilNextApplianceRefresh: 2,
     supportAddonPerCamYr: 0,
     retentionPricing: "scaled",
+    networkCostPerSiteYr: 0,
+    serverSoftwareCost: 0,
+    managementServers: 0,
     miscItems: [],
   };
 }

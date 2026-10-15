@@ -219,6 +219,25 @@ test("retention pricing: no discount below 30 days, and flat vendors don't scale
   assert.equal(lic({ ...sol, retentionPricing: "flat" }, 90), lic(sol, 30));
 });
 
+test("server software and management servers ride along with every server purchase", () => {
+  const sol = seedOnprem("a");
+  const scn = scenario({ ...NO_ESCALATION, creditResidualValue: false });
+  const base = computeSolution(scn, sol, false);
+  const extra = computeSolution(scn, { ...sol, serverSoftwareCost: 1000, managementServers: 1 }, false);
+  const disc = 1 - sol.discountPct / 100;
+  // Software on all recording servers plus the management server, and the management server itself.
+  const perPurchase = (1000 * (base.hardware.units + 1) + sol.serverCost) * disc;
+  // Two purchases in ten years: year 0 and the year-5 refresh.
+  assert.equal(round(extra.totalsByCategory["Hardware (initial & refresh)"] - base.totalsByCategory["Hardware (initial & refresh)"]), round(perPurchase * 2));
+  assert.equal(extra.hardware.managementServers, 1);
+});
+
+test("network cost is charged per site every year", () => {
+  const sol = { ...seedVerkada("b"), networkCostPerSiteYr: 600 };
+  const r = computeSolution(scenario({ ...NO_ESCALATION }), sol, false);
+  assert.equal(round(r.totalsByCategory["Network / bandwidth"]), 600 * 5 * 10);
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);
