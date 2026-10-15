@@ -11,12 +11,11 @@ import { TEXT_MUTED } from "../lib/colors";
 import { fieldSourceInfo, vendorEntriesFor } from "../lib/vendorDefaults";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
+import SolutionField from "./SolutionField";
 import MiscItemsEditor from "./MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
 import { RAID_OPTIONS } from "../lib/fields";
-import { MANAGEMENT_SERVERS_HELP, NETWORK_HELP, SERVER_SOFTWARE_HELP } from "../lib/fieldHelp";
-import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, RAID_ARRAY_HELP, RAID_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
-import { withWarranty } from "../lib/defaults";
+import { RAID_HELP } from "../lib/fieldHelp";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -27,20 +26,11 @@ const MIGRATION_STRATEGY_HELP =
 const LICENSE_HELP =
   "Before the retention multiplier. Billed as a lump sum at purchase and at every renewal (year 0, then every term-length years), not smoothed evenly across each year in between — the $/yr figure below is just an average for reference. Support, software updates, and analytics are assumed bundled into the license by default; use the add-on field below if this vendor prices any of that separately.";
 
-const ADDON_HELP =
-  "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
-
 const RETENTION_PRICING_HELP =
   "Whether this vendor charges more for its license as retention goes up. \"Rises with retention\" scales the license by (days/30)^0.4 above 30 days. \"Fixed\" is for vendors that record on the camera or a local appliance and sell longer retention as bigger hardware or a separate archive add-on; enter that cost in the camera or add-on fields.";
 
 const RENEWAL_HELP =
   "How many years until the license already in place has to be renewed. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
-
-const NEXT_REFRESH_HELP =
-  "How many years until the already-installed hardware is next replaced. Only shown for the incumbent: a solution bought new at year 0 gets its first refresh one full refresh cycle later.";
-
-const ONPREM_LICENSE_HELP =
-  "Charged once at year 0, same as the hardware, unless this solution is marked incumbent above (already owned, not charged again). Only the support/care renewal below recurs afterward.";
 
 // Groups related fields under a shared heading, since a flat list of ~25
 // fields (this panel's old shape) reads as one undifferentiated wall of
@@ -92,59 +82,23 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
   // from what that vendor's research actually produced.
   const vendorEntries = vendorEntriesFor(sol);
 
-  const num = (
-    label: React.ReactNode,
-    key: keyof SolutionInputs,
-    opts?: {
-      step?: number; decimalScale?: number; min?: number; icon?: React.ElementType; help?: string; int?: boolean;
-      onValue?: (v: number) => void;
-    }
-  ) => {
-    const meta = fieldSourceInfo(key, sol[key], ...vendorEntries);
-    const dot = <SourceDot meta={meta} />;
-    return (
-      <NumberInput
-        label={
-          opts?.help
-            ? <InfoLabel label={label as string} help={opts.help} extra={dot} />
-            : <Group gap={4} wrap="nowrap">{label}{dot}</Group>
-        }
-        leftSection={opts?.icon ? icon(opts.icon) : undefined}
-        value={sol[key] as number}
-        min={opts?.min ?? 0}
-        step={opts?.step}
-        decimalScale={opts?.decimalScale}
-        allowDecimal={!opts?.int}
-        onChange={(v) => (opts?.onValue ? opts.onValue(Number(v) || 0) : set(key, (Number(v) || 0) as SolutionInputs[typeof key]))}
-      />
-    );
-  };
+  const field = (key: keyof SolutionInputs, Icon?: React.ElementType) => (
+    <SolutionField sol={sol} field={key} onChange={onChange} icon={Icon} />
+  );
   const perYear = sol.tierPrice / Math.max(1, sol.tierYears);
 
   return (
     <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
       <SectionLabel first>Pricing</SectionLabel>
-      {num("Discount off list (%)", "discountPct", {
-        min: 0, icon: Percent,
-        help: "This vendor's own negotiated discount off list price. Applied broadly — camera, license, appliance/server, and analytics costs below are all discounted by this same percentage.",
-      })}
+      {field("discountPct", Percent)}
 
       <SectionLabel>Camera hardware</SectionLabel>
       <CameraStrategyControl sol={sol} scenario={scenario} onChange={onChange} compact />
-      {num("Camera ($/cam)", "cameraCost", { icon: Camera, help: "Price of one camera, used for a new fleet at year 0 and for out-of-warranty replacements." })}
-      {num("Year-0 install / onboarding ($/cam)", "bulkInstallLaborCost", {
-        icon: Wrench,
-        help: "Labor per camera when this solution is first deployed: a planned install for new cameras, or onboarding existing cameras onto the new system. Not charged for the incumbent.",
-      })}
-      {num("Replacement install labor ($/cam)", "replacementInstallLaborCost", { icon: Hammer })}
-      {num("Fleet half-life (yrs)", "fleetHalfLifeYears", {
-        step: 0.5, decimalScale: 1, min: 0.5, icon: Hourglass,
-        help: HALF_LIFE_HELP,
-      })}
-      {num("Warranty (yrs)", "warrantyYears", {
-        step: 0.5, decimalScale: 1, icon: ShieldCheck, onValue: (w) => onChange(withWarranty(sol, w)),
-        help: "How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself.",
-      })}
+      {field("cameraCost", Camera)}
+      {field("bulkInstallLaborCost", Wrench)}
+      {field("replacementInstallLaborCost", Hammer)}
+      {field("fleetHalfLifeYears", Hourglass)}
+      {field("warrantyYears", ShieldCheck)}
 
       <SectionLabel>Licensing</SectionLabel>
       {sol.model === "cloud" ? (
@@ -169,8 +123,8 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
               ]}
             />
           </div>
-          {num("License term (years)", "tierYears", { min: 1, int: true, icon: CalendarRange })}
-          {num("License cost for term ($/cam)", "tierPrice", { icon: DollarSign })}
+          {field("tierYears", CalendarRange)}
+          {field("tierPrice", DollarSign)}
           <div style={{ gridColumn: "1 / -1" }}>
             <Box mb={4}>
               <InfoLabel
@@ -191,7 +145,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
           <div style={{ gridColumn: "1 / -1" }}>
             <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
           </div>
-          {num("Support/analytics add-on ($/cam/yr)", "supportAddonPerCamYr", { icon: Headset, help: ADDON_HELP })}
+          {field("supportAddonPerCamYr", Headset)}
           {isIncumbent && (
             <NumberInput
               label={<InfoLabel label="Years until license renewal" help={RENEWAL_HELP} />}
@@ -204,9 +158,9 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         </>
       ) : (
         <>
-          {num("Base license ($, one-time)", "baseLicense", { icon: FileText, help: ONPREM_LICENSE_HELP })}
-          {num("Device license ($/cam, one-time)", "deviceLicense", { icon: Tag, help: ONPREM_LICENSE_HELP })}
-          {num("Support renewal (%/yr)", "carePct", { icon: ShieldCheck })}
+          {field("baseLicense", FileText)}
+          {field("deviceLicense", Tag)}
+          {field("carePct", ShieldCheck)}
         </>
       )}
 
@@ -214,10 +168,10 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       {sol.model === "cloud" ? (
         sol.migrationStrategy === "connector" && (
           <>
-            {num("Connector appliance ($/unit)", "applianceCost", { icon: Router })}
-            {num("Cameras per appliance", "applianceCapacity", { min: 1, int: true, icon: Layers })}
-            {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, int: true, icon: RefreshCw })}
-            {isIncumbent && num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, int: true, icon: Clock, help: NEXT_REFRESH_HELP })}
+            {field("applianceCost", Router)}
+            {field("applianceCapacity", Layers)}
+            {field("applianceRefreshCycleYears", RefreshCw)}
+            {isIncumbent && field("yearsUntilNextApplianceRefresh", Clock)}
             <StaleRefreshWarning
               isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextApplianceRefresh}
               horizonYears={scenario.horizonYears} what="the connector appliance cost"
@@ -226,11 +180,11 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         )
       ) : (
         <>
-          {num("Recording server ($/unit)", "serverCost", { icon: Server })}
-          {num("Cameras per server", "serverCapacity", { min: 1, int: true, icon: Layers })}
-          {num("Server software ($/server)", "serverSoftwareCost", { icon: FileText, help: SERVER_SOFTWARE_HELP })}
-          {num("Management servers", "managementServers", { int: true, icon: Server, help: MANAGEMENT_SERVERS_HELP })}
-          {num("Storage ($/TB raw)", "storageCostPerTB", { icon: HardDrive, help: STORAGE_PRICE_HELP })}
+          {field("serverCost", Server)}
+          {field("serverCapacity", Layers)}
+          {field("serverSoftwareCost", FileText)}
+          {field("managementServers", Server)}
+          {field("storageCostPerTB", HardDrive)}
           <Select
             label={<InfoLabel label="Storage redundancy" help={RAID_HELP} extra={<SourceDot meta={fieldSourceInfo("raidLevel", sol.raidLevel, ...vendorEntries)} />} />}
             leftSection={icon(HardDrive)}
@@ -240,9 +194,9 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
             onChange={(v) => v && set("raidLevel", v as RaidLevel)}
           />
           {(sol.raidLevel === "raid5" || sol.raidLevel === "raid6") &&
-            num("Drives per RAID array", "raidArrayDrives", { min: 3, int: true, icon: HardDrive, help: RAID_ARRAY_HELP })}
-          {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, int: true, icon: RefreshCw })}
-          {isIncumbent && num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, int: true, icon: Clock, help: NEXT_REFRESH_HELP })}
+            field("raidArrayDrives", HardDrive)}
+          {field("refreshCycleYears", RefreshCw)}
+          {isIncumbent && field("yearsUntilNextRefresh", Clock)}
           <StaleRefreshWarning
             isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextRefresh}
             horizonYears={scenario.horizonYears} what="server, storage, and analytics appliance costs"
@@ -251,26 +205,17 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       )}
 
       <SectionLabel>Operations</SectionLabel>
-      {num("Truck rolls / site / yr", "truckRollsPerSiteYr", { step: 0.5, decimalScale: 1, icon: Truck, help: TRUCK_ROLLS_HELP })}
-      {num("Internet / WAN ($/site/yr)", "networkCostPerSiteYr", { icon: Globe, help: NETWORK_HELP })}
-      {num("Admin hrs / cam / yr", "adminHrsPerCamYr", { step: 0.1, decimalScale: 1, icon: UserCog, help: ADMIN_HOURS_HELP })}
-      {num("Hrs per investigation", "investigationHrsPerIncident", { step: 0.25, decimalScale: 2, icon: Search, help: INVESTIGATION_HOURS_HELP })}
+      {field("truckRollsPerSiteYr", Truck)}
+      {field("networkCostPerSiteYr", Globe)}
+      {field("adminHrsPerCamYr", UserCog)}
+      {field("investigationHrsPerIncident", Search)}
 
       {sol.model === "onprem" && (
         <>
           <SectionLabel>Analytics</SectionLabel>
-          {num("Analytics appliance ($/site)", "analyticsApplianceCost", {
-            icon: Cpu,
-            help: "Per site, not per fleet: an on-prem analytics appliance runs against that site's own recording servers, so a multi-site deployment needs one at each site. Recurs on the same refresh cycle as the servers/storage above.",
-          })}
-          {num("Analytics software license ($/cam, one-time)", "analyticsSoftwareCostPerCam", {
-            icon: BrainCircuit,
-            help: "Per camera, not per site — analytics software is licensed per device analyzed, not per piece of infrastructure. Charged once at year 0, same as the base/device license, unless this solution is marked incumbent above (already owned, not charged again), and unlike the analytics appliance above, doesn't recur at hardware refresh — a software license isn't tied to the server hardware it happens to run on.",
-          })}
-          {num("Analytics software ($/cam/yr)", "analyticsSoftwareCostPerCamYr", {
-            icon: BrainCircuit,
-            help: "A separate, purely additive ongoing per-camera annual cost, for vendors that also charge a recurring analytics subscription on top of the one-time license above. Defaults to $0 (\"bundled into the one-time license\").",
-          })}
+          {field("analyticsApplianceCost", Cpu)}
+          {field("analyticsSoftwareCostPerCam", BrainCircuit)}
+          {field("analyticsSoftwareCostPerCamYr", BrainCircuit)}
         </>
       )}
 

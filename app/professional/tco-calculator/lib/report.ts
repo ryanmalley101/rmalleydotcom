@@ -39,7 +39,7 @@ const csvCell = (v: unknown) => {
 };
 
 export function buildCsv(state: SharedState, c: ComparisonResult): string {
-  const { scenario, solA, solB } = state;
+  const { solA, solB } = state;
   const rows: unknown[][] = [];
   rows.push(["Video surveillance TCO comparison", `${solA.name} vs. ${solB.name}`]);
   rows.push([]);

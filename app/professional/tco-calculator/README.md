@@ -413,6 +413,15 @@ before trusting an unedited comparison:
   `spareServers`) all live in one collapsed-by-default "Advanced" accordion
   instead, so a first pass at a comparison doesn't need to see them.
 
+- **Field definitions live in one place**: `lib/fields.ts`
+  (`SOLUTION_FIELDS` / `SCENARIO_FIELDS`) holds each input's label, help
+  text, and valid range. Numeric solution inputs render through
+  `components/SolutionField.tsx` in both the wizard and the results page, so
+  a field can't be labeled or explained differently in the two places (they
+  had drifted: e.g. "Support renewal (% of license/yr)" vs. "(%/yr)"), and
+  the CSV/printable exports use the same labels. Add a new numeric input by
+  adding it there, not by hand-building a `NumberInput`.
+
 ## Platform notes
 
 - This route is the **one place in the app that uses Mantine instead of

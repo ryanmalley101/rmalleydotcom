@@ -178,8 +178,11 @@ test("an incumbent cloud license renews when its current term ends", () => {
 });
 
 test("an old link's single escalation rate carries into all three", () => {
-  const { laborEscalationPct: _l, hardwareEscalationPct: _h, licenseEscalationPct: _c, ...rest } = scenario();
-  const n = normalizeScenario({ ...rest, annualEscalationPct: 5 } as never);
+  const legacy: Record<string, unknown> = { ...scenario(), annualEscalationPct: 5 };
+  delete legacy.laborEscalationPct;
+  delete legacy.hardwareEscalationPct;
+  delete legacy.licenseEscalationPct;
+  const n = normalizeScenario(legacy as never);
   assert.deepEqual([n.laborEscalationPct, n.hardwareEscalationPct, n.licenseEscalationPct], [5, 5, 5]);
   assert.equal("annualEscalationPct" in n, false);
 });
