@@ -38,6 +38,9 @@ const LICENSE_HELP =
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
 
+const NEXT_REFRESH_HELP =
+  "How many years until the already-installed hardware is next replaced. Only shown for the incumbent: a solution bought new at year 0 gets its first refresh one full refresh cycle later.";
+
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, same as the hardware, unless this solution is marked incumbent above (already owned, not charged again). Only the support/care renewal below recurs afterward.";
 
@@ -191,7 +194,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
               help: "The manufacturer's hardware warranty on the connector/appliance itself, separate from the camera warranty above since the two commonly differ for the same vendor. Reference only, doesn't change the refresh cost below.",
             })}
             {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, icon: RefreshCw })}
-            {num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, icon: Clock })}
+            {isIncumbent && num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, icon: Clock, help: NEXT_REFRESH_HELP })}
             <StaleRefreshWarning
               isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextApplianceRefresh}
               horizonYears={scenario.horizonYears} what="the connector appliance cost"
@@ -212,7 +215,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
             onChange={(v) => v && set("raidLevel", v as RaidLevel)}
           />
           {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, icon: RefreshCw })}
-          {num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, icon: Clock })}
+          {isIncumbent && num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, icon: Clock, help: NEXT_REFRESH_HELP })}
           <StaleRefreshWarning
             isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextRefresh}
             horizonYears={scenario.horizonYears} what="server, storage, and analytics appliance costs"

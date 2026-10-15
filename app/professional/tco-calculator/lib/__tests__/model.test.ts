@@ -12,7 +12,7 @@ test("default comparison snapshot", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 1151875, b: 555042, crossover: 2 },
+    { a: 1151875, b: 515293, crossover: 2 },
   );
 });
 
@@ -22,6 +22,29 @@ test("staff time is reported separately and sums back to the total", () => {
     assert.equal(round(r.cashTotal + r.staffTimeTotal), round(r.total));
     assert.equal(round(r.staffTimeTotal), round(r.totalsByCategory["Admin labor"] + r.totalsByCategory["Investigations"]));
   }
+});
+
+test("a fresh deployment's first refresh comes one full cycle after year 0", () => {
+  const scn = scenario({ annualEscalationPct: 0, horizonYears: 10 });
+  const onprem = seedOnprem("a"); // 5-year cycle, 2 years until next refresh
+  const fresh = computeSolution(scn, onprem, false);
+  const yearZero = computeSolution({ ...scn, horizonYears: 0 }, onprem, false);
+  const onePurchase = yearZero.totalsByCategory["Hardware (initial & refresh)"];
+  // Years 0 and 5, not 0, 2, and 7.
+  assert.equal(round(fresh.totalsByCategory["Hardware (initial & refresh)"]), round(onePurchase * 2));
+
+  const cloud = seedVerkada("b"); // 7-year cycle, 2 years until next refresh
+  const freshCloud = computeSolution(scn, cloud, false);
+  const cloudOne = computeSolution({ ...scn, horizonYears: 0 }, cloud, false).totalsByCategory["Hardware (initial & refresh)"];
+  assert.equal(round(freshCloud.totalsByCategory["Hardware (initial & refresh)"]), round(cloudOne * 2)); // years 0 and 7
+});
+
+test("the incumbent still refreshes on its own offset", () => {
+  const scn = scenario({ annualEscalationPct: 0, horizonYears: 10 });
+  const onprem = seedOnprem("a");
+  const inc = computeSolution(scn, onprem, true);
+  const onePurchase = computeSolution({ ...scn, horizonYears: 0 }, onprem, false).totalsByCategory["Hardware (initial & refresh)"];
+  assert.equal(round(inc.totalsByCategory["Hardware (initial & refresh)"]), round(onePurchase * 2)); // years 2 and 7
 });
 
 test("incumbent pays nothing at year 0", () => {

@@ -43,6 +43,14 @@ auth-gated, "dampened" on purpose.
   license purchase for either side, which understated a fresh on-prem
   deployment's cost any time neither side (or the *other* side) was
   incumbent — fixed since it contradicted this same symmetry principle.
+- **Refresh timing differs by incumbency**: `yearsUntilNextRefresh` /
+  `yearsUntilNextApplianceRefresh` describe hardware that's already installed
+  and aging, so only the incumbent uses them (and `AssumptionsPanel` only
+  shows them for the incumbent). A side that buys new hardware at year 0
+  gets its first refresh one full cycle later (`refreshCycleYears` /
+  `applianceRefreshCycleYears`). Before this, a fresh deployment also used
+  the offset, so with the defaults it bought all its servers, storage, and
+  analytics appliances at year 0 and again at year 2.
 - **Silent-zero warning for stale refresh timing**: an incumbent's *only*
   path to ever charging server/storage/analytics-appliance cost (or the
   connector appliance cost) is a hardware refresh landing inside the

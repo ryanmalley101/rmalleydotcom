@@ -358,6 +358,17 @@ export function computeSolution(
     .filter((it) => it.timing === "recurring")
     .reduce((sum, it) => sum + (Number(it.amount) || 0), 0);
 
+  // Refresh timing. "Years until next refresh" describes hardware that's
+  // already installed and aging, so only the incumbent uses it. A side that
+  // buys new hardware at year 0 gets its first refresh one full cycle later;
+  // using the offset there too used to buy a brand-new deployment's hardware
+  // twice within a couple of years.
+  const refreshCycle = Math.max(1, sol.refreshCycleYears);
+  const firstRefresh = isIncumbent ? sol.yearsUntilNextRefresh : refreshCycle;
+  const applianceCycle = Math.max(1, sol.applianceRefreshCycleYears);
+  const firstApplianceRefresh = isIncumbent ? sol.yearsUntilNextApplianceRefresh : applianceCycle;
+  const isRefreshYear = (y: number, first: number, cycle: number) => y >= first && (y - first) % cycle === 0 && y < yrs;
+
   const totalsByCategory = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
   const cumulative: number[] = [];
   let running = 0;
@@ -438,16 +449,12 @@ export function computeSolution(
       if (sol.model === "cloud") {
         // ripReplace has no connector appliance, so no ongoing hardware refresh.
         if (sol.migrationStrategy === "connector") {
-          if (
-            y >= sol.yearsUntilNextApplianceRefresh &&
-            (y - sol.yearsUntilNextApplianceRefresh) % sol.applianceRefreshCycleYears === 0 &&
-            y < yrs
-          ) {
+          if (isRefreshYear(y, firstApplianceRefresh, applianceCycle)) {
             yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits;
           }
         }
       } else {
-        if (y >= sol.yearsUntilNextRefresh && (y - sol.yearsUntilNextRefresh) % sol.refreshCycleYears === 0 && y < yrs) {
+        if (isRefreshYear(y, firstRefresh, refreshCycle)) {
           yearCosts["Hardware (initial & refresh)"] =
             sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
         }
