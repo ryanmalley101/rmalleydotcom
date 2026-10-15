@@ -14,6 +14,7 @@ import { saveComparison } from "../lib/savedComparisons";
 import ScenarioStep from "./ScenarioStep";
 import AssumptionsPanel from "./AssumptionsPanel";
 import ChartsPanel from "./ChartsPanel";
+import MethodologyNotes from "./MethodologyNotes";
 import IncumbentPicker from "./IncumbentPicker";
 
 // Color by meaning (which side actually costs less), not by A/B slot or
@@ -311,25 +312,7 @@ export default function ResultsView({
         </Box>
       </Box>
 
-      <Text size="xs" c={TEXT_MUTED} maw={860}>
-        <Text span fw={700} size="xs">Methodology notes.</Text> Unless one solution is marked incumbent above,
-        both pay their own year-0 buildout cost (initial hardware plus bulk install labor) so neither side gets
-        a sunk-cost pass; the incumbent&apos;s ongoing hardware refreshes still apply on schedule. Camera failures
-        follow exponential decay (surviving fraction = 0.5^(years / half-life)), each solution has its own
-        half-life and warranty period; a failure still under warranty costs only replacement labor, not the
-        camera itself. Replacement cameras are assumed not to fail again within the horizon. Cloud/hybrid
-        license prices are annualized (price &divide; term) with a continuous retention curve
-        ((days/30)<sup>0.4</sup>), reflecting that storage is only part of what a license covers and gets
-        cheaper per unit at higher volumes; on-prem storage scales the same way, before RAID overhead. On-prem
-        storage cost accounts for RAID redundancy: RAID 1 and RAID 10 roughly double the raw capacity bought
-        versus RAID 0 or no RAID, to survive a drive failure. On-prem perpetual licenses are charged once at
-        year 0 like the hardware, unless that side is marked incumbent (already owned); support renewals are
-        counted every year regardless. Appliance/server counts assume at least one unit per site.
-        Annual cost escalation compounds every recurring cost year over year.
-        Investigation labor is a soft cost, kept as its own category so it can be zeroed out independently.
-        Defaults are directional placeholders, not quotes. This tool is not affiliated with or endorsed by any
-        vendor named here.
-      </Text>
+      <MethodologyNotes />
     </Stack>
   );
 }

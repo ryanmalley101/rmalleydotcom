@@ -160,10 +160,10 @@ export default function ChartsPanel({
   return (
     <Stack gap="md">
       <Paper withBorder p="md" radius="md" h={320} pos="relative">
-        <canvas ref={cumRef} role="img" aria-label="Cumulative discounted cost by year for both solutions" />
+        <canvas ref={cumRef} role="img" aria-label="Cumulative cost by year for both solutions" />
       </Paper>
       <Paper withBorder p="md" radius="md" h={Math.max(280, comparison.activeCategories.length * 46)} pos="relative">
-        <canvas ref={catRef} role="img" aria-label="Discounted cost by category for both solutions" />
+        <canvas ref={catRef} role="img" aria-label="Total cost by category for both solutions" />
       </Paper>
     </Stack>
   );
