@@ -150,17 +150,17 @@ export interface ScenarioInputs {
 // a misc item with a negative amount, same mechanism as a misc cost. Applied
 // at face value, not multiplied by the vendor's discountPct — these are
 // user-authored numbers unrelated to vendor pricing, not a vendor SKU.
-export type MiscItemTiming = "upfront" | "recurring";
+export type MiscItemTiming = "upfront" | "recurring" | "once";
 export interface MiscCostItem {
   id: string;
   label: string;
   amount: number;
-  // "upfront": charged once at year 0, same incumbent-zeroing as the rest of
-  // that year's buildout cost (nothing new is being deployed for an
-  // incumbent, so nothing new to charge/credit). "recurring": charged every
-  // year after year 0, escalating like the other recurring lines, regardless
-  // of incumbent status (same as the support/care renewal elsewhere).
+  // "upfront": once at year 0. "recurring": every year after year 0,
+  // escalating like the other recurring lines. "once": a single charge in
+  // `year` (0 to the horizon), for a known future event. All three apply to
+  // the incumbent too: these are the user's own numbers, not buildout costs.
   timing: MiscItemTiming;
+  year?: number;
 }
 
 export interface SolutionInputs {
@@ -402,12 +402,18 @@ export function computeSolution(
   const careCost = sol.model === "onprem" ? (sol.baseLicense + sol.deviceLicense * cams) * disc * (sol.carePct / 100) : 0;
   // Misc items are applied at face value (no vendor disc), split by timing.
   const miscItems = Array.isArray(sol.miscItems) ? sol.miscItems : [];
-  const miscUpfrontTotal = miscItems
-    .filter((it) => it.timing === "upfront")
-    .reduce((sum, it) => sum + (Number(it.amount) || 0), 0);
-  const miscRecurringTotal = miscItems
-    .filter((it) => it.timing === "recurring")
-    .reduce((sum, it) => sum + (Number(it.amount) || 0), 0);
+  // User-authored, so they always apply, incumbent or not: an incumbent can
+  // face real one-time costs too (replacing end-of-life NVRs, adding
+  // analytics). Year 0 gets "upfront" items, years 1+ get "recurring" ones,
+  // and a "once" item lands in its own year.
+  const miscForYear = (y: number) =>
+    miscItems.reduce((sum, it) => {
+      const amount = Number(it.amount) || 0;
+      if (it.timing === "upfront") return y === 0 ? sum + amount : sum;
+      if (it.timing === "recurring") return y > 0 ? sum + amount : sum;
+      if (it.timing === "once") return Math.round(Number(it.year) || 0) === y ? sum + amount : sum;
+      return sum;
+    }, 0);
 
   // Refresh timing. "Years until next refresh" describes hardware that's
   // already installed and aging, so only the incumbent uses it. A side that
@@ -459,8 +465,6 @@ export function computeSolution(
           yearCosts["Licenses/subscription"] =
             (sol.baseLicense + sol.deviceLicense * cams + (Number(sol.analyticsSoftwareCostPerCam) || 0) * cams) * disc;
         }
-        // Sum of "upfront" miscItems (see MiscCostItem above).
-        yearCosts["Misc / other"] = miscUpfrontTotal;
       }
     } else {
       let swaps = 0;
@@ -493,9 +497,6 @@ export function computeSolution(
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate;
       yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate;
-      // Sum of "recurring" miscItems, regardless of incumbent status, same as
-      // the support/care renewal elsewhere.
-      yearCosts["Misc / other"] = miscRecurringTotal;
 
       if (sol.model === "cloud") {
         // ripReplace has no connector appliance, so no ongoing hardware refresh.
@@ -511,6 +512,8 @@ export function computeSolution(
         }
       }
     }
+
+    yearCosts["Misc / other"] = miscForYear(y);
 
     // Every Hardware line is a lump purchase on its refresh cycle; for cloud,
     // so is every license term (the add-on is annual, so it's excluded).

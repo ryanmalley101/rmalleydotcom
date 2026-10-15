@@ -257,7 +257,8 @@ auth-gated, "dampened" on purpose.
 - **Misc / other**: `SolutionInputs.miscItems` is a free-form list
   (`MiscCostItem[]`, `lib/model.ts`) rather than the two fixed
   `miscUpfrontCost`/`miscAnnualCost` fields this replaced — each item has its
-  own `label`, `amount`, and `timing` (`"upfront"` | `"recurring"`), edited
+  own `label`, `amount`, and `timing` (`"upfront"` | `"recurring"` |
+  `"once"`, the last with its own `year`), edited
   via `MiscItemsEditor` (its own component, since it's a repeatable
   add/remove list rather than a flat field). This exists specifically so a
   user can justify value with their own named line items (e.g. "Workers comp
@@ -266,10 +267,10 @@ auth-gated, "dampened" on purpose.
   a misc item with a negative amount, the same mechanism as a misc cost.
   Applied at face value (no vendor `discountPct`) — these are user-authored
   numbers unrelated to vendor pricing, not a vendor SKU. `"upfront"` items
-  follow the same incumbent-zeroing as the rest of year 0's buildout cost;
-  `"recurring"` items are charged every year regardless of incumbent status
-  (same as the support/care renewal) and escalate like the other recurring
-  lines. `normalizeSolution()` (`lib/defaults.ts`) migrates an older
+  land in year 0, `"recurring"` items every year after, and `"once"` items
+  in their chosen year, all escalating with their year. All three apply to
+  the incumbent too: they used to be zeroed for it like the buildout, which
+  silently ignored a real known cost such as replacing end-of-life NVRs. `normalizeSolution()` (`lib/defaults.ts`) migrates an older
   share link/saved comparison's flat `miscUpfrontCost`/`miscAnnualCost` into
   equivalent named items on load, so old data isn't silently dropped.
 - **Crossover detection**: `computeComparison`'s search starts its baseline

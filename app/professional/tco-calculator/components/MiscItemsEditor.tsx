@@ -26,16 +26,17 @@ export default function MiscItemsEditor({ items, onChange }: { items: MiscCostIt
     <Stack gap="xs" style={{ gridColumn: "1 / -1" }}>
       <Text size="xs" c={TEXT_MUTED}>
         Add your own cost or savings line items — enter a negative amount for a cost offset (e.g. a
-        workers&apos; comp claim reduction). Choose whether each applies once at deployment or every year.
+        workers&apos; comp claim reduction). Each applies at deployment, every year, or once in a year you choose,
+        including on the incumbent.
       </Text>
       {safeItems.map((item) => (
-        <Group key={item.id} gap="xs" wrap="nowrap" align="flex-end">
+        <Group key={item.id} gap="xs" wrap="wrap" align="flex-end">
           <TextInput
             label="Label"
             placeholder="e.g. Workers comp claim reduction"
             value={item.label}
             onChange={(e) => update(item.id, { label: e.currentTarget.value })}
-            style={{ flex: 2, minWidth: 0 }}
+            style={{ flex: "2 1 160px", minWidth: 0 }}
           />
           <NumberInput
             label="Amount ($)"
@@ -43,16 +44,26 @@ export default function MiscItemsEditor({ items, onChange }: { items: MiscCostIt
             value={item.amount}
             onChange={(v) => update(item.id, { amount: typeof v === "number" ? v : 0 })}
             thousandSeparator=","
-            style={{ flex: 1, minWidth: 0 }}
+            style={{ flex: "1 1 100px", minWidth: 0 }}
           />
           <SegmentedControl
             value={item.timing}
-            onChange={(v) => update(item.id, { timing: v as MiscItemTiming })}
+            onChange={(v) => update(item.id, { timing: v as MiscItemTiming, year: v === "once" ? item.year ?? 1 : item.year })}
             data={[
               { label: "Upfront", value: "upfront" },
-              { label: "Recurring", value: "recurring" },
+              { label: "Yearly", value: "recurring" },
+              { label: "In year", value: "once" },
             ]}
           />
+          {item.timing === "once" && (
+            <NumberInput
+              label="Year"
+              value={item.year ?? 1}
+              min={0} max={30} step={1} allowDecimal={false}
+              onChange={(v) => update(item.id, { year: typeof v === "number" ? v : 0 })}
+              w={80}
+            />
+          )}
           <ActionIcon color="red" variant="subtle" onClick={() => remove(item.id)} aria-label="Remove item" mb={4}>
             <Trash2 size={16} />
           </ActionIcon>

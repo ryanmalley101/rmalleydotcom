@@ -126,6 +126,23 @@ test("a side reusing the incumbent's cameras starts on the incumbent's reliabili
   assert.ok(c.b.hardware.cameraSwaps > ownFleet.hardware.cameraSwaps * 2);
 });
 
+test("misc items apply to the incumbent and can land in a chosen year", () => {
+  const scn = scenario({ annualEscalationPct: 0 });
+  const base = { ...seedOnprem("a"), miscItems: [] };
+  const withItems = {
+    ...base,
+    miscItems: [
+      { id: "1", label: "Replace EOL NVRs", amount: 50000, timing: "upfront" as const },
+      { id: "2", label: "VMS upgrade", amount: 20000, timing: "once" as const, year: 3 },
+      { id: "3", label: "Insurance credit", amount: -1000, timing: "recurring" as const },
+    ],
+  };
+  const before = computeSolution(scn, base, true);
+  const after = computeSolution(scn, withItems, true);
+  assert.equal(round(after.total - before.total), 50000 + 20000 - 1000 * 10);
+  assert.equal(round(after.cumulative[3] - after.cumulative[2] - (before.cumulative[3] - before.cumulative[2])), 20000 - 1000);
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);
