@@ -60,6 +60,7 @@ const SOLUTION_RULES: Partial<Record<keyof SolutionInputs, Rule>> = {
   managementServers: { min: 0, int: true, fallback: 0 },
   raidArrayDrives: { min: 3, max: 24, int: true, fallback: 8 },
   analyticsApplianceCost: { min: 0, fallback: 0 },
+  analyticsApplianceCapacity: { min: 1, int: true, fallback: 50 },
   analyticsSoftwareCostPerCam: { min: 0, fallback: 0 },
   analyticsSoftwareCostPerCamYr: { min: 0, fallback: 0 },
   refreshCycleYears: { min: 1, int: true, fallback: 5 },

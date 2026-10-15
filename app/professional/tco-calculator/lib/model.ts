@@ -240,23 +240,25 @@ export interface SolutionInputs {
   // Drives per array for RAID 5/6: parity overhead is 1 or 2 drives per
   // array of this many. Ignored for other levels.
   raidArrayDrives: number;
-  // Per-site, not fleet-wide: an on-prem analytics appliance is deployed at
-  // each site individually (it runs against that site's own recording
-  // servers), not once for the whole comparison. Multiplies by `sites`
-  // wherever it's charged, and recurs on the same refresh cycle as the
-  // recording servers/storage.
+  // On-prem only. Whether this solution includes AI video search
+  // (analytics). Off by default: cloud vendors bundle search into the
+  // license, while on-prem buys it separately, and the on-prem defaults
+  // already assume slower, unassisted investigations. Turning it on adds the
+  // analytics costs below and, in the UI, moves this side's hours per
+  // investigation to the faster with-search default (withAnalytics in
+  // lib/defaults.ts), so the cost and its benefit always come together.
+  // Before this, on-prem paid for analytics and still carried four times the
+  // investigation hours.
+  analyticsEnabled: boolean;
+  // Analytics hardware, sized by camera count like recording servers'
+  // capacity (no per-site minimum: per-site pricing made 100 cameras cost
+  // $188 each at one site and $9,375 each at 50). Bought with the servers
+  // and replaced on the same refresh cycle.
   analyticsApplianceCost: number;
-  // The analytics *software* license, by contrast, is per-camera, not
-  // per-site — it's licensed per device analyzed, not per piece of
-  // infrastructure. analyticsSoftwareCostPerCam is a one-time purchase,
-  // charged alongside baseLicense/deviceLicense at year 0 (same
-  // incumbent-zeroing: already-owned for the incumbent, not charged again),
-  // and does *not* recur at hardware refresh cycles the way
-  // analyticsApplianceCost does — a software license isn't tied to the
-  // server hardware it happens to run on. analyticsSoftwareCostPerCamYr is
-  // a separate, purely additive ongoing per-camera-per-year cost (defaults
-  // to $0), for vendors that also charge a recurring analytics subscription
-  // on top of the one-time license.
+  analyticsApplianceCapacity: number;
+  // Per-camera analytics software: a one-time license at year 0 (owned
+  // already by the incumbent, and not repurchased at hardware refresh), and
+  // an optional recurring subscription on top.
   analyticsSoftwareCostPerCam: number;
   analyticsSoftwareCostPerCamYr: number;
   refreshCycleYears: number;
@@ -427,8 +429,10 @@ export function computeSolution(
   // management servers, each with its server software (OS, database), the
   // storage, and the analytics appliances.
   const serverUnits = nSrv + sol.managementServers;
+  const analyticsOn = sol.model === "onprem" && sol.analyticsEnabled === true;
+  const analyticsUnits = analyticsOn ? Math.ceil(cams / sol.analyticsApplianceCapacity) : 0;
   const onpremHardwarePurchase = () =>
-    (sol.serverCost + sol.serverSoftwareCost) * disc * serverUnits + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
+    (sol.serverCost + sol.serverSoftwareCost) * disc * serverUnits + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * analyticsUnits;
   const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * storageOverheadMultiplier;
   // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
   // mirrored RAID 1/10).
@@ -513,7 +517,7 @@ export function computeSolution(
           // after this. Number(...) || 0 guards an older saved state missing
           // analyticsSoftwareCostPerCam (normalization normally backfills it).
           yearCosts["Licenses/subscription"] =
-            (sol.baseLicense + sol.deviceLicense * cams + sol.analyticsSoftwareCostPerCam * cams) * disc * lic;
+            (sol.baseLicense + sol.deviceLicense * cams + (analyticsOn ? sol.analyticsSoftwareCostPerCam * cams : 0)) * disc * lic;
         }
       }
     } else {
@@ -541,7 +545,7 @@ export function computeSolution(
         }
         yearCosts["Licenses/subscription"] = cloudLicenseCost * lic;
       } else {
-        yearCosts["Licenses/subscription"] = (careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc) * lic;
+        yearCosts["Licenses/subscription"] = (careCost + (analyticsOn ? sol.analyticsSoftwareCostPerCamYr * cams * disc : 0)) * lic;
       }
 
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost * labor;

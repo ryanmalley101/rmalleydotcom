@@ -12,6 +12,7 @@ import {
   switchVendor, confidenceSummary, fieldSourceInfo, vendorEntriesFor, type VendorDefaultEntry,
 } from "../lib/vendorDefaults";
 import CameraStrategyControl from "./CameraStrategyControl";
+import AnalyticsToggle from "./AnalyticsToggle";
 import { RAID_OPTIONS } from "../lib/fields";
 import { RAID_HELP } from "../lib/fieldHelp";
 import InfoLabel from "./InfoLabel";
@@ -225,6 +226,7 @@ function SolutionCard({
         ) : (
           <>
             <CameraStrategyControl sol={sol} scenario={scenario} onChange={onChange} />
+            <AnalyticsToggle sol={sol} onChange={onChange} />
             {/* VMS-vendor fields first, camera-vendor fields second, matching the
                 order the two provider pickers are shown in above (OnPremNaming). */}
             <SolutionField sol={sol} field="baseLicense" onChange={onChange} icon={FileText} />

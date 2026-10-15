@@ -235,32 +235,25 @@ auth-gated, "dampened" on purpose.
   added fields and complexity. `driveCapacityTb` survived that removal
   because it also drives whole-drive storage *billing* (see RAID above),
   independent of power draw.
-- **Analytics**: on-prem's `analyticsApplianceCost`/`analyticsSoftwareCostPerCam`/
-  `analyticsSoftwareCostPerCamYr` get their own labeled "Analytics"
-  sub-section in `AssumptionsPanel` (a `SectionLabel` div spanning the
-  grid), separate from the flat field list, since cloud's equivalent cost
-  is bundled into its license price by default and it wasn't obvious those
-  fields existed otherwise. The appliance and the software license are
-  billed on different bases, deliberately: `analyticsApplianceCost` is
-  per-site (`* sites` wherever it's charged) — it's a physical box running
-  against that site's own recording servers, so a multi-site deployment
-  needs one at each site — and recurs on the refresh cycle, same as the
-  servers/storage it's bundled with in "Hardware (initial & refresh)".
-  Analytics *software*, by contrast, is licensed per camera analyzed, not
-  per site: `analyticsSoftwareCostPerCam` (default $100) is a one-time
-  purchase charged at year 0 alongside `baseLicense`/`deviceLicense` (same
-  incumbent-zeroing, and — unlike the appliance — doesn't recur at
-  hardware refresh, since a software license isn't tied to the server
-  hardware it happens to run on); `analyticsSoftwareCostPerCamYr` (default
-  $0) is a separate, purely additive ongoing per-camera cost for vendors
-  that also charge a recurring analytics subscription on top of the
-  one-time license. Both usages in `computeSolution` coerce through
-  `Number(sol.x) || 0`, not the raw field — this pair replaced the single
-  older `analyticsSoftwareCost` field, and an un-normalized old
-  solution object (missing the new names entirely) would otherwise NaN out
-  that whole year's total. `normalizeSolution()` backfills the real default
-  (100/0) before this ever runs in the actual app; this is a last-resort
-  guard in case some future path ever calls `computeSolution` without it.
+- **Analytics**: on-prem analytics is a per-solution switch,
+  `analyticsEnabled`, off by default. Cloud solutions are assumed to bundle
+  AI video search into their license. On-prem used to always pay for
+  analytics (a $25k appliance per site plus $100/camera software) while
+  still carrying four times the cloud's investigation hours, so it paid for
+  faster search without getting it. Now, off means no analytics costs and
+  the slower `INVESTIGATION_HRS_WITHOUT_SEARCH` default (3); on adds the
+  costs and `withAnalytics()` (`lib/defaults.ts`) moves that side's hours
+  to `INVESTIGATION_HRS_WITH_SEARCH` (0.75), unless the user entered their
+  own hours. The appliance is sized by camera count
+  (`analyticsApplianceCapacity`, default 50), not one per site, which made
+  100 cameras cost $188 each at one site and $9,375 each at 50. Both the
+  $25k price and the capacity are unsourced placeholders, flagged in their
+  help text and in the pre-share checklist when analytics is on. The
+  per-camera software (`analyticsSoftwareCostPerCam`, one-time at year 0,
+  owned by the incumbent) and optional subscription
+  (`analyticsSoftwareCostPerCamYr`) also apply only when it's on. Older
+  links that carried analytics costs normalize to on, keeping their
+  investigation hours.
 - **Residual value at the horizon end**: `ScenarioInputs.creditResidualValue`
   (default on, a switch in the Scenario step's Advanced section) credits back
   the unused share of every lump purchase with a fixed service life that

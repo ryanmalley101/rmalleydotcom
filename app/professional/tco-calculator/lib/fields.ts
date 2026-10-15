@@ -115,9 +115,14 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
     help: "How often recording servers, storage, and analytics appliances are replaced.",
   },
   { key: "yearsUntilNextRefresh", label: "Years until next refresh", models: ["onprem"], min: 0, int: true, help: NEXT_REFRESH_HELP },
+  { key: "analyticsEnabled", label: "Includes AI video search (analytics)", models: ["onprem"] },
   {
-    key: "analyticsApplianceCost", label: "Analytics appliance ($/site)", models: ["onprem"],
-    help: "One analytics appliance per site, running against that site's recording servers. Bought with the servers and replaced on the same refresh cycle.",
+    key: "analyticsApplianceCost", label: "Analytics appliance ($/unit)", models: ["onprem"],
+    help: "Price of one analytics appliance, bought with the recording servers and replaced on the same refresh cycle. The default is an unsourced placeholder; replace it with a quote.",
+  },
+  {
+    key: "analyticsApplianceCapacity", label: "Cameras per analytics appliance", models: ["onprem"], min: 1, int: true,
+    help: "How many cameras one analytics appliance handles. The default is an unsourced placeholder.",
   },
   {
     key: "analyticsSoftwareCostPerCam", label: "Analytics software license ($/cam, one-time)", models: ["onprem"],

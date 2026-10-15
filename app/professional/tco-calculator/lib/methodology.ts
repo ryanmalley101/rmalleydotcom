@@ -10,6 +10,7 @@ export const METHODOLOGY_NOTES: string[] = [
   "Cameras fail at a steady rate set by each fleet's half-life, and replacement cameras can fail again. Each batch of cameras has its own warranty, counted from when it was installed; cameras already on site start at the age entered for them. A failure under warranty costs only replacement labor.",
   "On-prem support renewals and all other recurring costs are charged every year. Prices grow at three separate escalation rates: one for labor and services, one for hardware, and one for licenses and subscriptions.",
   "Purchases with a fixed service life that runs past the horizon are credited for their unused share in the final year, unless that option is turned off.",
+  "Cloud solutions are assumed to include AI video search in their license. On-prem solutions include it only when analytics is turned on, which adds analytics hardware and software costs and the faster with-search investigation time together.",
   "Admin and investigation labor are estimates of staff time, shown separately from cash costs.",
   "Defaults are directional placeholders, not quotes. This tool is not affiliated with or endorsed by any vendor named here.",
 ];

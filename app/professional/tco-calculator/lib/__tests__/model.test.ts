@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { computeComparison, computeSolution, drivesForArray, retentionMultiplier } from "../model";
-import { defaultSolution, normalizeScenario, normalizeSolution } from "../defaults";
+import { defaultSolution, normalizeScenario, normalizeSolution, withAnalytics } from "../defaults";
 import { seedOnprem, seedVerkada, scenario, round, NO_ESCALATION } from "./helpers";
 
 // Pins the headline numbers of the comparison a first-time visitor sees
@@ -12,7 +12,7 @@ test("default comparison snapshot", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 1148512, b: 520050, crossover: 2 },
+    { a: 979872, b: 520050, crossover: 2 },
   );
 });
 
@@ -241,6 +241,32 @@ test("network cost is charged per site every year", () => {
   assert.equal(round(r.totalsByCategory["Network / bandwidth"]), 600 * 5 * 10);
 });
 
+test("on-prem analytics is off by default and brings its cost and faster search together", () => {
+  const sol = seedOnprem("a");
+  assert.equal(sol.analyticsEnabled, false);
+  const scn = scenario({ ...NO_ESCALATION });
+  const off = computeSolution(scn, sol, false);
+  const onSol = withAnalytics(sol, true);
+  assert.equal(onSol.investigationHrsPerIncident, 0.75, "faster with-search hours");
+  const on = computeSolution(scn, onSol, false);
+  assert.ok(on.totalsByCategory["Hardware (initial & refresh)"] > off.totalsByCategory["Hardware (initial & refresh)"]);
+  assert.ok(on.totalsByCategory["Investigations"] < off.totalsByCategory["Investigations"]);
+  assert.equal(withAnalytics(onSol, false).investigationHrsPerIncident, 3, "switching off restores the default");
+  assert.equal(withAnalytics({ ...sol, investigationHrsPerIncident: 2 }, true).investigationHrsPerIncident, 2, "a user's own value stands");
+});
+
+test("analytics hardware is sized by cameras, not sites", () => {
+  const sol = { ...seedOnprem("a"), analyticsEnabled: true, analyticsApplianceCapacity: 50 };
+  const hw = (sites: number) => computeSolution(scenario({ ...NO_ESCALATION, sites }), { ...sol, serverCost: 0, storageCostPerTB: 0 }, false).byYear[0]["Hardware (initial & refresh)"];
+  assert.equal(round(hw(1)), round(hw(50)));
+});
+
+test("older links that carried analytics costs keep analytics on", () => {
+  const { analyticsEnabled: _omit, ...legacy } = seedOnprem("a");
+  void _omit;
+  assert.equal(normalizeSolution(legacy as never).analyticsEnabled, true);
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);
@@ -249,8 +275,10 @@ test("incumbent pays nothing at year 0", () => {
 test("non-incumbent on-prem pays its perpetual license at year 0", () => {
   const sol = seedOnprem("a");
   const r = computeSolution(scenario({ ...NO_ESCALATION }), sol, false);
-  const expected = (sol.baseLicense + sol.deviceLicense * 100 + sol.analyticsSoftwareCostPerCam * 100) * (1 - sol.discountPct / 100);
+  const expected = (sol.baseLicense + sol.deviceLicense * 100) * (1 - sol.discountPct / 100);
   assert.equal(round(r.byYear[0]["Licenses/subscription"]), round(expected));
+  const withAnalytics = computeSolution(scenario({ ...NO_ESCALATION }), { ...sol, analyticsEnabled: true }, false);
+  assert.equal(round(withAnalytics.byYear[0]["Licenses/subscription"]), round(expected + sol.analyticsSoftwareCostPerCam * 100 * (1 - sol.discountPct / 100)));
 });
 
 test("cloud license is billed as a lump sum at purchase and each renewal", () => {

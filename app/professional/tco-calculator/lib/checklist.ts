@@ -22,6 +22,7 @@ export function buildChecklist(scenario: ScenarioInputs, solA: SolutionInputs, s
       const def = SOLUTION_FIELD_MAP[k];
       if (def.models && !def.models.includes(sol.model)) return false;
       if (k === "applianceCost" && sol.migrationStrategy !== "connector") return false;
+      if (k === "analyticsApplianceCost" && !sol.analyticsEnabled) return false;
       return sol[k] === generic[k] && !fieldSourceInfo(k, sol[k], ...entries);
     });
     if (genericKeys.length) {

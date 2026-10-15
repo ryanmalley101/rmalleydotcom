@@ -14,6 +14,27 @@ import { DEFAULT_DRIVE_CAPACITY_TB, DEFAULT_STORAGE_OVERHEAD_MULTIPLIER, DEFAULT
 // storage). An estimate, not sourced; replace with a real quote.
 export const DEFAULT_STORAGE_COST_PER_TB = 30;
 
+// Default hours per investigation with and without AI video search. Cloud
+// solutions bundle search, so they start "with"; on-prem starts "without"
+// until analytics is turned on for it (withAnalytics). Unsourced
+// per-deployment-model defaults (see README's known risks).
+export const INVESTIGATION_HRS_WITH_SEARCH = 0.75;
+export const INVESTIGATION_HRS_WITHOUT_SEARCH = 3;
+
+// Turns analytics on or off for a solution and moves its hours per
+// investigation between the without-search and with-search defaults, so
+// paying for search also buys its benefit. A user-entered hours value
+// (anything other than the default being switched away from) stands.
+export function withAnalytics(sol: SolutionInputs, enabled: boolean): SolutionInputs {
+  const from = enabled ? INVESTIGATION_HRS_WITHOUT_SEARCH : INVESTIGATION_HRS_WITH_SEARCH;
+  const to = enabled ? INVESTIGATION_HRS_WITH_SEARCH : INVESTIGATION_HRS_WITHOUT_SEARCH;
+  return {
+    ...sol,
+    analyticsEnabled: enabled,
+    investigationHrsPerIncident: sol.investigationHrsPerIncident === from ? to : sol.investigationHrsPerIncident,
+  };
+}
+
 export const HALF_LIFE_PER_WARRANTY_YEAR = 1.5;
 export const MIN_DERIVED_HALF_LIFE_YEARS = 1.5;
 export function halfLifeForWarranty(warrantyYears: number): number {
@@ -79,6 +100,13 @@ export function normalizeSolution(sol: SolutionInputs): SolutionInputs {
     }
     merged.miscItems = migrated;
   }
+  // Analytics used to be always on for on-prem, with its costs charged and
+  // investigation hours unchanged. An older link keeps that: analytics is on
+  // if it carried any analytics cost, so its totals don't silently drop.
+  if (sol.analyticsEnabled === undefined && sol.model === "onprem") {
+    const legacy = sol as SolutionInputs & { analyticsSoftwareCost?: number };
+    merged.analyticsEnabled = Boolean(sol.analyticsApplianceCost || sol.analyticsSoftwareCostPerCam || sol.analyticsSoftwareCostPerCamYr || legacy.analyticsSoftwareCost);
+  }
   return merged;
 }
 
@@ -109,7 +137,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       warrantyYears: 3,
       truckRollsPerSiteYr: 1,
       adminHrsPerCamYr: 1,
-      investigationHrsPerIncident: 0.75,
+      investigationHrsPerIncident: INVESTIGATION_HRS_WITH_SEARCH,
       migrationStrategy: "connector",
       tierPrice: 1099,
       tierYears: 5,
@@ -131,7 +159,9 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       storageCostPerTB: DEFAULT_STORAGE_COST_PER_TB,
       raidLevel: "raid1",
       raidArrayDrives: 8,
+      analyticsEnabled: false,
       analyticsApplianceCost: 25000,
+      analyticsApplianceCapacity: 50,
       analyticsSoftwareCostPerCam: 100,
       analyticsSoftwareCostPerCamYr: 0,
       refreshCycleYears: 5,
@@ -152,7 +182,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     warrantyYears: 3,
     truckRollsPerSiteYr: 4,
     adminHrsPerCamYr: 2.5,
-    investigationHrsPerIncident: 3,
+    investigationHrsPerIncident: INVESTIGATION_HRS_WITHOUT_SEARCH,
     onpremCameraStrategy: "reuse",
     baseLicense: 1500,
     deviceLicense: 250,
@@ -162,7 +192,9 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     storageCostPerTB: DEFAULT_STORAGE_COST_PER_TB,
     raidLevel: "raid1",
     raidArrayDrives: 8,
+    analyticsEnabled: false,
     analyticsApplianceCost: 25000,
+    analyticsApplianceCapacity: 50,
     analyticsSoftwareCostPerCam: 100,
     analyticsSoftwareCostPerCamYr: 0,
     refreshCycleYears: 5,

@@ -14,6 +14,7 @@ import SourceDot from "./SourceDot";
 import SolutionField from "./SolutionField";
 import MiscItemsEditor from "./MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
+import AnalyticsToggle from "./AnalyticsToggle";
 import { RAID_OPTIONS } from "../lib/fields";
 import { RAID_HELP } from "../lib/fieldHelp";
 
@@ -199,7 +200,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
           {isIncumbent && field("yearsUntilNextRefresh", Clock)}
           <StaleRefreshWarning
             isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextRefresh}
-            horizonYears={scenario.horizonYears} what="server, storage, and analytics appliance costs"
+            horizonYears={scenario.horizonYears} what="server, storage, and any analytics appliance costs"
           />
         </>
       )}
@@ -213,9 +214,15 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       {sol.model === "onprem" && (
         <>
           <SectionLabel>Analytics</SectionLabel>
-          {field("analyticsApplianceCost", Cpu)}
-          {field("analyticsSoftwareCostPerCam", BrainCircuit)}
-          {field("analyticsSoftwareCostPerCamYr", BrainCircuit)}
+          <AnalyticsToggle sol={sol} onChange={onChange} />
+          {sol.analyticsEnabled && (
+            <>
+              {field("analyticsApplianceCost", Cpu)}
+              {field("analyticsApplianceCapacity", Layers)}
+              {field("analyticsSoftwareCostPerCam", BrainCircuit)}
+              {field("analyticsSoftwareCostPerCamYr", BrainCircuit)}
+            </>
+          )}
         </>
       )}
 
