@@ -9,7 +9,7 @@ import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
 import {
   CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS,
-  withVendorDefaults, confidenceSummary, fieldSourceInfo, type VendorDefaultEntry,
+  switchVendor, confidenceSummary, fieldSourceInfo, type VendorDefaultEntry,
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import CameraStrategyControl from "./CameraStrategyControl";
@@ -107,8 +107,8 @@ function CloudNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: Sol
         value={selectValue}
         onChange={(v) => {
           if (!v) return;
-          if (v === OTHER) { onChange({ ...sol, name: "" }); return; }
-          onChange({ ...withVendorDefaults(sol, v, CLOUD_VENDOR_DEFAULTS), name: v });
+          const next = v === OTHER ? "" : v;
+          onChange({ ...switchVendor(sol, sol.name, next, CLOUD_VENDOR_DEFAULTS), name: next });
         }}
       />
       {selectValue && selectValue !== OTHER && <ConfidenceBadge vendorName={selectValue} table={CLOUD_VENDOR_DEFAULTS} headlineField="tierPrice" />}
@@ -132,11 +132,11 @@ function OnPremNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: So
   const cameraSelectValue = camera === undefined ? null : cameraKnown ? camera : OTHER;
 
   function updateVms(v: string) {
-    const withDefaults = withVendorDefaults(sol, v, ONPREM_VMS_VENDOR_DEFAULTS);
+    const withDefaults = switchVendor(sol, vms, v, ONPREM_VMS_VENDOR_DEFAULTS);
     onChange({ ...withDefaults, vmsProvider: v, name: composeOnPremName(sol.id, v, camera ?? "") });
   }
   function updateCamera(v: string) {
-    const withDefaults = withVendorDefaults(sol, v, ONPREM_CAMERA_VENDOR_DEFAULTS);
+    const withDefaults = switchVendor(sol, camera, v, ONPREM_CAMERA_VENDOR_DEFAULTS);
     onChange({ ...withDefaults, cameraProvider: v, name: composeOnPremName(sol.id, vms ?? "", v) });
   }
 

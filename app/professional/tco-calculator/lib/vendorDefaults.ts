@@ -1,4 +1,5 @@
 import type { SolutionInputs } from "./model";
+import { defaultSolution } from "./defaults";
 
 // Per-vendor researched defaults, produced by RESEARCH_PROMPT.md and reviewed
 // before merging across two research passes (a handful of claims from each
@@ -68,6 +69,34 @@ export interface FieldMeta {
 export function withVendorDefaults(sol: SolutionInputs, vendorName: string, table: Record<string, VendorDefaultEntry>): SolutionInputs {
   const entry = table[vendorName];
   return entry ? { ...sol, ...entry.values } : sol;
+}
+
+// What the wizard's provider pickers call when the vendor changes. Merging
+// the new vendor on top of the current values (withVendorDefaults alone)
+// left behind every field the previous vendor set and the new one doesn't,
+// e.g. switching the pre-filled Verkada to Meraki kept Verkada's camera
+// reliability numbers, with no source dot to show where they came from. So
+// first, any field still holding exactly the previous vendor's value goes
+// back to the generic default; a field the user edited no longer matches
+// that value and is kept. Then the new vendor's values apply as before.
+// `nextVendor` may be "" or an unknown name ("Other"): the reset still
+// happens and nothing new is applied.
+export function switchVendor(
+  sol: SolutionInputs,
+  prevVendor: string | undefined,
+  nextVendor: string,
+  table: Record<string, VendorDefaultEntry>,
+): SolutionInputs {
+  const prev = prevVendor ? table[prevVendor] : undefined;
+  const reset: SolutionInputs = { ...sol };
+  if (prev && prevVendor !== nextVendor) {
+    const generic = defaultSolution(sol.id, sol.name, sol.model) as unknown as Record<string, unknown>;
+    const current = sol as unknown as Record<string, unknown>;
+    for (const [key, value] of Object.entries(prev.values)) {
+      if (current[key] === value) (reset as unknown as Record<string, unknown>)[key] = generic[key];
+    }
+  }
+  return withVendorDefaults(reset, nextVendor, table);
 }
 
 // Looks up a single field's provenance across whichever vendor entries could

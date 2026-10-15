@@ -18,9 +18,12 @@ auth-gated, "dampened" on purpose.
   (`CLOUD_VENDOR_DEFAULTS`, `ONPREM_VMS_VENDOR_DEFAULTS`,
   `ONPREM_CAMERA_VENDOR_DEFAULTS`) keyed by the exact strings in
   `lib/providers.ts`'s dropdown lists. `SolutionsStep.tsx`'s provider
-  `Select`s merge a matched vendor's `values` on top of whatever's already
-  filled in when picked, so switching vendors layers new numbers in without
-  wiping unrelated fields; a vendor without an entry (or "Other") just keeps
+  `Select`s call `switchVendor()`: any field still holding the previous
+  vendor's exact value goes back to the generic default, then the new
+  vendor's `values` merge on top. User edits survive (they no longer match
+  the old vendor's value), but the old vendor's numbers don't leak into the
+  new one, which they used to (switching the pre-filled Verkada to Meraki
+  kept Verkada's reliability figures); a vendor without an entry (or "Other") just keeps
   today's generic `defaultSolution()` values. Each entry's `fieldMeta` keeps
   per-field source URLs, sourced/estimated status, and confidence for future
   audit — not surfaced in the UI today, but there for whoever revisits a
