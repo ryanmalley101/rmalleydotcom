@@ -207,7 +207,7 @@ export default function ResultsView({
                     {[{ sol: solA, result: a, slot: "a" as const }, { sol: solB, result: b, slot: "b" as const }].map(({ sol, result, slot }) => {
                       const isCheaper = sol.id === cheaper.id;
                       const isIncumbent = scenario.incumbent === slot;
-                      const perCamMo = fmtUsd(result.total / (scenario.cameras * scenario.horizonYears * 12));
+                      const perCamMo = fmtUsd(result.total / (Math.max(1, scenario.cameras) * Math.max(1, scenario.horizonYears) * 12));
                       const hwText = hardwareSummaryText(result.hardware);
                       return (
                         <div key={sol.id}>

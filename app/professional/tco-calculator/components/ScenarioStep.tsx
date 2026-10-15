@@ -48,13 +48,13 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
         </Text>
       </div>
       <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="lg">
-        <NumberInput label="Camera count" leftSection={icon(Camera)} value={value.cameras} min={1} thousandSeparator=","
+        <NumberInput label="Camera count" leftSection={icon(Camera)} allowDecimal={false} value={value.cameras} min={1} thousandSeparator=","
           onChange={(v) => set("cameras", num(v))} />
-        <NumberInput label="Sites / buildings" leftSection={icon(Building2)} value={value.sites} min={1} thousandSeparator=","
+        <NumberInput label="Sites / buildings" leftSection={icon(Building2)} allowDecimal={false} value={value.sites} min={1} thousandSeparator=","
           onChange={(v) => set("sites", num(v))} />
-        <NumberInput label={RETENTION_LABEL} leftSection={icon(Database)} value={value.retentionDays} min={1}
+        <NumberInput label={RETENTION_LABEL} leftSection={icon(Database)} allowDecimal={false} value={value.retentionDays} min={1}
           onChange={(v) => set("retentionDays", num(v))} />
-        <NumberInput label="Horizon (years)" leftSection={icon(CalendarRange)} value={value.horizonYears} min={1} max={30}
+        <NumberInput label="Horizon (years)" leftSection={icon(CalendarRange)} allowDecimal={false} value={value.horizonYears} min={1} max={30}
           onChange={(v) => set("horizonYears", num(v))} />
         <NumberInput label="Bitrate/cam (Mbps)" leftSection={icon(Activity)} value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
           onChange={(v) => set("bitrateMbps", num(v))} />
@@ -88,7 +88,7 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
               />
               <NumberInput
                 label={<InfoLabel label="Spare recording servers" help={SPARE_SERVERS_HELP} />}
-                leftSection={icon(Server)} value={value.spareServers} min={0}
+                leftSection={icon(Server)} allowDecimal={false} value={value.spareServers} min={0}
                 onChange={(v) => set("spareServers", num(v))}
               />
             </SimpleGrid>

@@ -102,7 +102,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
   const num = (
     label: React.ReactNode,
     key: keyof SolutionInputs,
-    opts?: { step?: number; decimalScale?: number; min?: number; icon?: React.ElementType; help?: string }
+    opts?: { step?: number; decimalScale?: number; min?: number; icon?: React.ElementType; help?: string; int?: boolean }
   ) => {
     const meta = fieldSourceInfo(key, sol[key], ...vendorEntries);
     const dot = <SourceDot meta={meta} />;
@@ -118,6 +118,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         min={opts?.min ?? 0}
         step={opts?.step}
         decimalScale={opts?.decimalScale}
+        allowDecimal={!opts?.int}
         onChange={(v) => set(key, (Number(v) || 0) as SolutionInputs[typeof key])}
       />
     );
@@ -173,7 +174,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
               ]}
             />
           </div>
-          {num("License term (years)", "tierYears", { min: 1, icon: CalendarRange })}
+          {num("License term (years)", "tierYears", { min: 1, int: true, icon: CalendarRange })}
           {num("License cost for term ($/cam)", "tierPrice", { icon: DollarSign })}
           <div style={{ gridColumn: "1 / -1" }}>
             <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
@@ -193,13 +194,13 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         sol.migrationStrategy === "connector" && (
           <>
             {num("Connector appliance ($/unit)", "applianceCost", { icon: Router })}
-            {num("Cameras per appliance", "applianceCapacity", { min: 1, icon: Layers })}
+            {num("Cameras per appliance", "applianceCapacity", { min: 1, int: true, icon: Layers })}
             {num("Connector warranty (yrs)", "applianceWarrantyYears", {
               step: 0.5, decimalScale: 1, icon: ShieldCheck,
               help: "The manufacturer's hardware warranty on the connector/appliance itself, separate from the camera warranty above since the two commonly differ for the same vendor. Reference only, doesn't change the refresh cost below.",
             })}
-            {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, icon: RefreshCw })}
-            {isIncumbent && num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, icon: Clock, help: NEXT_REFRESH_HELP })}
+            {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, int: true, icon: RefreshCw })}
+            {isIncumbent && num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, int: true, icon: Clock, help: NEXT_REFRESH_HELP })}
             <StaleRefreshWarning
               isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextApplianceRefresh}
               horizonYears={scenario.horizonYears} what="the connector appliance cost"
@@ -209,7 +210,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       ) : (
         <>
           {num("Recording server ($/unit)", "serverCost", { icon: Server })}
-          {num("Cameras per server", "serverCapacity", { min: 1, icon: Layers })}
+          {num("Cameras per server", "serverCapacity", { min: 1, int: true, icon: Layers })}
           {num("Storage ($/TB usable)", "storageCostPerTB", { icon: HardDrive })}
           <Select
             label={<InfoLabel label="Storage redundancy" help={RAID_HELP} extra={<SourceDot meta={fieldSourceInfo("raidLevel", sol.raidLevel, ...vendorEntries)} />} />}
@@ -219,8 +220,8 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
             allowDeselect={false}
             onChange={(v) => v && set("raidLevel", v as RaidLevel)}
           />
-          {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, icon: RefreshCw })}
-          {isIncumbent && num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, icon: Clock, help: NEXT_REFRESH_HELP })}
+          {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, int: true, icon: RefreshCw })}
+          {isIncumbent && num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, int: true, icon: Clock, help: NEXT_REFRESH_HELP })}
           <StaleRefreshWarning
             isIncumbent={isIncumbent} yearsUntilNextRefresh={sol.yearsUntilNextRefresh}
             horizonYears={scenario.horizonYears} what="server, storage, and analytics appliance costs"

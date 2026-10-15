@@ -16,6 +16,8 @@
 // every share link/save, so a link created under an older model can say its
 // totals were recalculated instead of silently showing different numbers.
 // Links from before versioning existed decode as version 1.
+import { sanitizeScenario, sanitizeSolution } from "./sanitize";
+
 export const MODEL_VERSION = 2;
 
 export type DeploymentModel = "cloud" | "onprem";
@@ -126,11 +128,9 @@ export interface ScenarioInputs {
   adminRate: number;
   investigatorRate: number;
   truckRollCost: number;
-  // See the DEFAULT_* constants above. Resolved via
-  // `Number(scenario.x) || DEFAULT_X` in computeSolution, so a missing value
-  // (older share link/saved comparison) falls back to the original built-in
-  // assumption instead of zeroing out a whole cost line or, for
-  // driveCapacityTb specifically, dividing by zero.
+  // See the DEFAULT_* constants above. A missing or invalid value (older
+  // share link/saved comparison, cleared field) is replaced by
+  // lib/sanitize.ts before any math runs.
   driveCapacityTb: number;
   storageOverheadMultiplier: number;
   spareServers: number;
@@ -316,6 +316,9 @@ export interface HardwareFootprint {
 export interface SolutionResult {
   totalsByCategory: Record<Category, number>;
   cumulative: number[]; // escalated running total, index = year
+  // Escalated cost per category for each year, index = year. The residual
+  // credit, if any, sits in the final year.
+  byYear: Record<Category, number>[];
   total: number;
   // total split into money paid out vs. estimated internal staff time
   // (STAFF_TIME_CATEGORIES); cashTotal + staffTimeTotal === total.
@@ -325,15 +328,20 @@ export interface SolutionResult {
 }
 
 export function computeSolution(
-  scenario: ScenarioInputs,
-  sol: SolutionInputs,
+  rawScenario: ScenarioInputs,
+  rawSol: SolutionInputs,
   isIncumbent = false,
-  existingFleet?: SolutionInputs
+  rawExistingFleet?: SolutionInputs
 ): SolutionResult {
+  // Every input is clamped to a usable range first (see lib/sanitize.ts), so
+  // nothing below needs its own guard against a cleared or missing field.
+  const scenario = sanitizeScenario(rawScenario);
+  const sol = sanitizeSolution(rawSol);
+  const existingFleet = rawExistingFleet && sanitizeSolution(rawExistingFleet);
   const { cameras: cams, sites, retentionDays: ret, horizonYears: yrs, bitrateMbps: br, investigationsPerMonth: invMo } = scenario;
   const esc = scenario.annualEscalationPct / 100;
   const disc = 1 - sol.discountPct / 100;
-  const tierYears = Math.max(1, sol.tierYears); // guard against a cleared/zeroed input
+  const tierYears = sol.tierYears;
 
 
   // Whether this side buys a camera fleet at year 0 (when it isn't the
@@ -358,11 +366,11 @@ export function computeSolution(
   // carry warranty on its numbers, not this solution's.
   const keepsExistingCameras = isIncumbent || !buysCameras;
   const startSource = keepsExistingCameras && existingFleet ? existingFleet : sol;
-  const fleetAge = keepsExistingCameras ? Math.max(0, Number(scenario.existingFleetAgeYears) || 0) : 0;
+  const fleetAge = keepsExistingCameras ? scenario.existingFleetAgeYears : 0;
   const startCohort = {
     size: cams,
     installedYear: -fleetAge,
-    halfLife: Math.max(0.5, startSource.fleetHalfLifeYears),
+    halfLife: startSource.fleetHalfLifeYears,
     warrantyYears: startSource.warrantyYears,
   };
   const cohorts = [startCohort];
@@ -370,9 +378,8 @@ export function computeSolution(
 
   // Resolved storage-billing assumptions — see the ScenarioInputs comment for
   // why the fallback pattern.
-  const driveCapacityTb = Number(scenario.driveCapacityTb) || DEFAULT_DRIVE_CAPACITY_TB;
-  const storageOverheadMultiplier = Number(scenario.storageOverheadMultiplier) || DEFAULT_STORAGE_OVERHEAD_MULTIPLIER;
-  const spareServers = Number(scenario.spareServers) || DEFAULT_SPARE_SERVERS;
+  // A spare-server count of 0 used to fall back to the default of 1 here.
+  const { driveCapacityTb, storageOverheadMultiplier, spareServers } = scenario;
 
   // Charged as a lump sum at purchase/renewal (year 0, then every `tierYears`
   // thereafter), not smoothed evenly across every year of the term — a 5-year
@@ -386,9 +393,9 @@ export function computeSolution(
   const supportAddonAnnual = sol.model === "cloud" ? sol.supportAddonPerCamYr * disc : 0;
   // At least one box per site (a connector/NVR is physically local to the cameras it
   // serves, you can't split one across sites), or more if total camera count demands it.
-  const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.applianceCapacity))) : 0;
+  const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / sol.applianceCapacity)) : 0;
   const nSrv =
-    sol.model === "onprem" ? Math.max(sites, Math.ceil(cams / Math.max(1, sol.serverCapacity))) + spareServers : 0;
+    sol.model === "onprem" ? Math.max(sites, Math.ceil(cams / sol.serverCapacity)) + spareServers : 0;
   const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * storageOverheadMultiplier * (sol.framerateFps / 24);
   // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
   // mirrored RAID 1/10).
@@ -420,9 +427,9 @@ export function computeSolution(
   // buys new hardware at year 0 gets its first refresh one full cycle later;
   // using the offset there too used to buy a brand-new deployment's hardware
   // twice within a couple of years.
-  const refreshCycle = Math.max(1, sol.refreshCycleYears);
+  const refreshCycle = sol.refreshCycleYears;
   const firstRefresh = isIncumbent ? sol.yearsUntilNextRefresh : refreshCycle;
-  const applianceCycle = Math.max(1, sol.applianceRefreshCycleYears);
+  const applianceCycle = sol.applianceRefreshCycleYears;
   const firstApplianceRefresh = isIncumbent ? sol.yearsUntilNextApplianceRefresh : applianceCycle;
   const isRefreshYear = (y: number, first: number, cycle: number) => y >= first && (y - first) % cycle === 0 && y < yrs;
 
@@ -433,6 +440,7 @@ export function computeSolution(
 
   const totalsByCategory = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
   const cumulative: number[] = [];
+  const byYear: Record<Category, number>[] = [];
   let running = 0;
 
   for (let y = 0; y <= yrs; y++) {
@@ -463,7 +471,7 @@ export function computeSolution(
           // after this. Number(...) || 0 guards an older saved state missing
           // analyticsSoftwareCostPerCam (normalization normally backfills it).
           yearCosts["Licenses/subscription"] =
-            (sol.baseLicense + sol.deviceLicense * cams + (Number(sol.analyticsSoftwareCostPerCam) || 0) * cams) * disc;
+            (sol.baseLicense + sol.deviceLicense * cams + sol.analyticsSoftwareCostPerCam * cams) * disc;
         }
       }
     } else {
@@ -476,7 +484,7 @@ export function computeSolution(
         const inWarranty = y - cohort.installedYear <= cohort.warrantyYears;
         cameraCost += fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
       }
-      cohorts.push({ size: swaps, installedYear: y, halfLife: Math.max(0.5, sol.fleetHalfLifeYears), warrantyYears: sol.warrantyYears });
+      cohorts.push({ size: swaps, installedYear: y, halfLife: sol.fleetHalfLifeYears, warrantyYears: sol.warrantyYears });
       cameraSwaps += swaps;
       yearCosts["Cameras"] = cameraCost;
 
@@ -491,7 +499,7 @@ export function computeSolution(
         }
         yearCosts["Licenses/subscription"] = cloudLicenseCost;
       } else {
-        yearCosts["Licenses/subscription"] = careCost + (Number(sol.analyticsSoftwareCostPerCamYr) || 0) * cams * disc;
+        yearCosts["Licenses/subscription"] = careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc;
       }
 
       yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
@@ -526,12 +534,15 @@ export function computeSolution(
     }
 
     let yearTotal = 0;
+    const escalatedYear = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
     CATEGORIES.forEach((c) => {
       // Year-0 costs are today's dollars already (escalation factor is 1 at y=0 anyway).
       const escalated = yearCosts[c] * escalation;
+      escalatedYear[c] = escalated;
       totalsByCategory[c] += escalated;
       yearTotal += escalated;
     });
+    byYear.push(escalatedYear);
     running += yearTotal;
     cumulative.push(running);
   }
@@ -544,6 +555,7 @@ export function computeSolution(
     if (credit > 0) {
       totalsByCategory["Residual value (credit)"] = -credit;
       cumulative[cumulative.length - 1] -= credit;
+      byYear[byYear.length - 1]["Residual value (credit)"] = -credit;
     }
   }
 
@@ -560,7 +572,7 @@ export function computeSolution(
     cameraSwaps,
     originalFleetReplacedPct: cams > 0 ? Math.min(100, Math.max(0, (100 * (cams - startCohort.size)) / cams)) : 0,
   };
-  return { totalsByCategory, cumulative, total, cashTotal: total - staffTimeTotal, staffTimeTotal, hardware };
+  return { totalsByCategory, cumulative, byYear, total, cashTotal: total - staffTimeTotal, staffTimeTotal, hardware };
 }
 
 export interface ComparisonResult {
@@ -573,7 +585,8 @@ export interface ComparisonResult {
   activeCategories: Category[];
 }
 
-export function computeComparison(scenario: ScenarioInputs, solA: SolutionInputs, solB: SolutionInputs): ComparisonResult {
+export function computeComparison(rawScenario: ScenarioInputs, solA: SolutionInputs, solB: SolutionInputs): ComparisonResult {
+  const scenario = sanitizeScenario(rawScenario);
   // A side that keeps the cameras already on site is keeping the incumbent's
   // hardware when the other side is the incumbent, so its starting fleet uses
   // the incumbent's reliability and warranty (see computeSolution's cohorts).

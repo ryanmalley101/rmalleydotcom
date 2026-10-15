@@ -28,14 +28,13 @@ test("a fresh deployment's first refresh comes one full cycle after year 0", () 
   const scn = scenario({ annualEscalationPct: 0, horizonYears: 10 });
   const onprem = seedOnprem("a"); // 5-year cycle, 2 years until next refresh
   const fresh = computeSolution(scn, onprem, false);
-  const yearZero = computeSolution({ ...scn, horizonYears: 0 }, onprem, false);
-  const onePurchase = yearZero.totalsByCategory["Hardware (initial & refresh)"];
+  const onePurchase = fresh.byYear[0]["Hardware (initial & refresh)"];
   // Years 0 and 5, not 0, 2, and 7.
   assert.equal(round(fresh.totalsByCategory["Hardware (initial & refresh)"]), round(onePurchase * 2));
 
   const cloud = seedVerkada("b"); // 7-year cycle, 2 years until next refresh
   const freshCloud = computeSolution(scn, cloud, false);
-  const cloudOne = computeSolution({ ...scn, horizonYears: 0 }, cloud, false).totalsByCategory["Hardware (initial & refresh)"];
+  const cloudOne = freshCloud.byYear[0]["Hardware (initial & refresh)"];
   assert.equal(round(freshCloud.totalsByCategory["Hardware (initial & refresh)"]), round(cloudOne * 2)); // years 0 and 7
 });
 
@@ -43,12 +42,12 @@ test("the incumbent still refreshes on its own offset", () => {
   const scn = scenario({ annualEscalationPct: 0, horizonYears: 10 });
   const onprem = seedOnprem("a");
   const inc = computeSolution(scn, onprem, true);
-  const onePurchase = computeSolution({ ...scn, horizonYears: 0 }, onprem, false).totalsByCategory["Hardware (initial & refresh)"];
+  const onePurchase = computeSolution(scn, onprem, false).byYear[0]["Hardware (initial & refresh)"];
   assert.equal(round(inc.totalsByCategory["Hardware (initial & refresh)"]), round(onePurchase * 2)); // years 2 and 7
 });
 
 const yearZero = (sol: Parameters<typeof computeSolution>[1], overrides = {}) =>
-  computeSolution(scenario({ annualEscalationPct: 0, horizonYears: 0, ...overrides }), sol, false).totalsByCategory;
+  computeSolution(scenario({ annualEscalationPct: 0, ...overrides }), sol, false).byYear[0];
 
 test("on a new site every newly deployed side buys its cameras", () => {
   const onprem = seedOnprem("a");
@@ -143,6 +142,29 @@ test("misc items apply to the incumbent and can land in a chosen year", () => {
   assert.equal(round(after.cumulative[3] - after.cumulative[2] - (before.cumulative[3] - before.cumulative[2])), 20000 - 1000);
 });
 
+test("cleared or invalid inputs can't break the totals", () => {
+  const broken = { ...seedOnprem("a"), fleetHalfLifeYears: 0, refreshCycleYears: 0, serverCapacity: 0, tierYears: Number.NaN };
+  const r = computeSolution(scenario({ horizonYears: 0, cameras: 0 }), broken, false);
+  assert.equal(r.cumulative.length, 2, "a zero horizon is clamped to one year");
+  assert.ok(Number.isFinite(r.total));
+  const c = computeComparison(scenario({ horizonYears: 10.6 as number }), broken, seedVerkada("b"));
+  assert.equal(c.labels.length, 12, "horizon rounds to a whole number of years");
+  assert.ok(Number.isFinite(c.a.total) && Number.isFinite(c.b.total));
+});
+
+test("zero spare servers means zero", () => {
+  const sol = seedOnprem("a");
+  const none = computeSolution(scenario({ spareServers: 0 }), sol, false).hardware.units;
+  const one = computeSolution(scenario({ spareServers: 1 }), sol, false).hardware.units;
+  assert.equal(one - none, 1);
+});
+
+test("the per-year breakdown sums to the total", () => {
+  const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
+  const sum = c.a.byYear.reduce((t, yr) => t + Object.values(yr).reduce((a, b) => a + b, 0), 0);
+  assert.equal(round(sum), round(c.a.total));
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);
@@ -150,9 +172,9 @@ test("incumbent pays nothing at year 0", () => {
 
 test("non-incumbent on-prem pays its perpetual license at year 0", () => {
   const sol = seedOnprem("a");
-  const r = computeSolution(scenario({ annualEscalationPct: 0, horizonYears: 0 }), sol, false);
+  const r = computeSolution(scenario({ annualEscalationPct: 0 }), sol, false);
   const expected = (sol.baseLicense + sol.deviceLicense * 100 + sol.analyticsSoftwareCostPerCam * 100) * (1 - sol.discountPct / 100);
-  assert.equal(round(r.totalsByCategory["Licenses/subscription"]), round(expected));
+  assert.equal(round(r.byYear[0]["Licenses/subscription"]), round(expected));
 });
 
 test("cloud license is billed as a lump sum at purchase and each renewal", () => {

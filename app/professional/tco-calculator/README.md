@@ -175,6 +175,15 @@ auth-gated, "dampened" on purpose.
   than the continuous multiplier alone would suggest, and both the storage
   cost and the `storageTB` hardware-footprint stat reflect that (`tbBilled`,
   not the continuous `tbPhysical`).
+- **Input validation** (`lib/sanitize.ts`): `computeSolution` and
+  `computeComparison` clamp every numeric input to a usable range before any
+  math (counts and cycle lengths rounded to whole numbers, half-life at least
+  0.5, horizon 1-30, and so on), with a per-field fallback for a missing or
+  non-numeric value. A cleared form field becomes 0, and before this a 0
+  half-life turned every total into NaN, a 0 refresh cycle silently disabled
+  refreshes, and a spare-server count of 0 was read as the default of 1.
+  `SolutionResult.byYear` holds the escalated per-category cost for each
+  year, for the year-by-year view and for tests.
 - **Storage overhead and spare servers, editable**: `storageOverheadMultiplier`
   (default 1.3, i.e. 30%) is the metadata/audio/keyframe-indexing overhead on
   top of the raw video-bitrate math in `tbUsable`, feeding on-prem storage

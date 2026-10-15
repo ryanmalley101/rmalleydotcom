@@ -202,6 +202,7 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
           leftSection={icon(CalendarRange)}
           value={sol.tierYears}
           min={1}
+          allowDecimal={false}
           onChange={(v) => set("tierYears", num(v) || 1)}
         />
         <NumberInput
