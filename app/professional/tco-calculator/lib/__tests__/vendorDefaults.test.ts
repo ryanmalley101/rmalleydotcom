@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { defaultSolution } from "../defaults";
-import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, switchVendor } from "../vendorDefaults";
+import { defaultSolution, halfLifeForWarranty, withWarranty } from "../defaults";
+import { CLOUD_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, fieldSourceInfo, switchVendor } from "../vendorDefaults";
 import { seedOnprem, seedVerkada } from "./helpers";
 
 const generic = defaultSolution("b", "x", "cloud");
@@ -38,4 +38,27 @@ test("on-prem VMS switches reset that VMS's fields only", () => {
   assert.equal(q.baseLicense, onpremGeneric.baseLicense);
   assert.equal(q.serverCost, onpremGeneric.serverCost);
   assert.equal(q.cameraCost, sol.cameraCost, "camera-vendor fields are untouched");
+});
+
+test("half-life is 1.5 times the warranty for every vendor", () => {
+  assert.equal(seedVerkada("b").fleetHalfLifeYears, 15);
+  assert.equal(seedOnprem("a").fleetHalfLifeYears, 4.5); // Axis, 3-year warranty
+  assert.equal(generic.fleetHalfLifeYears, 4.5);
+  for (const table of [CLOUD_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS]) {
+    for (const entry of Object.values(table)) assert.equal(entry.values.fleetHalfLifeYears, undefined);
+  }
+  assert.equal(halfLifeForWarranty(0), 1.5);
+});
+
+test("the derived half-life has a source dot explaining it", () => {
+  const sol = seedVerkada("b");
+  const meta = fieldSourceInfo("fleetHalfLifeYears", sol.fleetHalfLifeYears, CLOUD_VENDOR_DEFAULTS.Verkada);
+  assert.equal(meta?.status, "estimated");
+  assert.match(meta?.reasoning ?? "", /1\.5 times/);
+});
+
+test("half-life follows warranty edits unless the user overrode it", () => {
+  const sol = seedOnprem("a");
+  assert.equal(withWarranty(sol, 5).fleetHalfLifeYears, 7.5);
+  assert.equal(withWarranty({ ...sol, fleetHalfLifeYears: 9 }, 5).fleetHalfLifeYears, 9);
 });

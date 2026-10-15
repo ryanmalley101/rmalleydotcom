@@ -13,7 +13,8 @@ import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 import MiscItemsEditor from "./MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
-import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { withWarranty } from "../lib/defaults";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -99,7 +100,10 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
   const num = (
     label: React.ReactNode,
     key: keyof SolutionInputs,
-    opts?: { step?: number; decimalScale?: number; min?: number; icon?: React.ElementType; help?: string; int?: boolean }
+    opts?: {
+      step?: number; decimalScale?: number; min?: number; icon?: React.ElementType; help?: string; int?: boolean;
+      onValue?: (v: number) => void;
+    }
   ) => {
     const meta = fieldSourceInfo(key, sol[key], ...vendorEntries);
     const dot = <SourceDot meta={meta} />;
@@ -116,7 +120,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         step={opts?.step}
         decimalScale={opts?.decimalScale}
         allowDecimal={!opts?.int}
-        onChange={(v) => set(key, (Number(v) || 0) as SolutionInputs[typeof key])}
+        onChange={(v) => (opts?.onValue ? opts.onValue(Number(v) || 0) : set(key, (Number(v) || 0) as SolutionInputs[typeof key]))}
       />
     );
   };
@@ -140,10 +144,10 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       {num("Replacement install labor ($/cam)", "replacementInstallLaborCost", { icon: Hammer })}
       {num("Fleet half-life (yrs)", "fleetHalfLifeYears", {
         step: 0.5, decimalScale: 1, min: 0.5, icon: Hourglass,
-        help: "A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life.",
+        help: HALF_LIFE_HELP,
       })}
       {num("Warranty (yrs)", "warrantyYears", {
-        step: 0.5, decimalScale: 1, icon: ShieldCheck,
+        step: 0.5, decimalScale: 1, icon: ShieldCheck, onValue: (w) => onChange(withWarranty(sol, w)),
         help: "How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself.",
       })}
 

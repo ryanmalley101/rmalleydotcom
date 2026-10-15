@@ -88,6 +88,16 @@ auth-gated, "dampened" on purpose.
   hardware can have its own reliability/warranty, even when comparing two
   deployments of the same type. A decay-driven camera failure still inside
   its warranty window costs only replacement labor, not the camera itself.
+- **Half-life is derived from warranty**: every vendor's default
+  `fleetHalfLifeYears` is `1.5 × warrantyYears` (`halfLifeForWarranty` in
+  `lib/defaults.ts`, floored at 1.5 years), on the reasoning that warranty
+  length is the most comparable public signal of expected camera life.
+  Vendor entries no longer store half-lives (several were uncited guesses,
+  e.g. 12 years for Verkada and Axis); `vendorValues()` derives one from the
+  entry's warranty, and the source dot explains the derivation. Editing the
+  warranty moves the half-life with it (`withWarranty`) unless the user has
+  set their own half-life. Generic default: 3-year warranty, 4.5-year
+  half-life.
 - **Bitrate and storage price**: `bitrateMbps` is the average *recorded*
   bitrate per camera, which already reflects frame rate, so there's no
   frame-rate multiplier (an earlier `framerateFps` field scaled bitrate

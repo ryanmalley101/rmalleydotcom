@@ -1,6 +1,26 @@
 import type { ScenarioInputs, SolutionInputs, DeploymentModel, MiscCostItem } from "./model";
 import { DEFAULT_DRIVE_CAPACITY_TB, DEFAULT_STORAGE_OVERHEAD_MULTIPLIER, DEFAULT_SPARE_SERVERS } from "./model";
 
+// Camera reliability rule, applied the same way to every vendor: a fleet's
+// half-life is 1.5 times its warranty period, on the reasoning that a
+// manufacturer's warranty length is the most comparable public signal of
+// how long it expects its cameras to last. Replaced per-vendor half-life
+// guesses (several were uncited estimates). Floored so a 0-year warranty
+// doesn't imply cameras failing almost immediately.
+export const HALF_LIFE_PER_WARRANTY_YEAR = 1.5;
+export const MIN_DERIVED_HALF_LIFE_YEARS = 1.5;
+export function halfLifeForWarranty(warrantyYears: number): number {
+  return Math.max(MIN_DERIVED_HALF_LIFE_YEARS, (Number(warrantyYears) || 0) * HALF_LIFE_PER_WARRANTY_YEAR);
+}
+
+// Changes a solution's warranty and keeps its half-life following the rule
+// above, unless the user has set the half-life to something else, in which
+// case their number stands.
+export function withWarranty(sol: SolutionInputs, warrantyYears: number): SolutionInputs {
+  const follows = sol.fleetHalfLifeYears === halfLifeForWarranty(sol.warrantyYears);
+  return { ...sol, warrantyYears, fleetHalfLifeYears: follows ? halfLifeForWarranty(warrantyYears) : sol.fleetHalfLifeYears };
+}
+
 export const DEFAULT_SCENARIO: ScenarioInputs = {
   cameras: 100,
   sites: 5,
@@ -66,7 +86,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       cameraCost: 1200,
       bulkInstallLaborCost: 100,
       replacementInstallLaborCost: 250,
-      fleetHalfLifeYears: 7,
+      fleetHalfLifeYears: halfLifeForWarranty(3),
       warrantyYears: 3,
       truckRollsPerSiteYr: 1,
       adminHrsPerCamYr: 1,
@@ -104,7 +124,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     cameraCost: 700,
     bulkInstallLaborCost: 100,
     replacementInstallLaborCost: 250,
-    fleetHalfLifeYears: 7,
+    fleetHalfLifeYears: halfLifeForWarranty(3),
     warrantyYears: 3,
     truckRollsPerSiteYr: 4,
     adminHrsPerCamYr: 2.5,

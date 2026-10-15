@@ -1,5 +1,5 @@
 import type { SolutionInputs } from "./model";
-import { defaultSolution } from "./defaults";
+import { defaultSolution, halfLifeForWarranty } from "./defaults";
 
 // Per-vendor researched defaults, produced by RESEARCH_PROMPT.md and reviewed
 // before merging across two research passes (a handful of claims from each
@@ -70,7 +70,17 @@ export interface FieldMeta {
 // (including "Other") pass `sol` through untouched.
 export function withVendorDefaults(sol: SolutionInputs, vendorName: string, table: Record<string, VendorDefaultEntry>): SolutionInputs {
   const entry = table[vendorName];
-  return entry ? { ...sol, ...entry.values } : sol;
+  return entry ? { ...sol, ...vendorValues(entry) } : sol;
+}
+
+// A vendor entry's values plus the half-life its warranty implies (see
+// halfLifeForWarranty), which is derived rather than stored per vendor.
+export function vendorValues(entry: VendorDefaultEntry): Partial<SolutionInputs> {
+  const values = { ...entry.values };
+  if (values.warrantyYears !== undefined && values.fleetHalfLifeYears === undefined) {
+    values.fleetHalfLifeYears = halfLifeForWarranty(values.warrantyYears);
+  }
+  return values;
 }
 
 // What the wizard's provider pickers call when the vendor changes. Merging
@@ -94,7 +104,7 @@ export function switchVendor(
   if (prev && prevVendor !== nextVendor) {
     const generic = defaultSolution(sol.id, sol.name, sol.model) as unknown as Record<string, unknown>;
     const current = sol as unknown as Record<string, unknown>;
-    for (const [key, value] of Object.entries(prev.values)) {
+    for (const [key, value] of Object.entries(vendorValues(prev))) {
       if (current[key] === value) (reset as unknown as Record<string, unknown>)[key] = generic[key];
     }
   }
@@ -116,8 +126,20 @@ export function fieldSourceInfo(
 ): FieldMeta | null {
   for (const entry of entries) {
     if (!entry) continue;
-    if (!(key in entry.values)) continue;
-    if ((entry.values as Record<string, unknown>)[key] !== currentValue) continue;
+    const values = vendorValues(entry) as Record<string, unknown>;
+    if (!(key in values)) continue;
+    if (values[key] !== currentValue) continue;
+    if (key === "fleetHalfLifeYears" && !entry.fieldMeta[key]) {
+      const warranty = entry.fieldMeta.warrantyYears;
+      return {
+        value: currentValue,
+        status: "estimated",
+        confidence: warranty?.confidence ?? "low",
+        sources: warranty?.sources ?? [],
+        reasoning: "Derived from this vendor's warranty: every vendor's half-life is 1.5 times its warranty period, so a longer warranty means a longer expected camera life.",
+        checkedOn: warranty?.checkedOn ?? "",
+      };
+    }
     return entry.fieldMeta[key] ?? null;
   }
   return null;
@@ -248,7 +270,7 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
     notes: "Usage-based; cost scales up with search/storage/labeling beyond the base tier. 30-day cloud history included in base.",
   },
   Rhombus: {
-    values: { migrationStrategy: "ripReplace", tierPrice: 699, tierYears: 5, supportAddonPerCamYr: 0, cameraCost: 648, warrantyYears: 10, fleetHalfLifeYears: 10 },
+    values: { migrationStrategy: "ripReplace", tierPrice: 699, tierYears: 5, supportAddonPerCamYr: 0, cameraCost: 648, warrantyYears: 10 },
     fieldMeta: {
       migrationStrategy: { value: "ripReplace", status: "sourced", confidence: "high", sources: ["https://www.rhombus.com/pricing/"], reasoning: "Camera-native, on-camera recording; no third-party-camera connector product, so onboarding means native cameras.", checkedOn: "2026-07-25" },
       tierPrice: { value: 699, status: "sourced", confidence: "high", sources: ["https://getsafeandsound.com/blog/rhombus-pricing/", "https://www.rhombus.com/pricing/"], reasoning: "Enterprise tier, 5yr per camera ($140/yr). Enterprise: $199/1yr, $699/5yr, $1,399/10yr; Professional $149/1yr; R600 multisensor license is 3x.", checkedOn: "2026-07-25" },
@@ -256,24 +278,22 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
       supportAddonPerCamYr: { value: 0, status: "estimated", confidence: "medium", sources: ["https://www.rhombus.com/license-comparison/"], reasoning: "Enterprise license covers management/firmware/support/AI; cloud archiving and some AI are add-ons only on the lower Professional tier.", checkedOn: "2026-07-25" },
       cameraCost: { value: 648, status: "sourced", confidence: "medium", sources: ["https://butterflymx.com/blog/rhombus-camera-review/", "https://www.rhombus.com/pricing/"], reasoning: "Mid-range dome (R170/R200 band $499-648); entry R100/R120 $200-498, 4K/fisheye $899-1,648. Some listings bundle hardware + first license, so treat as hardware-only approximation.", checkedOn: "2026-07-25" },
       warrantyYears: { value: 10, status: "sourced", confidence: "high", sources: ["https://www.rhombus.com/pricing/"], reasoning: "\"All cameras include 10-year warranties.\"", checkedOn: "2026-07-25" },
-      fleetHalfLifeYears: { value: 10, status: "estimated", confidence: "low", sources: [], reasoning: "Generic modern-IP-camera assumption.", checkedOn: "2026-07-25" },
     },
     notes: "No NVR/DVR, no on-prem storage line; applianceCost left unset (n/a for the ripReplace path). Multi-year licensing saves up to ~30%, but that's a term discount, not negotiated off-list.",
   },
   Verkada: {
-    values: { migrationStrategy: "connector", applianceCost: 9999, applianceCapacity: 50, applianceWarrantyYears: 5, warrantyYears: 10, supportAddonPerCamYr: 0, fleetHalfLifeYears: 12 },
+    values: { migrationStrategy: "connector", applianceCost: 9999, applianceCapacity: 50, applianceWarrantyYears: 5, warrantyYears: 10, supportAddonPerCamYr: 0 },
     fieldMeta: {
       applianceCost: { value: 9999, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing"], reasoning: "Command Connector CC700 (the tier already baked into this vendor's generic defaults) confirmed directly on Verkada's public pricing page at $9,999 MSRP.", checkedOn: "2026-07-25" },
       applianceCapacity: { value: 50, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "CC700 is the top connector tier by channel count, 50 channels, confirmed directly on Verkada's public pricing page.", checkedOn: "2026-08-12" },
       applianceWarrantyYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty", "https://docs.verkada.com/docs/command-connector-faq.pdf"], reasoning: "Verkada's own warranty documentation: \"Each model of Command Connector comes with a 5-year warranty.\"", checkedOn: "2026-07-25" },
       warrantyYears: { value: 10, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty"], reasoning: "Verkada's own warranty documentation: most cameras carry a 10-year product warranty; PTZ models are the exception at 5 years. 10yr used here as the representative default across the dome/bullet/mini lineup used elsewhere in this tool.", checkedOn: "2026-07-25" },
       supportAddonPerCamYr: { value: 0, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "Support/analytics are Verkada's own all-inclusive baseline this tool's generic defaults are built around, genuinely bundled at $0, not a separate SKU, confirmed directly on Verkada's public pricing page.", checkedOn: "2026-08-12" },
-      fleetHalfLifeYears: { value: 12, status: "estimated", confidence: "medium", sources: [], reasoning: "Raised from the generic 7yr cloud default on direct request, no public citation attached. 10yr hardware warranty (see warrantyYears above) makes a 12yr half-life at least plausible relative to the generic figure, but this is a business judgment call, not a sourced spec.", checkedOn: "2026-08-12" },
     },
-    notes: "Deliberately mirrors the generic cloud defaults (see the top-of-file comment on why Verkada is excluded from a from-scratch re-pricing here) rather than introducing new tierPrice/cameraCost numbers; this entry only adds fieldMeta provenance to what was already the tool's baseline, plus the connector-specific warranty figure that didn't otherwise have a home, plus a Verkada-specific fleetHalfLifeYears override (12yr vs. the generic 7yr default). tierPrice/tierYears/cameraCost intentionally left unset here since a prior research pass's numbers for those weren't directly confirmable (see top-of-file comment) and re-pricing them isn't this entry's purpose.",
+    notes: "Deliberately mirrors the generic cloud defaults (see the top-of-file comment on why Verkada is excluded from a from-scratch re-pricing here) rather than introducing new tierPrice/cameraCost numbers; this entry only adds fieldMeta provenance to what was already the tool's baseline, plus the connector-specific warranty figure that didn't otherwise have a home. tierPrice/tierYears/cameraCost intentionally left unset here since a prior research pass's numbers for those weren't directly confirmable (see top-of-file comment) and re-pricing them isn't this entry's purpose.",
   },
   "Eagle Eye Networks": {
-    values: { migrationStrategy: "connector", tierPrice: 240, tierYears: 1, applianceCost: 1000, applianceCapacity: 20, applianceRefreshCycleYears: 5, supportAddonPerCamYr: 0, cameraCost: 400, warrantyYears: 3, fleetHalfLifeYears: 10 },
+    values: { migrationStrategy: "connector", tierPrice: 240, tierYears: 1, applianceCost: 1000, applianceCapacity: 20, applianceRefreshCycleYears: 5, supportAddonPerCamYr: 0, cameraCost: 400, warrantyYears: 3 },
     fieldMeta: {
       migrationStrategy: { value: "connector", status: "sourced", confidence: "high", sources: ["https://www.een.com/product/cloud-vms-subscriptions/"], reasoning: "Requires an on-site Bridge or CMVR appliance; reuses the existing ONVIF/PoE camera fleet.", checkedOn: "2026-07-25" },
       tierPrice: { value: 240, status: "sourced", confidence: "medium", sources: ["https://getsafeandsound.com/blog/eagle-eye-networks-pricing/"], reasoning: "Native billing is per-camera-per-month, varying by resolution + retention (~$15-50/cam/mo band; ~$20/mo mid annualized to $240/yr). M10 ($5/mo) is the no-cloud-retention plan. Re-check against a current EEN price sheet before trusting in isolation.", checkedOn: "2026-07-25" },
@@ -284,7 +304,6 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
       supportAddonPerCamYr: { value: 0, status: "sourced", confidence: "medium", sources: ["https://www.securitysales.com/surveillance/eagle-eye-smart-video-search-10th-anniversary/", "https://www.een.com/product/cloud-vms-subscriptions/"], reasoning: "24/7 operational monitoring, web/mobile, and alerts included in the per-camera subscription. Smart Video Search (the closest equivalent to Verkada's bundled people/vehicle search) confirmed as having no extra subscription fee. Object Counting and License Plate Recognition are separately noted as paid add-ons, but only a stale ~2018 legacy figure ($4-5/cam/mo) was found for either; too dated to use, and those are premium features beyond Verkada's baseline anyway, not a paid version of the bundled search itself.", checkedOn: "2026-07-27" },
       cameraCost: { value: 400, status: "estimated", confidence: "medium", sources: ["https://getsafeandsound.com/blog/eagle-eye-networks-pricing/"], reasoning: "Camera-agnostic; native/first-party cameras run $150-800. In a connector deployment cameraCost is really whichever third-party camera the operator chose.", checkedOn: "2026-07-25" },
       warrantyYears: { value: 3, status: "estimated", confidence: "low", sources: [], reasoning: "Depends on the third-party camera paired with it, not Eagle Eye itself.", checkedOn: "2026-07-25" },
-      fleetHalfLifeYears: { value: 10, status: "estimated", confidence: "low", sources: [], reasoning: "Generic modern-IP-camera assumption.", checkedOn: "2026-07-25" },
     },
     notes: "Fundamentally OpEx/monthly pricing; the annualization above is the main thing to re-check against a current price sheet. Camera-direct (no appliance) is allowed only for ≤6 cameras.",
   },
@@ -498,20 +517,18 @@ export const ONPREM_CAMERA_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> =
     notes: "Priced model: H5A dome (5.0C-H5A-DO1-IR, 5MP outdoor, IR). Distinct from Avigilon Control Center VMS; this is the camera-hardware brand. H5A is the premium analytics line; H5SL is the value line ($579, confirmed). SPOT-CHECK cameraCost before trusting; still an estimate.",
   },
   "Axis Communications": {
-    values: { cameraCost: 999, warrantyYears: 3, fleetHalfLifeYears: 12 },
+    values: { cameraCost: 999, warrantyYears: 3 },
     fieldMeta: {
       cameraCost: { value: 999, status: "sourced", confidence: "high", sources: ["https://www.surveillance-video.com/camera-02330-001.html", "https://www.cdwg.com/product/axis-p3267-lve-repl-5mp-network-camera/6906306"], reasoning: "Switched from the indoor P3267-LV to its outdoor sibling P3267-LVE (same 5MP sensor, ARTPEC-8, varifocal lens, IP66/IK10 outdoor housing): same family, only the environmental rating differs. Confirmed directly at $999.00.", checkedOn: "2026-07-27" },
       warrantyYears: { value: 3, status: "sourced", confidence: "medium", sources: ["https://www.axis.com/products/axis-p3265-lv/support"], reasoning: "Axis standard hardware warranty is 3 years, extendable to 5 via registration/extension. Changes when replacement cost (vs. labor-only) kicks in; spot-check whether 3 or 5 fits the deal.", checkedOn: "2026-07-25" },
-      fleetHalfLifeYears: { value: 12, status: "estimated", confidence: "low", sources: [], reasoning: "Axis's reliability reputation supports a longer-than-generic half-life; anchored above the 10 used elsewhere, not sourced.", checkedOn: "2026-07-25" },
     },
     notes: "Priced model: AXIS P3267-LVE (5MP outdoor; was priced via the indoor P3267-LV before). P3267-LV/-LVE is being phased out by Axis, a current-gen equivalent may reprice.",
   },
   "Hanwha Vision": {
-    values: { cameraCost: 1103.76, warrantyYears: 5, fleetHalfLifeYears: 10 },
+    values: { cameraCost: 1103.76, warrantyYears: 5 },
     fieldMeta: {
       cameraCost: { value: 1103.76, status: "sourced", confidence: "high", sources: ["https://www.a1securitycameras.com/samsung-xnv-8080r-5mp-vandal-ir-dome-ip-security-camera.html"], reasoning: "Switched from the indoor XND-8080RV to its outdoor counterpart XNV-8080R (5MP, same Wisenet-5 generation and \"8080\" line, vandal-resistant outdoor dome), confirmed directly at $1,103.76.", checkedOn: "2026-07-27" },
       warrantyYears: { value: 5, status: "estimated", confidence: "medium", sources: [], reasoning: "Hanwha's North America Wisenet warranty program is commonly 5 years; one reseller listing for the indoor sibling showed 3yr instead; unresolved discrepancy, confirm against current terms for the target region.", checkedOn: "2026-07-25" },
-      fleetHalfLifeYears: { value: 10, status: "estimated", confidence: "low", sources: [], reasoning: "Generic; roughly on par with commodity-premium IP domes.", checkedOn: "2026-07-25" },
     },
     notes: "Priced model: XNV-8080R (5MP outdoor; was priced via the indoor XND-8080RV before). Distinct from the \"Hanwha Wisenet WAVE\" entry in ONPREM_VMS_VENDOR_DEFAULTS: that's the VMS software, this is the camera-hardware brand. Country of origin listed as China for this model, which matters for NDAA/procurement filtering in some federal/education contexts even though Hanwha itself is South Korean.",
   },

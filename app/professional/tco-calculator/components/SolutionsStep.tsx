@@ -13,7 +13,8 @@ import {
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import CameraStrategyControl from "./CameraStrategyControl";
-import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { withWarranty } from "../lib/defaults";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 
@@ -29,9 +30,6 @@ function vendorEntriesFor(sol: SolutionInputs) {
 
 const OTHER = "other";
 const PLACEHOLDER_NAMES = ["Solution A (Cloud)", "Solution A (On-Prem)", "Solution B (Cloud)", "Solution B (On-Prem)"];
-
-const HALF_LIFE_HELP =
-  "A rough estimate of camera lifespan. About half of today's cameras will have failed and been replaced by this many years from now, half of what's left by twice that many years, and so on, the same math as radioactive half-life.";
 
 const WARRANTY_HELP =
   "How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself.";
@@ -325,7 +323,7 @@ function SolutionCard({
                 leftSection={icon(ShieldCheck)}
                 value={sol.warrantyYears}
                 min={0} step={0.5} decimalScale={1}
-                onChange={(v) => set("warrantyYears", num(v))}
+                onChange={(v) => onChange(withWarranty(sol, num(v)))}
               />
             </Group>
             <CloudLicenseFields sol={sol} onChange={onChange} />
@@ -400,7 +398,7 @@ function SolutionCard({
                 leftSection={icon(ShieldCheck)}
                 value={sol.warrantyYears}
                 min={0} step={0.5} decimalScale={1}
-                onChange={(v) => set("warrantyYears", num(v))}
+                onChange={(v) => onChange(withWarranty(sol, num(v)))}
               />
             </Group>
           </>

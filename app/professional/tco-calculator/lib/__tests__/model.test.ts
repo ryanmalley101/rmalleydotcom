@@ -12,7 +12,7 @@ test("default comparison snapshot", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 1090144, b: 494495, crossover: 2 },
+    { a: 1143331, b: 520050, crossover: 2 },
   );
 });
 
