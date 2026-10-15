@@ -6,7 +6,7 @@ import {
   FileText, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
   RefreshCw, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
 } from "lucide-react";
-import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
+import type { CloudMigrationStrategy, RaidLevel, RetentionPricing, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import { fieldSourceInfo, vendorEntriesFor } from "../lib/vendorDefaults";
 import InfoLabel from "./InfoLabel";
@@ -28,6 +28,9 @@ const LICENSE_HELP =
 
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
+
+const RETENTION_PRICING_HELP =
+  "Whether this vendor charges more for its license as retention goes up. \"Rises with retention\" scales the license by (days/30)^0.4 above 30 days. \"Fixed\" is for vendors that record on the camera or a local appliance and sell longer retention as bigger hardware or a separate archive add-on; enter that cost in the camera or add-on fields.";
 
 const RENEWAL_HELP =
   "How many years until the license already in place has to be renewed. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
@@ -167,6 +170,23 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
           </div>
           {num("License term (years)", "tierYears", { min: 1, int: true, icon: CalendarRange })}
           {num("License cost for term ($/cam)", "tierPrice", { icon: DollarSign })}
+          <div style={{ gridColumn: "1 / -1" }}>
+            <Box mb={4}>
+              <InfoLabel
+                label="License price vs. retention" help={RETENTION_PRICING_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED}
+                extra={<SourceDot meta={fieldSourceInfo("retentionPricing", sol.retentionPricing, ...vendorEntries)} />}
+              />
+            </Box>
+            <SegmentedControl
+              fullWidth
+              value={sol.retentionPricing ?? "scaled"}
+              onChange={(v) => set("retentionPricing", v as RetentionPricing)}
+              data={[
+                { label: "Rises with retention", value: "scaled" },
+                { label: "Fixed (stored on site)", value: "flat" },
+              ]}
+            />
+          </div>
           <div style={{ gridColumn: "1 / -1" }}>
             <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
           </div>

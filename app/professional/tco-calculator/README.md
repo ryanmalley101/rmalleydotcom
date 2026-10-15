@@ -178,8 +178,13 @@ auth-gated, "dampened" on purpose.
   disagreed with it.
 - **Retention**: a continuous curve (`(days/30)^0.4`, fit against an
   earlier discrete 30/60/90/180/365-day step table) rather than a step
-  function, matching on-prem storage's already-continuous scaling and
-  avoiding artificial cost cliffs at each threshold day.
+  function, avoiding artificial cost cliffs at each threshold day. It's
+  floored at 30 days (it used to extrapolate below, cutting the license 44%
+  at 7 days, beyond the data it was fit to), and it only applies when
+  `SolutionInputs.retentionPricing` is `"scaled"` (the default). Vendors
+  that record on the camera or a local appliance, like Meraki, use `"flat"`:
+  their longer retention is bigger hardware or a separate archive add-on,
+  not a pricier license, so it belongs in those fields.
 - **RAID**: on-prem storage is bought per recording server, since each
   active (non-spare) server holds its share of the footage on its own
   array. `drivesForArray()` (`lib/model.ts`) turns that server's usable TB

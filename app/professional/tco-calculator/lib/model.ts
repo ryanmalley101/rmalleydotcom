@@ -35,6 +35,7 @@ export type CloudMigrationStrategy = "connector" | "ripReplace";
 // ScenarioInputs.existingCamerasReusable is true; otherwise every newly
 // deployed side buys cameras regardless.
 export type OnpremCameraStrategy = "reuse" | "replace";
+export type RetentionPricing = "scaled" | "flat";
 
 // On-prem storage redundancy. Affects only how many drives have to be
 // bought for the usable capacity needed, not the recording server count.
@@ -216,6 +217,12 @@ export interface SolutionInputs {
   // tool's own defaults assume; this makes that assumption visible and
   // overridable per solution instead of a silent, hardcoded universal.
   supportAddonPerCamYr: number;
+  // Whether this vendor's license price rises with retention ("scaled", the
+  // retention curve) or not ("flat"): vendors that record on the camera or a
+  // local appliance sell longer retention as bigger hardware or a separate
+  // archive add-on, not a pricier license. Put that cost in the camera or
+  // add-on fields instead.
+  retentionPricing: RetentionPricing;
   // Incumbent only: years until the license already in place comes up for
   // renewal. Absent means one full term from year 0 (as if just bought),
   // which is how the model always treated an incumbent's license before.
@@ -288,8 +295,13 @@ export const STAFF_TIME_CATEGORIES: readonly Category[] = ["Admin labor", "Inves
 // higher volumes/cold tiers) without an artificial cliff right at each
 // threshold day. On-prem storage cost already scales continuously with days
 // via `tbUsable`, this brings cloud licensing in line with that.
-function retentionMultiplier(days: number) {
-  return Math.pow(Math.max(days, 1) / 30, 0.4);
+//
+// Floored at 30 days: license prices are quoted for (at least) 30-day
+// retention, and the curve was only fit from 30 days up, so shorter
+// retention no longer extrapolates into a discount (7 days used to cut the
+// price by 44%).
+export function retentionMultiplier(days: number) {
+  return Math.pow(Math.max(days, 30) / 30, 0.4);
 }
 
 // End-state hardware footprint, for the results summary's "what do you
@@ -389,7 +401,8 @@ export function computeSolution(
   // negotiated discount still applies to it; unlike the term price, it's
   // named/priced as a genuinely annual cost, so it's charged every year
   // regardless of where the term-renewal cycle is.
-  const licenseTermCost = sol.model === "cloud" ? sol.tierPrice * retentionMultiplier(ret) * disc : 0;
+  const retentionFactor = sol.retentionPricing === "flat" ? 1 : retentionMultiplier(ret);
+  const licenseTermCost = sol.model === "cloud" ? sol.tierPrice * retentionFactor * disc : 0;
   const supportAddonAnnual = sol.model === "cloud" ? sol.supportAddonPerCamYr * disc : 0;
   // At least one box per site (a connector/NVR is physically local to the cameras it
   // serves, you can't split one across sites), or more if total camera count demands it.

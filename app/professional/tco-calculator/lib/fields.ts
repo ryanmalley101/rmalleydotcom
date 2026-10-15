@@ -45,6 +45,7 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
   { key: "tierYears", label: "License term (years)", models: ["cloud"] },
   { key: "tierPrice", label: "License cost for term ($/cam)", models: ["cloud"] },
   { key: "supportAddonPerCamYr", label: "Support/analytics add-on ($/cam/yr)", models: ["cloud"] },
+  { key: "retentionPricing", label: "License price vs. retention", models: ["cloud"] },
   { key: "yearsUntilLicenseRenewal", label: "Years until license renewal (incumbent)", models: ["cloud"] },
   { key: "applianceCost", label: "Connector appliance ($/unit)", models: ["cloud"] },
   { key: "applianceCapacity", label: "Cameras per appliance", models: ["cloud"] },

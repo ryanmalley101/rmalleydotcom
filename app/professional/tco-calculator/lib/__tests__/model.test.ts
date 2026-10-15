@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeComparison, computeSolution, drivesForArray } from "../model";
+import { computeComparison, computeSolution, drivesForArray, retentionMultiplier } from "../model";
 import { defaultSolution, normalizeScenario, normalizeSolution } from "../defaults";
 import { seedOnprem, seedVerkada, scenario, round, NO_ESCALATION } from "./helpers";
 
@@ -208,6 +208,15 @@ test("each active recording server gets its own array", () => {
   const r = computeSolution(scenario({ cameras: 20, sites: 5 }), sol, false);
   // 5 sites -> 5 active servers + 1 spare; each needs a 4-drive RAID 10 array.
   assert.equal(r.hardware.storageTB, 5 * 4 * 16);
+});
+
+test("retention pricing: no discount below 30 days, and flat vendors don't scale", () => {
+  assert.equal(retentionMultiplier(7), 1);
+  assert.ok(retentionMultiplier(90) > 1.5);
+  const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0 };
+  const lic = (s: typeof sol, days: number) => computeSolution(scenario({ retentionDays: days }), s, false).byYear[0]["Licenses/subscription"];
+  assert.ok(lic(sol, 90) > lic(sol, 30));
+  assert.equal(lic({ ...sol, retentionPricing: "flat" }, 90), lic(sol, 30));
 });
 
 test("incumbent pays nothing at year 0", () => {

@@ -119,6 +119,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       applianceRefreshCycleYears: 7,
       yearsUntilNextApplianceRefresh: 2,
       supportAddonPerCamYr: 0,
+      retentionPricing: "scaled",
       // on-prem-only fields, unused by the cloud formula but kept populated,
       // so switching a solution's model later doesn't lose prior edits
       onpremCameraStrategy: "reuse",
@@ -157,7 +158,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     serverCapacity: 100,
     storageCostPerTB: DEFAULT_STORAGE_COST_PER_TB,
     raidLevel: "raid1",
-      raidArrayDrives: 8,
+    raidArrayDrives: 8,
     analyticsApplianceCost: 25000,
     analyticsSoftwareCostPerCam: 100,
     analyticsSoftwareCostPerCamYr: 0,
@@ -173,6 +174,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     applianceRefreshCycleYears: 7,
     yearsUntilNextApplianceRefresh: 2,
     supportAddonPerCamYr: 0,
+    retentionPricing: "scaled",
     miscItems: [],
   };
 }
