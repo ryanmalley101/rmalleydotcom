@@ -13,7 +13,7 @@ import {
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import CameraStrategyControl from "./CameraStrategyControl";
-import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 
@@ -367,7 +367,7 @@ function SolutionCard({
                 onChange={(v) => set("serverCost", num(v))}
               />
               <NumberInput
-                label={<Group gap={4} wrap="nowrap">Storage ($/TB usable)<SourceDot meta={fieldSourceInfo("storageCostPerTB", sol.storageCostPerTB, ...entries)} /></Group>}
+                label={<InfoLabel label="Storage ($/TB raw)" help={STORAGE_PRICE_HELP} extra={<SourceDot meta={fieldSourceInfo("storageCostPerTB", sol.storageCostPerTB, ...entries)} />} />}
                 leftSection={icon(HardDrive)}
                 value={sol.storageCostPerTB}
                 min={0}

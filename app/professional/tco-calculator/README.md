@@ -83,16 +83,20 @@ auth-gated, "dampened" on purpose.
   the full cost at year 0 regardless of refresh timing, so a refresh
   falling past the horizon there is a legitimate, harmless scenario, not a
   cost line quietly disappearing.
-- **Per-solution, not scenario-level**: `fleetHalfLifeYears`, `warrantyYears`,
-  `framerateFps` all live on `SolutionInputs` since each side's camera
-  hardware can have its own reliability/warranty/frame rate, even when
-  comparing two deployments of the same type. A decay-driven camera failure
-  still inside its warranty window costs only replacement labor, not the
-  camera itself. `framerateFps` (default 24) is a secondary multiplier on
-  top of `bitrateMbps` in the storage formula (`tbUsable`), not a
-  replacement for it, and like bitrate it only has a computed effect on the
-  on-prem branch (cloud storage is priced into the license, not derived
-  from bitrate/framerate at all).
+- **Per-solution, not scenario-level**: `fleetHalfLifeYears` and
+  `warrantyYears` live on `SolutionInputs` since each side's camera
+  hardware can have its own reliability/warranty, even when comparing two
+  deployments of the same type. A decay-driven camera failure still inside
+  its warranty window costs only replacement labor, not the camera itself.
+- **Bitrate and storage price**: `bitrateMbps` is the average *recorded*
+  bitrate per camera, which already reflects frame rate, so there's no
+  frame-rate multiplier (an earlier `framerateFps` field scaled bitrate
+  again relative to 24fps, double counting it for anyone entering a
+  measured bitrate; old share links may still carry the key, which is
+  ignored). It only affects on-prem storage sizing. `storageCostPerTB` is
+  per *raw* TB: it's multiplied by the post-RAID whole-drive capacity
+  (`tbBilled`), so the field says "$/TB raw" (it used to say "usable",
+  which invited counting RAID overhead twice).
 - **Camera failures are tracked by install-year cohort** (`computeSolution`):
   each cohort loses a constant share per year, `1 - 0.5^(1/halfLife)`, and
   every failure is replaced at this solution's own `cameraCost` /

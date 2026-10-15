@@ -14,5 +14,11 @@ export const INVESTIGATION_HOURS_HELP =
 export const INVESTIGATIONS_PER_MONTH_HELP =
   "How many times a month someone searches footage for an incident, across all sites. Multiplied by each solution's hours per investigation and the investigator rate.";
 
+export const STORAGE_PRICE_HELP =
+  "Price per terabyte of raw drive capacity. Storage is sized from bitrate and retention, multiplied for RAID redundancy, and billed in whole drives, so use a raw-drive price here, not a per-usable-TB quote, or the RAID overhead is counted twice.";
+
+export const BITRATE_HELP =
+  "Average recorded bitrate per camera, as your cameras or VMS report it. It already reflects resolution, codec, frame rate, and motion, so there's no separate frame-rate setting. Only used to size on-prem storage; cloud storage is priced into the license.";
+
 export const STAFF_TIME_NOTE =
   "Admin and investigation labor are estimates of staff time rather than invoices, so they're shown separately from cash costs.";

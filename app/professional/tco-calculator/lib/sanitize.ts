@@ -39,7 +39,6 @@ const SOLUTION_RULES: Partial<Record<keyof SolutionInputs, Rule>> = {
   truckRollsPerSiteYr: { min: 0, fallback: 0 },
   adminHrsPerCamYr: { min: 0, fallback: 0 },
   investigationHrsPerIncident: { min: 0, fallback: 0 },
-  framerateFps: { min: 1, fallback: 24 },
   tierPrice: { min: 0, fallback: 0 },
   tierYears: { min: 1, int: true, fallback: 1 },
   applianceCost: { min: 0, fallback: 0 },

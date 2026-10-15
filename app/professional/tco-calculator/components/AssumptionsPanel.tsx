@@ -3,7 +3,7 @@
 import { Alert, Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
 import {
   AlertTriangle, ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
-  FileText, Film, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
+  FileText, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
   RefreshCw, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
@@ -13,7 +13,7 @@ import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 import MiscItemsEditor from "./MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
-import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { ADMIN_HOURS_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -29,9 +29,6 @@ const RAID_OPTIONS: { value: RaidLevel; label: string }[] = [
   { value: "raid1", label: "RAID 1 (mirroring)" },
   { value: "raid10", label: "RAID 10 (striped mirrors)" },
 ];
-
-const FRAMERATE_HELP =
-  "Frames per second recorded per camera. Storage scales proportionally relative to the 24fps default; bitrate already captures most of the storage cost, this is a secondary adjustment on top of it.";
 
 const LICENSE_HELP =
   "Before the retention multiplier. Billed as a lump sum at purchase and at every renewal (year 0, then every term-length years), not smoothed evenly across each year in between — the $/yr figure below is just an average for reference. Support, software updates, and analytics are assumed bundled into the license by default; use the add-on field below if this vendor prices any of that separately.";
@@ -149,7 +146,6 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         step: 0.5, decimalScale: 1, icon: ShieldCheck,
         help: "How many years new camera hardware is covered by the manufacturer's warranty. A failure within this window is assumed to cost only the labor to swap the unit, not the hardware itself.",
       })}
-      {num("Framerate (fps)", "framerateFps", { step: 1, min: 1, icon: Film, help: FRAMERATE_HELP })}
 
       <SectionLabel>Licensing</SectionLabel>
       {sol.model === "cloud" ? (
@@ -211,7 +207,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
         <>
           {num("Recording server ($/unit)", "serverCost", { icon: Server })}
           {num("Cameras per server", "serverCapacity", { min: 1, int: true, icon: Layers })}
-          {num("Storage ($/TB usable)", "storageCostPerTB", { icon: HardDrive })}
+          {num("Storage ($/TB raw)", "storageCostPerTB", { icon: HardDrive, help: STORAGE_PRICE_HELP })}
           <Select
             label={<InfoLabel label="Storage redundancy" help={RAID_HELP} extra={<SourceDot meta={fieldSourceInfo("raidLevel", sol.raidLevel, ...vendorEntries)} />} />}
             leftSection={icon(HardDrive)}

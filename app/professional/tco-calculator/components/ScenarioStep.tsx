@@ -8,7 +8,7 @@ import {
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
-import { INVESTIGATIONS_PER_MONTH_HELP } from "../lib/fieldHelp";
+import { BITRATE_HELP, INVESTIGATIONS_PER_MONTH_HELP } from "../lib/fieldHelp";
 
 const RETENTION_LABEL = (
   <InfoLabel
@@ -56,7 +56,7 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
           onChange={(v) => set("retentionDays", num(v))} />
         <NumberInput label="Horizon (years)" leftSection={icon(CalendarRange)} allowDecimal={false} value={value.horizonYears} min={1} max={30}
           onChange={(v) => set("horizonYears", num(v))} />
-        <NumberInput label="Bitrate/cam (Mbps)" leftSection={icon(Activity)} value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
+        <NumberInput label={<InfoLabel label="Avg bitrate/cam (Mbps)" help={BITRATE_HELP} />} leftSection={icon(Activity)} value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
           onChange={(v) => set("bitrateMbps", num(v))} />
         <NumberInput label={<InfoLabel label="Investigations/mo" help={INVESTIGATIONS_PER_MONTH_HELP} />} leftSection={icon(Search)} value={value.investigationsPerMonth} min={0}
           onChange={(v) => set("investigationsPerMonth", num(v))} />
