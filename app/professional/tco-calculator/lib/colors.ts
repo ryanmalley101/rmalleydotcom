@@ -18,5 +18,7 @@ export const COLOR_SWATCHES = [
 // near-black background; Mantine's and Chart.js's own "dimmed" defaults are too dark here.
 export const TEXT_MUTED = "#b7c0cc";
 
-export const fmtUsd = (n: number) => "$" + Math.round(n).toLocaleString();
-export const fmtUsdK = (n: number) => "$" + (n / 1000).toLocaleString() + "k";
+// Sign goes before the dollar sign ("-$500", not "$-500"); credits are negative.
+export const fmtUsd = (n: number) => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString();
+export const fmtUsdK = (n: number) =>
+  (n < 0 ? "-$" : "$") + (Math.abs(n) / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 }) + "k";

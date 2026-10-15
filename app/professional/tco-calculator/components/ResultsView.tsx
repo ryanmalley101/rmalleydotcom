@@ -15,6 +15,7 @@ import ScenarioStep from "./ScenarioStep";
 import AssumptionsPanel from "./AssumptionsPanel";
 import ChartsPanel from "./ChartsPanel";
 import MethodologyNotes from "./MethodologyNotes";
+import GapDrivers from "./GapDrivers";
 import IncumbentPicker from "./IncumbentPicker";
 
 // Color by meaning (which side actually costs less), not by A/B slot or
@@ -282,6 +283,7 @@ export default function ResultsView({
               </Paper>
 
               <ChartsPanel comparison={comparison} nameA={solA.name} nameB={solB.name} colorA={colorA} colorB={colorB} />
+              <GapDrivers comparison={comparison} scenario={scenario} solA={solA} solB={solB} colorA={colorA} colorB={colorB} />
             </Stack>
           </Box>
         </Box>
