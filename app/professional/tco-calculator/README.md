@@ -158,7 +158,10 @@ auth-gated, "dampened" on purpose.
   every year regardless of the term-renewal cycle, separate from
   `tierPrice`. Renewals recur regardless of incumbent status, same as the
   on-prem support/care renewal — only the *first* term purchase is skipped
-  for an incumbent (already owned).
+  for an incumbent (already owned). The incumbent's first renewal comes at
+  `yearsUntilLicenseRenewal` (shown only for the incumbent; absent means
+  one full term from year 0, the old behavior) and every term after, so an
+  incumbent whose term ends next year isn't given years of free license.
   `migrationStrategy` (`"connector" | "ripReplace"`): "connector" reuses the
   existing camera fleet behind a connector/NVR-style appliance, with
   cameras swapped for native ones only as they fail; "ripReplace" buys out

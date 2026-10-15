@@ -165,6 +165,18 @@ test("the per-year breakdown sums to the total", () => {
   assert.equal(round(sum), round(c.a.total));
 });
 
+test("an incumbent cloud license renews when its current term ends", () => {
+  const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0 };
+  const scn = scenario({ annualEscalationPct: 0, creditResidualValue: false });
+  const term = sol.tierPrice * (1 - sol.discountPct / 100) * 100;
+  const asBefore = computeSolution(scn, sol, true);
+  assert.equal(round(asBefore.totalsByCategory["Licenses/subscription"]), round(term), "default: renews at year 5 only");
+  const soon = computeSolution(scn, { ...sol, yearsUntilLicenseRenewal: 1 }, true);
+  assert.equal(round(soon.totalsByCategory["Licenses/subscription"]), round(term * 2), "renews at years 1 and 6");
+  const fresh = computeSolution(scn, { ...sol, yearsUntilLicenseRenewal: 1 }, false);
+  assert.equal(round(fresh.totalsByCategory["Licenses/subscription"]), round(term * 2), "ignored for a new purchase: years 0 and 5");
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);

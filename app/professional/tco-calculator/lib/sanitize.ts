@@ -76,4 +76,11 @@ function apply<T extends object>(input: T, rules: Partial<Record<keyof T, Rule>>
 }
 
 export const sanitizeScenario = (s: ScenarioInputs): ScenarioInputs => apply(s, SCENARIO_RULES);
-export const sanitizeSolution = (s: SolutionInputs): SolutionInputs => apply(s, SOLUTION_RULES);
+export const sanitizeSolution = (s: SolutionInputs): SolutionInputs => {
+  const out = apply(s, SOLUTION_RULES);
+  // Optional: left absent unless set, since absent has its own meaning.
+  if (out.yearsUntilLicenseRenewal !== undefined) {
+    out.yearsUntilLicenseRenewal = clamp(out.yearsUntilLicenseRenewal, { min: 0, int: true, fallback: out.tierYears });
+  }
+  return out;
+};

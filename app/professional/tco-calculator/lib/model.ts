@@ -220,6 +220,10 @@ export interface SolutionInputs {
   // tool's own defaults assume; this makes that assumption visible and
   // overridable per solution instead of a silent, hardcoded universal.
   supportAddonPerCamYr: number;
+  // Incumbent only: years until the license already in place comes up for
+  // renewal. Absent means one full term from year 0 (as if just bought),
+  // which is how the model always treated an incumbent's license before.
+  yearsUntilLicenseRenewal?: number;
 
   // On-prem only
   onpremCameraStrategy: OnpremCameraStrategy;
@@ -427,6 +431,10 @@ export function computeSolution(
   const applianceCycle = sol.applianceRefreshCycleYears;
   const firstApplianceRefresh = isIncumbent ? sol.yearsUntilNextApplianceRefresh : applianceCycle;
   const isRefreshYear = (y: number, first: number, cycle: number) => y >= first && (y - first) % cycle === 0 && y < yrs;
+  // Cloud license renewals: every term after year 0 for a new purchase; for
+  // the incumbent, starting when its current term actually ends.
+  const firstRenewal = isIncumbent && sol.yearsUntilLicenseRenewal !== undefined ? sol.yearsUntilLicenseRenewal : tierYears;
+  const isRenewalYear = (y: number) => y > 0 && isRefreshYear(y, firstRenewal, tierYears);
 
   // Lump purchases with a fixed service life, for the residual-value credit.
   // A purchase in year p serves years p+1 through p+life.
@@ -489,7 +497,7 @@ export function computeSolution(
         // smoothed), same cadence as an on-prem hardware refresh — skipped in
         // the horizon's final year, no benefit renewing a term you won't use.
         let cloudLicenseCost = supportAddonAnnual * cams;
-        if (y % tierYears === 0 && y < yrs) {
+        if (isRenewalYear(y)) {
           cloudLicenseCost += licenseTermCost * cams;
         }
         yearCosts["Licenses/subscription"] = cloudLicenseCost;
@@ -524,7 +532,7 @@ export function computeSolution(
       lumps.push({ year: y, amount: yearCosts["Hardware (initial & refresh)"] * escalation, life: hardwareLife });
     }
     if (sol.model === "cloud") {
-      const termBought = (y === 0 && !isIncumbent) || (y > 0 && y % tierYears === 0 && y < yrs);
+      const termBought = (y === 0 && !isIncumbent) || isRenewalYear(y);
       if (termBought) lumps.push({ year: y, amount: licenseTermCost * cams * escalation, life: tierYears });
     }
 

@@ -37,6 +37,9 @@ const LICENSE_HELP =
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
 
+const RENEWAL_HELP =
+  "How many years until the license already in place has to be renewed. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
+
 const NEXT_REFRESH_HELP =
   "How many years until the already-installed hardware is next replaced. Only shown for the incumbent: a solution bought new at year 0 gets its first refresh one full refresh cycle later.";
 
@@ -176,6 +179,15 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
             <InfoLabel label={`≈ $${perYear.toFixed(2)}/yr per camera`} help={LICENSE_HELP} size="var(--mantine-font-size-xs)" color={TEXT_MUTED} />
           </div>
           {num("Support/analytics add-on ($/cam/yr)", "supportAddonPerCamYr", { icon: Headset, help: ADDON_HELP })}
+          {isIncumbent && (
+            <NumberInput
+              label={<InfoLabel label="Years until license renewal" help={RENEWAL_HELP} />}
+              leftSection={icon(Clock)}
+              value={sol.yearsUntilLicenseRenewal ?? sol.tierYears}
+              min={0} allowDecimal={false}
+              onChange={(v) => set("yearsUntilLicenseRenewal", Number(v) || 0)}
+            />
+          )}
         </>
       ) : (
         <>
