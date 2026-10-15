@@ -25,3 +25,9 @@ export const STAFF_TIME_NOTE =
 
 export const HALF_LIFE_HELP =
   "How long until about half of a batch of cameras has failed, half of the rest by twice that, and so on. By default it's 1.5 times the warranty period for every vendor, and it follows the warranty when that changes, unless you set your own number here.";
+
+export const RAID_HELP =
+  "How on-prem storage survives a drive failure. RAID 5 and 6 add one or two parity drives per array, the usual NVR setup. RAID 1 and 10 mirror everything, doubling the drives. No RAID and RAID 0 have no redundancy, so a single drive failure loses footage. The minimum array size applies to each recording server's own storage.";
+
+export const RAID_ARRAY_HELP =
+  "How many drives make up one RAID 5 or 6 array. Each array spends one (RAID 5) or two (RAID 6) drives on parity, so bigger arrays have less overhead.";

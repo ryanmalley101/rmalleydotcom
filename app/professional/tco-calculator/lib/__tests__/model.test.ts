@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeComparison, computeSolution } from "../model";
+import { computeComparison, computeSolution, drivesForArray } from "../model";
 import { defaultSolution, normalizeScenario, normalizeSolution } from "../defaults";
 import { seedOnprem, seedVerkada, scenario, round, NO_ESCALATION } from "./helpers";
 
@@ -12,7 +12,7 @@ test("default comparison snapshot", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 1143331, b: 520050, crossover: 2 },
+    { a: 1148512, b: 520050, crossover: 2 },
   );
 });
 
@@ -191,6 +191,23 @@ test("each escalation rate only moves its own costs", () => {
   assert.equal(round(hwOnly.totalsByCategory["Admin labor"]), round(base.totalsByCategory["Admin labor"]));
   assert.equal(round(hwOnly.totalsByCategory["Licenses/subscription"]), round(base.totalsByCategory["Licenses/subscription"]));
   assert.ok(hwOnly.totalsByCategory["Hardware (initial & refresh)"] > base.totalsByCategory["Hardware (initial & refresh)"]);
+});
+
+test("RAID levels buy the right number of drives", () => {
+  // 100 TB usable on 16 TB drives = 7 data drives.
+  assert.equal(drivesForArray(100, "none", 16, 8), 7);
+  assert.equal(drivesForArray(100, "raid1", 16, 8), 14);
+  assert.equal(drivesForArray(100, "raid5", 16, 8), 8); // one 8-drive array: 7 data + 1 parity
+  assert.equal(drivesForArray(100, "raid6", 16, 8), 11); // 7 data drives need two arrays (6 data each max), 2 parity each
+  assert.equal(drivesForArray(1, "raid10", 16, 8), 4, "minimum array size");
+  assert.equal(drivesForArray(1, "raid6", 16, 8), 4, "minimum array size");
+});
+
+test("each active recording server gets its own array", () => {
+  const sol = { ...seedOnprem("a"), raidLevel: "raid10" as const };
+  const r = computeSolution(scenario({ cameras: 20, sites: 5 }), sol, false);
+  // 5 sites -> 5 active servers + 1 spare; each needs a 4-drive RAID 10 array.
+  assert.equal(r.hardware.storageTB, 5 * 4 * 16);
 });
 
 test("incumbent pays nothing at year 0", () => {

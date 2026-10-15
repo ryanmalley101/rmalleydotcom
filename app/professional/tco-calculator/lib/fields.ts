@@ -1,6 +1,6 @@
 // One place that names every input, for exports and reports. `models`
 // limits a solution field to the deployment model(s) it applies to.
-import type { DeploymentModel, ScenarioInputs, SolutionInputs } from "./model";
+import type { DeploymentModel, RaidLevel, ScenarioInputs, SolutionInputs } from "./model";
 
 export interface FieldDef<K extends string> {
   key: K;
@@ -58,6 +58,7 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
   { key: "serverCapacity", label: "Cameras per server", models: ["onprem"] },
   { key: "storageCostPerTB", label: "Storage ($/TB raw)", models: ["onprem"] },
   { key: "raidLevel", label: "Storage redundancy", models: ["onprem"] },
+  { key: "raidArrayDrives", label: "Drives per RAID 5/6 array", models: ["onprem"] },
   { key: "refreshCycleYears", label: "Refresh cycle (yrs)", models: ["onprem"] },
   { key: "yearsUntilNextRefresh", label: "Years until next refresh (incumbent)", models: ["onprem"] },
   { key: "analyticsApplianceCost", label: "Analytics appliance ($/site)", models: ["onprem"] },
@@ -69,3 +70,14 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
 ];
 
 export const fieldsFor = (model: DeploymentModel) => SOLUTION_FIELDS.filter((f) => !f.models || f.models.includes(model));
+
+// Storage redundancy choices, most common first. RAID 0 stays selectable
+// only so an older saved comparison using it still displays.
+export const RAID_OPTIONS: { value: RaidLevel; label: string }[] = [
+  { value: "raid5", label: "RAID 5 (single parity)" },
+  { value: "raid6", label: "RAID 6 (double parity)" },
+  { value: "raid1", label: "RAID 1 (mirroring)" },
+  { value: "raid10", label: "RAID 10 (striped mirrors)" },
+  { value: "none", label: "No RAID" },
+  { value: "raid0", label: "RAID 0 (striping, no redundancy)" },
+];

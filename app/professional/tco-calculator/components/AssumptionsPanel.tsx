@@ -13,7 +13,8 @@ import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
 import MiscItemsEditor from "./MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
-import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { RAID_OPTIONS } from "../lib/fields";
+import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, RAID_ARRAY_HELP, RAID_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 import { withWarranty } from "../lib/defaults";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
@@ -21,15 +22,6 @@ const icon = (Icon: React.ElementType) => <Icon size={15} />;
 const MIGRATION_STRATEGY_HELP =
   "\"Reuse cameras\" keeps the existing fleet running behind a connector/NVR-style box, swapping individual cameras only as they fail. \"Replace all cameras\" buys out the whole fleet with native ones on day one instead. On a new site with no cameras to reuse, a connector setup still buys its cameras at year 0, plus the connector.";
 
-const RAID_HELP =
-  "How the on-prem storage is protected against a drive failure. No RAID and RAID 0 (striping) need only the usable capacity but have no redundancy, a single drive failure loses data. RAID 1 (mirroring) and RAID 10 (striped mirrors) roughly double the raw storage bought, to survive a drive failure.";
-
-const RAID_OPTIONS: { value: RaidLevel; label: string }[] = [
-  { value: "none", label: "No RAID" },
-  { value: "raid0", label: "RAID 0 (striping)" },
-  { value: "raid1", label: "RAID 1 (mirroring)" },
-  { value: "raid10", label: "RAID 10 (striped mirrors)" },
-];
 
 const LICENSE_HELP =
   "Before the retention multiplier. Billed as a lump sum at purchase and at every renewal (year 0, then every term-length years), not smoothed evenly across each year in between — the $/yr figure below is just an average for reference. Support, software updates, and analytics are assumed bundled into the license by default; use the add-on field below if this vendor prices any of that separately.";
@@ -228,6 +220,8 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
             allowDeselect={false}
             onChange={(v) => v && set("raidLevel", v as RaidLevel)}
           />
+          {(sol.raidLevel === "raid5" || sol.raidLevel === "raid6") &&
+            num("Drives per RAID array", "raidArrayDrives", { min: 3, int: true, icon: HardDrive, help: RAID_ARRAY_HELP })}
           {num("Refresh cycle (yrs)", "refreshCycleYears", { min: 1, int: true, icon: RefreshCw })}
           {isIncumbent && num("Years until next refresh", "yearsUntilNextRefresh", { min: 0, int: true, icon: Clock, help: NEXT_REFRESH_HELP })}
           <StaleRefreshWarning

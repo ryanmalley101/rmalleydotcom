@@ -312,7 +312,7 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
 // ---------- ON-PREM VMS SOFTWARE ----------
 export const ONPREM_VMS_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
   "Exacq (Johnson Controls)": {
-    values: { deviceLicense: 150, baseLicense: 0, carePct: 20, serverCost: 4000, serverCapacity: 64, storageCostPerTB: 30, raidLevel: "raid10" },
+    values: { deviceLicense: 150, baseLicense: 0, carePct: 20, serverCost: 4000, serverCapacity: 64, storageCostPerTB: 30, raidLevel: "raid6" },
     fieldMeta: {
       deviceLicense: { value: 150, status: "sourced", confidence: "high", sources: ["https://ipvm.com/reports/exacq-increases-enterprise-vms-pricing"], reasoning: "Professional $150/cam (Enterprise $225), confirmed directly.", checkedOn: "2026-07-26" },
       baseLicense: { value: 0, status: "sourced", confidence: "medium", sources: ["https://ipvm.com/reports/exacq-increases-enterprise-vms-pricing"], reasoning: "Per-camera model; Enterprise's separate server fee was dropped.", checkedOn: "2026-07-26" },
@@ -320,7 +320,7 @@ export const ONPREM_VMS_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
       serverCost: { value: 4000, status: "estimated", confidence: "low", sources: [], reasoning: "A/Z-series NVR appliance; generic 1U/2U anchor $3-5k.", checkedOn: "2026-07-26" },
       serverCapacity: { value: 64, status: "estimated", confidence: "low", sources: [], reasoning: "A-series scales to 128ch; conservative midpoint.", checkedOn: "2026-07-26" },
       storageCostPerTB: { value: 30, status: "estimated", confidence: "low", sources: [], reasoning: "Generic surveillance HDD $/TB.", checkedOn: "2026-07-26" },
-      raidLevel: { value: "raid10", status: "estimated", confidence: "low", sources: [], reasoning: "Appliances ship RAID 5/6; raid10 is the closest enum match for parity redundancy.", checkedOn: "2026-07-26" },
+      raidLevel: { value: "raid6", status: "estimated", confidence: "low", sources: [], reasoning: "Appliances ship RAID 5/6; RAID 6 used as the more conservative of the two. (Previously mapped to RAID 10 for lack of a parity option, which doubled the drives bought.)", checkedOn: "2026-10-15" },
     },
     notes: "Tiers Start/Professional/Enterprise. Perpetual per-camera. Z-series includes 5-yr SSA.",
   },

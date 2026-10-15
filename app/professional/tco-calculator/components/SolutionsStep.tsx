@@ -13,7 +13,8 @@ import {
 } from "../lib/vendorDefaults";
 import IncumbentPicker from "./IncumbentPicker";
 import CameraStrategyControl from "./CameraStrategyControl";
-import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
+import { RAID_OPTIONS } from "../lib/fields";
+import { ADMIN_HOURS_HELP, HALF_LIFE_HELP, RAID_HELP, INVESTIGATION_HOURS_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP } from "../lib/fieldHelp";
 import { withWarranty } from "../lib/defaults";
 import InfoLabel from "./InfoLabel";
 import SourceDot from "./SourceDot";
@@ -31,15 +32,6 @@ const MIGRATION_STRATEGY_HELP =
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, same as the hardware, unless this solution is marked incumbent below (already owned, not charged again). Only the support renewal recurs afterward.";
 
-const RAID_HELP =
-  "How the on-prem storage is protected against a drive failure. No RAID and RAID 0 (striping) need only the usable capacity but have no redundancy, a single drive failure loses data. RAID 1 (mirroring) and RAID 10 (striped mirrors) roughly double the raw storage bought, to survive a drive failure.";
-
-const RAID_OPTIONS: { value: RaidLevel; label: string }[] = [
-  { value: "none", label: "No RAID" },
-  { value: "raid0", label: "RAID 0 (striping)" },
-  { value: "raid1", label: "RAID 1 (mirroring)" },
-  { value: "raid10", label: "RAID 10 (striped mirrors)" },
-];
 
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";

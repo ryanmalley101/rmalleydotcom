@@ -176,22 +176,21 @@ auth-gated, "dampened" on purpose.
   earlier discrete 30/60/90/180/365-day step table) rather than a step
   function, matching on-prem storage's already-continuous scaling and
   avoiding artificial cost cliffs at each threshold day.
-- **RAID**: on-prem storage cost applies a redundancy multiplier
-  (`SolutionInputs.raidLevel`, defaults to RAID 1). RAID 0 and no RAID need
-  only the usable capacity; RAID 1 and RAID 10 roughly double the raw
-  capacity bought (striping alone adds no capacity overhead, so RAID 10
-  costs the same raw TB as RAID 1 for the same usable TB — the multiplier is
-  identical for both). That multiplied ("physical") capacity feeds the
-  storage *dollar* cost after one more step: `driveCountFor()`
-  (`lib/model.ts`) converts it into a whole number of real drives — you
-  can't buy a fraction of one — respecting each RAID level's minimum drive
-  count (`RAID_MIN_DRIVES`: `none`/`raid1` need at least 1/2, `raid0` needs
-  2, `raid10` needs at least *4*, since it's two mirrored pairs striped
-  together, not one). That floor matters most at small scale: a tiny fleet
-  on RAID 10 with large drives can be forced to buy far more raw capacity
-  than the continuous multiplier alone would suggest, and both the storage
-  cost and the `storageTB` hardware-footprint stat reflect that (`tbBilled`,
-  not the continuous `tbPhysical`).
+- **RAID**: on-prem storage is bought per recording server, since each
+  active (non-spare) server holds its share of the footage on its own
+  array. `drivesForArray()` (`lib/model.ts`) turns that server's usable TB
+  into whole drives for `SolutionInputs.raidLevel`: RAID 1/10 double the
+  data drives; RAID 5/6 add one or two parity drives per array of
+  `raidArrayDrives` (default 8); no RAID and RAID 0 add none. Each level's
+  minimum array size (`RAID_MIN_DRIVES`: RAID 10 needs 4, RAID 6 needs 4,
+  RAID 5 needs 3) applies per server, so several small sites cost more
+  storage than one big one. The billed whole-drive capacity (`tbBilled`)
+  feeds both the storage cost and the `storageTB` footprint stat. RAID 5/6
+  were added because they're the usual NVR setup (the Exacq entry had been
+  mapped to RAID 10 for lack of them, doubling its drives); RAID 0 stays
+  selectable only for older saved comparisons. Previously the minimum drive
+  count was applied once to the whole fleet, which didn't capture the
+  small-site case it was meant for.
 - **Input validation** (`lib/sanitize.ts`): `computeSolution` and
   `computeComparison` clamp every numeric input to a usable range before any
   math (counts and cycle lengths rounded to whole numbers, half-life at least

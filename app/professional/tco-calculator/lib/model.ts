@@ -36,47 +36,37 @@ export type CloudMigrationStrategy = "connector" | "ripReplace";
 // deployed side buys cameras regardless.
 export type OnpremCameraStrategy = "reuse" | "replace";
 
-// On-prem storage redundancy. Affects only how much *raw* storage has to be
-// bought to get the fleet's usable/needed TB, not the recording server count.
-export type RaidLevel = "none" | "raid0" | "raid1" | "raid10";
-// Raw-storage multiplier needed to get one TB of usable capacity. RAID 0 and
-// no RAID both need exactly the usable capacity (no redundancy overhead);
-// RAID 1 and RAID 10 both mirror everything, doubling the raw capacity
-// needed to survive a drive failure.
-const RAID_STORAGE_MULTIPLIER: Record<RaidLevel, number> = {
-  none: 1,
-  raid0: 1,
-  raid1: 2,
-  raid10: 2,
-};
+// On-prem storage redundancy. Affects only how many drives have to be
+// bought for the usable capacity needed, not the recording server count.
+// RAID 5 and 6 (parity) are the usual NVR setups; RAID 0 has no redundancy
+// and is kept only so older saved comparisons still load.
+export type RaidLevel = "none" | "raid0" | "raid1" | "raid10" | "raid5" | "raid6";
 
-// Minimum physical drives a valid array of this level needs, regardless of
-// how little raw capacity is actually required — you can't build a mirrored
-// array on one drive, and RAID 10 specifically needs at least two mirrored
-// pairs (4 drives) to actually stripe across; a "2-drive RAID 10" is just
-// RAID 1 under a bigger name. Only matters for the drive *count* used by the
-// power-draw and storage-billing math below — the $/TB assumption itself
-// (storageCostPerTB) intentionally stays continuous per-TB (see README's
-// "avoiding artificial cost cliffs"), this doesn't change that, it changes
-// how many TB actually get billed.
+// Minimum drives a valid array of each level needs.
 const RAID_MIN_DRIVES: Record<RaidLevel, number> = {
   none: 1,
   raid0: 2,
   raid1: 2,
   raid10: 4,
+  raid5: 3,
+  raid6: 4,
 };
 
-// Converts a raw physical TB figure into a whole number of real drives — you
-// can't buy or power a fractional drive. RAID 1/RAID 10 mirror in pairs, so
-// the count is rounded up to an even number before the RAID_MIN_DRIVES floor
-// is applied. driveCapacityTb is a scenario-level assumption (user-editable),
-// clamped to a sane positive minimum so a cleared/zeroed input can't divide
-// by zero.
-function driveCountFor(tbPhysical: number, raidLevel: RaidLevel, driveCapacityTb: number): number {
-  const raw = tbPhysical / Math.max(1, driveCapacityTb);
-  const isMirrored = raidLevel === "raid1" || raidLevel === "raid10";
-  const rounded = isMirrored ? Math.ceil(raw / 2) * 2 : Math.ceil(raw);
-  return Math.max(RAID_MIN_DRIVES[raidLevel], rounded);
+// Drives to buy for one recording server's array, given the usable TB it
+// has to hold. Mirrors (RAID 1/10) double the data drives; parity levels
+// add one (RAID 5) or two (RAID 6) parity drives per array of up to
+// `arrayDrives` drives. You can't buy a fraction of a drive, and each level
+// has a minimum array size.
+export function drivesForArray(usableTb: number, raidLevel: RaidLevel, driveCapacityTb: number, arrayDrives: number): number {
+  const data = Math.max(1, Math.ceil(usableTb / Math.max(1, driveCapacityTb)));
+  let drives: number;
+  if (raidLevel === "raid1" || raidLevel === "raid10") drives = data * 2;
+  else if (raidLevel === "raid5" || raidLevel === "raid6") {
+    const parity = raidLevel === "raid5" ? 1 : 2;
+    const dataPerArray = Math.max(1, arrayDrives - parity);
+    drives = data + Math.ceil(data / dataPerArray) * parity;
+  } else drives = data;
+  return Math.max(RAID_MIN_DRIVES[raidLevel], drives);
 }
 
 // Needed to convert a raw physical TB figure into a drive count for
@@ -240,6 +230,9 @@ export interface SolutionInputs {
   serverCapacity: number;
   storageCostPerTB: number;
   raidLevel: RaidLevel;
+  // Drives per array for RAID 5/6: parity overhead is 1 or 2 drives per
+  // array of this many. Ignored for other levels.
+  raidArrayDrives: number;
   // Per-site, not fleet-wide: an on-prem analytics appliance is deployed at
   // each site individually (it runs against that site's own recording
   // servers), not once for the whole comparison. Multiplies by `sites`
@@ -406,13 +399,14 @@ export function computeSolution(
   const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * storageOverheadMultiplier;
   // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
   // mirrored RAID 1/10).
-  const tbPhysical = sol.model === "onprem" ? tbUsable * RAID_STORAGE_MULTIPLIER[sol.raidLevel] : tbUsable;
-  // Storage is billed for the whole drives actually bought (respecting each RAID level's
-  // drive-count floor via driveCountFor — a small RAID 10 array still needs 4 real drives,
-  // and costs like it) rather than the continuous tbPhysical figure. Only matters on-prem;
-  // cloud has no drives-you-buy line for this to apply to.
+  // Each active (non-spare) recording server holds its share of the footage
+  // on its own array, so a RAID level's minimum drive count applies per
+  // server: five small sites on RAID 10 need five 4-drive arrays, not one.
+  const activeServers = Math.max(1, nSrv - spareServers);
   const tbBilled =
-    sol.model === "onprem" ? driveCountFor(tbPhysical, sol.raidLevel, driveCapacityTb) * driveCapacityTb : tbPhysical;
+    sol.model === "onprem"
+      ? drivesForArray(tbUsable / activeServers, sol.raidLevel, driveCapacityTb, sol.raidArrayDrives) * activeServers * driveCapacityTb
+      : tbUsable;
   const careCost = sol.model === "onprem" ? (sol.baseLicense + sol.deviceLicense * cams) * disc * (sol.carePct / 100) : 0;
   // Misc items are applied at face value (no vendor disc), split by timing.
   const miscItems = Array.isArray(sol.miscItems) ? sol.miscItems : [];
@@ -579,8 +573,7 @@ export function computeSolution(
     unitsLabel:
       sol.model === "onprem" ? "Recording servers" : sol.migrationStrategy === "connector" ? "Connector appliances" : null,
     units: sol.model === "onprem" ? nSrv : sol.migrationStrategy === "connector" ? applianceUnits : 0,
-    // tbBilled (not tbPhysical) so this never drifts from what the cost lines above
-    // actually charged for — the whole-drive figure, not the continuous one.
+    // tbBilled, the whole-drive figure the cost lines above actually charged for.
     storageTB: sol.model === "onprem" ? tbBilled : null,
     cameras: cams,
     cameraSwaps,
