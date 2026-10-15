@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Tooltip } from "@mantine/core";
+import { Anchor, Box, Popover, Stack, Text, UnstyledButton } from "@mantine/core";
 import type { FieldMeta } from "../lib/vendorDefaults";
 
 // Answers "which fields are actually sourced?" per-field, not just the
@@ -9,43 +9,45 @@ import type { FieldMeta } from "../lib/vendorDefaults";
 // specific number in front of you is one of them. Renders nothing when
 // there's no vendor-researched value behind the current field (including
 // when the user has edited it away from that value; see fieldSourceInfo).
+//
+// A real button opening a popover (not a hover-only tooltip): reachable by
+// keyboard, works on touch, and the source links inside can be clicked.
 export default function SourceDot({ meta }: { meta: FieldMeta | null }) {
   if (!meta) return null;
   const sourced = meta.status === "sourced";
   const color = sourced ? "teal" : "gray";
-  const parts = [
-    sourced ? `Sourced (${meta.confidence} confidence)` : `Estimated (${meta.confidence} confidence)`,
-    meta.reasoning,
-    sourced && meta.sources.length ? meta.sources[0] : null,
-    `Checked ${meta.checkedOn}`,
-  ].filter((p): p is string => Boolean(p));
-
-  const label = (
-    <Box>
-      {parts.map((part, i) => (
-        <Box key={i} mt={i > 0 ? 4 : 0}>
-          {part}
-        </Box>
-      ))}
-    </Box>
-  );
+  const summary = sourced ? `Sourced (${meta.confidence} confidence)` : `Estimated (${meta.confidence} confidence)`;
 
   return (
-    <Tooltip multiline w={280} withArrow events={{ hover: true, focus: true, touch: true }} label={label}>
-      <Box
-        component="span"
-        role="img"
-        aria-label={sourced ? "This value is sourced" : "This value is estimated"}
-        style={{
-          display: "inline-block",
-          width: 7,
-          height: 7,
-          borderRadius: "50%",
-          background: `var(--mantine-color-${color}-5)`,
-          cursor: "help",
-          flexShrink: 0,
-        }}
-      />
-    </Tooltip>
+    <Popover width={300} withArrow shadow="md" position="top">
+      <Popover.Target>
+        <UnstyledButton
+          type="button"
+          aria-label={`${summary}: show details`}
+          style={{ display: "inline-flex", alignItems: "center", padding: 3, margin: -3, cursor: "pointer", lineHeight: 0, flexShrink: 0 }}
+        >
+          <Box
+            component="span"
+            style={{ display: "inline-block", width: 7, height: 7, borderRadius: "50%", background: `var(--mantine-color-${color}-5)` }}
+          />
+        </UnstyledButton>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Stack gap={6}>
+          <Text size="xs" fw={600}>{summary}</Text>
+          {meta.reasoning && <Text size="xs">{meta.reasoning}</Text>}
+          {meta.sources.length > 0 && (
+            <Stack gap={2}>
+              {meta.sources.map((src) => (
+                <Anchor key={src} href={src} target="_blank" rel="noopener noreferrer" size="xs" style={{ wordBreak: "break-all" }}>
+                  {src}
+                </Anchor>
+              ))}
+            </Stack>
+          )}
+          {meta.checkedOn && <Text size="xs" c="dimmed">Checked {meta.checkedOn}</Text>}
+        </Stack>
+      </Popover.Dropdown>
+    </Popover>
   );
 }

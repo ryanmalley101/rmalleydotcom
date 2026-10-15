@@ -394,6 +394,9 @@ before trusting an unedited comparison:
   in sibling `*ThemeClient.tsx` Client Components they render.
 - `/professional/error.tsx` is the only error boundary in the app (none
   existed anywhere else before this route).
+- `SourceDot` (the per-field sourced/estimated dot) is a real button that
+  opens a `Popover`, not a hover tooltip, so it's keyboard-reachable and the
+  source links inside are clickable; every cited source is listed.
 - `InfoLabel`'s tooltip trigger is a real `<button>` with
   `events={{hover,focus,touch}}` set on the Mantine `Tooltip`, not just a
   hover-only icon: keyboard `:focus-visible` and touch both open it. Plain
