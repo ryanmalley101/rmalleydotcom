@@ -106,7 +106,11 @@ auth-gated, "dampened" on purpose.
   ignored). It only affects on-prem storage sizing. `storageCostPerTB` is
   per *raw* TB: it's multiplied by the post-RAID whole-drive capacity
   (`tbBilled`), so the field says "$/TB raw" (it used to say "usable",
-  which invited counting RAID overhead twice).
+  which invited counting RAID overhead twice). Its default, `DEFAULT_STORAGE_COST_PER_TB`
+  ($30, a raw surveillance-HDD estimate), is generic: VMS vendor entries
+  no longer set it, since storage price doesn't depend on the VMS (they all
+  set $30 while the generic default was $200, so picking a VMS silently
+  repriced storage).
 - **Camera failures are tracked by install-year cohort** (`computeSolution`):
   each cohort loses a constant share per year, `1 - 0.5^(1/halfLife)`, and
   every failure is replaced at this solution's own `cameraCost` /

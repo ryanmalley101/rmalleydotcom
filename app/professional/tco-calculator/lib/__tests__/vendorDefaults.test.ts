@@ -62,3 +62,8 @@ test("half-life follows warranty edits unless the user overrode it", () => {
   assert.equal(withWarranty(sol, 5).fleetHalfLifeYears, 7.5);
   assert.equal(withWarranty({ ...sol, fleetHalfLifeYears: 9 }, 5).fleetHalfLifeYears, 9);
 });
+
+test("storage price isn't set per VMS vendor", () => {
+  for (const entry of Object.values(ONPREM_VMS_VENDOR_DEFAULTS)) assert.equal(entry.values.storageCostPerTB, undefined);
+  assert.equal(defaultSolution("a", "x", "onprem").storageCostPerTB, seedOnprem("a").storageCostPerTB);
+});

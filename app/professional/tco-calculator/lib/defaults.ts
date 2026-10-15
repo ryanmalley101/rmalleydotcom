@@ -7,6 +7,13 @@ import { DEFAULT_DRIVE_CAPACITY_TB, DEFAULT_STORAGE_OVERHEAD_MULTIPLIER, DEFAULT
 // how long it expects its cameras to last. Replaced per-vendor half-life
 // guesses (several were uncited estimates). Floored so a 0-year warranty
 // doesn't imply cameras failing almost immediately.
+// Raw surveillance-grade HDD price per TB. Storage cost doesn't depend on
+// which VMS records to it, so it's one generic default rather than a
+// per-VMS-vendor value (VMS entries used to set it to this same figure while
+// the generic default sat at $200, so picking a VMS silently repriced
+// storage). An estimate, not sourced; replace with a real quote.
+export const DEFAULT_STORAGE_COST_PER_TB = 30;
+
 export const HALF_LIFE_PER_WARRANTY_YEAR = 1.5;
 export const MIN_DERIVED_HALF_LIFE_YEARS = 1.5;
 export function halfLifeForWarranty(warrantyYears: number): number {
@@ -120,7 +127,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       carePct: 20,
       serverCost: 9000,
       serverCapacity: 100,
-      storageCostPerTB: 200,
+      storageCostPerTB: DEFAULT_STORAGE_COST_PER_TB,
       raidLevel: "raid1",
       raidArrayDrives: 8,
       analyticsApplianceCost: 25000,
@@ -148,7 +155,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     carePct: 20,
     serverCost: 9000,
     serverCapacity: 100,
-    storageCostPerTB: 200,
+    storageCostPerTB: DEFAULT_STORAGE_COST_PER_TB,
     raidLevel: "raid1",
       raidArrayDrives: 8,
     analyticsApplianceCost: 25000,
