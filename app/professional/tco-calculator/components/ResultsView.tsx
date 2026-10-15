@@ -30,7 +30,7 @@ function FooterStat({ label, value }: { label: string; value: string }) {
   return (
     <Stack gap={0} align="center">
       <Text ff="monospace" fw={600} size="sm">{value}</Text>
-      <Text size="xs" c={TEXT_MUTED}>{label}</Text>
+      <Text size="xs" c={TEXT_MUTED} ta="center" maw={180} lineClamp={2}>{label}</Text>
     </Stack>
   );
 }
@@ -211,9 +211,11 @@ export default function ResultsView({
                       const hwText = hardwareSummaryText(result.hardware);
                       return (
                         <div key={sol.id}>
-                          <Group justify="space-between" mb={6} wrap="nowrap" gap="xs">
-                            <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
-                              <Text size="sm" fw={600} c={isCheaper ? undefined : TEXT_MUTED} truncate>{sol.name}</Text>
+                          {/* Wraps instead of truncating: on a phone the totals drop below the
+                              name rather than squeezing it down to a single letter. */}
+                          <Group justify="space-between" mb={6} wrap="wrap" gap="xs" style={{ rowGap: 2 }}>
+                            <Group gap={6} wrap="wrap" style={{ minWidth: 0, flex: "1 1 200px", rowGap: 2 }}>
+                              <Text size="sm" fw={600} c={isCheaper ? undefined : TEXT_MUTED} lineClamp={2} style={{ wordBreak: "break-word" }}>{sol.name}</Text>
                               {isCheaper && (
                                 <Badge size="xs" variant="light" color="teal" leftSection={<Check size={10} />} style={{ flexShrink: 0 }}>
                                   Lower cost
