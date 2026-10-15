@@ -105,10 +105,16 @@ export interface ScenarioInputs {
   horizonYears: number;
   bitrateMbps: number;
   investigationsPerMonth: number;
-  // Compounding annual growth applied to every recurring cost (subscriptions,
-  // labor, truck rolls, refreshes...). Real prices don't hold flat for a
-  // 10-15 year horizon.
-  annualEscalationPct: number;
+  // Compounding annual price growth, split three ways because the three move
+  // differently over a 10-15 year horizon: labor and services (install,
+  // truck rolls, admin, investigations, replacement labor, misc items) tend
+  // to rise with wages; hardware (cameras, servers, storage, appliances) is
+  // often flat or falling per unit; license and subscription pricing follows
+  // its own contracts. Older share links carried one annualEscalationPct,
+  // which normalizeScenario copies into all three.
+  laborEscalationPct: number;
+  hardwareEscalationPct: number;
+  licenseEscalationPct: number;
   // Which solution (if either) is already deployed. The incumbent skips its
   // year-0 buildout cost; the other solution pays it as a fresh deployment.
   incumbent: IncumbentChoice;
@@ -338,7 +344,9 @@ export function computeSolution(
   const sol = sanitizeSolution(rawSol);
   const existingFleet = rawExistingFleet && sanitizeSolution(rawExistingFleet);
   const { cameras: cams, sites, retentionDays: ret, horizonYears: yrs, bitrateMbps: br, investigationsPerMonth: invMo } = scenario;
-  const esc = scenario.annualEscalationPct / 100;
+  const escLabor = scenario.laborEscalationPct / 100;
+  const escHardware = scenario.hardwareEscalationPct / 100;
+  const escLicense = scenario.licenseEscalationPct / 100;
   const disc = 1 - sol.discountPct / 100;
   const tierYears = sol.tierYears;
 
@@ -447,7 +455,11 @@ export function computeSolution(
   let running = 0;
 
   for (let y = 0; y <= yrs; y++) {
-    const escalation = Math.pow(1 + esc, y);
+    // Escalation factors for this year; every amount below is escalated as
+    // it's assigned (year 0 factors are all 1).
+    const labor = Math.pow(1 + escLabor, y);
+    const hw = Math.pow(1 + escHardware, y);
+    const lic = Math.pow(1 + escLicense, y);
     const yearCosts = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
 
     if (y === 0) {
@@ -455,26 +467,26 @@ export function computeSolution(
       if (!isIncumbent) {
         // Install labor for a full camera fleet, or onboarding labor when the
         // existing cameras are kept and added to the new system.
-        yearCosts["Installation"] = sol.bulkInstallLaborCost * cams;
-        if (buysCameras) yearCosts["Cameras"] = cams * sol.cameraCost * disc;
+        yearCosts["Installation"] = sol.bulkInstallLaborCost * cams * labor;
+        if (buysCameras) yearCosts["Cameras"] = cams * sol.cameraCost * disc * hw;
         if (sol.model === "cloud") {
           // A connector/NVR-style box is needed whenever cameras other than the
           // vendor's own native ones are in use; native ("ripReplace") cameras
           // talk to the cloud directly.
           if (sol.migrationStrategy === "connector") {
-            yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits;
+            yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits * hw;
           }
           // First license term, bought up front.
-          yearCosts["Licenses/subscription"] = licenseTermCost * cams;
+          yearCosts["Licenses/subscription"] = licenseTermCost * cams * lic;
         } else {
           yearCosts["Hardware (initial & refresh)"] =
-            sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
+            (sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites) * hw;
           // A fresh on-prem deployment buys its perpetual license too; only the
           // ongoing care/SUP renewal (and analyticsSoftwareCostPerCamYr) recur
           // after this. Number(...) || 0 guards an older saved state missing
           // analyticsSoftwareCostPerCam (normalization normally backfills it).
           yearCosts["Licenses/subscription"] =
-            (sol.baseLicense + sol.deviceLicense * cams + sol.analyticsSoftwareCostPerCam * cams) * disc;
+            (sol.baseLicense + sol.deviceLicense * cams + sol.analyticsSoftwareCostPerCam * cams) * disc * lic;
         }
       }
     } else {
@@ -485,7 +497,7 @@ export function computeSolution(
         cohort.size -= fails;
         swaps += fails;
         const inWarranty = y - cohort.installedYear <= cohort.warrantyYears;
-        cameraCost += fails * (sol.replacementInstallLaborCost + (inWarranty ? 0 : sol.cameraCost * disc));
+        cameraCost += fails * (sol.replacementInstallLaborCost * labor + (inWarranty ? 0 : sol.cameraCost * disc * hw));
       }
       cohorts.push({ size: swaps, installedYear: y, halfLife: sol.fleetHalfLifeYears, warrantyYears: sol.warrantyYears });
       cameraSwaps += swaps;
@@ -500,47 +512,46 @@ export function computeSolution(
         if (isRenewalYear(y)) {
           cloudLicenseCost += licenseTermCost * cams;
         }
-        yearCosts["Licenses/subscription"] = cloudLicenseCost;
+        yearCosts["Licenses/subscription"] = cloudLicenseCost * lic;
       } else {
-        yearCosts["Licenses/subscription"] = careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc;
+        yearCosts["Licenses/subscription"] = (careCost + sol.analyticsSoftwareCostPerCamYr * cams * disc) * lic;
       }
 
-      yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost;
-      yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate;
-      yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate;
+      yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost * labor;
+      yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate * labor;
+      yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate * labor;
 
       if (sol.model === "cloud") {
         // ripReplace has no connector appliance, so no ongoing hardware refresh.
         if (sol.migrationStrategy === "connector") {
           if (isRefreshYear(y, firstApplianceRefresh, applianceCycle)) {
-            yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits;
+            yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits * hw;
           }
         }
       } else {
         if (isRefreshYear(y, firstRefresh, refreshCycle)) {
           yearCosts["Hardware (initial & refresh)"] =
-            sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites;
+            (sol.serverCost * disc * nSrv + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * sites) * hw;
         }
       }
     }
 
-    yearCosts["Misc / other"] = miscForYear(y);
+    yearCosts["Misc / other"] = miscForYear(y) * labor;
 
     // Every Hardware line is a lump purchase on its refresh cycle; for cloud,
     // so is every license term (the add-on is annual, so it's excluded).
     if (yearCosts["Hardware (initial & refresh)"] > 0) {
-      lumps.push({ year: y, amount: yearCosts["Hardware (initial & refresh)"] * escalation, life: hardwareLife });
+      lumps.push({ year: y, amount: yearCosts["Hardware (initial & refresh)"], life: hardwareLife });
     }
     if (sol.model === "cloud") {
       const termBought = (y === 0 && !isIncumbent) || isRenewalYear(y);
-      if (termBought) lumps.push({ year: y, amount: licenseTermCost * cams * escalation, life: tierYears });
+      if (termBought) lumps.push({ year: y, amount: licenseTermCost * cams * lic, life: tierYears });
     }
 
     let yearTotal = 0;
     const escalatedYear = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
     CATEGORIES.forEach((c) => {
-      // Year-0 costs are today's dollars already (escalation factor is 1 at y=0 anyway).
-      const escalated = yearCosts[c] * escalation;
+      const escalated = yearCosts[c]; // already escalated above
       escalatedYear[c] = escalated;
       totalsByCategory[c] += escalated;
       yearTotal += escalated;

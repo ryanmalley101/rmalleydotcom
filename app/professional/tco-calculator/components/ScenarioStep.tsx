@@ -17,12 +17,20 @@ const RETENTION_LABEL = (
   />
 );
 
-const ESCALATION_LABEL = (
-  <InfoLabel
-    label="Annual cost escalation (%)"
-    help="How much recurring costs (subscriptions, labor, truck rolls, refreshes) grow each year, since prices don't tend to hold flat over a long horizon."
-  />
-);
+const ESCALATION_FIELDS = [
+  {
+    key: "laborEscalationPct" as const, label: "Labor escalation (%/yr)",
+    help: "Yearly growth in labor and service costs: install and replacement labor, truck rolls, admin and investigation time, and your misc items. Tends to track wages.",
+  },
+  {
+    key: "hardwareEscalationPct" as const, label: "Hardware escalation (%/yr)",
+    help: "Yearly change in hardware prices for cameras, servers, storage, and appliances bought later in the horizon. Often flat or negative per unit, since storage in particular gets cheaper over time.",
+  },
+  {
+    key: "licenseEscalationPct" as const, label: "License escalation (%/yr)",
+    help: "Yearly growth in license, subscription, and support-renewal prices. Check your contracts: some lock renewal pricing, others allow annual increases.",
+  },
+];
 
 const STORAGE_OVERHEAD_HELP =
   "Multiplier on top of the raw video-bitrate math for metadata/audio/keyframe-indexing overhead beyond the encoded video stream itself. Feeds on-prem storage sizing. 1.3 (30% overhead) is a general placeholder — some VMSes run leaner or heavier than this.";
@@ -69,13 +77,15 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
       <Accordion variant="separated">
         <Accordion.Item value="advanced">
           <Accordion.Control>
-            <Text size="sm" fw={500}>Advanced (escalation, market rates, storage sizing)</Text>
+            <Text size="sm" fw={500}>Advanced (price escalation, market rates, storage sizing)</Text>
           </Accordion.Control>
           <Accordion.Panel>
             <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
-              <NumberInput label={ESCALATION_LABEL} leftSection={icon(TrendingUp)}
-                value={value.annualEscalationPct} min={0} max={100} step={0.5} decimalScale={1}
-                onChange={(v) => set("annualEscalationPct", num(v))} />
+              {ESCALATION_FIELDS.map((f) => (
+                <NumberInput key={f.key} label={<InfoLabel label={f.label} help={f.help} />} leftSection={icon(TrendingUp)}
+                  value={value[f.key]} min={-20} max={100} step={0.5} decimalScale={1}
+                  onChange={(v) => set(f.key, num(v))} />
+              ))}
               <NumberInput label="Admin ($/hr)" leftSection={icon(DollarSign)} value={value.adminRate} min={0} onChange={(v) => set("adminRate", num(v))} />
               <NumberInput label="Investigator ($/hr)" leftSection={icon(DollarSign)} value={value.investigatorRate} min={0} onChange={(v) => set("investigatorRate", num(v))} />
               <NumberInput label="Truck roll ($)" leftSection={icon(Truck)} value={value.truckRollCost} min={0} onChange={(v) => set("truckRollCost", num(v))} />

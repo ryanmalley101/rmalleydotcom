@@ -262,8 +262,15 @@ auth-gated, "dampened" on purpose.
   a fixed service life in this model. `activeCategories` filters on
   `Math.abs`, so credits (this, and negative misc items) appear in the
   category chart.
-- **Escalation, no NPV discounting**: `annualEscalationPct` compounds every
-  recurring cost year over year. An earlier version also had a separate NPV
+- **Escalation, no NPV discounting**: three escalation rates compound year
+  over year, applied to each cost as it's charged: `laborEscalationPct`
+  (install and replacement labor, truck rolls, admin, investigations, misc
+  items), `hardwareEscalationPct` (cameras, servers, storage, appliances),
+  and `licenseEscalationPct` (licenses, subscriptions, support renewals).
+  They replaced a single `annualEscalationPct`, which applied labor-style
+  growth to hardware too even though hardware, storage especially, tends
+  to get cheaper; `normalizeScenario` copies an old link's single rate into
+  all three, and the defaults (3% each) match the old behavior. An earlier version also had a separate NPV
   discount rate (`npvDiscountPct`), removed to keep the tool to one
   time-value assumption. Note what that trades away: discounting *can*
   change the winner, because it weights each side by when its costs land

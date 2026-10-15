@@ -25,7 +25,7 @@ test("every flip point is where the totals actually cross", () => {
   };
   for (const p of points) {
     const at = (x: number) => {
-      if (p.owner === null) return gapWith({ ...scn, [{ "investigations per month": "investigationsPerMonth", "investigator hourly rate": "investigatorRate", "admin hourly rate": "adminRate", "annual escalation": "annualEscalationPct" }[p.label]!]: x }, a, b);
+      if (p.owner === null) return gapWith({ ...scn, [{ "investigations per month": "investigationsPerMonth", "investigator hourly rate": "investigatorRate", "admin hourly rate": "adminRate", "labor escalation": "laborEscalationPct", "license escalation": "licenseEscalationPct", "hardware escalation": "hardwareEscalationPct" }[p.label]!]: x }, a, b);
       const key = keyFor[p.label];
       return p.owner === "a" ? gapWith(scn, { ...a, [key]: x }, b) : gapWith(scn, a, { ...b, [key]: x });
     };

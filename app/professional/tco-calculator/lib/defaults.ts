@@ -28,7 +28,9 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   horizonYears: 10,
   bitrateMbps: 2,
   investigationsPerMonth: 20,
-  annualEscalationPct: 3,
+  laborEscalationPct: 3,
+  hardwareEscalationPct: 3,
+  licenseEscalationPct: 3,
   incumbent: "none",
   existingCamerasReusable: true,
   existingFleetAgeYears: 0,
@@ -75,7 +77,17 @@ export function normalizeSolution(sol: SolutionInputs): SolutionInputs {
 
 // Same idea for ScenarioInputs.
 export function normalizeScenario(scenario: ScenarioInputs): ScenarioInputs {
-  return { ...DEFAULT_SCENARIO, ...scenario };
+  const merged = { ...DEFAULT_SCENARIO, ...scenario };
+  // Older links had one annualEscalationPct for everything; carry it into
+  // each of the three split rates they don't have yet.
+  const legacy = scenario as ScenarioInputs & { annualEscalationPct?: number };
+  if (legacy.annualEscalationPct !== undefined) {
+    if (legacy.laborEscalationPct === undefined) merged.laborEscalationPct = legacy.annualEscalationPct;
+    if (legacy.hardwareEscalationPct === undefined) merged.hardwareEscalationPct = legacy.annualEscalationPct;
+    if (legacy.licenseEscalationPct === undefined) merged.licenseEscalationPct = legacy.annualEscalationPct;
+  }
+  delete (merged as { annualEscalationPct?: number }).annualEscalationPct;
+  return merged;
 }
 
 export function defaultSolution(id: "a" | "b", name: string, model: DeploymentModel): SolutionInputs {

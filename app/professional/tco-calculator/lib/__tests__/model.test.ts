@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { computeComparison, computeSolution } from "../model";
-import { defaultSolution, normalizeSolution } from "../defaults";
-import { seedOnprem, seedVerkada, scenario, round } from "./helpers";
+import { defaultSolution, normalizeScenario, normalizeSolution } from "../defaults";
+import { seedOnprem, seedVerkada, scenario, round, NO_ESCALATION } from "./helpers";
 
 // Pins the headline numbers of the comparison a first-time visitor sees
 // (on-prem Milestone/Axis incumbent vs. Verkada). Any change to these is a
@@ -25,7 +25,7 @@ test("staff time is reported separately and sums back to the total", () => {
 });
 
 test("a fresh deployment's first refresh comes one full cycle after year 0", () => {
-  const scn = scenario({ annualEscalationPct: 0, horizonYears: 10 });
+  const scn = scenario({ ...NO_ESCALATION, horizonYears: 10 });
   const onprem = seedOnprem("a"); // 5-year cycle, 2 years until next refresh
   const fresh = computeSolution(scn, onprem, false);
   const onePurchase = fresh.byYear[0]["Hardware (initial & refresh)"];
@@ -39,7 +39,7 @@ test("a fresh deployment's first refresh comes one full cycle after year 0", () 
 });
 
 test("the incumbent still refreshes on its own offset", () => {
-  const scn = scenario({ annualEscalationPct: 0, horizonYears: 10 });
+  const scn = scenario({ ...NO_ESCALATION, horizonYears: 10 });
   const onprem = seedOnprem("a");
   const inc = computeSolution(scn, onprem, true);
   const onePurchase = computeSolution(scn, onprem, false).byYear[0]["Hardware (initial & refresh)"];
@@ -47,7 +47,7 @@ test("the incumbent still refreshes on its own offset", () => {
 });
 
 const yearZero = (sol: Parameters<typeof computeSolution>[1], overrides = {}) =>
-  computeSolution(scenario({ annualEscalationPct: 0, ...overrides }), sol, false).byYear[0];
+  computeSolution(scenario({ ...NO_ESCALATION, ...overrides }), sol, false).byYear[0];
 
 test("on a new site every newly deployed side buys its cameras", () => {
   const onprem = seedOnprem("a");
@@ -84,7 +84,7 @@ test("a connector only inherits the incumbent's fleet when cameras are reused", 
 
 test("purchases that outlast the horizon are credited for their unused share", () => {
   const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0, migrationStrategy: "ripReplace" as const };
-  const scn = scenario({ annualEscalationPct: 0, horizonYears: 6 });
+  const scn = scenario({ ...NO_ESCALATION, horizonYears: 6 });
   const r = computeSolution(scn, sol, false);
   const term = sol.tierPrice * (1 - sol.discountPct / 100) * 100;
   // Terms bought at years 0 and 5; the second serves only year 6 of its five.
@@ -126,7 +126,7 @@ test("a side reusing the incumbent's cameras starts on the incumbent's reliabili
 });
 
 test("misc items apply to the incumbent and can land in a chosen year", () => {
-  const scn = scenario({ annualEscalationPct: 0 });
+  const scn = scenario({ ...NO_ESCALATION });
   const base = { ...seedOnprem("a"), miscItems: [] };
   const withItems = {
     ...base,
@@ -167,7 +167,7 @@ test("the per-year breakdown sums to the total", () => {
 
 test("an incumbent cloud license renews when its current term ends", () => {
   const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0 };
-  const scn = scenario({ annualEscalationPct: 0, creditResidualValue: false });
+  const scn = scenario({ ...NO_ESCALATION, creditResidualValue: false });
   const term = sol.tierPrice * (1 - sol.discountPct / 100) * 100;
   const asBefore = computeSolution(scn, sol, true);
   assert.equal(round(asBefore.totalsByCategory["Licenses/subscription"]), round(term), "default: renews at year 5 only");
@@ -177,6 +177,22 @@ test("an incumbent cloud license renews when its current term ends", () => {
   assert.equal(round(fresh.totalsByCategory["Licenses/subscription"]), round(term * 2), "ignored for a new purchase: years 0 and 5");
 });
 
+test("an old link's single escalation rate carries into all three", () => {
+  const { laborEscalationPct: _l, hardwareEscalationPct: _h, licenseEscalationPct: _c, ...rest } = scenario();
+  const n = normalizeScenario({ ...rest, annualEscalationPct: 5 } as never);
+  assert.deepEqual([n.laborEscalationPct, n.hardwareEscalationPct, n.licenseEscalationPct], [5, 5, 5]);
+  assert.equal("annualEscalationPct" in n, false);
+});
+
+test("each escalation rate only moves its own costs", () => {
+  const sol = seedOnprem("a");
+  const base = computeSolution(scenario({ ...NO_ESCALATION }), sol, true);
+  const hwOnly = computeSolution(scenario({ ...NO_ESCALATION, hardwareEscalationPct: 10 }), sol, true);
+  assert.equal(round(hwOnly.totalsByCategory["Admin labor"]), round(base.totalsByCategory["Admin labor"]));
+  assert.equal(round(hwOnly.totalsByCategory["Licenses/subscription"]), round(base.totalsByCategory["Licenses/subscription"]));
+  assert.ok(hwOnly.totalsByCategory["Hardware (initial & refresh)"] > base.totalsByCategory["Hardware (initial & refresh)"]);
+});
+
 test("incumbent pays nothing at year 0", () => {
   const r = computeSolution(scenario(), seedOnprem("a"), true);
   assert.equal(r.cumulative[0], 0);
@@ -184,14 +200,14 @@ test("incumbent pays nothing at year 0", () => {
 
 test("non-incumbent on-prem pays its perpetual license at year 0", () => {
   const sol = seedOnprem("a");
-  const r = computeSolution(scenario({ annualEscalationPct: 0 }), sol, false);
+  const r = computeSolution(scenario({ ...NO_ESCALATION }), sol, false);
   const expected = (sol.baseLicense + sol.deviceLicense * 100 + sol.analyticsSoftwareCostPerCam * 100) * (1 - sol.discountPct / 100);
   assert.equal(round(r.byYear[0]["Licenses/subscription"]), round(expected));
 });
 
 test("cloud license is billed as a lump sum at purchase and each renewal", () => {
   const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0 };
-  const scn = scenario({ annualEscalationPct: 0, horizonYears: 10 });
+  const scn = scenario({ ...NO_ESCALATION, horizonYears: 10 });
   const r = computeSolution(scn, sol, false);
   const term = sol.tierPrice * (1 - sol.discountPct / 100) * 100;
   // Year 0 and year 5; the year-10 renewal falls on the horizon's last year and is skipped.
@@ -201,7 +217,7 @@ test("cloud license is billed as a lump sum at purchase and each renewal", () =>
 
 test("incumbent cloud skips its first term but still renews", () => {
   const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0 };
-  const r = computeSolution(scenario({ annualEscalationPct: 0 }), sol, true);
+  const r = computeSolution(scenario({ ...NO_ESCALATION }), sol, true);
   const term = sol.tierPrice * (1 - sol.discountPct / 100) * 100;
   assert.equal(round(r.totalsByCategory["Licenses/subscription"]), round(term));
 });

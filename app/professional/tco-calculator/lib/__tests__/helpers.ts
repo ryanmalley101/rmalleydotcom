@@ -23,3 +23,5 @@ export function scenario(overrides: Partial<ScenarioInputs> = {}): ScenarioInput
 }
 
 export const round = (n: number) => Math.round(n);
+
+export const NO_ESCALATION = { laborEscalationPct: 0, hardwareEscalationPct: 0, licenseEscalationPct: 0 };

@@ -37,7 +37,9 @@ const SCENARIO_PARAMS: Param[] = [
   { key: "investigationsPerMonth", label: "investigations per month", unit: "count", range: upTo(5, 50) },
   { key: "investigatorRate", label: "investigator hourly rate", unit: "usd", range: upTo(5, 200) },
   { key: "adminRate", label: "admin hourly rate", unit: "usd", range: upTo(5, 200) },
-  { key: "annualEscalationPct", label: "annual escalation", unit: "pct", range: () => [0, 20] },
+  { key: "laborEscalationPct", label: "labor escalation", unit: "pct", range: () => [-10, 20] },
+  { key: "licenseEscalationPct", label: "license escalation", unit: "pct", range: () => [-10, 20] },
+  { key: "hardwareEscalationPct", label: "hardware escalation", unit: "pct", range: () => [-10, 20] },
 ];
 
 export interface FlipPoint {
