@@ -84,6 +84,19 @@ export default function ResultsView({
   const diff = Math.abs(a.total - b.total);
   const maxTotal = Math.max(a.total, b.total);
   const pctSaved = maxTotal > 0 ? Math.round((diff / maxTotal) * 100) : 0;
+  const pricier = cheaper.id === solA.id ? solB : solA;
+  const yearsLabel = `${scenario.horizonYears} ${scenario.horizonYears === 1 ? "year" : "years"}`;
+  const isTie = diff < 0.5;
+  // The last sign flip is when the eventual winner took the lead for good.
+  const allCrossovers = crossoverYear === null ? [] : [crossoverYear, ...laterCrossoverYears];
+  const leadYear = allCrossovers.length ? allCrossovers[allCrossovers.length - 1] : null;
+  const timingSentence = isTie
+    ? null
+    : allCrossovers.length > 1
+      ? `The lead changes hands in years ${allCrossovers.join(", ")}, and ${cheaper.name} stays cheaper from year ${leadYear}.`
+      : leadYear !== null
+        ? `${cheaper.name} becomes the cheaper option in year ${leadYear}.`
+        : `${cheaper.name} is cheaper in every year.`;
 
   // From the cost model's own camera cohorts, so the stat can't disagree
   // with what was charged.
@@ -193,14 +206,19 @@ export default function ResultsView({
               <Paper withBorder p="xl" radius="md">
                 <Stack gap="xl">
                   <Stack gap={4} align="center" ta="center">
-                    <Text ff="monospace" fw={700} size="2.75rem" c="teal" lh={1.1}>
-                      {fmtUsd(diff)}
+                    <Text size="sm" fw={600}>
+                      {isTie ? `Both cost the same over ${yearsLabel}` : `${cheaper.name} costs less over ${yearsLabel}, by`}
                     </Text>
-                    <Text size="sm" c={TEXT_MUTED}>
-                      {pctSaved}% lower with {cheaper.name} over {scenario.horizonYears} {scenario.horizonYears === 1 ? "year" : "years"}
-                      {crossoverYear !== null && `, overtaken in Yr ${crossoverYear}`}
-                      {laterCrossoverYears.length > 0 && ` (crosses again at Yr ${laterCrossoverYears.join(", ")})`}
-                    </Text>
+                    {!isTie && (
+                      <Text ff="monospace" fw={700} size="2.75rem" c="teal" lh={1.1}>
+                        {fmtUsd(diff)}
+                      </Text>
+                    )}
+                    {!isTie && (
+                      <Text size="sm" c={TEXT_MUTED}>
+                        That&apos;s {pctSaved}% less than {pricier.name}. {timingSentence}
+                      </Text>
+                    )}
                   </Stack>
 
                   <Stack gap="md">
