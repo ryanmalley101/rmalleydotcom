@@ -261,19 +261,15 @@ auth-gated, "dampened" on purpose.
   category chart.
 - **Escalation, no NPV discounting**: `annualEscalationPct` compounds every
   recurring cost year over year. An earlier version also had a separate NPV
-  discount rate (`npvDiscountPct`) applied on top, standard financial-model
-  vocabulary but not something this tool needed: at its shipped default (0%)
-  it did nothing, and even cranked up it barely moved the comparison itself —
-  shrinking both sides' totals by a large, roughly equal fraction (checked
-  directly against the model: ~44% at a 12% rate over the default 10-year
-  horizon) without changing the crossover year or the relative gap by more
-  than a couple points. Since the same factor discounts both solutions
-  identically in the same year, it can only reweight a solution by its own
-  cost timing, never manufacture a winner — for a two-line-comparison tool
-  like this one, that reweighting effect wasn't worth the added assumption
-  (a discount rate) and the ambiguity it invites (real NPV analysis is
-  usually a whole-portfolio decision, not something to bolt onto a two-line
-  comparison), so it was removed rather than left in unused at its default.
+  discount rate (`npvDiscountPct`), removed to keep the tool to one
+  time-value assumption. Note what that trades away: discounting *can*
+  change the winner, because it weights each side by when its costs land
+  (an earlier note here said it couldn't). Checked against the model: in a
+  close comparison where cloud was about $23k cheaper undiscounted, a 5%
+  rate made the on-prem incumbent cheaper. Without discounting, whichever
+  side pays more up front (a fresh build, a prepaid multi-year term) is
+  somewhat penalized relative to one that pays later. Restoring it as an
+  optional, off-by-default setting is a reasonable future addition.
 - **Site-driven hardware minimums**: appliance/server unit counts assume at
   least one per site, not just enough for total camera count, since a
   connector/NVR box is physically local.
@@ -359,7 +355,9 @@ before trusting an unedited comparison:
   shape (currently a specific cloud provider name on the cloud slot, a
   specific VMS+camera pairing on the on-prem slot, both fully editable via
   the same dropdowns as any other choice) and default that on-prem side to
-  incumbent for the on-prem-vs-cloud shape. When a shape has two slots of
+  incumbent for the on-prem-vs-cloud shape. Each shape card lists when that
+  comparison fits ("Use this when" / "Keep in mind"), not pros and cons of
+  a deployment model. When a shape has two slots of
   the same model, only slot A gets a pre-filled default, slot B stays an
   open placeholder, comparing a vendor against itself by default wouldn't
   make sense. These are workflow conveniences, always overridable, not

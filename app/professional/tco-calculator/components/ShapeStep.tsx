@@ -33,17 +33,17 @@ export default function ShapeStep({ value, onChange }: { value: string | null; o
                   <Text size="sm" c={TEXT_MUTED}>{opt.description}</Text>
                   <Stack gap={2} mt="sm">
                     <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }}>
-                      Strengths
+                      Use this when
                     </Text>
-                    {opt.pros.map((p) => (
+                    {opt.useWhen.map((p) => (
                       <Text key={p} size="xs" c={TEXT_MUTED}>&bull; {p}</Text>
                     ))}
                   </Stack>
                   <Stack gap={2} mt="xs">
                     <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }}>
-                      Tradeoffs
+                      Keep in mind
                     </Text>
-                    {opt.cons.map((c) => (
+                    {opt.keepInMind.map((c) => (
                       <Text key={c} size="xs" c={TEXT_MUTED}>&bull; {c}</Text>
                     ))}
                   </Stack>

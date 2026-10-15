@@ -160,27 +160,28 @@ export interface ShapeOption {
   id: string;
   label: string;
   description: string;
-  pros: string[];
-  cons: string[];
+  // Neutral guidance on when this comparison fits, not claims about which
+  // deployment model is better (those used to live here as pros/cons).
+  useWhen: string[];
+  keepInMind: string[];
   modelA: DeploymentModel;
   modelB: DeploymentModel;
 }
 
-// Listed in order of how often they come up: replacing an existing on-prem
-// system with a cloud/hybrid one is the most common real comparison, so it
-// leads. This is a workflow convenience, not a scoring order, all three
-// remain equally full-featured and the pros/cons stay even-handed either way.
+// Listed in order of how often they come up: comparing an existing on-prem
+// system against a cloud/hybrid one is the most common real comparison, so
+// it leads. A workflow convenience, not a ranking.
 export const SHAPE_OPTIONS: ShapeOption[] = [
   {
     id: "onprem-cloud",
     label: "Cloud / Hybrid vs. On-Prem",
-    description: "An on-prem deployment against a cloud/hybrid one: CapEx vs. OpEx.",
-    pros: [
-      "Compares the CapEx-heavy and OpEx-heavy approaches directly",
-      "Good for evaluating a migration off an existing on-prem system",
+    description: "One on-premises deployment against one cloud-managed or hybrid deployment.",
+    useWhen: [
+      "You're weighing a move between on-prem and cloud, in either direction",
+      "You want upfront purchases and ongoing subscriptions side by side",
     ],
-    cons: [
-      "Harder to compare apples-to-apples; the two paths differ structurally",
+    keepInMind: [
+      "The cost structures differ, so check both sides include equivalent features, retention, and support",
     ],
     modelA: "onprem",
     modelB: "cloud",
@@ -188,14 +189,13 @@ export const SHAPE_OPTIONS: ShapeOption[] = [
   {
     id: "cloud-cloud",
     label: "Two Cloud / Hybrid Solutions",
-    description: "Two cloud-managed or hybrid deployments: lighter on-site footprint, subscription licensing.",
-    pros: [
-      "Less on-site hardware to buy, rack, and refresh",
-      "Lower admin labor and truck rolls; faster investigations",
+    description: "Two cloud-managed or hybrid deployments.",
+    useWhen: [
+      "You've settled on cloud and are comparing vendors",
+      "You're renewing or replacing an existing cloud deployment",
     ],
-    cons: [
-      "Subscription fees compound over the horizon",
-      "Depends on cloud connectivity",
+    keepInMind: [
+      "License terms, bundled features, and camera reuse vary a lot between vendors",
     ],
     modelA: "cloud",
     modelB: "cloud",
@@ -203,14 +203,13 @@ export const SHAPE_OPTIONS: ShapeOption[] = [
   {
     id: "onprem-onprem",
     label: "Two On-Prem Solutions",
-    description: "Two on-premises deployments: servers, storage, and hardware you own and refresh.",
-    pros: [
-      "No recurring per-camera subscription",
-      "Full data locality, no internet dependency",
+    description: "Two on-premises deployments.",
+    useWhen: [
+      "You've settled on on-prem and are comparing VMS or camera vendors",
+      "You're upgrading or replacing an existing on-prem system",
     ],
-    cons: [
-      "Higher hardware capex, upfront and ongoing",
-      "More admin labor and truck rolls",
+    keepInMind: [
+      "Server, storage, and support-renewal assumptions drive most of the difference",
     ],
     modelA: "onprem",
     modelB: "onprem",
