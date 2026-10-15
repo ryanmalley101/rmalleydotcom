@@ -161,6 +161,8 @@ function TcoCalculatorInner() {
             colorB={colorB}
             shareUrl={shareUrl}
             staleModel={staleModel}
+            onColorAChange={setColorA}
+            onColorBChange={setColorB}
             onDismissStaleModel={() => setStaleModel(false)}
             onScenarioChange={setScenario}
             onSolAChange={setSolA}
@@ -202,7 +204,7 @@ function TcoCalculatorInner() {
               {solA && solB && (
                 <SolutionsStep
                   solA={solA} solB={solB} onChangeA={setSolA} onChangeB={setSolB}
-                  colorA={colorA} colorB={colorB} onColorAChange={setColorA} onColorBChange={setColorB}
+                  colorA={colorA} colorB={colorB}
                   scenario={scenario} onScenarioChange={setScenario}
                 />
               )}

@@ -1,11 +1,11 @@
 "use client";
 
-import { Badge, Box, Card, ColorInput, Group, NumberInput, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
+import { Badge, Box, Card, Group, NumberInput, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
 import {
-  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Percent, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog,
+  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Layers, Percent, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
-import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
+import { TEXT_MUTED } from "../lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
 import {
   CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS,
@@ -35,9 +35,6 @@ const ONPREM_LICENSE_HELP =
 
 const ADDON_HELP =
   "Not every cloud vendor bundles everything into one flat license price the way this tool's defaults assume. If this vendor charges separately for support, analytics, or extended retention, add the per-camera annual cost here; leave at $0 if it's genuinely all-inclusive.";
-
-const CONNECTOR_WARRANTY_HELP =
-  "The manufacturer's hardware warranty on the connector/appliance itself, separate from the camera warranty above since the two commonly differ for the same vendor. Reference only, doesn't change the refresh cost below.";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -224,16 +221,11 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
             onChange={(v) => set("applianceCost", num(v))}
           />
           <NumberInput
-            label={
-              <InfoLabel
-                label="Connector warranty (yrs)" help={CONNECTOR_WARRANTY_HELP} size="var(--mantine-font-size-sm)"
-                extra={<SourceDot meta={fieldSourceInfo("applianceWarrantyYears", sol.applianceWarrantyYears, ...entries)} />}
-              />
-            }
-            leftSection={icon(ShieldCheck)}
-            value={sol.applianceWarrantyYears}
-            min={0} step={0.5} decimalScale={1}
-            onChange={(v) => set("applianceWarrantyYears", num(v))}
+            label={<Group gap={4} wrap="nowrap">Cameras per appliance<SourceDot meta={fieldSourceInfo("applianceCapacity", sol.applianceCapacity, ...entries)} /></Group>}
+            leftSection={icon(Layers)}
+            value={sol.applianceCapacity}
+            min={1} allowDecimal={false}
+            onChange={(v) => set("applianceCapacity", num(v) || 1)}
           />
         </Group>
       )}
@@ -242,9 +234,9 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
 }
 
 function SolutionCard({
-  sol, onChange, color, onColorChange, scenario,
+  sol, onChange, color, scenario,
 }: {
-  sol: SolutionInputs; onChange: (v: SolutionInputs) => void; color: string; onColorChange: (v: string) => void;
+  sol: SolutionInputs; onChange: (v: SolutionInputs) => void; color: string;
   scenario: ScenarioInputs;
 }) {
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
@@ -257,15 +249,6 @@ function SolutionCard({
         <Group justify="space-between" align="flex-start">
           <Text fw={700} fz="1.05rem">{sol.name || "Unnamed solution"}</Text>
           <Group gap="xs">
-            <ColorInput
-              value={color}
-              onChange={onColorChange}
-              format="hex"
-              size="xs"
-              w={110}
-              swatches={COLOR_SWATCHES}
-              aria-label="Chart color for this solution"
-            />
             <Badge variant="light" color={sol.model === "cloud" ? "blue" : "grape"}>
               {sol.model === "cloud" ? "Cloud / Hybrid" : "On-Prem"}
             </Badge>
@@ -422,12 +405,11 @@ function SolutionCard({
 }
 
 export default function SolutionsStep({
-  solA, solB, onChangeA, onChangeB, colorA, colorB, onColorAChange, onColorBChange, scenario, onScenarioChange,
+  solA, solB, onChangeA, onChangeB, colorA, colorB, scenario, onScenarioChange,
 }: {
   solA: SolutionInputs; solB: SolutionInputs;
   onChangeA: (v: SolutionInputs) => void; onChangeB: (v: SolutionInputs) => void;
   colorA: string; colorB: string;
-  onColorAChange: (v: string) => void; onColorBChange: (v: string) => void;
   scenario: ScenarioInputs; onScenarioChange: (v: ScenarioInputs) => void;
 }) {
   return (
@@ -439,8 +421,8 @@ export default function SolutionsStep({
         </Text>
       </div>
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-        <SolutionCard sol={solA} onChange={onChangeA} color={colorA} onColorChange={onColorAChange} scenario={scenario} />
-        <SolutionCard sol={solB} onChange={onChangeB} color={colorB} onColorChange={onColorBChange} scenario={scenario} />
+        <SolutionCard sol={solA} onChange={onChangeA} color={colorA} scenario={scenario} />
+        <SolutionCard sol={solB} onChange={onChangeB} color={colorB} scenario={scenario} />
       </SimpleGrid>
       <Card withBorder padding="lg" radius="md">
         <IncumbentPicker scenario={scenario} onScenarioChange={onScenarioChange} nameA={solA.name} nameB={solB.name} />

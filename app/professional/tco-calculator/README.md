@@ -144,6 +144,12 @@ auth-gated, "dampened" on purpose.
   actual installed fleet to draw numbers from, so it falls back to its own
   `fleetHalfLifeYears`/`warrantyYears` same as before this existed. Doesn't
   apply to `ripReplace` (buys the full native fleet at year 0 regardless).
+- **Connector warranty is data, not a field**: `applianceWarrantyYears`
+  stays in the model and vendor data for reference but isn't shown in the
+  forms or exports, since it never affected a cost (connector replacement
+  follows the refresh cycle). The wizard shows "Cameras per appliance"
+  there instead, which does. Chart color pickers live on the results page,
+  next to each solution's assumptions, not in the setup cards.
 - **Cloud licensing**: free-form term/price per solution (not a fixed
   vendor's pricing tiers), plus a `supportAddonPerCamYr` field (default 0,
   "bundled into the license") for vendors that price support/analytics/

@@ -216,10 +216,6 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
           <>
             {num("Connector appliance ($/unit)", "applianceCost", { icon: Router })}
             {num("Cameras per appliance", "applianceCapacity", { min: 1, int: true, icon: Layers })}
-            {num("Connector warranty (yrs)", "applianceWarrantyYears", {
-              step: 0.5, decimalScale: 1, icon: ShieldCheck,
-              help: "The manufacturer's hardware warranty on the connector/appliance itself, separate from the camera warranty above since the two commonly differ for the same vendor. Reference only, doesn't change the refresh cost below.",
-            })}
             {num("Appliance refresh cycle (yrs)", "applianceRefreshCycleYears", { min: 1, int: true, icon: RefreshCw })}
             {isIncumbent && num("Years until next refresh", "yearsUntilNextApplianceRefresh", { min: 0, int: true, icon: Clock, help: NEXT_REFRESH_HELP })}
             <StaleRefreshWarning

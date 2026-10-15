@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Accordion, Alert, Badge, Box, Button, CopyButton, Group, Menu, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Accordion, Alert, Badge, Box, Button, ColorInput, CopyButton, Group, Menu, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { Check, ChevronDown, Copy, Download, FileSpreadsheet, FileText, History, Image as ImageIcon, RotateCcw, Save } from "lucide-react";
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
-import { TEXT_MUTED, fmtUsd } from "../lib/colors";
+import { COLOR_SWATCHES, TEXT_MUTED, fmtUsd } from "../lib/colors";
 import { STAFF_TIME_NOTE } from "../lib/fieldHelp";
 import InfoLabel from "./InfoLabel";
 import { exportSnapshot } from "../lib/exportSnapshot";
@@ -29,6 +29,17 @@ import IncumbentPicker from "./IncumbentPicker";
 // use), this is a separate, computed-only accent scoped to this summary.
 const CHEAPER_COLOR = "var(--mantine-color-teal-5)";
 const PRICIER_COLOR = "var(--mantine-color-gray-5)";
+
+// Chart line color for one solution, on the results page next to that
+// solution's assumptions (it used to sit in the wizard's setup cards).
+function ChartColor({ color, onChange }: { color: string; onChange: (v: string) => void }) {
+  return (
+    <ColorInput
+      label="Chart color" value={color} onChange={onChange} format="hex" size="xs" w={160} mb="sm"
+      swatches={COLOR_SWATCHES}
+    />
+  );
+}
 
 function FooterStat({ label, value }: { label: string; value: string }) {
   return (
@@ -54,7 +65,7 @@ function hardwareSummaryText(hw: HardwareFootprint): string | null {
 }
 
 export default function ResultsView({
-  shapeId, scenario, solA, solB, colorA, colorB, shareUrl, staleModel = false, onDismissStaleModel,
+  shapeId, scenario, solA, solB, colorA, colorB, shareUrl, staleModel = false, onDismissStaleModel, onColorAChange, onColorBChange,
   onScenarioChange, onSolAChange, onSolBChange, onEditSetup,
 }: {
   shapeId: string;
@@ -65,6 +76,8 @@ export default function ResultsView({
   colorB: string;
   shareUrl: string;
   staleModel?: boolean;
+  onColorAChange: (v: string) => void;
+  onColorBChange: (v: string) => void;
   onDismissStaleModel?: () => void;
   onScenarioChange: (v: ScenarioInputs) => void;
   onSolAChange: (v: SolutionInputs) => void;
@@ -353,6 +366,7 @@ export default function ResultsView({
                 </Group>
               </Accordion.Control>
               <Accordion.Panel>
+                <ChartColor color={colorA} onChange={onColorAChange} />
                 <AssumptionsPanel sol={solA} onChange={onSolAChange} scenario={scenario} />
               </Accordion.Panel>
             </Accordion.Item>
@@ -364,6 +378,7 @@ export default function ResultsView({
                 </Group>
               </Accordion.Control>
               <Accordion.Panel>
+                <ChartColor color={colorB} onChange={onColorBChange} />
                 <AssumptionsPanel sol={solB} onChange={onSolBChange} scenario={scenario} />
               </Accordion.Panel>
             </Accordion.Item>

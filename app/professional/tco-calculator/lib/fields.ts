@@ -49,7 +49,6 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
   { key: "yearsUntilLicenseRenewal", label: "Years until license renewal (incumbent)", models: ["cloud"] },
   { key: "applianceCost", label: "Connector appliance ($/unit)", models: ["cloud"] },
   { key: "applianceCapacity", label: "Cameras per appliance", models: ["cloud"] },
-  { key: "applianceWarrantyYears", label: "Connector warranty (yrs)", models: ["cloud"] },
   { key: "applianceRefreshCycleYears", label: "Appliance refresh cycle (yrs)", models: ["cloud"] },
   { key: "yearsUntilNextApplianceRefresh", label: "Years until next appliance refresh (incumbent)", models: ["cloud"] },
   { key: "baseLicense", label: "Base license ($, one-time)", models: ["onprem"] },
