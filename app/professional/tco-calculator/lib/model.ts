@@ -128,6 +128,12 @@ export interface ScenarioInputs {
   driveCapacityTb: number;
   storageOverheadMultiplier: number;
   spareServers: number;
+  // Credit the unused share of any lump purchase that outlasts the horizon
+  // (a cloud license term, a hardware or connector refresh), straight-line
+  // over its service life. Without it, a purchase made late in the horizon is
+  // billed in full for a year or two of use: a six-year horizon pays for two
+  // five-year cloud terms. Defaults to true.
+  creditResidualValue: boolean;
 }
 
 // A free-form misc cost/credit line item — the escape valve for whatever a
@@ -260,6 +266,7 @@ export const CATEGORIES = [
   "Admin labor",
   "Investigations",
   "Misc / other",
+  "Residual value (credit)",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
@@ -388,6 +395,11 @@ export function computeSolution(
   const firstApplianceRefresh = isIncumbent ? sol.yearsUntilNextApplianceRefresh : applianceCycle;
   const isRefreshYear = (y: number, first: number, cycle: number) => y >= first && (y - first) % cycle === 0 && y < yrs;
 
+  // Lump purchases with a fixed service life, for the residual-value credit.
+  // A purchase in year p serves years p+1 through p+life.
+  const lumps: { year: number; amount: number; life: number }[] = [];
+  const hardwareLife = sol.model === "cloud" ? applianceCycle : refreshCycle;
+
   const totalsByCategory = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
   const cumulative: number[] = [];
   let running = 0;
@@ -472,6 +484,16 @@ export function computeSolution(
       }
     }
 
+    // Every Hardware line is a lump purchase on its refresh cycle; for cloud,
+    // so is every license term (the add-on is annual, so it's excluded).
+    if (yearCosts["Hardware (initial & refresh)"] > 0) {
+      lumps.push({ year: y, amount: yearCosts["Hardware (initial & refresh)"] * escalation, life: hardwareLife });
+    }
+    if (sol.model === "cloud") {
+      const termBought = (y === 0 && !isIncumbent) || (y > 0 && y % tierYears === 0 && y < yrs);
+      if (termBought) lumps.push({ year: y, amount: licenseTermCost * cams * escalation, life: tierYears });
+    }
+
     let yearTotal = 0;
     CATEGORIES.forEach((c) => {
       // Year-0 costs are today's dollars already (escalation factor is 1 at y=0 anyway).
@@ -481,6 +503,17 @@ export function computeSolution(
     });
     running += yearTotal;
     cumulative.push(running);
+  }
+
+  if (scenario.creditResidualValue !== false) {
+    const credit = lumps.reduce((sum, l) => {
+      const unused = l.life - Math.min(l.life, Math.max(0, yrs - l.year));
+      return sum + (l.amount * unused) / l.life;
+    }, 0);
+    if (credit > 0) {
+      totalsByCategory["Residual value (credit)"] = -credit;
+      cumulative[cumulative.length - 1] -= credit;
+    }
   }
 
   const total = Object.values(totalsByCategory).reduce((a, b) => a + b, 0);
@@ -539,7 +572,8 @@ export function computeComparison(scenario: ScenarioInputs, solA: SolutionInputs
     }
   }
 
-  const activeCategories = CATEGORIES.filter((c) => a.totalsByCategory[c] > 0.5 || b.totalsByCategory[c] > 0.5);
+  // Math.abs: credits (residual value, negative misc items) are real lines too.
+  const activeCategories = CATEGORIES.filter((c) => Math.abs(a.totalsByCategory[c]) > 0.5 || Math.abs(b.totalsByCategory[c]) > 0.5);
 
   return {
     a, b, labels,

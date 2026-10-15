@@ -12,7 +12,7 @@ test("default comparison snapshot", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 1151875, b: 515293, crossover: 2 },
+    { a: 1081492, b: 490698, crossover: 2 },
   );
 });
 
@@ -81,6 +81,25 @@ test("a connector only inherits the incumbent's fleet when cameras are reused", 
   // Reused: failures follow the incumbent's short half-life and lapsed warranty.
   // New site: Verkada's own, longer-lived, in-warranty fleet.
   assert.ok(reused.b.totalsByCategory["Cameras"] > greenfieldReplacements * 2);
+});
+
+test("purchases that outlast the horizon are credited for their unused share", () => {
+  const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0, migrationStrategy: "ripReplace" as const };
+  const scn = scenario({ annualEscalationPct: 0, horizonYears: 6 });
+  const r = computeSolution(scn, sol, false);
+  const term = sol.tierPrice * (1 - sol.discountPct / 100) * 100;
+  // Terms bought at years 0 and 5; the second serves only year 6 of its five.
+  assert.equal(round(r.totalsByCategory["Residual value (credit)"]), round(-term * 4 / 5));
+  assert.equal(round(r.cumulative[6]), round(r.total));
+
+  const off = computeSolution({ ...scn, creditResidualValue: false }, sol, false);
+  assert.equal(off.totalsByCategory["Residual value (credit)"], 0);
+  assert.equal(round(off.total - r.total), round(term * 4 / 5));
+});
+
+test("credits show up in the category breakdown", () => {
+  const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
+  assert.ok(c.activeCategories.includes("Residual value (credit)"));
 });
 
 test("incumbent pays nothing at year 0", () => {

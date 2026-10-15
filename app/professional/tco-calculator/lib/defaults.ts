@@ -20,6 +20,7 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   driveCapacityTb: DEFAULT_DRIVE_CAPACITY_TB,
   storageOverheadMultiplier: DEFAULT_STORAGE_OVERHEAD_MULTIPLIER,
   spareServers: DEFAULT_SPARE_SERVERS,
+  creditResidualValue: true,
 };
 
 // Backfills any fields missing from a SolutionInputs decoded from an older

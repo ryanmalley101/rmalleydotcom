@@ -205,6 +205,21 @@ auth-gated, "dampened" on purpose.
   that whole year's total. `normalizeSolution()` backfills the real default
   (100/0) before this ever runs in the actual app; this is a last-resort
   guard in case some future path ever calls `computeSolution` without it.
+- **Residual value at the horizon end**: `ScenarioInputs.creditResidualValue`
+  (default on, a switch in the Scenario step's Advanced section) credits back
+  the unused share of every lump purchase with a fixed service life that
+  runs past the horizon, straight-line: cloud license terms (life
+  `tierYears`), on-prem server/storage/analytics-appliance purchases (life
+  `refreshCycleYears`), and connector appliances (life
+  `applianceRefreshCycleYears`). A purchase in year p serves years p+1
+  through p+life. The credit is its own category, "Residual value
+  (credit)", applied in the final year (so the cumulative chart dips there).
+  Without it, a six-year horizon paid for two full five-year cloud terms,
+  and a year-7 refresh in a ten-year horizon was billed in full for three
+  years of use. Cameras and perpetual licenses aren't credited: neither has
+  a fixed service life in this model. `activeCategories` filters on
+  `Math.abs`, so credits (this, and negative misc items) appear in the
+  category chart.
 - **Escalation, no NPV discounting**: `annualEscalationPct` compounds every
   recurring cost year over year. An earlier version also had a separate NPV
   discount rate (`npvDiscountPct`) applied on top, standard financial-model

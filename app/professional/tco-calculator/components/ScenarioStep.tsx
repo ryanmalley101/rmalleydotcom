@@ -1,6 +1,6 @@
 "use client";
 
-import { Accordion, NumberInput, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Accordion, NumberInput, SimpleGrid, Stack, Switch, Text, Title } from "@mantine/core";
 import {
   Activity, Building2, Camera, CalendarRange, Database, DollarSign,
   HardDrive, Layers, Search, Server, TrendingUp, Truck,
@@ -29,6 +29,9 @@ const STORAGE_OVERHEAD_HELP =
 
 const SPARE_SERVERS_HELP =
   "On-prem recording servers bought beyond whatever capacity actually requires, as hot-spare/headroom. Applies once per solution, not once per site.";
+
+const RESIDUAL_HELP =
+  "Gives back the unused share of anything bought with a fixed service life that runs past the end of the horizon: cloud license terms, server and storage refreshes, and connectors. Straight-line over the service life, shown as its own credit line in the final year. Without it, a purchase late in the horizon is billed in full for a year or two of use.";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -89,6 +92,12 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
                 onChange={(v) => set("spareServers", num(v))}
               />
             </SimpleGrid>
+            <Switch
+              mt="md"
+              checked={value.creditResidualValue !== false}
+              onChange={(e) => set("creditResidualValue", e.currentTarget.checked)}
+              label={<InfoLabel label="Credit unused service life at the end of the horizon" help={RESIDUAL_HELP} />}
+            />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
