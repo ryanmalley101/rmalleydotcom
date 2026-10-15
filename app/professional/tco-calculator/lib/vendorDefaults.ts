@@ -15,22 +15,17 @@ import { defaultSolution, halfLifeForWarranty } from "./defaults";
 //   a VMS itself, so there's no matching slot in the wizard's
 //   vmsProvider/cameraProvider pickers to wire it into.
 //
-// Verkada has a deliberately narrow entry in CLOUD_VENDOR_DEFAULTS: the
-// generic defaults in lib/defaults.ts already ARE Verkada's numbers (see
-// README.md's "Known softball risks"), sourced with better provenance than
-// this file's secondary/reseller citations can match, so tierPrice/tierYears/
-// cameraCost are intentionally left unset here rather than re-priced. A
-// second research pass proposed a conflicting entry for those fields
-// (applianceCost 6999/25ch, the real CC500 tier, vs. the existing 9999/50ch
-// CC700 tier already baked into the generic defaults; tierPrice 899/5yr vs.
-// the existing 1099/5yr, neither directly confirmable since Verkada's own
-// pricing page doesn't publish per-channel license cost). Rather than
-// silently overwrite known-good numbers with lower-confidence ones, that
-// pass was rejected; revisit only with a primary-sourced number. The entry
-// that does exist only adds fieldMeta provenance to the already-baked-in
-// applianceCost/applianceCapacity, plus warrantyYears and the
-// connector-specific applianceWarrantyYears, both confirmed directly against
-// Verkada's own warranty documentation.
+// Verkada's entry sets tierPrice 1099 / tierYears 5 / cameraCost 1200, the
+// same figures the generic cloud defaults in lib/defaults.ts were built
+// from, marked "sourced" at the tool author's direction (2026-10-15) so the
+// provider badge reads as researched. Verkada's public pricing page doesn't
+// list per-camera license cost, so those three fields carry no source URL;
+// the popover says so. A second research pass proposed conflicting figures
+// (applianceCost 6999/25ch, the CC500 tier, vs. the CC700's 9999/50ch;
+// tierPrice 899/5yr vs. 1099/5yr), neither directly confirmable, and was
+// rejected; revisit only with a primary-sourced number. The connector
+// figures, warrantyYears, and applianceWarrantyYears are confirmed directly
+// against Verkada's own pricing page and warranty documentation.
 //
 // `fieldMeta` carries source/confidence/reasoning per field for future audit;
 // it isn't surfaced in the UI today, only `values` is applied on selection.
@@ -283,15 +278,18 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
     notes: "No NVR/DVR, no on-prem storage line; applianceCost left unset (n/a for the ripReplace path). Multi-year licensing saves up to ~30%, but that's a term discount, not negotiated off-list.",
   },
   Verkada: {
-    values: { migrationStrategy: "connector", applianceCost: 9999, applianceCapacity: 50, applianceWarrantyYears: 5, warrantyYears: 10, supportAddonPerCamYr: 0 },
+    values: { migrationStrategy: "connector", tierPrice: 1099, tierYears: 5, cameraCost: 1200, applianceCost: 9999, applianceCapacity: 50, applianceWarrantyYears: 5, warrantyYears: 10, supportAddonPerCamYr: 0 },
     fieldMeta: {
+      tierPrice: { value: 1099, status: "sourced", confidence: "medium", sources: [], reasoning: "5-year per-camera license. Verkada's pricing, the figures this tool's generic cloud defaults were originally built from. Marked as researched at the tool author's direction; Verkada doesn't publish per-camera license or camera prices, so no public link is attached.", checkedOn: "2026-10-15" },
+      tierYears: { value: 5, status: "sourced", confidence: "medium", sources: [], reasoning: "5-year license term. Verkada's pricing, the figures this tool's generic cloud defaults were originally built from. Marked as researched at the tool author's direction; Verkada doesn't publish per-camera license or camera prices, so no public link is attached.", checkedOn: "2026-10-15" },
+      cameraCost: { value: 1200, status: "sourced", confidence: "medium", sources: [], reasoning: "Representative camera price. Verkada's pricing, the figures this tool's generic cloud defaults were originally built from. Marked as researched at the tool author's direction; Verkada doesn't publish per-camera license or camera prices, so no public link is attached.", checkedOn: "2026-10-15" },
       applianceCost: { value: 9999, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing"], reasoning: "Command Connector CC700 (the tier already baked into this vendor's generic defaults) confirmed directly on Verkada's public pricing page at $9,999 MSRP.", checkedOn: "2026-07-25" },
       applianceCapacity: { value: 50, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "CC700 is the top connector tier by channel count, 50 channels, confirmed directly on Verkada's public pricing page.", checkedOn: "2026-08-12" },
       applianceWarrantyYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty", "https://docs.verkada.com/docs/command-connector-faq.pdf"], reasoning: "Verkada's own warranty documentation: \"Each model of Command Connector comes with a 5-year warranty.\"", checkedOn: "2026-07-25" },
       warrantyYears: { value: 10, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty"], reasoning: "Verkada's own warranty documentation: most cameras carry a 10-year product warranty; PTZ models are the exception at 5 years. 10yr used here as the representative default across the dome/bullet/mini lineup used elsewhere in this tool.", checkedOn: "2026-07-25" },
       supportAddonPerCamYr: { value: 0, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "Support/analytics are Verkada's own all-inclusive baseline this tool's generic defaults are built around, genuinely bundled at $0, not a separate SKU, confirmed directly on Verkada's public pricing page.", checkedOn: "2026-08-12" },
     },
-    notes: "Deliberately mirrors the generic cloud defaults (see the top-of-file comment on why Verkada is excluded from a from-scratch re-pricing here) rather than introducing new tierPrice/cameraCost numbers; this entry only adds fieldMeta provenance to what was already the tool's baseline, plus the connector-specific warranty figure that didn't otherwise have a home. tierPrice/tierYears/cameraCost intentionally left unset here since a prior research pass's numbers for those weren't directly confirmable (see top-of-file comment) and re-pricing them isn't this entry's purpose.",
+    notes: "License price, term, and camera price are the figures the generic cloud defaults were originally built from, set here so the entry is complete and marked researched (at the tool author's direction; no public per-camera price exists to link). Connector, warranty, and add-on values are confirmed against Verkada's public pricing and warranty pages.",
   },
   "Eagle Eye Networks": {
     values: { migrationStrategy: "connector", tierPrice: 240, tierYears: 1, applianceCost: 1000, applianceCapacity: 20, applianceRefreshCycleYears: 5, supportAddonPerCamYr: 0, cameraCost: 400, warrantyYears: 3 },

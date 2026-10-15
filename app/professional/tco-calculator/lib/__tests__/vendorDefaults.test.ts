@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { defaultSolution, halfLifeForWarranty, withWarranty } from "../defaults";
-import { CLOUD_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, fieldSourceInfo, switchVendor } from "../vendorDefaults";
+import { CLOUD_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, confidenceSummary, fieldSourceInfo, switchVendor } from "../vendorDefaults";
 import { seedOnprem, seedVerkada } from "./helpers";
 
 const generic = defaultSolution("b", "x", "cloud");
@@ -66,4 +66,10 @@ test("half-life follows warranty edits unless the user overrode it", () => {
 test("storage price isn't set per VMS vendor", () => {
   for (const entry of Object.values(ONPREM_VMS_VENDOR_DEFAULTS)) assert.equal(entry.values.storageCostPerTB, undefined);
   assert.equal(defaultSolution("a", "x", "onprem").storageCostPerTB, seedOnprem("a").storageCostPerTB);
+});
+
+test("Verkada's provider badge reads as researched", () => {
+  const summary = confidenceSummary("Verkada", CLOUD_VENDOR_DEFAULTS, "tierPrice");
+  assert.equal(summary.tone, "sourced");
+  assert.equal(summary.sourced, summary.total);
 });
