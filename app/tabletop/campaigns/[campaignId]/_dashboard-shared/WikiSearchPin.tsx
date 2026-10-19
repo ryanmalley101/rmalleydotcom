@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Box, Paper, Typography, TextField, IconButton, InputAdornment, Collapse, Chip, Tooltip } from "@mui/material";
-import { Search, Pin, ChevronDown, ChevronRight, EyeOff } from "lucide-react";
+import { Box, Paper, Typography, TextField, IconButton, InputAdornment, Chip, Tooltip } from "@mui/material";
+import { Search, Pin, EyeOff, PanelTopOpen } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { WikiArticleWindow } from "./WikiArticleWindow";
 
 const client = generateClient<Schema>();
 type WikiArticle = Schema["WikiArticle"]["type"];
@@ -15,17 +16,19 @@ interface WikiSearchPinProps {
     onTogglePin: (articleId: string) => void;
 }
 
-function ArticleRow({ article, isPinned, expanded, onToggleExpand, onTogglePin }: {
-    article: WikiArticle; isPinned: boolean; expanded: boolean;
-    onToggleExpand: () => void; onTogglePin: () => void;
+function ArticleRow({ article, isPinned, isOpen, onOpen, onTogglePin }: {
+    article: WikiArticle; isPinned: boolean; isOpen: boolean;
+    onOpen: () => void; onTogglePin: () => void;
 }) {
     return (
-        <Box sx={{ borderLeft: "3px solid", borderColor: "primary.light", pl: 1.5, py: 0.5, mb: 0.5 }}>
+        <Box sx={{ borderLeft: "3px solid", borderColor: isOpen ? "primary.main" : "primary.light", pl: 1.5, py: 0.5, mb: 0.5,
+            backgroundColor: isOpen ? "action.selected" : "transparent" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                <IconButton size="small" sx={{ p: 0.25 }} onClick={onToggleExpand}>
-                    {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                </IconButton>
-                <Typography variant="body2" sx={{ fontWeight: 700, flex: 1 }}>{article.title}</Typography>
+                <Box onClick={onOpen} sx={{ display: "flex", alignItems: "center", gap: 0.75, flex: 1, minWidth: 0, cursor: "pointer",
+                    "&:hover .wiki-row-title": { textDecoration: "underline" } }}>
+                    <PanelTopOpen size={14} style={{ flexShrink: 0, opacity: 0.6 }} />
+                    <Typography className="wiki-row-title" variant="body2" noWrap sx={{ fontWeight: 700 }}>{article.title}</Typography>
+                </Box>
                 {article.articleType && <Chip label={article.articleType} size="small" sx={{ height: 18, fontSize: "0.6rem" }} />}
                 {article.visibleToPlayers === false && (
                     <Tooltip title="Not visible to players">
@@ -37,12 +40,6 @@ function ArticleRow({ article, isPinned, expanded, onToggleExpand, onTogglePin }
                     <Pin size={13} />
                 </IconButton>
             </Box>
-            <Collapse in={expanded}>
-                <Typography variant="caption" sx={{ color: "text.secondary", whiteSpace: "pre-wrap", display: "block",
-                    pl: 3.5, maxHeight: 220, overflowY: "auto" }}>
-                    {article.excerpt || article.content || "No content yet."}
-                </Typography>
-            </Collapse>
         </Box>
     );
 }
@@ -50,7 +47,15 @@ function ArticleRow({ article, isPinned, expanded, onToggleExpand, onTogglePin }
 export function WikiSearchPin({ worldIds, pinnedIds, onTogglePin }: WikiSearchPinProps) {
     const [articles, setArticles] = useState<WikiArticle[]>([]);
     const [search, setSearch] = useState("");
-    const [expandedId, setExpandedId] = useState<string | null>(null);
+    // Articles opened in the floating window, most recent last — the window
+    // shows the last one and its Back button pops the stack.
+    const [history, setHistory] = useState<string[]>([]);
+    const openId = history[history.length - 1] ?? null;
+    const openArticle = useMemo(() => articles.find(a => a.id === openId) ?? null, [articles, openId]);
+
+    function openInWindow(articleId: string) {
+        setHistory(h => h[h.length - 1] === articleId ? h : [...h, articleId]);
+    }
 
     useEffect(() => {
         if (worldIds.length === 0) return;
@@ -82,7 +87,7 @@ export function WikiSearchPin({ worldIds, pinnedIds, onTogglePin }: WikiSearchPi
                 <Box sx={{ mb: 1.5 }}>
                     {pinned.map(a => (
                         <ArticleRow key={a.id} article={a} isPinned
-                            expanded={expandedId === a.id} onToggleExpand={() => setExpandedId(expandedId === a.id ? null : a.id)}
+                            isOpen={openId === a.id} onOpen={() => openInWindow(a.id)}
                             onTogglePin={() => onTogglePin(a.id)} />
                     ))}
                 </Box>
@@ -94,10 +99,16 @@ export function WikiSearchPin({ worldIds, pinnedIds, onTogglePin }: WikiSearchPi
                 <Box sx={{ mt: 1 }}>
                     {results.map(a => (
                         <ArticleRow key={a.id} article={a} isPinned={false}
-                            expanded={expandedId === a.id} onToggleExpand={() => setExpandedId(expandedId === a.id ? null : a.id)}
+                            isOpen={openId === a.id} onOpen={() => openInWindow(a.id)}
                             onTogglePin={() => onTogglePin(a.id)} />
                     ))}
                 </Box>
+            )}
+            {openArticle && (
+                <WikiArticleWindow article={openArticle} articles={articles}
+                    isPinned={pinnedIds.includes(openArticle.id)} canGoBack={history.length > 1}
+                    onNavigate={openInWindow} onBack={() => setHistory(h => h.slice(0, -1))}
+                    onTogglePin={() => onTogglePin(openArticle.id)} onClose={() => setHistory([])} />
             )}
         </Paper>
     );
