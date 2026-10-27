@@ -11,6 +11,13 @@ const projects = [
     description:
       "A guided wizard for comparing the total cost of ownership of two video-management deployments (on-prem vs. on-prem, cloud vs. cloud, or one of each), with editable pricing assumptions and NPV, crossover, and cost-by-category charts.",
   },
+  {
+    // Links to /demo: the app root is a sign-in wall and accounts are admin-created only.
+    href: "https://vantage.rmalley.com/demo",
+    title: "Vantage",
+    description:
+      "A site survey and camera-placement planner built around Verkada hardware. Upload a floorplan, trace its walls, and place cameras and access-control devices by hand or automatically, with wall-aware coverage, a priced bill of materials, and print-ready site PDFs. Works offline on an iPad during a site walk.",
+  },
 ];
 
 export default function ProfessionalPage() {
