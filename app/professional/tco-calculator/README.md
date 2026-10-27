@@ -322,29 +322,58 @@ auth-gated, "dampened" on purpose.
   business impact (below); misc items stay the catch-all for anything else.
 - **Business impact (`lib/verticals.ts`, `BusinessImpactStep`)**: the
   wizard's optional fourth step, also on the results page as its own
-  accordion panel. `ScenarioInputs.vertical` picks an industry (Retail,
-  Education, Manufacturing, Healthcare, Finance; only Retail is modeled so
-  far, and the others show as "coming soon" and can't be selected). Each
-  vertical is pure data, a `VerticalDef`: shared inputs (facts about the
-  business, stored in `ScenarioInputs.outcomeBaseline`, falling back to
-  each input's default) and categories of two kinds. An `"existing"`
-  category is a cost the business has today (shrink, liability and workers'
-  comp claims, break-ins, false-alarm fines, people counters, guards), sized
-  per site from the shared inputs; each solution enters a % change in
-  `SolutionInputs.outcomeChanges`. A `"new"` category is a cost the
-  business doesn't have today (face recognition compliance, alert review
-  time at the investigator rate, remote monitoring), where each solution
-  enters its own amount. Adding a vertical means filling in its
-  `VerticalDef` and flipping `modeled` to true; no model or UI code needs
-  to change.
-  - Categories sit in themed `groups` (retail: Shrink, Safety & liability,
-    Crime & security operations, Tools a system could replace, New costs),
-    each rendered as its own card, and every category has a checkbox
-    (`ScenarioInputs.outcomeEnabled`). All start off: a card shows only its
-    checkboxes until one is ticked, then just the shared inputs those
-    categories need (`inputsInUse`) and their change rows. A category
-    that's off counts for nothing, but keeps its entered values for when
-    it's switched back on. Every input, category, and group names an icon
+  accordion panel. Built from a value-proposition framework of 34 props in
+  five pillars (Safety SF1-8, Risk & liability RL1-5, Operational impact
+  OI1-9, Compliance & governance CG1-6, Total cost of ownership TCO1-6),
+  with each category's framework `code` kept in the data (never shown in
+  the UI; vendor product names from the framework are replaced by generic
+  capabilities). Every prop lands in exactly one of four places:
+  - **Priced (16)**: SF1, SF8, RL1, RL2, RL3, RL5, OI2, OI3, OI4, OI5, CG1,
+    CG3, CG5, TCO3, TCO4, TCO6, each a cost the business has today
+    (`"existing"`), sized per site from shared inputs
+    (`ScenarioInputs.outcomeBaseline`, falling back to each input's
+    placeholder) and changed by a % per solution
+    (`SolutionInputs.outcomeChanges`). Hour-based ones (CG1, CG3) are
+    costed at the scenario's admin rate. Defined once in `PRICED`; an
+    industry overrides only wording and placeholders (`specsFor`), or swaps
+    a prop for custom categories (retail splits RL2 into outside and
+    employee theft, sharing sales and shrink inputs).
+  - **Already in the core model (4)**, deliberately not repeated: SF7
+    (hours per investigation), TCO1 (servers/NVRs/storage), TCO2 (admin
+    hours, truck rolls), TCO5 (install labor).
+  - **Considerations (9)**: SF2, SF5, SF6, RL4, CG2, CG4, CG6, plus revenue
+    items OI7 and OI8. No credible dollar figure, or revenue rather than
+    cost; several are how a priced saving happens (SF2 alerts → RL2/RL3),
+    so pricing them would double-count. Ticked per solution
+    (`SolutionInputs.considerations`, incumbent included), shown as "+ N
+    other considerations, not in totals" in the summary and in exports,
+    never added to a total.
+  - **Out of scope (5)**: SF3 lockdown, SF4 vape/air quality, OI1
+    front-desk and credential admin, OI6 unattended hours, OI9 fleet
+    uptime. They need access control, sensors, intercom, guest management,
+    or fleet products, which this calculator doesn't price; counting their
+    benefit without their cost would tilt the comparison. The step lists
+    them in a scope note. Pricing those product lines is a separate,
+    larger project.
+
+  Beyond the framework, three `"new"` categories (face recognition
+  compliance, alert review time at the investigator rate, remote
+  monitoring) take each solution's own amount. The framework lists only
+  benefits; these keep the tool even-handed.
+
+  Industries (`VERTICALS`): K-12 & Higher Ed, Retail & Convenience,
+  Healthcare, Logistics & Transportation, Manufacturing & Industrial,
+  Property Management & CRE (the framework's six), plus Finance, which the
+  framework has no section for (its suggested set, RL2 teller fraud, RL1,
+  and CG1, is our own). Every industry offers all 16 priced props; picking
+  one switches on (`ScenarioInputs.outcomeEnabled`) the ones its framework
+  section names (`suggested`). Logistics is thin by design: most of its
+  framework value is fleet, which is out of scope.
+  - Categories are grouped by pillar, each rendered as its own card with a
+    checkbox per category. An unchecked card shows only its checkboxes;
+    checking one shows just the shared inputs it needs (`inputsInUse`) and
+    its change row. A category that's off counts for nothing, but keeps
+    its entered values. Every input, category, and group names an icon
     (`OutcomeIcon`, a string so `lib/` stays React-free;
     `BusinessImpactStep`'s `ICONS` maps it to a lucide icon) shown beside
     its label.

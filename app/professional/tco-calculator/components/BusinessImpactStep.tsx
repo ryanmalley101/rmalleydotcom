@@ -2,15 +2,17 @@
 
 import { Alert, Badge, Box, Checkbox, Group, NumberInput, Paper, Select, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import {
-  ArrowRightLeft, BellRing, Cctv, Clock, DollarSign, Footprints, Gavel, Hammer, HardHat, IdCard, Info, PackageX,
-  ScanFace, Shield, ShieldUser, ShoppingCart, Siren, Store, UserX, Users,
+  ArrowRightLeft, BadgeCheck, BellRing, Boxes, Building2, CameraOff, Cctv, ChartColumn, ClipboardCheck, Clock, DollarSign,
+  EyeOff, Factory, FileCheck, FileWarning, Footprints, Gavel, Hammer, Handshake, HardHat, HeartPulse, Hospital, IdCard,
+  Info, Landmark, Lock, PackageX, Plug, Radar, ScanFace, School, ScrollText, Shield, ShieldAlert, ShieldUser,
+  ShoppingCart, Siren, Store, Timer, Trash2, TrendingUp, Truck, Umbrella, UserX, Users, Wallet, Workflow,
 } from "lucide-react";
 import type { ScenarioInputs, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
 import {
-  NEW_COST_UNIT_LABEL, VERTICALS, annualBaselinePerSite, annualOutcomes, baselineValue, changeValue, inputsInUse,
-  isCategoryEnabled, verticalFor,
-  type OutcomeCategory, type OutcomeGroup, type OutcomeIcon, type OutcomeInput, type Vertical, type VerticalDef,
+  CONSIDERATIONS, NEW_COST_UNIT_LABEL, OUT_OF_SCOPE, VERTICALS, annualBaselinePerSite, annualOutcomes, baselineValue,
+  changeValue, inputsInUse, isCategoryEnabled, verticalFor,
+  type Consideration, type OutcomeCategory, type OutcomeGroup, type OutcomeIcon, type OutcomeInput, type VerticalDef,
 } from "../lib/verticals";
 import InfoLabel from "./InfoLabel";
 
@@ -18,16 +20,17 @@ const ICONS: Record<OutcomeIcon, React.ElementType> = {
   store: Store, sales: ShoppingCart, shrink: PackageX, outsideTheft: UserX, employeeTheft: IdCard,
   slip: Footprints, gavel: Gavel, hardHat: HardHat, hammer: Hammer, siren: Siren, people: Users, guard: ShieldUser,
   clock: Clock, dollar: DollarSign, face: ScanFace, bell: BellRing, cctv: Cctv, shield: Shield, swap: ArrowRightLeft,
+  alert: ShieldAlert, umbrella: Umbrella, clipboard: ClipboardCheck, waste: Trash2, boxes: Boxes, fileCheck: FileCheck,
+  eyeOff: EyeOff, citation: FileWarning, plug: Plug, safety: HeartPulse, workflow: Workflow, wallet: Wallet,
+  radar: Radar, handshake: Handshake, timer: Timer, cameraOff: CameraOff, scroll: ScrollText, badge: BadgeCheck,
+  lock: Lock, chart: ChartColumn, trending: TrendingUp, school: School, hospital: Hospital, truck: Truck,
+  factory: Factory, building: Building2, bank: Landmark,
 };
 
 const INDUSTRY_HELP =
-  "Picks the industry-specific costs a video system can raise or lower, such as theft and injury claims in retail. Leave it empty to keep business impact out of the comparison.";
+  "Picks the industry-specific costs a video system can raise or lower, such as theft and injury claims in retail, and checks the ones that usually matter most there. Leave it empty to keep business impact out of the comparison.";
 
-const VERTICAL_OPTIONS = VERTICALS.map((v) => ({
-  value: v.id,
-  label: v.modeled ? v.label : `${v.label} (coming soon)`,
-  disabled: !v.modeled,
-}));
+const VERTICAL_OPTIONS = VERTICALS.map((v) => ({ value: v.id, label: v.label }));
 
 const BORDER = "1px solid var(--mantine-color-dark-4)";
 
@@ -208,6 +211,52 @@ function GroupCard({ group, vertical, scenario, sides, onScenarioChange }: {
   );
 }
 
+// Benefits each solution offers that aren't priced: a checkbox per solution
+// per consideration, never part of a total.
+function ConsiderationsCard({ sides, onSidesChange }: {
+  sides: Side[]; onSidesChange: (side: Side, considerations: string[]) => void;
+}) {
+  const ticked = (side: Side, c: Consideration) => (side.sol.considerations ?? []).includes(c.code);
+  const toggle = (side: Side, c: Consideration, on: boolean) => {
+    const current = side.sol.considerations ?? [];
+    onSidesChange(side, on ? [...current, c.code] : current.filter((code) => code !== c.code));
+  };
+  return (
+    <Paper withBorder p="md" radius="md">
+      <Stack gap="sm">
+        <Group gap="sm" wrap="nowrap" align="flex-start">
+          <BadgeCheck size={18} style={{ flexShrink: 0, marginTop: 2 }} />
+          <div>
+            <Text fw={600} size="sm">Other considerations (not in totals)</Text>
+            <Text size="xs" c={TEXT_MUTED}>
+              Benefits with no credible dollar figure, or that are revenue rather than cost. Tick the ones each solution
+              offers; they&apos;re listed with the results but never added to a total.
+            </Text>
+          </div>
+        </Group>
+        <SimpleGrid cols={3} spacing="sm" visibleFrom="sm" pt="xs" style={{ borderTop: BORDER }}>
+          <div />
+          {sides.map((side) => <SideBadge key={side.sol.id} side={side} size="md" />)}
+        </SimpleGrid>
+        {CONSIDERATIONS.map((c) => (
+          <SimpleGrid key={c.code} cols={{ base: 1, sm: 3 }} spacing="sm" verticalSpacing={4}>
+            <IconLabel icon={c.icon} label={c.revenue ? `${c.label} (revenue)` : c.label} help={c.help} size="var(--mantine-font-size-sm)" />
+            {sides.map((side) => (
+              <Checkbox
+                key={side.sol.id}
+                aria-label={`${c.label}, ${side.sol.name}`}
+                checked={ticked(side, c)}
+                onChange={(e) => toggle(side, c, e.currentTarget.checked)}
+                label={<Box hiddenFrom="sm" component="span"><SideBadge side={side} /></Box>}
+              />
+            ))}
+          </SimpleGrid>
+        ))}
+      </Stack>
+    </Paper>
+  );
+}
+
 // The wizard's business impact step, and the matching panel on the results
 // page: pick an industry, switch on the costs that apply, enter facts about
 // the business once, then each solution's change. See lib/verticals.ts.
@@ -250,11 +299,16 @@ export default function BusinessImpactStep({
       )}
 
       <Select
-        label={<IconLabel icon="store" label="Industry" help={INDUSTRY_HELP} />}
+        label={<IconLabel icon={vertical?.icon ?? "building"} label="Industry" help={INDUSTRY_HELP} />}
         placeholder="None, leave business impact out"
         data={VERTICAL_OPTIONS}
         value={vertical?.id ?? null}
-        onChange={(v) => onScenarioChange({ ...scenario, vertical: (v as Vertical | null) ?? null })}
+        onChange={(v) => {
+          // A new industry starts from its own suggested categories; values
+          // already entered are kept, keyed by industry, for switching back.
+          const next = VERTICALS.find((d) => d.id === v) ?? null;
+          onScenarioChange({ ...scenario, vertical: next?.id ?? null, outcomeEnabled: next ? next.suggested : [] });
+        }}
         clearable
         allowDeselect
         maw={360}
@@ -263,7 +317,8 @@ export default function BusinessImpactStep({
       {vertical && (
         <>
           <Text size="xs" c={TEXT_MUTED}>
-            Check the costs that apply to this business; only those show fields and count toward the totals. Facts about
+            The usual costs for this industry are checked; check any others that apply. Only checked costs show fields
+            and count toward the totals. Facts about
             the business are shared by both solutions, and their defaults are placeholders. Each change is a year-one
             figure (a % of today&apos;s cost, negative for a saving, or a new cost&apos;s amount) and grows with labor
             escalation after that.
@@ -289,6 +344,12 @@ export default function BusinessImpactStep({
               ))}
             </SimpleGrid>
           )}
+
+          <ConsiderationsCard sides={sides} onSidesChange={(side, considerations) => side.onChange({ ...side.sol, considerations })} />
+
+          <Text size="xs" c={TEXT_MUTED}>
+            Not covered, because this calculator only prices video and alarm monitoring: {OUT_OF_SCOPE.join("; ")}.
+          </Text>
 
           {scenario.incumbent === "none" && anyEnabled && (
             <Alert color="blue" variant="light" icon={<Info size={16} />} p="sm">

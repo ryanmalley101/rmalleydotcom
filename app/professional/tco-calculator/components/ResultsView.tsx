@@ -22,6 +22,7 @@ import { buildCsv, buildReportHtml } from "../lib/report";
 import { METHODOLOGY_NOTES } from "../lib/methodology";
 import IncumbentPicker from "./IncumbentPicker";
 import BusinessImpactStep from "./BusinessImpactStep";
+import { considerationsFor, verticalFor } from "../lib/verticals";
 
 // Color by meaning (which side actually costs less), not by A/B slot or
 // hardcoded to any vendor — computed fresh from the totals every render, so
@@ -329,6 +330,13 @@ export default function ResultsView({
                             />
                           </Box>
                           {hwText && <Text size="xs" c={TEXT_MUTED}>{hwText}</Text>}
+                          {verticalFor(scenario) && considerationsFor(sol).length > 0 && (
+                            <InfoLabel
+                              label={`+ ${considerationsFor(sol).length} other consideration${considerationsFor(sol).length === 1 ? "" : "s"}, not in totals`}
+                              help={considerationsFor(sol).map((c) => c.label).join(" · ")}
+                              size="var(--mantine-font-size-xs)" color={TEXT_MUTED}
+                            />
+                          )}
                         </div>
                       );
                     })}

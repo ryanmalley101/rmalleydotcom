@@ -174,6 +174,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       managementServers: 0,
       miscItems: [],
       outcomeChanges: {},
+      considerations: [],
     };
   }
   return {
@@ -219,6 +220,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     managementServers: 0,
     miscItems: [],
     outcomeChanges: {},
+    considerations: [],
   };
 }
 

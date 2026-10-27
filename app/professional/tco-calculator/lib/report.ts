@@ -65,6 +65,8 @@ export function buildCsv(state: SharedState, c: ComparisonResult): string {
   for (const [label, v] of impact.inputs) rows.push([label, v]);
   if (impact.changes.length) rows.push(["Business impact change", solA.name, "", solB.name, ""]);
   for (const [label, a, b] of impact.changes) rows.push([label, a, "", b, ""]);
+  if (impact.considerations.length) rows.push(["Other considerations (not in totals)", solA.name, "", solB.name, ""]);
+  for (const [label, a, b] of impact.considerations) rows.push([label, a, "", b, ""]);
   rows.push([]);
   rows.push(["Year", ...CATEGORIES.map((cat) => `${solA.name}: ${cat}`), `${solA.name}: year total`, `${solA.name}: cumulative`,
     ...CATEGORIES.map((cat) => `${solB.name}: ${cat}`), `${solB.name}: year total`, `${solB.name}: cumulative`]);
@@ -131,6 +133,9 @@ ${impact.changes.length ? `<h2>Business impact: ${esc(impact.industry)}</h2>
 <table>${impact.inputs.map(([l, v]) => `<tr><td>${esc(l)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
 <table><tr><th>Change</th><th>${esc(solA.name)}</th><th>${esc(solB.name)}</th></tr>
 ${impact.changes.map(([l, a, b]) => `<tr><td>${esc(l)}</td><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</table>` : ""}
+${impact.considerations.length ? `<h2>Other considerations (not in totals)</h2>
+<table><tr><th>Consideration</th><th>${esc(solA.name)}</th><th>${esc(solB.name)}</th></tr>
+${impact.considerations.map(([l, a, b]) => `<tr><td>${esc(l)}</td><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</table>` : ""}
 <h2>How this is calculated</h2>
 <ul>${notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>
 </body></html>`;

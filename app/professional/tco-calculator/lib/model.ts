@@ -297,6 +297,10 @@ export interface SolutionInputs {
   // means no change. Ignored for the incumbent, whose effect is already in
   // today's numbers.
   outcomeChanges: Record<string, number>;
+  // Codes of the business impact considerations (lib/verticals.ts
+  // CONSIDERATIONS) this solution offers: benefits listed beside the
+  // totals, never priced into them.
+  considerations: string[];
 }
 
 export const CATEGORIES = [
