@@ -3,8 +3,8 @@
 import { Box, Group, SegmentedControl } from "@mantine/core";
 import { Camera } from "lucide-react";
 import type { OnpremCameraStrategy, ScenarioInputs, SolutionInputs } from "../lib/model";
-import { TEXT_MUTED } from "../lib/colors";
-import InfoLabel from "./InfoLabel";
+import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
+import InfoLabel from "../../_tco-shared/components/InfoLabel";
 
 const HELP =
   "Keep the cameras already on site and add them to this VMS, paying onboarding labor only, or buy a new camera fleet at year 0. Only shown when the scenario says existing cameras can be reused; otherwise a newly deployed solution always buys cameras.";

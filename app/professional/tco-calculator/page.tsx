@@ -1,27 +1,38 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Box, Button, Card, Container, Group, Stepper, Text, Title } from "@mantine/core";
-import { ArrowLeft } from "lucide-react";
-import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "./lib/colors";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Box, Button, Card, Group, Stepper, Text, Title } from "@mantine/core";
+import { CalendarRange, Database, Share2 } from "lucide-react";
+import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "../_tco-shared/lib/colors";
 import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution, type ShapeOption } from "./lib/defaults";
-import type { IncumbentChoice, ScenarioInputs, SolutionInputs } from "./lib/model";
+import type { ScenarioInputs, SolutionInputs } from "./lib/model";
 import { decodeShareState, encodeShareState, isStaleModel, normalizeSharedState, type SharedState } from "./lib/shareState";
 import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, withVendorDefaults } from "./lib/vendorDefaults";
-import IntroScreen from "./components/IntroScreen";
-import ShapeStep from "./components/ShapeStep";
+import { SAVED_COMPARISONS } from "./lib/savedComparisons";
+import { METHODOLOGY_NOTES } from "./lib/methodology";
+import { IMPACT } from "./lib/verticals";
+import { IMPACT_COPY } from "./lib/impactCopy";
+import { defaultIncumbentFor } from "../_tco-shared/lib/fields";
+import IntroScreen from "../_tco-shared/components/IntroScreen";
+import ShapeStep from "../_tco-shared/components/ShapeStep";
+import CalculatorFrame, { confirmLeaveSetup, useAddressBarSync } from "../_tco-shared/components/CalculatorFrame";
 import ScenarioStep from "./components/ScenarioStep";
 import SolutionsStep from "./components/SolutionsStep";
 import ResultsView from "./components/ResultsView";
-import BusinessImpactStep from "./components/BusinessImpactStep";
+import BusinessImpactStep from "../_tco-shared/components/BusinessImpactStep";
 import IncumbentPicker from "./components/IncumbentPicker";
 
 type Phase = "intro" | "wizard" | "results";
 
 // Index of the wizard's final step (business impact).
 const LAST_STEP = 3;
+
+const HIGHLIGHTS = [
+  { icon: Database, text: "Real vendor pricing pre-filled where it's been researched" },
+  { icon: CalendarRange, text: "Model any horizon, from a 1-year pilot to a 15-year refresh cycle" },
+  { icon: Share2, text: "Share a link with your numbers baked in, no login required" },
+];
 
 // Convenience defaults for this tool's actual primary audience, comparing
 // against whatever a prospect already runs. Neither is forced, both stay
@@ -49,14 +60,7 @@ function seedSolution(slot: "a" | "b", opt: ShapeOption): SolutionInputs {
   return { ...sol, vmsProvider: "Milestone XProtect", cameraProvider: "Axis Communications", name: "Milestone XProtect · Axis Communications cameras" };
 }
 
-function defaultIncumbentFor(opt: ShapeOption): IncumbentChoice {
-  if (opt.modelA === "onprem" && opt.modelB === "cloud") return "a";
-  if (opt.modelA === "cloud" && opt.modelB === "onprem") return "b";
-  return "none";
-}
-
 function TcoCalculatorInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // Read a shared link once, at mount, as lazy initial state rather than via
@@ -97,23 +101,11 @@ function TcoCalculatorInner() {
     return `${window.location.origin}${window.location.pathname}?s=${encodeURIComponent(json)}`;
   }, [shapeId, scenario, solA, solB, colorA, colorB]);
 
-  // Keep the address bar in sync so copying it directly also works, not just
-  // the Share button, and so a refresh mid-wizard returns to the same step.
-  useEffect(() => {
-    if (phase === "intro" || !shareUrl) return;
-    const t = setTimeout(() => {
-      const url = new URL(shareUrl);
-      if (phase === "wizard") url.searchParams.set("step", String(stepIndex));
-      router.replace(`${url.pathname}${url.search}`, { scroll: false });
-    }, 400);
-    return () => clearTimeout(t);
-  }, [phase, stepIndex, shareUrl, router]);
+  useAddressBarSync(phase, stepIndex, shareUrl);
 
   // Leaving from the wizard drops an unfinished setup, so ask first.
   function confirmLeave(e: React.MouseEvent) {
-    if (phase === "wizard" && shapeId && !window.confirm("Leave the calculator? Your unfinished setup won't be saved.")) {
-      e.preventDefault();
-    }
+    if (phase === "wizard" && shapeId) confirmLeaveSetup(e);
   }
 
   function handleShapeChange(id: string) {
@@ -156,24 +148,23 @@ function TcoCalculatorInner() {
 
   if (phase === "intro") {
     return (
-      <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
-        <Container size="lg">
-          <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
-            All professional tools
-          </Button>
-          <IntroScreen onStart={() => setPhase("wizard")} onLoadSaved={handleLoadSaved} />
-        </Container>
-      </Box>
+      <CalculatorFrame size="lg">
+        <IntroScreen
+          title="Video Surveillance TCO Calculator"
+          description="Compare the true multi-year cost of two video-management deployments, cloud, on-prem, or a mix, not just the sticker price. Hardware, licensing, storage, admin labor, and truck rolls all factor in, and every assumption behind the numbers is transparent and yours to edit."
+          highlights={HIGHLIGHTS}
+          notes={METHODOLOGY_NOTES}
+          store={SAVED_COMPARISONS}
+          onStart={() => setPhase("wizard")}
+          onLoadSaved={handleLoadSaved}
+        />
+      </CalculatorFrame>
     );
   }
 
   if (phase === "results" && solA && solB) {
     return (
-      <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
-        <Container size="xl">
-          <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg">
-            All professional tools
-          </Button>
+      <CalculatorFrame size="xl">
           <ResultsView
             shapeId={shapeId ?? ""}
             scenario={scenario}
@@ -194,17 +185,12 @@ function TcoCalculatorInner() {
               setStepIndex(2);
             }}
           />
-        </Container>
-      </Box>
+      </CalculatorFrame>
     );
   }
 
   return (
-    <Box style={{ minHeight: "100vh", background: "#0f1117" }} py="xl">
-      <Container size="lg">
-        <Button component={Link} href="/professional" leftSection={<ArrowLeft size={16} />} variant="subtle" mb="lg" onClick={confirmLeave}>
-          All professional tools
-        </Button>
+    <CalculatorFrame size="lg" onLeave={confirmLeave}>
         <Title order={2} mb={4}>TCO Comparison Wizard</Title>
         <Text c={TEXT_MUTED} size="sm" mb="xl">
           Four quick steps to set up your comparison. The last one is optional.
@@ -213,7 +199,7 @@ function TcoCalculatorInner() {
         <Stepper active={stepIndex} onStepClick={setStepIndex} allowNextStepsSelect={false} mb="xl">
           <Stepper.Step label="Comparison" description="What's being compared">
             <Box mt="xl">
-              <ShapeStep value={shapeId} onChange={handleShapeChange} />
+              <ShapeStep options={SHAPE_OPTIONS} value={shapeId} onChange={handleShapeChange} />
               {/* Asked up front, not after the solution cards: incumbency and
                   camera reuse change how every year-0 cost is treated, and
                   which fields later steps need to show. */}
@@ -244,6 +230,7 @@ function TcoCalculatorInner() {
             <Box mt="xl">
               {solA && solB && (
                 <BusinessImpactStep
+                  impact={IMPACT} copy={IMPACT_COPY}
                   scenario={scenario} solA={solA} solB={solB} colorA={colorA} colorB={colorB}
                   onScenarioChange={setScenario} onSolAChange={setSolA} onSolBChange={setSolB}
                 />
@@ -260,8 +247,7 @@ function TcoCalculatorInner() {
             {stepIndex < LAST_STEP ? "Next" : "Generate comparison"}
           </Button>
         </Group>
-      </Container>
-    </Box>
+    </CalculatorFrame>
   );
 }
 

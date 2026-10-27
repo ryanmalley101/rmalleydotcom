@@ -18,11 +18,15 @@
 // Links from before versioning existed decode as version 1.
 import { sanitizeScenario, sanitizeSolution } from "./sanitize";
 import { annualOutcomes, type Vertical } from "./verticals";
+import {
+  advanceCohorts, compareTotals, emptyYear, isRefreshYear, miscForYear, residualCredit, splitTotals, tallyYears,
+  type Cohort, type ComparisonTotals, type DeploymentModel, type IncumbentChoice, type Lump, type MiscCostItem, type SolutionTotals,
+} from "../../_tco-shared/lib/engine";
+
+export type { DeploymentModel, IncumbentChoice, MiscCostItem, MiscItemTiming } from "../../_tco-shared/lib/engine";
 
 export const MODEL_VERSION = 2;
 
-export type DeploymentModel = "cloud" | "onprem";
-export type IncumbentChoice = "none" | "a" | "b";
 // How a cloud/hybrid solution's cameras get onto the new platform:
 // "connector" reuses the existing camera fleet behind a connector/NVR-style
 // appliance (a common product shape among cloud/hybrid VMS vendors) - year-0
@@ -148,27 +152,6 @@ export interface ScenarioInputs {
   // fields or count toward a total; the rest keep any entered values, so
   // switching one back on restores them.
   outcomeEnabled: string[];
-}
-
-// A free-form misc cost/credit line item — the escape valve for whatever a
-// real quote (or a value-justification argument) contains that doesn't fit
-// any category above, without inventing a new named category for every
-// oddball line a user might want. `amount` can be negative — a workers' comp
-// claim reduction, a productivity credit, or any other cost *offset* is just
-// a misc item with a negative amount, same mechanism as a misc cost. Applied
-// at face value, not multiplied by the vendor's discountPct — these are
-// user-authored numbers unrelated to vendor pricing, not a vendor SKU.
-export type MiscItemTiming = "upfront" | "recurring" | "once";
-export interface MiscCostItem {
-  id: string;
-  label: string;
-  amount: number;
-  // "upfront": once at year 0. "recurring": every year after year 0,
-  // escalating like the other recurring lines. "once": a single charge in
-  // `year` (0 to the horizon), for a known future event. All three apply to
-  // the incumbent too: these are the user's own numbers, not buildout costs.
-  timing: MiscItemTiming;
-  year?: number;
 }
 
 export interface SolutionInputs {
@@ -369,19 +352,10 @@ export interface HardwareFootprint {
   originalFleetReplacedPct: number;
 }
 
-export interface SolutionResult {
-  totalsByCategory: Record<Category, number>;
-  cumulative: number[]; // escalated running total, index = year
-  // Escalated cost per category for each year, index = year. The residual
-  // credit, if any, sits in the final year.
-  byYear: Record<Category, number>[];
-  total: number;
-  // total split into money paid out, estimated internal staff time
-  // (STAFF_TIME_CATEGORIES), and estimated business impact
-  // (OUTCOME_CATEGORIES); cashTotal + staffTimeTotal + outcomeTotal === total.
-  cashTotal: number;
-  staffTimeTotal: number;
-  outcomeTotal: number;
+// Totals by category and year, with total split into money paid out,
+// estimated internal staff time (STAFF_TIME_CATEGORIES), and estimated
+// business impact (OUTCOME_CATEGORIES).
+export interface SolutionResult extends SolutionTotals<Category> {
   hardware: HardwareFootprint;
 }
 
@@ -427,7 +401,7 @@ export function computeSolution(
   const keepsExistingCameras = isIncumbent || !buysCameras;
   const startSource = keepsExistingCameras && existingFleet ? existingFleet : sol;
   const fleetAge = keepsExistingCameras ? scenario.existingFleetAgeYears : 0;
-  const startCohort = {
+  const startCohort: Cohort = {
     size: cams,
     installedYear: -fleetAge,
     halfLife: startSource.fleetHalfLifeYears,
@@ -477,20 +451,6 @@ export function computeSolution(
       ? drivesForArray(tbUsable / activeServers, sol.raidLevel, driveCapacityTb, sol.raidArrayDrives) * activeServers * driveCapacityTb
       : tbUsable;
   const careCost = sol.model === "onprem" ? (sol.baseLicense + sol.deviceLicense * cams) * disc * (sol.carePct / 100) : 0;
-  // Misc items are applied at face value (no vendor disc), split by timing.
-  const miscItems = Array.isArray(sol.miscItems) ? sol.miscItems : [];
-  // User-authored, so they always apply, incumbent or not: an incumbent can
-  // face real one-time costs too (replacing end-of-life NVRs, adding
-  // analytics). Year 0 gets "upfront" items, years 1+ get "recurring" ones,
-  // and a "once" item lands in its own year.
-  const miscForYear = (y: number) =>
-    miscItems.reduce((sum, it) => {
-      const amount = Number(it.amount) || 0;
-      if (it.timing === "upfront") return y === 0 ? sum + amount : sum;
-      if (it.timing === "recurring") return y > 0 ? sum + amount : sum;
-      if (it.timing === "once") return Math.round(Number(it.year) || 0) === y ? sum + amount : sum;
-      return sum;
-    }, 0);
   // Business impact, a change from today: none for the incumbent, which is
   // today. Recurring from year 1, once the system is in, and escalated with
   // labor and services, since losses and claims track wages and prices.
@@ -507,21 +467,16 @@ export function computeSolution(
   const firstRefresh = isIncumbent ? sol.yearsUntilNextRefresh : refreshCycle;
   const applianceCycle = sol.applianceRefreshCycleYears;
   const firstApplianceRefresh = isIncumbent ? sol.yearsUntilNextApplianceRefresh : applianceCycle;
-  const isRefreshYear = (y: number, first: number, cycle: number) => y >= first && (y - first) % cycle === 0 && y < yrs;
   // Cloud license renewals: every term after year 0 for a new purchase; for
   // the incumbent, starting when its current term actually ends.
   const firstRenewal = isIncumbent && sol.yearsUntilLicenseRenewal !== undefined ? sol.yearsUntilLicenseRenewal : tierYears;
-  const isRenewalYear = (y: number) => y > 0 && isRefreshYear(y, firstRenewal, tierYears);
+  const isRenewalYear = (y: number) => y > 0 && isRefreshYear(y, firstRenewal, tierYears, yrs);
 
   // Lump purchases with a fixed service life, for the residual-value credit.
-  // A purchase in year p serves years p+1 through p+life.
-  const lumps: { year: number; amount: number; life: number }[] = [];
+  const lumps: Lump[] = [];
   const hardwareLife = sol.model === "cloud" ? applianceCycle : refreshCycle;
 
-  const totalsByCategory = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
-  const cumulative: number[] = [];
-  const byYear: Record<Category, number>[] = [];
-  let running = 0;
+  const years: Record<Category, number>[] = [];
 
   for (let y = 0; y <= yrs; y++) {
     // Escalation factors for this year; every amount below is escalated as
@@ -529,7 +484,7 @@ export function computeSolution(
     const labor = Math.pow(1 + escLabor, y);
     const hw = Math.pow(1 + escHardware, y);
     const lic = Math.pow(1 + escLicense, y);
-    const yearCosts = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
+    const yearCosts = emptyYear(CATEGORIES);
 
     if (y === 0) {
       // Nothing new is deployed for the incumbent, so its year 0 is empty.
@@ -559,18 +514,11 @@ export function computeSolution(
         }
       }
     } else {
-      let swaps = 0;
-      let cameraCost = 0;
-      for (const cohort of cohorts) {
-        const fails = cohort.size * (1 - Math.pow(0.5, 1 / cohort.halfLife));
-        cohort.size -= fails;
-        swaps += fails;
-        const inWarranty = y - cohort.installedYear <= cohort.warrantyYears;
-        cameraCost += fails * (sol.replacementInstallLaborCost * labor + (inWarranty ? 0 : sol.cameraCost * disc * hw));
-      }
-      cohorts.push({ size: swaps, installedYear: y, halfLife: sol.fleetHalfLifeYears, warrantyYears: sol.warrantyYears });
-      cameraSwaps += swaps;
-      yearCosts["Cameras"] = cameraCost;
+      // Every failure costs replacement labor; only out-of-warranty ones
+      // cost the camera too.
+      const { failed, outOfWarranty } = advanceCohorts(cohorts, y, { halfLife: sol.fleetHalfLifeYears, warrantyYears: sol.warrantyYears });
+      cameraSwaps += failed;
+      yearCosts["Cameras"] = failed * sol.replacementInstallLaborCost * labor + outOfWarranty * sol.cameraCost * disc * hw;
 
       if (sol.model === "cloud") {
         // The support/analytics add-on is genuinely annual, charged every year;
@@ -596,19 +544,22 @@ export function computeSolution(
       if (sol.model === "cloud") {
         // ripReplace has no connector appliance, so no ongoing hardware refresh.
         if (sol.migrationStrategy === "connector") {
-          if (isRefreshYear(y, firstApplianceRefresh, applianceCycle)) {
+          if (isRefreshYear(y, firstApplianceRefresh, applianceCycle, yrs)) {
             yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits * hw;
           }
         }
       } else {
-        if (isRefreshYear(y, firstRefresh, refreshCycle)) {
+        if (isRefreshYear(y, firstRefresh, refreshCycle, yrs)) {
           yearCosts["Hardware (initial & refresh)"] =
             onpremHardwarePurchase() * hw;
         }
       }
     }
 
-    yearCosts["Misc / other"] = miscForYear(y) * labor;
+    // User-authored, so they always apply, incumbent or not: an incumbent can
+    // face real one-time costs too (replacing end-of-life NVRs, adding
+    // analytics). Applied at face value (no vendor disc).
+    yearCosts["Misc / other"] = miscForYear(sol.miscItems, y) * labor;
 
     // Every Hardware line is a lump purchase on its refresh cycle; for cloud,
     // so is every license term (the add-on is annual, so it's excluded).
@@ -620,34 +571,11 @@ export function computeSolution(
       if (termBought) lumps.push({ year: y, amount: licenseTermCost * cams * lic, life: tierYears });
     }
 
-    let yearTotal = 0;
-    const escalatedYear = Object.fromEntries(CATEGORIES.map((c) => [c, 0])) as Record<Category, number>;
-    CATEGORIES.forEach((c) => {
-      const escalated = yearCosts[c]; // already escalated above
-      escalatedYear[c] = escalated;
-      totalsByCategory[c] += escalated;
-      yearTotal += escalated;
-    });
-    byYear.push(escalatedYear);
-    running += yearTotal;
-    cumulative.push(running);
+    years.push(yearCosts);
   }
 
-  if (scenario.creditResidualValue !== false) {
-    const credit = lumps.reduce((sum, l) => {
-      const unused = l.life - Math.min(l.life, Math.max(0, yrs - l.year));
-      return sum + (l.amount * unused) / l.life;
-    }, 0);
-    if (credit > 0) {
-      totalsByCategory["Residual value (credit)"] = -credit;
-      cumulative[cumulative.length - 1] -= credit;
-      byYear[byYear.length - 1]["Residual value (credit)"] = -credit;
-    }
-  }
-
-  const total = Object.values(totalsByCategory).reduce((a, b) => a + b, 0);
-  const staffTimeTotal = STAFF_TIME_CATEGORIES.reduce((sum, c) => sum + totalsByCategory[c], 0);
-  const outcomeTotal = OUTCOME_CATEGORIES.reduce((sum, c) => sum + totalsByCategory[c], 0);
+  const credit = scenario.creditResidualValue !== false ? residualCredit(lumps, yrs) : 0;
+  const totals = splitTotals(tallyYears(CATEGORIES, years, credit, "Residual value (credit)"), STAFF_TIME_CATEGORIES, OUTCOME_CATEGORIES);
   const hardware: HardwareFootprint = {
     unitsLabel:
       sol.model === "onprem" ? "Recording servers" : sol.migrationStrategy === "connector" ? "Connector appliances" : null,
@@ -659,21 +587,10 @@ export function computeSolution(
     cameraSwaps,
     originalFleetReplacedPct: cams > 0 ? Math.min(100, Math.max(0, (100 * (cams - startCohort.size)) / cams)) : 0,
   };
-  return {
-    totalsByCategory, cumulative, byYear, total,
-    cashTotal: total - staffTimeTotal - outcomeTotal, staffTimeTotal, outcomeTotal, hardware,
-  };
+  return { ...totals, hardware };
 }
 
-export interface ComparisonResult {
-  a: SolutionResult;
-  b: SolutionResult;
-  labels: string[];
-  crossoverYear: number | null;
-  /** Additional sign flips after the first one, if the lines cross more than once. */
-  laterCrossoverYears: number[];
-  activeCategories: Category[];
-}
+export type ComparisonResult = ComparisonTotals<Category, SolutionResult>;
 
 export function computeComparison(rawScenario: ScenarioInputs, solA: SolutionInputs, solB: SolutionInputs): ComparisonResult {
   const scenario = sanitizeScenario(rawScenario);
@@ -686,36 +603,5 @@ export function computeComparison(rawScenario: ScenarioInputs, solA: SolutionInp
   const existingFleetForB = reusing && scenario.incumbent === "a" ? solA : undefined;
   const a = computeSolution(scenario, solA, scenario.incumbent === "a", existingFleetForA);
   const b = computeSolution(scenario, solB, scenario.incumbent === "b", existingFleetForB);
-  const labels = Array.from({ length: scenario.horizonYears + 1 }, (_, y) => "Yr " + y);
-
-  // Find the first year with a nonzero gap to use as the baseline side, then
-  // scan forward for every year the gap flips relative to the side it flipped
-  // to most recently. Starting the baseline at year 0 (rather than year 1)
-  // matters: with an incumbent, one side often starts at $0 and can cross the
-  // other before year 1.
-  const crossoverYears: number[] = [];
-  let currentSign = 0;
-  let baselineFound = false;
-  for (let y = 0; y <= scenario.horizonYears; y++) {
-    const sign = Math.sign(a.cumulative[y] - b.cumulative[y]);
-    if (sign === 0) continue;
-    if (!baselineFound) {
-      currentSign = sign;
-      baselineFound = true;
-    } else if (sign !== currentSign) {
-      crossoverYears.push(y);
-      currentSign = sign;
-    }
-  }
-
-  // Math.abs: credits (residual value, negative misc items, business impact
-  // savings) are real lines too.
-  const activeCategories = CATEGORIES.filter((c) => Math.abs(a.totalsByCategory[c]) > 0.5 || Math.abs(b.totalsByCategory[c]) > 0.5);
-
-  return {
-    a, b, labels,
-    crossoverYear: crossoverYears[0] ?? null,
-    laterCrossoverYears: crossoverYears.slice(1),
-    activeCategories,
-  };
+  return compareTotals(CATEGORIES, a, b, scenario.horizonYears);
 }

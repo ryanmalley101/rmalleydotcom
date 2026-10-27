@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
 import { Box, Group, List, Paper, Stack, Text } from "@mantine/core";
-import type { ComparisonResult, ScenarioInputs, SolutionInputs } from "../lib/model";
-import { findFlipPoints, type FlipPoint } from "../lib/sensitivity";
+import type { ComparisonTotals } from "../lib/engine";
+import type { FlipPoint } from "../lib/sensitivity";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
 import InfoLabel from "./InfoLabel";
 
@@ -18,12 +17,15 @@ function fmtValue(unit: FlipPoint["unit"], n: number): string {
     case "hours": return `${n.toFixed(2)} hrs`;
     case "pct": return `${n.toFixed(1)}%`;
     case "years": return `${n.toFixed(1)} yrs`;
+    case "minutes": return `${n.toFixed(1)} min`;
     default: return n.toFixed(1);
   }
 }
 
-export default function GapDrivers({ comparison, scenario, solA, solB, colorA, colorB }: {
-  comparison: ComparisonResult; scenario: ScenarioInputs; solA: SolutionInputs; solB: SolutionInputs; colorA: string; colorB: string;
+// What drives the gap between two solutions, and which single inputs would
+// flip it. `flips` comes from the calculator's own sensitivity search.
+export default function GapDrivers({ comparison, flips, nameA, nameB, colorA, colorB }: {
+  comparison: ComparisonTotals; flips: FlipPoint[]; nameA: string; nameB: string; colorA: string; colorB: string;
 }) {
   const { a, b, activeCategories } = comparison;
   // Positive: favors B (A costs more in that category). Negative: favors A.
@@ -32,9 +34,8 @@ export default function GapDrivers({ comparison, scenario, solA, solB, colorA, c
     .filter((d) => Math.abs(d.diff) >= 1)
     .sort((x, y) => Math.abs(y.diff) - Math.abs(x.diff));
   const max = Math.max(1, ...drivers.map((d) => Math.abs(d.diff)));
-  const flips = useMemo(() => findFlipPoints(scenario, solA, solB), [scenario, solA, solB]);
-  const cheaperName = a.total <= b.total ? solA.name : solB.name;
-  const otherName = a.total <= b.total ? solB.name : solA.name;
+  const cheaperName = a.total <= b.total ? nameA : nameB;
+  const otherName = a.total <= b.total ? nameB : nameA;
 
   return (
     <Paper withBorder p="md" radius="md">
@@ -48,7 +49,7 @@ export default function GapDrivers({ comparison, scenario, solA, solB, colorA, c
                 <Group justify="space-between" gap="xs" wrap="nowrap">
                   <Text size="xs">{d.category}</Text>
                   <Text size="xs" c={TEXT_MUTED} ta="right">
-                    {fmtUsd(Math.abs(d.diff))} in favor of {favorsB ? solB.name : solA.name}
+                    {fmtUsd(Math.abs(d.diff))} in favor of {favorsB ? nameB : nameA}
                   </Text>
                 </Group>
                 <Box style={{ height: 6, borderRadius: 3, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
@@ -68,7 +69,7 @@ export default function GapDrivers({ comparison, scenario, solA, solB, colorA, c
             <List size="xs" spacing={4}>
               {flips.map((f) => (
                 <List.Item key={`${f.owner}-${f.label}`}>
-                  {f.owner ? `${f.owner === "a" ? solA.name : solB.name}'s ${f.label}` : f.label.charAt(0).toUpperCase() + f.label.slice(1)}
+                  {f.owner ? `${f.owner === "a" ? nameA : nameB}'s ${f.label}` : f.label.charAt(0).toUpperCase() + f.label.slice(1)}
                   {" "}at {fmtValue(f.unit, f.flipAt)} instead of {fmtValue(f.unit, f.current)} would make{" "}
                   {otherName} cheaper than {cheaperName}.
                 </List.Item>

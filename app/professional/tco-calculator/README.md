@@ -12,6 +12,21 @@ the `<meta name="robots">` tag in rendered HTML, not just the source, if
 this ever needs re-checking): deliberately not indexed, not full
 auth-gated, "dampened" on purpose.
 
+The parts that don't depend on what's being bought are shared with the
+access control calculator (`/professional/access-control-tco`) and live in
+`app/professional/_tco-shared/`: the year-by-year building blocks
+(`lib/engine.ts`: misc items, refresh timing, failure cohorts, residual
+credit, totals, crossovers), input clamping, vendor-default helpers, share
+links and saved comparisons, the flip-point search, the CSV/printable
+report builder, the business impact engine (`lib/impact.ts`), and the UI
+around them (intro, shape cards, results header and summary, charts, year
+table, gap drivers, checklist, business impact step, misc items). This
+calculator's `lib/` keeps its own cost model, fields, defaults, vendor
+tables, and business impact catalog, and wraps the shared pieces under the
+same export names, so the rules below still describe where each behavior
+lives even when the code is shared. A change to a shared piece changes both
+calculators.
+
 ## Cost model (`lib/model.ts`, `lib/defaults.ts`, `lib/vendorDefaults.ts`)
 
 - **Per-vendor defaults**: `lib/vendorDefaults.ts` holds three lookup tables

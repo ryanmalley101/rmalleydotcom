@@ -1,16 +1,14 @@
 // Clamps every numeric input to a range the cost model can use, before any
-// math runs. Inputs arrive straight from form fields, where a cleared box
-// becomes 0 (or an older share link may be missing a field entirely), and
-// a single bad value used to poison the results: a 0 half-life turned every
-// total into NaN, a 0 refresh cycle silently disabled refreshes, and a
-// fractional camera or horizon count produced odd partial years.
+// math runs (see the shared clamp in _tco-shared/lib/sanitize.ts for why).
+// Here, a 0 half-life used to turn every total into NaN, a 0 refresh cycle
+// silently disabled refreshes, and a fractional camera or horizon count
+// produced odd partial years.
 //
 // Kept free of runtime imports from model.ts/defaults.ts (types only) so the
 // model can call it without an import cycle; each rule carries its own
 // fallback for a missing or non-numeric value.
 import type { ScenarioInputs, SolutionInputs } from "./model";
-
-interface Rule { min: number; max?: number; int?: boolean; fallback: number }
+import { applyRules, clamp, type Rule } from "../../_tco-shared/lib/sanitize";
 
 const SCENARIO_RULES: Partial<Record<keyof ScenarioInputs, Rule>> = {
   cameras: { min: 1, int: true, fallback: 1 },
@@ -67,24 +65,9 @@ const SOLUTION_RULES: Partial<Record<keyof SolutionInputs, Rule>> = {
   yearsUntilNextRefresh: { min: 0, int: true, fallback: 0 },
 };
 
-function clamp(value: unknown, rule: Rule): number {
-  let n = typeof value === "number" ? value : typeof value === "string" && value.trim() !== "" ? Number(value) : NaN;
-  if (!Number.isFinite(n)) n = rule.fallback;
-  if (rule.int) n = Math.round(n);
-  n = Math.max(rule.min, n);
-  if (rule.max !== undefined) n = Math.min(rule.max, n);
-  return n;
-}
-
-function apply<T extends object>(input: T, rules: Partial<Record<keyof T, Rule>>): T {
-  const out = { ...input } as Record<string, unknown>;
-  for (const [key, rule] of Object.entries(rules) as [string, Rule][]) out[key] = clamp(out[key], rule);
-  return out as T;
-}
-
-export const sanitizeScenario = (s: ScenarioInputs): ScenarioInputs => apply(s, SCENARIO_RULES);
+export const sanitizeScenario = (s: ScenarioInputs): ScenarioInputs => applyRules(s, SCENARIO_RULES);
 export const sanitizeSolution = (s: SolutionInputs): SolutionInputs => {
-  const out = apply(s, SOLUTION_RULES);
+  const out = applyRules(s, SOLUTION_RULES);
   // Optional: left absent unless set, since absent has its own meaning.
   if (out.yearsUntilLicenseRenewal !== undefined) {
     out.yearsUntilLicenseRenewal = clamp(out.yearsUntilLicenseRenewal, { min: 0, int: true, fallback: out.tierYears });

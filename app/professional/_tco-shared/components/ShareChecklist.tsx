@@ -1,16 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
 import { List, Paper, Stack, Text } from "@mantine/core";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
-import type { ComparisonResult, ScenarioInputs, SolutionInputs } from "../lib/model";
-import { buildChecklist } from "../lib/checklist";
 import { TEXT_MUTED } from "../lib/colors";
 
-export default function ShareChecklist({ scenario, solA, solB, comparison }: {
-  scenario: ScenarioInputs; solA: SolutionInputs; solB: SolutionInputs; comparison: ComparisonResult;
-}) {
-  const items = useMemo(() => buildChecklist(scenario, solA, solB, comparison), [scenario, solA, solB, comparison]);
+// "Before you share this": each calculator builds its own items from the
+// comparison; an empty list means nothing stood out.
+export default function ShareChecklist({ items }: { items: string[] }) {
   return (
     <Paper withBorder p="md" radius="md" mb="md">
       <Stack gap={6}>

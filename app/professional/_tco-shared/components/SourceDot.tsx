@@ -1,7 +1,7 @@
 "use client";
 
 import { Anchor, Box, Popover, Stack, Text, UnstyledButton } from "@mantine/core";
-import type { FieldMeta } from "../lib/vendorDefaults";
+import type { FieldMeta } from "../lib/vendorData";
 
 // Answers "which fields are actually sourced?" per-field, not just the
 // aggregate "N/M fields sourced" badge on the provider Select; that badge

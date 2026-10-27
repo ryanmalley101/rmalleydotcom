@@ -3,7 +3,7 @@
 import { Switch } from "@mantine/core";
 import type { SolutionInputs } from "../lib/model";
 import { withAnalytics } from "../lib/defaults";
-import InfoLabel from "./InfoLabel";
+import InfoLabel from "../../_tco-shared/components/InfoLabel";
 
 const HELP =
   "Whether this on-prem solution includes AI video search (people and vehicle search, analytics). Off: no analytics costs, and investigations take the slower default time. On: adds the analytics hardware and software below, and moves hours per investigation to the faster with-search default. Cloud solutions are assumed to bundle search in their license.";

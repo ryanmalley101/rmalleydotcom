@@ -1,11 +1,9 @@
 "use client";
 
 import { NumberInput, Radio, Group, Stack } from "@mantine/core";
-import type { ScenarioInputs, IncumbentChoice } from "../lib/model";
-import InfoLabel from "./InfoLabel";
-
-const INCUMBENT_HELP =
-  "The incumbent skips its year-0 buildout cost, since that hardware is already paid for. The other solution is still costed as a fresh deployment.";
+import type { ScenarioInputs } from "../lib/model";
+import InfoLabel from "../../_tco-shared/components/InfoLabel";
+import { IncumbentRadio } from "../../_tco-shared/components/FormParts";
 
 const FLEET_AGE_HELP =
   "How many years the cameras already on site have been installed. Their warranty is counted from this age, so an older fleet's failures cost the camera as well as the labor sooner. Applies to the incumbent and to any solution that keeps those cameras. 0 treats them as brand new.";
@@ -23,19 +21,7 @@ export default function IncumbentPicker({
 }) {
   return (
     <Stack gap="md">
-      <Stack gap={8}>
-        <InfoLabel label="Is either solution already deployed?" help={INCUMBENT_HELP} fw={500} />
-        <Radio.Group
-          value={scenario.incumbent}
-          onChange={(v) => onScenarioChange({ ...scenario, incumbent: v as IncumbentChoice })}
-        >
-          <Group gap="lg">
-            <Radio value="none" label="Neither (fresh comparison)" />
-            <Radio value="a" label={`${nameA} is incumbent`} />
-            <Radio value="b" label={`${nameB} is incumbent`} />
-          </Group>
-        </Radio.Group>
-      </Stack>
+      <IncumbentRadio value={scenario.incumbent} onChange={(incumbent) => onScenarioChange({ ...scenario, incumbent })} nameA={nameA} nameB={nameB} />
       <Stack gap={8}>
         <InfoLabel label="Can the existing cameras be reused?" help={EXISTING_CAMERAS_HELP} fw={500} />
         <Radio.Group

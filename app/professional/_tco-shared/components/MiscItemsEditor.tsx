@@ -2,7 +2,7 @@
 
 import { ActionIcon, Button, Group, NumberInput, SegmentedControl, Stack, Text, TextInput } from "@mantine/core";
 import { Plus, Trash2 } from "lucide-react";
-import type { MiscCostItem, MiscItemTiming } from "../lib/model";
+import type { MiscCostItem, MiscItemTiming } from "../lib/engine";
 import { TEXT_MUTED } from "../lib/colors";
 
 // Free-form list editor for a solution's miscItems — the escape valve for

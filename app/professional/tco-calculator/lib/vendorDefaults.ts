@@ -1,5 +1,10 @@
 import type { SolutionInputs } from "./model";
 import { defaultSolution, halfLifeForWarranty } from "./defaults";
+import {
+  confidenceSummary as sharedConfidenceSummary, fieldSourceInfo as sharedFieldSourceInfo, switchVendor as sharedSwitchVendor,
+  withVendorDefaults as sharedWithVendorDefaults,
+  type ConfidenceSummary, type FieldMeta, type VendorDefaultEntry as SharedVendorDefaultEntry,
+} from "../../_tco-shared/lib/vendorData";
 
 // Per-vendor researched defaults, produced by RESEARCH_PROMPT.md and reviewed
 // before merging across two research passes (a handful of claims from each
@@ -46,25 +51,8 @@ import { defaultSolution, halfLifeForWarranty } from "./defaults";
 // Verkada bundles for free is a real, separately-priced SKU for that vendor;
 // don't infer a gap without a citation for the missing piece specifically.
 
-export type FieldStatus = "sourced" | "estimated";
-export type Confidence = "high" | "medium" | "low";
-
-export interface FieldMeta {
-  value: unknown;
-  status: FieldStatus;
-  confidence: Confidence;
-  sources: string[];
-  reasoning?: string;
-  checkedOn: string;
-}
-
-// Picking (or pre-seeding) a vendor with researched data merges its values
-// on top of whatever's already filled in; vendors without an entry here
-// (including "Other") pass `sol` through untouched.
-export function withVendorDefaults(sol: SolutionInputs, vendorName: string, table: Record<string, VendorDefaultEntry>): SolutionInputs {
-  const entry = table[vendorName];
-  return entry ? { ...sol, ...vendorValues(entry) } : sol;
-}
+export type { Confidence, ConfidenceSummary, FieldMeta, FieldStatus } from "../../_tco-shared/lib/vendorData";
+export type VendorDefaultEntry = SharedVendorDefaultEntry<SolutionInputs>;
 
 // A vendor entry's values plus the half-life its warranty implies (see
 // halfLifeForWarranty), which is derived rather than stored per vendor.
@@ -76,109 +64,61 @@ export function vendorValues(entry: VendorDefaultEntry): Partial<SolutionInputs>
   return values;
 }
 
-// What the wizard's provider pickers call when the vendor changes. Merging
-// the new vendor on top of the current values (withVendorDefaults alone)
-// left behind every field the previous vendor set and the new one doesn't,
-// e.g. switching the pre-filled Verkada to Meraki kept Verkada's camera
-// reliability numbers, with no source dot to show where they came from. So
-// first, any field still holding exactly the previous vendor's value goes
-// back to the generic default; a field the user edited no longer matches
-// that value and is kept. Then the new vendor's values apply as before.
-// `nextVendor` may be "" or an unknown name ("Other"): the reset still
-// happens and nothing new is applied.
+// Picking (or pre-seeding) a vendor with researched data merges its values
+// on top of whatever's already filled in; vendors without an entry here
+// (including "Other") pass `sol` through untouched.
+export function withVendorDefaults(sol: SolutionInputs, vendorName: string, table: Record<string, VendorDefaultEntry>): SolutionInputs {
+  return sharedWithVendorDefaults(sol, vendorName, table, vendorValues);
+}
+
+// What the wizard's provider pickers call when the vendor changes: fields
+// still holding the previous vendor's exact value go back to the generic
+// default first, so switching the pre-filled Verkada to Meraki doesn't keep
+// Verkada's camera reliability numbers (see the shared switchVendor).
 export function switchVendor(
   sol: SolutionInputs,
   prevVendor: string | undefined,
   nextVendor: string,
   table: Record<string, VendorDefaultEntry>,
 ): SolutionInputs {
-  const prev = prevVendor ? table[prevVendor] : undefined;
-  const reset: SolutionInputs = { ...sol };
-  if (prev && prevVendor !== nextVendor) {
-    const generic = defaultSolution(sol.id, sol.name, sol.model) as unknown as Record<string, unknown>;
-    const current = sol as unknown as Record<string, unknown>;
-    for (const [key, value] of Object.entries(vendorValues(prev))) {
-      if (current[key] === value) (reset as unknown as Record<string, unknown>)[key] = generic[key];
-    }
-  }
-  return withVendorDefaults(reset, nextVendor, table);
+  return sharedSwitchVendor(sol, prevVendor, nextVendor, table, defaultSolution(sol.id, sol.name, sol.model), vendorValues);
+}
+
+// A half-life no vendor stores is derived from its warranty, so its source
+// is the warranty's.
+function derivedHalfLifeMeta(key: keyof SolutionInputs, entry: VendorDefaultEntry, value: unknown): FieldMeta | null {
+  if (key !== "fleetHalfLifeYears") return null;
+  const warranty = entry.fieldMeta.warrantyYears;
+  return {
+    value,
+    status: "estimated",
+    confidence: warranty?.confidence ?? "low",
+    sources: warranty?.sources ?? [],
+    reasoning: "Derived from this vendor's warranty: every vendor's half-life is 1.5 times its warranty period, so a longer warranty means a longer expected camera life.",
+    checkedOn: warranty?.checkedOn ?? "",
+  };
 }
 
 // Looks up a single field's provenance across whichever vendor entries could
 // have set it (on-prem has a separate VMS-vendor entry and camera-vendor
-// entry; cloud has just the one). Only returns metadata if the field's
-// CURRENT value still matches what that vendor's research produced; if the
-// user has since edited it, showing "sourced" next to a number they typed
-// themselves would be a worse lie than showing nothing, so it deliberately
-// goes stale the moment the value changes rather than tracking edits some
-// other way.
+// entry; cloud has just the one), and only while its value is unedited.
 export function fieldSourceInfo(
   key: keyof SolutionInputs,
   currentValue: unknown,
   ...entries: (VendorDefaultEntry | undefined)[]
 ): FieldMeta | null {
-  for (const entry of entries) {
-    if (!entry) continue;
-    const values = vendorValues(entry) as Record<string, unknown>;
-    if (!(key in values)) continue;
-    if (values[key] !== currentValue) continue;
-    if (key === "fleetHalfLifeYears" && !entry.fieldMeta[key]) {
-      const warranty = entry.fieldMeta.warrantyYears;
-      return {
-        value: currentValue,
-        status: "estimated",
-        confidence: warranty?.confidence ?? "low",
-        sources: warranty?.sources ?? [],
-        reasoning: "Derived from this vendor's warranty: every vendor's half-life is 1.5 times its warranty period, so a longer warranty means a longer expected camera life.",
-        checkedOn: warranty?.checkedOn ?? "",
-      };
-    }
-    return entry.fieldMeta[key] ?? null;
-  }
-  return null;
+  return sharedFieldSourceInfo(key, currentValue, entries, vendorValues, derivedHalfLifeMeta);
 }
 
-export interface ConfidenceSummary {
-  sourced: number;
-  total: number;
-  label: string;
-  tone: "sourced" | "mixed" | "estimated" | "none";
-}
-
-// Collapses a vendor's per-field fieldMeta into a single at-a-glance figure;
-// the underlying source/confidence detail stays in fieldMeta for anyone who
-// wants it, this just makes "how much of this is real vs. a guess" visible
-// without reading the data file. `total: 0` (no entry at all, or "Other")
-// means generic, not-vendor-specific defaults, not zero sourced fields.
-//
-// `headlineField`, if given, is checked for presence in `values` first and
-// short-circuits to a distinct "not researched" state if it's missing;
-// otherwise a vendor whose price field was never researched (e.g. Turing AI
-// and Arcules's tierPrice, silently falling through to the generic default)
-// could still show a reassuring "3/3 sourced" based only on the fields that
-// *are* present, which is a worse, more confident-looking lie than showing
-// nothing at all.
+// How much of a vendor's pre-filled data is sourced; `headlineField` (the
+// vendor's main price) reports "not researched" when it's missing, rather
+// than a reassuring count of the fields that are present.
 export function confidenceSummary(
   vendorName: string,
   table: Record<string, VendorDefaultEntry>,
   headlineField?: keyof SolutionInputs
 ): ConfidenceSummary {
-  const entry = table[vendorName];
-  if (!entry) return { sourced: 0, total: 0, label: "Generic defaults, not vendor-specific", tone: "none" };
-  const metas = Object.values(entry.fieldMeta);
-  const total = metas.length;
-  const sourced = metas.filter((m) => m.status === "sourced").length;
-  if (headlineField !== undefined && !(headlineField in entry.values)) {
-    return { sourced, total, label: "Price not researched, using generic default", tone: "estimated" };
-  }
-  const tone: ConfidenceSummary["tone"] = total === 0 ? "none" : sourced === total ? "sourced" : sourced === 0 ? "estimated" : "mixed";
-  return { sourced, total, label: total === 0 ? "Generic defaults, not vendor-specific" : `${sourced}/${total} fields sourced`, tone };
-}
-
-export interface VendorDefaultEntry {
-  values: Partial<SolutionInputs>;
-  fieldMeta: Record<string, FieldMeta>;
-  notes?: string;
+  return sharedConfidenceSummary(vendorName, table, headlineField);
 }
 
 // ---------- CLOUD / HYBRID VMS ----------

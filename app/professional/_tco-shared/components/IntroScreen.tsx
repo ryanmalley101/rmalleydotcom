@@ -2,48 +2,48 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { ActionIcon, Anchor, Divider, Group, List, Modal, Paper, Stack, Text, Title, Button, UnstyledButton } from "@mantine/core";
-import { ArrowRight, CalendarRange, Database, Share2, Trash2 } from "lucide-react";
+import { ArrowRight, Trash2 } from "lucide-react";
 import { TEXT_MUTED } from "../lib/colors";
-import {
-  getSavedComparisonsSnapshot, getSavedComparisonsServerSnapshot, subscribeSavedComparisons, deleteSavedComparison,
-} from "../lib/savedComparisons";
-import type { SharedState } from "../lib/shareState";
-import { METHODOLOGY_NOTES } from "../lib/methodology";
+import type { SavedComparisonsStore } from "../lib/savedComparisons";
 
-const HIGHLIGHTS = [
-  { icon: Database, text: "Real vendor pricing pre-filled where it's been researched" },
-  { icon: CalendarRange, text: "Model any horizon, from a 1-year pilot to a 15-year refresh cycle" },
-  { icon: Share2, text: "Share a link with your numbers baked in, no login required" },
-];
+export interface Highlight { icon: React.ElementType; text: string }
 
-export default function IntroScreen({
-  onStart, onLoadSaved,
-}: { onStart: () => void; onLoadSaved: (state: SharedState) => void }) {
+// A calculator's landing screen: what it does, how it calculates, and any
+// comparisons saved in this browser.
+export default function IntroScreen<State>({
+  title, description, highlights, notes, store, onStart, onLoadSaved,
+}: {
+  title: string;
+  description: string;
+  highlights: Highlight[];
+  notes: string[];
+  store: SavedComparisonsStore<State>;
+  onStart: () => void;
+  onLoadSaved: (state: State) => void;
+}) {
   // useSyncExternalStore (not useState+useEffect) because localStorage is an
   // external store the server can't see: the server snapshot is always an
   // empty array, matching what SSR renders, and the real client snapshot only
   // takes over post-hydration — avoids the hydration mismatch a populated
   // useState initializer would cause, without a synchronous setState-in-effect.
-  const saved = useSyncExternalStore(subscribeSavedComparisons, getSavedComparisonsSnapshot, getSavedComparisonsServerSnapshot);
+  const saved = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
 
   const [howOpen, setHowOpen] = useState(false);
 
   function handleDelete(id: string) {
-    deleteSavedComparison(id);
+    store.remove(id);
   }
 
   return (
     <Stack align="center" gap="lg" py={{ base: 40, sm: 80 }} maw={560} mx="auto" ta="center">
       <Title order={1} fz={{ base: "1.75rem", sm: "2.25rem" }}>
-        Video Surveillance TCO Calculator
+        {title}
       </Title>
       <Text c={TEXT_MUTED} size="lg">
-        Compare the true multi-year cost of two video-management deployments, cloud, on-prem, or a
-        mix, not just the sticker price. Hardware, licensing, storage, admin labor, and truck rolls
-        all factor in, and every assumption behind the numbers is transparent and yours to edit.
+        {description}
       </Text>
       <Stack gap={6} align="flex-start">
-        {HIGHLIGHTS.map(({ icon: Icon, text }) => (
+        {highlights.map(({ icon: Icon, text }) => (
           <Group gap={8} key={text} wrap="nowrap">
             <Icon size={15} color={TEXT_MUTED} style={{ flexShrink: 0 }} />
             <Text c={TEXT_MUTED} size="sm" ta="left">{text}</Text>
@@ -58,7 +58,7 @@ export default function IntroScreen({
       </Anchor>
       <Modal opened={howOpen} onClose={() => setHowOpen(false)} title="How the numbers are calculated" size="lg">
         <List size="sm" spacing={6}>
-          {METHODOLOGY_NOTES.map((n) => <List.Item key={n}>{n}</List.Item>)}
+          {notes.map((n) => <List.Item key={n}>{n}</List.Item>)}
         </List>
       </Modal>
       <Text c={TEXT_MUTED} size="xs" maw={420}>

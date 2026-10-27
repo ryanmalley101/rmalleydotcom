@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import MantineThemeClient from "./MantineThemeClient";
+import MantineThemeClient from "../_tco-shared/MantineThemeClient";
 
 export const metadata: Metadata = {
     title: "Video Surveillance TCO Calculator | Ryan Malley",

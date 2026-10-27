@@ -6,8 +6,8 @@ import {
   HardDrive, Layers, Search, Server, TrendingUp, Truck,
 } from "lucide-react";
 import type { ScenarioInputs } from "../lib/model";
-import { TEXT_MUTED } from "../lib/colors";
-import InfoLabel from "./InfoLabel";
+import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
+import InfoLabel from "../../_tco-shared/components/InfoLabel";
 import { BITRATE_HELP, INVESTIGATIONS_PER_MONTH_HELP } from "../lib/fieldHelp";
 import { SCENARIO_PRESETS } from "../lib/presets";
 

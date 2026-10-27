@@ -3,17 +3,17 @@
 import { Alert, Badge, Box, Checkbox, Group, NumberInput, Paper, Select, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import {
   ArrowRightLeft, BadgeCheck, BellRing, Boxes, Building2, CameraOff, Cctv, ChartColumn, ClipboardCheck, Clock, DollarSign,
-  EyeOff, Factory, FileCheck, FileWarning, Footprints, Gavel, Hammer, Handshake, HardHat, HeartPulse, Hospital, IdCard,
-  Info, Landmark, Lock, PackageX, Plug, Radar, ScanFace, School, ScrollText, Shield, ShieldAlert, ShieldUser,
-  ShoppingCart, Siren, Store, Timer, Trash2, TrendingUp, Truck, Umbrella, UserX, Users, Wallet, Workflow,
+  DoorOpen, EyeOff, Factory, FileCheck, FileWarning, Fingerprint, Footprints, Gavel, Hammer, Handshake, HardHat, HeartPulse,
+  Hospital, IdCard, Info, KeyRound, Landmark, Lock, LockOpen, Moon, PackageX, Plug, Radar, ScanFace, School, ScrollText,
+  Shield, ShieldAlert, ShieldUser, ShoppingCart, Siren, Store, Timer, Trash2, TrendingUp, Truck, Umbrella, UserX, Users,
+  Wallet, Workflow,
 } from "lucide-react";
-import type { ScenarioInputs, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
 import {
-  CONSIDERATIONS, NEW_COST_UNIT_LABEL, OUT_OF_SCOPE, VERTICALS, annualBaselinePerSite, annualOutcomes, baselineValue,
-  changeValue, inputsInUse, isCategoryEnabled, verticalFor,
-  type Consideration, type OutcomeCategory, type OutcomeGroup, type OutcomeIcon, type OutcomeInput, type VerticalDef,
-} from "../lib/verticals";
+  NEW_COST_UNIT_LABEL, annualBaselinePerSite, baselineValue, changeValue, inputsInUse, isCategoryEnabled,
+  type Consideration, type Impact, type ImpactScenario, type ImpactSolution, type OutcomeCategory, type OutcomeGroup,
+  type OutcomeIcon, type OutcomeInput, type VerticalDef,
+} from "../lib/impact";
 import InfoLabel from "./InfoLabel";
 
 const ICONS: Record<OutcomeIcon, React.ElementType> = {
@@ -25,12 +25,19 @@ const ICONS: Record<OutcomeIcon, React.ElementType> = {
   radar: Radar, handshake: Handshake, timer: Timer, cameraOff: CameraOff, scroll: ScrollText, badge: BadgeCheck,
   lock: Lock, chart: ChartColumn, trending: TrendingUp, school: School, hospital: Hospital, truck: Truck,
   factory: Factory, building: Building2, bank: Landmark,
+  door: DoorOpen, key: KeyRound, fingerprint: Fingerprint, unlock: LockOpen, moon: Moon,
 };
 
-const INDUSTRY_HELP =
-  "Picks the industry-specific costs a video system can raise or lower, such as theft and injury claims in retail, and checks the ones that usually matter most there. Leave it empty to keep business impact out of the comparison.";
-
-const VERTICAL_OPTIONS = VERTICALS.map((v) => ({ value: v.id, label: v.label }));
+// The wording that differs between calculators.
+export interface ImpactCopy {
+  // The step's opening paragraph.
+  intro: string;
+  industryHelp: string;
+  // Leads into the catalog's out-of-scope list.
+  scopeNote: string;
+  // Shown when neither solution is installed yet.
+  freshNote: string;
+}
 
 const BORDER = "1px solid var(--mantine-color-dark-4)";
 
@@ -53,8 +60,8 @@ const SubLabel = ({ children }: { children: React.ReactNode }) => (
   </Text>
 );
 
-function BaselineField({ input, scenario, onScenarioChange }: {
-  input: OutcomeInput; scenario: ScenarioInputs; onScenarioChange: (v: ScenarioInputs) => void;
+function BaselineField<S extends ImpactScenario>({ input, scenario, onScenarioChange }: {
+  input: OutcomeInput; scenario: S; onScenarioChange: (v: S) => void;
 }) {
   return (
     <NumberInput
@@ -78,9 +85,9 @@ function BaselineField({ input, scenario, onScenarioChange }: {
 }
 
 interface Side {
-  sol: SolutionInputs;
+  sol: ImpactSolution;
   color: string;
-  onChange: (v: SolutionInputs) => void;
+  onChange: (v: ImpactSolution) => void;
   isIncumbent: boolean;
   outcomes: { category: OutcomeCategory; amount: number }[];
   total: number;
@@ -121,9 +128,9 @@ function ChangeField({ category, side }: { category: OutcomeCategory; side: Side
 
 // One themed group: a checkbox per category, then, for the ones switched
 // on, the shared facts they need and each solution's change.
-function GroupCard({ group, vertical, scenario, sides, onScenarioChange }: {
-  group: OutcomeGroup; vertical: VerticalDef; scenario: ScenarioInputs; sides: Side[];
-  onScenarioChange: (v: ScenarioInputs) => void;
+function GroupCard<S extends ImpactScenario>({ group, vertical, scenario, sides, onScenarioChange }: {
+  group: OutcomeGroup; vertical: VerticalDef; scenario: S; sides: Side[];
+  onScenarioChange: (v: S) => void;
 }) {
   const GroupIcon = ICONS[group.icon];
   const categories = group.categoryIds
@@ -213,8 +220,8 @@ function GroupCard({ group, vertical, scenario, sides, onScenarioChange }: {
 
 // Benefits each solution offers that aren't priced: a checkbox per solution
 // per consideration, never part of a total.
-function ConsiderationsCard({ sides, onSidesChange }: {
-  sides: Side[]; onSidesChange: (side: Side, considerations: string[]) => void;
+function ConsiderationsCard({ considerations, sides, onSidesChange }: {
+  considerations: Consideration[]; sides: Side[]; onSidesChange: (side: Side, considerations: string[]) => void;
 }) {
   const ticked = (side: Side, c: Consideration) => (side.sol.considerations ?? []).includes(c.code);
   const toggle = (side: Side, c: Consideration, on: boolean) => {
@@ -238,7 +245,7 @@ function ConsiderationsCard({ sides, onSidesChange }: {
           <div />
           {sides.map((side) => <SideBadge key={side.sol.id} side={side} size="md" />)}
         </SimpleGrid>
-        {CONSIDERATIONS.map((c) => (
+        {considerations.map((c) => (
           <SimpleGrid key={c.code} cols={{ base: 1, sm: 3 }} spacing="sm" verticalSpacing={4}>
             <IconLabel icon={c.icon} label={c.revenue ? `${c.label} (revenue)` : c.label} help={c.help} size="var(--mantine-font-size-sm)" />
             {sides.map((side) => (
@@ -259,26 +266,32 @@ function ConsiderationsCard({ sides, onSidesChange }: {
 
 // The wizard's business impact step, and the matching panel on the results
 // page: pick an industry, switch on the costs that apply, enter facts about
-// the business once, then each solution's change. See lib/verticals.ts.
-export default function BusinessImpactStep({
-  scenario, solA, solB, colorA, colorB, onScenarioChange, onSolAChange, onSolBChange, showIntro = true,
+// the business once, then each solution's change. The catalog comes from
+// the calculator (`impact`); see lib/impact.ts.
+export default function BusinessImpactStep<S extends ImpactScenario, T extends ImpactSolution>({
+  impact, copy, scenario, solA, solB, colorA, colorB, onScenarioChange, onSolAChange, onSolBChange, showIntro = true,
 }: {
-  scenario: ScenarioInputs;
-  solA: SolutionInputs;
-  solB: SolutionInputs;
+  impact: Impact;
+  copy: ImpactCopy;
+  scenario: S;
+  solA: T;
+  solB: T;
   colorA: string;
   colorB: string;
-  onScenarioChange: (v: ScenarioInputs) => void;
-  onSolAChange: (v: SolutionInputs) => void;
-  onSolBChange: (v: SolutionInputs) => void;
+  onScenarioChange: (v: S) => void;
+  onSolAChange: (v: T) => void;
+  onSolBChange: (v: T) => void;
   showIntro?: boolean;
 }) {
-  const vertical = verticalFor(scenario);
+  const { verticals, considerations, outOfScope } = impact.catalog;
+  const vertical = impact.verticalFor(scenario);
+  // Side holds the structural solution type; only this step's own edits
+  // (changes and considerations) go back through it, so the cast is safe.
   const sides: Side[] = [
-    { sol: solA, color: colorA, onChange: onSolAChange, isIncumbent: scenario.incumbent === "a" },
-    { sol: solB, color: colorB, onChange: onSolBChange, isIncumbent: scenario.incumbent === "b" },
+    { sol: solA, color: colorA, onChange: onSolAChange as (v: ImpactSolution) => void, isIncumbent: scenario.incumbent === "a" },
+    { sol: solB, color: colorB, onChange: onSolBChange as (v: ImpactSolution) => void, isIncumbent: scenario.incumbent === "b" },
   ].map((s) => {
-    const outcomes = s.isIncumbent ? [] : annualOutcomes(scenario, s.sol);
+    const outcomes = s.isIncumbent ? [] : impact.annualOutcomes(scenario, s.sol);
     return { ...s, outcomes, total: outcomes.reduce((sum, o) => sum + o.amount, 0) };
   });
   const incumbent = sides.find((s) => s.isIncumbent);
@@ -291,22 +304,20 @@ export default function BusinessImpactStep({
         <div>
           <Title order={4} mb={4}>Business impact (optional)</Title>
           <Text size="sm" c={TEXT_MUTED}>
-            Costs your business already carries that a video system can raise or lower, and new costs it can bring.
-            Every change starts at 0: enter only what you can support with your own data, not a vendor&apos;s claim.
-            Results show these estimates separately from cash costs.
+            {copy.intro}
           </Text>
         </div>
       )}
 
       <Select
-        label={<IconLabel icon={vertical?.icon ?? "building"} label="Industry" help={INDUSTRY_HELP} />}
+        label={<IconLabel icon={vertical?.icon ?? "building"} label="Industry" help={copy.industryHelp} />}
         placeholder="None, leave business impact out"
-        data={VERTICAL_OPTIONS}
+        data={verticals.map((v) => ({ value: v.id, label: v.label }))}
         value={vertical?.id ?? null}
         onChange={(v) => {
           // A new industry starts from its own suggested categories; values
           // already entered are kept, keyed by industry, for switching back.
-          const next = VERTICALS.find((d) => d.id === v) ?? null;
+          const next = verticals.find((d) => d.id === v) ?? null;
           onScenarioChange({ ...scenario, vertical: next?.id ?? null, outcomeEnabled: next ? next.suggested : [] });
         }}
         clearable
@@ -345,19 +356,15 @@ export default function BusinessImpactStep({
             </SimpleGrid>
           )}
 
-          <ConsiderationsCard sides={sides} onSidesChange={(side, considerations) => side.onChange({ ...side.sol, considerations })} />
+          <ConsiderationsCard considerations={considerations} sides={sides} onSidesChange={(side, considerations) => side.onChange({ ...side.sol, considerations })} />
 
           <Text size="xs" c={TEXT_MUTED}>
-            Not covered, because this calculator only prices video and alarm monitoring: {OUT_OF_SCOPE.join("; ")}.
+            {copy.scopeNote} {outOfScope.join("; ")}.
           </Text>
 
           {scenario.incumbent === "none" && anyEnabled && (
             <Alert color="blue" variant="light" icon={<Info size={16} />} p="sm">
-              <Text size="xs">
-                Neither solution is installed yet, so each change is measured against having no system at all. Both
-                solutions would likely deter theft and help with claims; give them different numbers only where their
-                features actually differ.
-              </Text>
+              <Text size="xs">{copy.freshNote}</Text>
             </Alert>
           )}
         </>

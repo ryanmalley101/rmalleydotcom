@@ -1,10 +1,12 @@
 "use client";
 
 import { Card, SimpleGrid, Stack, Text, Title, UnstyledButton } from "@mantine/core";
-import { SHAPE_OPTIONS } from "../lib/defaults";
+import type { ShapeOption } from "../lib/fields";
 import { TEXT_MUTED } from "../lib/colors";
 
-export default function ShapeStep({ value, onChange }: { value: string | null; onChange: (id: string) => void }) {
+export default function ShapeStep({ options, value, onChange }: {
+  options: ShapeOption[]; value: string | null; onChange: (id: string) => void;
+}) {
   return (
     <Stack gap="md">
       <div>
@@ -14,7 +16,7 @@ export default function ShapeStep({ value, onChange }: { value: string | null; o
         </Text>
       </div>
       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
-        {SHAPE_OPTIONS.map((opt) => {
+        {options.map((opt) => {
           const selected = value === opt.id;
           return (
             <UnstyledButton key={opt.id} onClick={() => onChange(opt.id)}>

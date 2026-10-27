@@ -1,7 +1,7 @@
 "use client";
 
 import { Accordion, ScrollArea, Table, Text } from "@mantine/core";
-import type { ComparisonResult } from "../lib/model";
+import type { ComparisonTotals } from "../lib/engine";
 import { upfrontAndOngoing } from "../lib/report";
 import { TEXT_MUTED, fmtUsd } from "../lib/colors";
 
@@ -10,7 +10,7 @@ const yearTotal = (byYear: Record<string, number>) => Object.values(byYear).redu
 // Year-by-year costs for both solutions, plus the buildout-vs-ongoing split,
 // as a plain table: the numbers behind the cumulative chart, readable
 // without hovering and by screen readers.
-export default function YearTable({ comparison, nameA, nameB }: { comparison: ComparisonResult; nameA: string; nameB: string }) {
+export default function YearTable({ comparison, nameA, nameB }: { comparison: ComparisonTotals; nameA: string; nameB: string }) {
   const { a, b, labels } = comparison;
   const sa = upfrontAndOngoing(a), sb = upfrontAndOngoing(b);
   return (

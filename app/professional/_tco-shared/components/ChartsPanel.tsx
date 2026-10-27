@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Chart, type Plugin } from "chart.js/auto";
 import { Paper, Stack } from "@mantine/core";
-import type { ComparisonResult } from "../lib/model";
+import type { ComparisonTotals } from "../lib/engine";
 import { TEXT_MUTED, fmtUsdK } from "../lib/colors";
 
 Chart.defaults.color = TEXT_MUTED;
@@ -67,7 +67,7 @@ function makeCrossoverPlugin(yearsRef: { current: number[] }): Plugin<"line"> {
 
 export default function ChartsPanel({
   comparison, nameA, nameB, colorA, colorB,
-}: { comparison: ComparisonResult; nameA: string; nameB: string; colorA: string; colorB: string }) {
+}: { comparison: ComparisonTotals; nameA: string; nameB: string; colorA: string; colorB: string }) {
   const cumRef = useRef<HTMLCanvasElement>(null);
   const catRef = useRef<HTMLCanvasElement>(null);
   const cumChart = useRef<Chart | null>(null);

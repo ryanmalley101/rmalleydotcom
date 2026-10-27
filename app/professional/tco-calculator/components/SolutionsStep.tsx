@@ -1,11 +1,11 @@
 "use client";
 
-import { Badge, Box, Card, Group, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
+import { Badge, Box, Card, Group, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
 import {
   ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Layers, Percent, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
-import { TEXT_MUTED } from "../lib/colors";
+import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
 import { CLOUD_PROVIDERS, ONPREM_VMS_PROVIDERS, ONPREM_CAMERA_PROVIDERS } from "../lib/providers";
 import {
   CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS,
@@ -15,12 +15,12 @@ import CameraStrategyControl from "./CameraStrategyControl";
 import AnalyticsToggle from "./AnalyticsToggle";
 import { RAID_OPTIONS } from "../lib/fields";
 import { RAID_HELP } from "../lib/fieldHelp";
-import InfoLabel from "./InfoLabel";
-import SourceDot from "./SourceDot";
+import InfoLabel from "../../_tco-shared/components/InfoLabel";
+import SourceDot from "../../_tco-shared/components/SourceDot";
 import SolutionField from "./SolutionField";
+import { ConfidenceBadge as SharedConfidenceBadge, OTHER_PROVIDER as OTHER, providerSelectData as selectData } from "../../_tco-shared/components/FormParts";
 
 
-const OTHER = "other";
 const PLACEHOLDER_NAMES = ["Solution A (Cloud)", "Solution A (On-Prem)", "Solution B (Cloud)", "Solution B (On-Prem)"];
 
 const MIGRATION_STRATEGY_HELP =
@@ -29,30 +29,13 @@ const MIGRATION_STRATEGY_HELP =
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
-function selectData(options: string[]) {
-  return [...options.map((p) => ({ value: p, label: p })), { value: OTHER, label: "Other…" }];
-}
-
 // How much of a picked vendor's pre-filled data is a real source vs. an
 // estimate — the fieldMeta this reads already exists per-field, this just
 // surfaces it at a glance instead of it sitting invisible in the data file.
 function ConfidenceBadge({
   vendorName, table, headlineField,
 }: { vendorName: string; table: Record<string, VendorDefaultEntry>; headlineField?: keyof SolutionInputs }) {
-  const summary = confidenceSummary(vendorName, table, headlineField);
-  if (summary.total === 0 && summary.tone !== "estimated") return null;
-  const color = summary.tone === "sourced" ? "teal" : summary.tone === "mixed" ? "yellow" : "gray";
-  return (
-    <Tooltip
-      multiline w={260} withArrow
-      events={{ hover: true, focus: true, touch: true }}
-      label="How many of this vendor's pre-filled fields come from a real published/reseller source vs. an estimate. Every field is still fully editable either way, worth double-checking the estimated ones before trusting a close comparison."
-    >
-      <Badge variant="light" color={color} size="sm" style={{ cursor: "help", width: "fit-content" }}>
-        {summary.label}
-      </Badge>
-    </Tooltip>
-  );
+  return <SharedConfidenceBadge summary={confidenceSummary(vendorName, table, headlineField)} />;
 }
 
 function composeOnPremName(id: "a" | "b", vms: string, camera: string) {

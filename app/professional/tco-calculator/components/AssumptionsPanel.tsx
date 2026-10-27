@@ -1,22 +1,23 @@
 "use client";
 
-import { Alert, Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid, Text } from "@mantine/core";
+import { Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid } from "@mantine/core";
 import {
-  AlertTriangle, ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
+  ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
   FileText, Globe, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
   RefreshCw, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, RetentionPricing, ScenarioInputs, SolutionInputs } from "../lib/model";
-import { TEXT_MUTED } from "../lib/colors";
+import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
 import { fieldSourceInfo, vendorEntriesFor } from "../lib/vendorDefaults";
-import InfoLabel from "./InfoLabel";
-import SourceDot from "./SourceDot";
+import InfoLabel from "../../_tco-shared/components/InfoLabel";
+import SourceDot from "../../_tco-shared/components/SourceDot";
 import SolutionField from "./SolutionField";
-import MiscItemsEditor from "./MiscItemsEditor";
+import MiscItemsEditor from "../../_tco-shared/components/MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
 import AnalyticsToggle from "./AnalyticsToggle";
 import { RAID_OPTIONS } from "../lib/fields";
 import { RAID_HELP } from "../lib/fieldHelp";
+import { SectionLabel, StaleRefreshWarning } from "../../_tco-shared/components/FormParts";
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
@@ -32,43 +33,6 @@ const RETENTION_PRICING_HELP =
 
 const RENEWAL_HELP =
   "How many years until the license already in place has to be renewed. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
-
-// Groups related fields under a shared heading, since a flat list of ~25
-// fields (this panel's old shape) reads as one undifferentiated wall of
-// inputs. `first` drops the top margin so the very first section doesn't
-// float away from the panel's top edge.
-const SectionLabel = ({ children, first }: { children: React.ReactNode; first?: boolean }) => (
-  <div style={{ gridColumn: "1 / -1" }}>
-    <Text size="xs" fw={700} tt="uppercase" c={TEXT_MUTED} style={{ letterSpacing: 0.5 }} mt={first ? 0 : "sm"}>
-      {children}
-    </Text>
-  </div>
-);
-
-// Warns when a solution's hardware-refresh timing means its whole refresh
-// line (server/storage/analytics appliance, or the connector appliance) can
-// never actually be charged within this comparison: an incumbent skips the
-// year-0 buildout entirely (nothing new deployed for it), so refresh cycles
-// are the *only* place that cost can still appear — and if the next refresh
-// falls at or beyond the horizon, it never does. Silent otherwise, since a
-// non-incumbent always pays at year 0 regardless of refresh timing, and a
-// refresh past the horizon for it is a legitimate, harmless scenario, not a
-// cost line quietly disappearing.
-function StaleRefreshWarning({ isIncumbent, yearsUntilNextRefresh, horizonYears, what }: {
-  isIncumbent: boolean; yearsUntilNextRefresh: number; horizonYears: number; what: string;
-}) {
-  if (!isIncumbent || yearsUntilNextRefresh < horizonYears) return null;
-  return (
-    <div style={{ gridColumn: "1 / -1" }}>
-      <Alert color="yellow" variant="light" icon={<AlertTriangle size={16} />} p="xs">
-        <Text size="xs">
-          This solution is marked incumbent and its next refresh ({yearsUntilNextRefresh}yr) falls at or beyond the{" "}
-          {horizonYears}-year horizon — {what} won&apos;t appear anywhere in this comparison.
-        </Text>
-      </Alert>
-    </div>
-  );
-}
 
 export default function AssumptionsPanel({ sol, onChange, scenario }: {
   sol: SolutionInputs; onChange: (v: SolutionInputs) => void; scenario: ScenarioInputs;

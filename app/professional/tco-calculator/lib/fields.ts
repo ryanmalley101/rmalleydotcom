@@ -9,18 +9,9 @@ import {
   ADMIN_HOURS_HELP, HALF_LIFE_HELP, INVESTIGATION_HOURS_HELP, MANAGEMENT_SERVERS_HELP, NETWORK_HELP,
   RAID_ARRAY_HELP, SERVER_SOFTWARE_HELP, STORAGE_PRICE_HELP, TRUCK_ROLLS_HELP,
 } from "./fieldHelp";
+import type { FieldDef } from "../../_tco-shared/lib/fields";
 
-export interface FieldDef<K extends string> {
-  key: K;
-  label: string;
-  models?: DeploymentModel[];
-  help?: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  decimalScale?: number;
-  int?: boolean;
-}
+export type { FieldDef } from "../../_tco-shared/lib/fields";
 
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, like the hardware, unless this solution is the incumbent (already owned). Only the support renewal recurs afterward.";

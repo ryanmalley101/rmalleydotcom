@@ -23,103 +23,33 @@
 //   out of scope (OUT_OF_SCOPE): counting their benefit without their cost
 //   would tilt the comparison.
 //
-// Two kinds of priced category:
-// - "existing": a cost the business has today. Its yearly size per site comes
-//   from shared inputs (facts about the business, the same for both
-//   solutions); each solution enters a % change to it.
-// - "new": a cost the business doesn't have today. Each solution enters its
-//   own amount. The framework only lists benefits; these keep the tool
-//   even-handed.
-// Every industry offers the same priced props, with its own wording and
-// placeholders where it matters, and pre-checks the ones its section of the
-// framework names (`suggested`). The user switches categories on and off
-// (ScenarioInputs.outcomeEnabled); a category that's off counts for nothing.
-//
-// Every value is a change from today. The incumbent *is* today, so its
-// changes are always 0 (computeSolution skips them): today's shrink and
-// claims already reflect the system that's installed. On a new site neither
-// side is incumbent, and both are changes from having no system at all.
+// The engine (kinds of category, how a change becomes a yearly amount, the
+// incumbent rule) is shared with the access control calculator; see
+// _tco-shared/lib/impact.ts. This file is the video catalog: every industry
+// offers the same priced props, with its own wording and placeholders where
+// it matters, and pre-checks the ones its section of the framework names
+// (`suggested`).
 //
 // Kept free of runtime imports from model.ts (types only) so the model can
 // call it without an import cycle, like sanitize.ts.
-import type { ScenarioInputs, SolutionInputs } from "./model";
+import {
+  annual, buildVertical as sharedBuildVertical, createImpact, incidents, merge, text,
+  type Consideration, type InputSpec, type InputText, type NewCostDef, type OutcomeIcon, type Overrides, type PillarDef, type Spec,
+  type VerticalDef,
+} from "../../_tco-shared/lib/impact";
+
+export {
+  NEW_COST_UNIT_LABEL, annualBaselinePerSite, baselineValue, changeValue, inputsInUse, isCategoryEnabled,
+} from "../../_tco-shared/lib/impact";
+export type {
+  Consideration, NewCostUnit, OutcomeCategory, OutcomeGroup, OutcomeIcon, OutcomeInput, OutcomeInputUnit, VerticalDef,
+} from "../../_tco-shared/lib/impact";
 
 export type Vertical = "education" | "retail" | "healthcare" | "logistics" | "manufacturing" | "property" | "finance";
 
-export type OutcomeInputUnit = "usd" | "pct" | "count" | "hours";
-
-// Names an icon shown beside a field's label. Strings rather than icon
-// components so this file stays free of React; BusinessImpactStep maps them.
-export type OutcomeIcon =
-  | "store" | "sales" | "shrink" | "outsideTheft" | "employeeTheft" | "slip" | "gavel" | "hardHat"
-  | "hammer" | "siren" | "people" | "guard" | "clock" | "dollar" | "face" | "bell" | "cctv" | "shield" | "swap"
-  | "alert" | "umbrella" | "clipboard" | "waste" | "boxes" | "fileCheck" | "eyeOff" | "citation" | "plug"
-  | "safety" | "workflow" | "wallet" | "radar" | "handshake" | "timer" | "cameraOff" | "scroll" | "badge" | "lock"
-  | "chart" | "trending" | "school" | "hospital" | "truck" | "factory" | "building" | "bank";
-
-// A shared fact about the business, entered once and used by one or more
-// "existing" categories.
-export interface OutcomeInput {
-  key: string;
-  label: string;
-  help: string;
-  icon: OutcomeIcon;
-  unit: OutcomeInputUnit;
-  // Directional placeholder so the inputs aren't blank. Every solution's
-  // change starts at 0, so these never move a total on their own.
-  default: number;
-}
-
-export type NewCostUnit = "usdPerYear" | "usdPerSiteMonth" | "hoursPerSiteWeek";
-
-export type OutcomeCategory =
-  | {
-      id: string;
-      code: string;
-      label: string;
-      help: string;
-      icon: OutcomeIcon;
-      kind: "existing";
-      // The shared inputs this category's yearly cost is built from, for display.
-      inputKeys: string[];
-      // Yearly cost per site today. `v` reads a shared input by key, or a
-      // scenario rate as "scenario.adminRate" / "scenario.investigatorRate".
-      annualPerSite: (v: (key: string) => number) => number;
-    }
-  | {
-      id: string;
-      code: string;
-      label: string;
-      help: string;
-      icon: OutcomeIcon;
-      kind: "new";
-      unit: NewCostUnit;
-    };
-
-// A themed set of categories, shown together with its own heading so the
-// step isn't one long list.
-export interface OutcomeGroup {
-  id: string;
-  label: string;
-  description: string;
-  icon: OutcomeIcon;
-  categoryIds: string[];
-}
-
-export interface VerticalDef {
-  id: Vertical;
-  label: string;
-  icon: OutcomeIcon;
-  inputs: OutcomeInput[];
-  categories: OutcomeCategory[];
-  groups: OutcomeGroup[];
-  // Category ids switched on when this industry is picked.
-  suggested: string[];
-}
-
 // The framework's pillars, in its order, as group headings. "NEW" holds the
 // new costs, which aren't part of the framework.
-const PILLARS: { prefix: string; label: string; description: string; icon: OutcomeIcon }[] = [
+const PILLARS: PillarDef[] = [
   { prefix: "SF", label: "Safety", description: "Harm to people, and the claims that follow.", icon: "safety" },
   { prefix: "RL", label: "Risk & liability", description: "Theft, damage, disputes, and insurance.", icon: "gavel" },
   { prefix: "OI", label: "Operational impact", description: "Staffing, process failures, waste, and lost assets.", icon: "workflow" },
@@ -129,44 +59,12 @@ const PILLARS: { prefix: string; label: string; description: string; icon: Outco
 ];
 
 // ---------------------------------------------------------------------------
-// Priced categories. Each helper builds one category plus the shared inputs
-// it needs; an input's key is `<industry>.<category>.<name>` unless it sets
-// its own (to share it between categories, like retail's sales and shrink).
-
-interface InputSpec { name: string; key?: string; label: string; help: string; icon: OutcomeIcon; unit: OutcomeInputUnit; default: number }
-interface Spec {
-  id: string;
-  code: string;
-  label: string;
-  help: string;
-  icon: OutcomeIcon;
-  inputs: InputSpec[];
-  annualPerSite: (v: (name: string) => number) => number;
-}
-
-interface Text { label: string; help: string; icon: OutcomeIcon }
-type InputText = Omit<InputSpec, "name" | "unit" | "key">;
-
-// Incidents per site per year × average cost each.
-function incidents(code: string, t: Text, count: InputText, cost: InputText, id = code): Spec {
-  return {
-    id, code, ...t,
-    inputs: [{ name: "count", unit: "count", ...count }, { name: "cost", unit: "usd", ...cost }],
-    annualPerSite: (v) => v("count") * v("cost"),
-  };
-}
-
-// A yearly dollar amount per site.
-function annual(code: string, t: Text, amount: InputText, id = code): Spec {
-  return { id, code, ...t, inputs: [{ name: "amount", unit: "usd", ...amount }], annualPerSite: (v) => v("amount") };
-}
-
-// The generic version of each priced prop, worded for any industry. An
-// industry overrides only the text and placeholders that differ for it.
-type Overrides = Partial<Text> & { count?: Partial<InputText>; cost?: Partial<InputText>; amount?: Partial<InputText>; hours?: Partial<InputText> };
-
-const merge = <T extends object>(base: T, o?: Partial<T>): T => ({ ...base, ...(o ?? {}) });
-const text = (base: Text, o?: Overrides): Text => ({ label: o?.label ?? base.label, help: o?.help ?? base.help, icon: o?.icon ?? base.icon });
+// Priced categories, built with the shared helpers (incidents, annual): one
+// category plus the shared inputs it needs; an input's key is
+// `<industry>.<category>.<name>` unless it sets its own (to share it between
+// categories, like retail's sales and shrink). Each is the generic version,
+// worded for any industry; an industry overrides only the text and
+// placeholders that differ for it.
 
 const PRICED: Record<string, (o?: Overrides) => Spec> = {
   SF1: (o) => incidents("SF1",
@@ -244,7 +142,7 @@ const PRICED: Record<string, (o?: Overrides) => Spec> = {
 const PRICED_ORDER = ["SF1", "SF8", "RL2", "RL1", "RL3", "RL5", "OI2", "OI3", "OI4", "OI5", "CG1", "CG3", "CG5", "TCO3", "TCO4", "TCO6"];
 
 // New costs, the same for every industry.
-const NEW_COSTS: { id: string; label: string; help: string; icon: OutcomeIcon; unit: NewCostUnit }[] = [
+const NEW_COSTS: NewCostDef[] = [
   {
     id: "biometricCompliance", unit: "usdPerYear", icon: "face", label: "Face recognition compliance",
     help: "Yearly cost of using face recognition lawfully, across the company: legal review, signage, consent, and the exposure under biometric privacy laws such as Illinois's BIPA. Leave at 0 for a solution where it isn't used.",
@@ -259,30 +157,10 @@ const NEW_COSTS: { id: string; label: string; help: string; icon: OutcomeIcon; u
   },
 ];
 
-function buildVertical(id: Vertical, label: string, icon: OutcomeIcon, specs: Spec[], suggested: string[]): VerticalDef {
-  const inputs = new Map<string, OutcomeInput>();
-  const categories: OutcomeCategory[] = specs.map((spec) => {
-    const keyFor = new Map(spec.inputs.map((i) => [i.name, i.key ?? `${id}.${spec.id}.${i.name}`]));
-    for (const i of spec.inputs) {
-      const key = keyFor.get(i.name)!;
-      if (!inputs.has(key)) inputs.set(key, { key, label: i.label, help: i.help, icon: i.icon, unit: i.unit, default: i.default });
-    }
-    return {
-      id: `${id}.${spec.id}`, code: spec.code, label: spec.label, help: spec.help, icon: spec.icon, kind: "existing" as const,
-      inputKeys: Array.from(keyFor.values()),
-      annualPerSite: (v: (key: string) => number) => spec.annualPerSite((name) => v(name.startsWith("scenario.") ? name : keyFor.get(name)!)),
-    };
-  });
-  for (const c of NEW_COSTS) categories.push({ ...c, id: `${id}.${c.id}`, code: "NEW", kind: "new" });
-
-  const pillarOf = (code: string) => code.replace(/\d+$/, "");
-  const groups = PILLARS.map((p) => ({
-    id: `${id}.${p.prefix}`, label: p.label, description: p.description, icon: p.icon,
-    categoryIds: categories.filter((c) => pillarOf(c.code) === p.prefix).map((c) => c.id),
-  })).filter((g) => g.categoryIds.length > 0);
-
-  return { id, label, icon, inputs: Array.from(inputs.values()), categories, groups, suggested: suggested.map((s) => `${id}.${s}`) };
-}
+// Kept typed by this calculator's own industry ids.
+type CameraVerticalDef = VerticalDef & { id: Vertical };
+const buildVertical = (id: Vertical, label: string, icon: OutcomeIcon, specs: Spec[], suggested: string[]): CameraVerticalDef =>
+  ({ ...sharedBuildVertical(id, label, icon, specs, suggested, PILLARS, NEW_COSTS), id });
 
 // Every priced prop, in order, with this industry's overrides; `replace`
 // swaps one prop for a custom set of categories (retail's split shrink).
@@ -326,7 +204,7 @@ const RETAIL_SHRINK: Spec[] = [
 
 const store = (s: string) => s.replace(/\bsite\b/g, "store");
 
-export const VERTICALS: VerticalDef[] = [
+export const VERTICALS: CameraVerticalDef[] = [
   buildVertical("education", "K-12 & Higher Ed", "school", specsFor({
     SF1: { label: "Fights & violent incidents", help: "Incidents × average cost. Fight detection and person-of-interest search can interrupt incidents and speed up the response; the cost includes injuries, staff time, and legal exposure.", count: { label: "Violent incidents per campus per year" } },
     RL3: { count: { label: "Vandalism incidents per campus per year", help: "Graffiti, restroom and property damage, and after-hours break-ins per campus per year." } },
@@ -388,14 +266,6 @@ export const VERTICALS: VerticalDef[] = [
 // happens (proactive alerts reduce theft, faster response reduces harm), so
 // pricing them too would count them twice. Ticked per solution
 // (SolutionInputs.considerations) and listed beside the totals, never in them.
-export interface Consideration {
-  code: string;
-  label: string;
-  help: string;
-  icon: OutcomeIcon;
-  revenue?: boolean;
-}
-
 export const CONSIDERATIONS: Consideration[] = [
   { code: "SF2", icon: "radar", label: "Proactive alerts that interrupt incidents", help: "Line-crossing, loitering, and similar alerts that let staff step in while something is happening. Its dollar value shows up in theft and damage, so it isn't priced separately." },
   { code: "SF6", icon: "timer", label: "Faster incident response", help: "Alerts routed to the right people, and live video shared with responders. Its dollar value shows up in safety and damage costs." },
@@ -418,111 +288,6 @@ export const OUT_OF_SCOPE = [
   "fleet uptime (fleet cameras)",
 ];
 
-export function verticalFor(scenario: Pick<ScenarioInputs, "vertical">): VerticalDef | null {
-  return VERTICALS.find((v) => v.id === scenario.vertical) ?? null;
-}
-
-export function isCategoryEnabled(scenario: Pick<ScenarioInputs, "outcomeEnabled">, categoryId: string): boolean {
-  return Array.isArray(scenario.outcomeEnabled) && scenario.outcomeEnabled.includes(categoryId);
-}
-
-// A solution's ticked considerations, in display order.
-export function considerationsFor(sol: SolutionInputs): Consideration[] {
-  const ticked = Array.isArray(sol.considerations) ? sol.considerations : [];
-  return CONSIDERATIONS.filter((c) => ticked.includes(c.code));
-}
-
-// The shared inputs the enabled categories need, in the vertical's order.
-// Inputs only an "off" category uses stay hidden.
-export function inputsInUse(scenario: ScenarioInputs, vertical: VerticalDef, categoryIds = vertical.categories.map((c) => c.id)): OutcomeInput[] {
-  const keys = new Set(
-    vertical.categories
-      .filter((c) => categoryIds.includes(c.id) && isCategoryEnabled(scenario, c.id))
-      .flatMap((c) => (c.kind === "existing" ? c.inputKeys : [])),
-  );
-  return vertical.inputs.filter((i) => keys.has(i.key));
-}
-
-export const NEW_COST_UNIT_LABEL: Record<NewCostUnit, string> = {
-  usdPerYear: "$/yr",
-  usdPerSiteMonth: "$/site/mo",
-  hoursPerSiteWeek: "hrs/site/wk",
-};
-
-const num = (n: unknown, fallback = 0) => (typeof n === "number" && Number.isFinite(n) ? n : fallback);
-
-// Reads a shared input, falling back to its default when it hasn't been set.
-// Never negative; percentages capped at 100.
-export function baselineValue(scenario: ScenarioInputs, input: OutcomeInput): number {
-  const n = Math.max(0, num(scenario.outcomeBaseline?.[input.key], input.default));
-  return input.unit === "pct" ? Math.min(100, n) : n;
-}
-
-export function annualBaselinePerSite(scenario: ScenarioInputs, vertical: VerticalDef, category: OutcomeCategory): number {
-  if (category.kind !== "existing") return 0;
-  const byKey = new Map(vertical.inputs.map((i) => [i.key, i]));
-  return category.annualPerSite((key) => {
-    if (key === "scenario.adminRate") return Math.max(0, num(scenario.adminRate));
-    if (key === "scenario.investigatorRate") return Math.max(0, num(scenario.investigatorRate));
-    const input = byKey.get(key);
-    return input ? baselineValue(scenario, input) : 0;
-  });
-}
-
-// A solution's entered change for one category: a % (-100 to 100) for an
-// existing cost, a non-negative amount in the category's unit for a new one.
-export function changeValue(sol: SolutionInputs, category: OutcomeCategory): number {
-  const n = num(sol.outcomeChanges?.[category.id]);
-  return category.kind === "existing" ? Math.max(-100, Math.min(100, n)) : Math.max(0, n);
-}
-
-// Business impact inputs as a reader of an exported report should see them:
-// the shared inputs, each solution's change per category, and each
-// solution's considerations. Empty when no industry is selected.
-export function outcomeReportRows(scenario: ScenarioInputs, solA: SolutionInputs, solB: SolutionInputs): {
-  industry: string;
-  inputs: [string, number][];
-  changes: [string, string, string][];
-  considerations: [string, string, string][];
-} {
-  const vertical = verticalFor(scenario);
-  if (!vertical) return { industry: "None", inputs: [], changes: [], considerations: [] };
-  const show = (sol: SolutionInputs, category: OutcomeCategory) => {
-    if (scenario.incumbent === sol.id) return "incumbent (today)";
-    const v = changeValue(sol, category);
-    return category.kind === "existing" ? `${v}%` : `${v} ${NEW_COST_UNIT_LABEL[category.unit]}`;
-  };
-  const a = considerationsFor(solA), b = considerationsFor(solB);
-  return {
-    industry: vertical.label,
-    inputs: inputsInUse(scenario, vertical).map((i) => [i.label, baselineValue(scenario, i)]),
-    changes: vertical.categories
-      .filter((c) => isCategoryEnabled(scenario, c.id))
-      .map((c) => [c.label, show(solA, c), show(solB, c)]),
-    considerations: CONSIDERATIONS
-      .filter((c) => a.includes(c) || b.includes(c))
-      .map((c) => [c.label, a.includes(c) ? "yes" : "", b.includes(c) ? "yes" : ""]),
-  };
-}
-
-// Year-1 (unescalated) dollar effect of each enabled category for one
-// solution; negative is a saving. Escalated with labor in computeSolution.
-export function annualOutcomes(scenario: ScenarioInputs, sol: SolutionInputs): { category: OutcomeCategory; amount: number }[] {
-  const vertical = verticalFor(scenario);
-  if (!vertical) return [];
-  const sites = Math.max(1, scenario.sites);
-  return vertical.categories.filter((c) => isCategoryEnabled(scenario, c.id)).map((category) => {
-    const change = changeValue(sol, category);
-    let amount = 0;
-    if (category.kind === "existing") {
-      amount = annualBaselinePerSite(scenario, vertical, category) * sites * (change / 100);
-    } else if (category.unit === "usdPerYear") {
-      amount = change;
-    } else if (category.unit === "usdPerSiteMonth") {
-      amount = change * 12 * sites;
-    } else {
-      amount = change * 52 * sites * Math.max(0, num(scenario.investigatorRate));
-    }
-    return { category, amount };
-  });
-}
+// The catalog's functions, bound to it.
+export const IMPACT = createImpact({ verticals: VERTICALS, considerations: CONSIDERATIONS, outOfScope: OUT_OF_SCOPE });
+export const { verticalFor, considerationsFor, annualOutcomes, outcomeReportRows } = IMPACT;
