@@ -12,6 +12,12 @@ const projects = [
       "A guided wizard for comparing the total cost of ownership of two video-management deployments (on-prem vs. on-prem, cloud vs. cloud, or one of each), with editable pricing assumptions and NPV, crossover, and cost-by-category charts.",
   },
   {
+    href: "/professional/access-control-tco",
+    title: "Access Control TCO Calculator",
+    description:
+      "The same kind of comparison for access control: cloud-managed vs. server-based systems, priced per door and per cardholder, with which existing readers and controllers each side can keep decided per solution.",
+  },
+  {
     // Links to /demo: the app root is a sign-in wall and accounts are admin-created only.
     href: "https://vantage.rmalley.com/demo",
     title: "Vantage",

@@ -8,6 +8,19 @@ import type { IncumbentChoice } from "../lib/engine";
 import type { ConfidenceSummary } from "../lib/vendorData";
 import InfoLabel from "./InfoLabel";
 
+// A field label with its context icon in front, and a help tooltip when
+// there's help text.
+export function IconLabel({ icon: Icon, label, help, size, color, fw, extra }: {
+  icon: React.ElementType; label: string; help?: string; size?: string; color?: string; fw?: number; extra?: React.ReactNode;
+}) {
+  return (
+    <Group gap={6} wrap="nowrap" style={{ fontSize: size, color, fontWeight: fw }}>
+      <Icon size={14} style={{ flexShrink: 0, opacity: 0.85 }} />
+      {help ? <InfoLabel label={label} help={help} size={size} color={color} fw={fw} extra={extra} /> : <span>{label}</span>}
+    </Group>
+  );
+}
+
 // Groups related fields under a shared heading, since a flat list of ~25
 // fields reads as one undifferentiated wall of inputs. `first` drops the top
 // margin so the very first section doesn't float away from the panel's top
