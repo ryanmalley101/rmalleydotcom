@@ -17,6 +17,7 @@
 // totals were recalculated instead of silently showing different numbers.
 // Links from before versioning existed decode as version 1.
 import { sanitizeScenario, sanitizeSolution } from "./sanitize";
+import { annualOutcomes, type Vertical } from "./verticals";
 
 export const MODEL_VERSION = 2;
 
@@ -137,6 +138,16 @@ export interface ScenarioInputs {
   // billed in full for a year or two of use: a six-year horizon pays for two
   // five-year cloud terms. Defaults to true.
   creditResidualValue: boolean;
+  // Industry for the business impact step (lib/verticals.ts), or null for
+  // none, which leaves business impact out of the comparison entirely.
+  vertical: Vertical | null;
+  // That industry's shared inputs, keyed by OutcomeInput.key. A missing key
+  // reads as the input's default.
+  outcomeBaseline: Record<string, number>;
+  // Ids of the categories switched on for this business. Only these show
+  // fields or count toward a total; the rest keep any entered values, so
+  // switching one back on restores them.
+  outcomeEnabled: string[];
 }
 
 // A free-form misc cost/credit line item — the escape valve for whatever a
@@ -279,6 +290,13 @@ export interface SolutionInputs {
   // Defaults to an empty array; purely additive, never changes any other
   // category's math.
   miscItems: MiscCostItem[];
+
+  // Business impact: this solution's change to each of the scenario
+  // vertical's categories, keyed by category id (a % for a cost the business
+  // already has, an amount for a new one; see lib/verticals.ts). Missing
+  // means no change. Ignored for the incumbent, whose effect is already in
+  // today's numbers.
+  outcomeChanges: Record<string, number>;
 }
 
 export const CATEGORIES = [
@@ -291,6 +309,8 @@ export const CATEGORIES = [
   "Investigations",
   "Network / bandwidth",
   "Misc / other",
+  "Business impact: savings",
+  "Business impact: added costs",
   "Residual value (credit)",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
@@ -300,6 +320,12 @@ export type Category = (typeof CATEGORIES)[number];
 // separately (SolutionResult.staffTimeTotal) because they're the softest,
 // least-verifiable numbers in a comparison and often its biggest driver.
 export const STAFF_TIME_CATEGORIES: readonly Category[] = ["Admin labor", "Investigations"];
+
+// The business impact step's estimates (lib/verticals.ts): changes to theft,
+// claims, guards, and the like. Also kept in every total and reported
+// separately (SolutionResult.outcomeTotal), for the same reason as staff
+// time, only more so.
+export const OUTCOME_CATEGORIES: readonly Category[] = ["Business impact: savings", "Business impact: added costs"];
 
 // Continuous replacement for the old 5-step (30/60/90/180/365-day) table.
 // Fit as a power curve (days/30)^0.4 against those same reference points
@@ -346,10 +372,12 @@ export interface SolutionResult {
   // credit, if any, sits in the final year.
   byYear: Record<Category, number>[];
   total: number;
-  // total split into money paid out vs. estimated internal staff time
-  // (STAFF_TIME_CATEGORIES); cashTotal + staffTimeTotal === total.
+  // total split into money paid out, estimated internal staff time
+  // (STAFF_TIME_CATEGORIES), and estimated business impact
+  // (OUTCOME_CATEGORIES); cashTotal + staffTimeTotal + outcomeTotal === total.
   cashTotal: number;
   staffTimeTotal: number;
+  outcomeTotal: number;
   hardware: HardwareFootprint;
 }
 
@@ -459,6 +487,12 @@ export function computeSolution(
       if (it.timing === "once") return Math.round(Number(it.year) || 0) === y ? sum + amount : sum;
       return sum;
     }, 0);
+  // Business impact, a change from today: none for the incumbent, which is
+  // today. Recurring from year 1, once the system is in, and escalated with
+  // labor and services, since losses and claims track wages and prices.
+  const outcomes = isIncumbent ? [] : annualOutcomes(scenario, sol);
+  const outcomeSavings = outcomes.reduce((sum, o) => sum + Math.min(0, o.amount), 0);
+  const outcomeCosts = outcomes.reduce((sum, o) => sum + Math.max(0, o.amount), 0);
 
   // Refresh timing. "Years until next refresh" describes hardware that's
   // already installed and aging, so only the incumbent uses it. A side that
@@ -552,6 +586,8 @@ export function computeSolution(
       yearCosts["Network / bandwidth"] = sites * sol.networkCostPerSiteYr * labor;
       yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate * labor;
       yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate * labor;
+      yearCosts["Business impact: savings"] = outcomeSavings * labor;
+      yearCosts["Business impact: added costs"] = outcomeCosts * labor;
 
       if (sol.model === "cloud") {
         // ripReplace has no connector appliance, so no ongoing hardware refresh.
@@ -607,6 +643,7 @@ export function computeSolution(
 
   const total = Object.values(totalsByCategory).reduce((a, b) => a + b, 0);
   const staffTimeTotal = STAFF_TIME_CATEGORIES.reduce((sum, c) => sum + totalsByCategory[c], 0);
+  const outcomeTotal = OUTCOME_CATEGORIES.reduce((sum, c) => sum + totalsByCategory[c], 0);
   const hardware: HardwareFootprint = {
     unitsLabel:
       sol.model === "onprem" ? "Recording servers" : sol.migrationStrategy === "connector" ? "Connector appliances" : null,
@@ -618,7 +655,10 @@ export function computeSolution(
     cameraSwaps,
     originalFleetReplacedPct: cams > 0 ? Math.min(100, Math.max(0, (100 * (cams - startCohort.size)) / cams)) : 0,
   };
-  return { totalsByCategory, cumulative, byYear, total, cashTotal: total - staffTimeTotal, staffTimeTotal, hardware };
+  return {
+    totalsByCategory, cumulative, byYear, total,
+    cashTotal: total - staffTimeTotal - outcomeTotal, staffTimeTotal, outcomeTotal, hardware,
+  };
 }
 
 export interface ComparisonResult {
@@ -664,7 +704,8 @@ export function computeComparison(rawScenario: ScenarioInputs, solA: SolutionInp
     }
   }
 
-  // Math.abs: credits (residual value, negative misc items) are real lines too.
+  // Math.abs: credits (residual value, negative misc items, business impact
+  // savings) are real lines too.
   const activeCategories = CATEGORIES.filter((c) => Math.abs(a.totalsByCategory[c]) > 0.5 || Math.abs(b.totalsByCategory[c]) > 0.5);
 
   return {

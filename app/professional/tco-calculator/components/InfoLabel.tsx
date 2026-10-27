@@ -4,11 +4,17 @@ import { Group, Tooltip, UnstyledButton } from "@mantine/core";
 import { HelpCircle } from "lucide-react";
 
 export default function InfoLabel({
-  label, help, size, color, fw, extra,
-}: { label: string; help: string; size?: string; color?: string; fw?: number | string; extra?: React.ReactNode }) {
+  label, help, size, color, fw, extra, hideLabel,
+}: {
+  label: string; help: string; size?: string; color?: string; fw?: number | string; extra?: React.ReactNode;
+  // Just the help icon, for a label shown elsewhere (e.g. a checkbox's own
+  // label, which the icon can't sit inside without toggling it). `label`
+  // still names the icon for screen readers.
+  hideLabel?: boolean;
+}) {
   return (
     <Group gap={4} wrap="nowrap" style={{ fontSize: size, color, fontWeight: fw }}>
-      <span>{label}</span>
+      {!hideLabel && <span>{label}</span>}
       {extra}
       <Tooltip multiline w={260} withArrow label={help} events={{ hover: true, focus: true, touch: true }}>
         <UnstyledButton

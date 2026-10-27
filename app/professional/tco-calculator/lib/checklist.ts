@@ -5,6 +5,7 @@ import type { ComparisonResult, ScenarioInputs, SolutionInputs } from "./model";
 import { defaultSolution } from "./defaults";
 import { SOLUTION_FIELD_MAP } from "./fields";
 import { fieldSourceInfo, vendorEntriesFor } from "./vendorDefaults";
+import { changeValue, isCategoryEnabled, verticalFor } from "./verticals";
 
 // Inputs that most often decide a comparison, checked for still holding an
 // unsourced generic default.
@@ -51,6 +52,28 @@ export function buildChecklist(scenario: ScenarioInputs, solA: SolutionInputs, s
   const staffGap = Math.abs(c.a.staffTimeTotal - c.b.staffTimeTotal);
   if (gap > 0 && staffGap / gap > 0.5 && Math.sign(c.a.staffTimeTotal - c.b.staffTimeTotal) === Math.sign(c.a.total - c.b.total)) {
     items.push(`More than half of the difference is estimated staff time (admin and investigation hours). Check those inputs with the people who do the work.`);
+  }
+
+  const vertical = verticalFor(scenario);
+  if (vertical) {
+    const outcomeGap = Math.abs(c.a.outcomeTotal - c.b.outcomeTotal);
+    if (gap > 0 && outcomeGap / gap > 0.5 && Math.sign(c.a.outcomeTotal - c.b.outcomeTotal) === Math.sign(c.a.total - c.b.total)) {
+      items.push("More than half of the difference is estimated business impact (theft, claims, and similar changes). Make sure each change is backed by the customer's own data, not a vendor case study.");
+    }
+    // Shared inputs still on their placeholder, for a category some
+    // solution has actually claimed a change to.
+    const claimed = vertical.categories.filter(
+      (cat) =>
+        cat.kind === "existing" &&
+        isCategoryEnabled(scenario, cat.id) &&
+        [solA, solB].some((s) => scenario.incumbent !== s.id && changeValue(s, cat) !== 0),
+    );
+    const placeholders = vertical.inputs.filter(
+      (i) => scenario.outcomeBaseline?.[i.key] === undefined && claimed.some((cat) => cat.kind === "existing" && cat.inputKeys.includes(i.key)),
+    );
+    if (placeholders.length) {
+      items.push(`Business impact: ${placeholders.map((i) => i.label).join(", ")} still use placeholder values. Replace them with the customer's own figures.`);
+    }
   }
   return items;
 }

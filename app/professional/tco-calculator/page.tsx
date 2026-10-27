@@ -15,9 +15,13 @@ import ShapeStep from "./components/ShapeStep";
 import ScenarioStep from "./components/ScenarioStep";
 import SolutionsStep from "./components/SolutionsStep";
 import ResultsView from "./components/ResultsView";
+import BusinessImpactStep from "./components/BusinessImpactStep";
 import IncumbentPicker from "./components/IncumbentPicker";
 
 type Phase = "intro" | "wizard" | "results";
+
+// Index of the wizard's final step (business impact).
+const LAST_STEP = 3;
 
 // Convenience defaults for this tool's actual primary audience, comparing
 // against whatever a prospect already runs. Neither is forced, both stay
@@ -72,7 +76,7 @@ function TcoCalculatorInner() {
   const [initialStep] = useState(() => {
     const raw = searchParams.get("step");
     const n = raw === null ? NaN : Number(raw);
-    return Number.isInteger(n) && n >= 0 && n <= 2 ? n : null;
+    return Number.isInteger(n) && n >= 0 && n <= LAST_STEP ? n : null;
   });
   const [phase, setPhase] = useState<Phase>(initial ? (initialStep !== null ? "wizard" : "results") : "intro");
   const [stepIndex, setStepIndex] = useState(initialStep ?? 0);
@@ -125,7 +129,7 @@ function TcoCalculatorInner() {
   }
 
   function next() {
-    if (stepIndex < 2) setStepIndex((i) => i + 1);
+    if (stepIndex < LAST_STEP) setStepIndex((i) => i + 1);
     else if (solA && solB) setPhase("results");
   }
   function back() {
@@ -203,7 +207,7 @@ function TcoCalculatorInner() {
         </Button>
         <Title order={2} mb={4}>TCO Comparison Wizard</Title>
         <Text c={TEXT_MUTED} size="sm" mb="xl">
-          Three quick steps to set up your comparison.
+          Four quick steps to set up your comparison. The last one is optional.
         </Text>
 
         <Stepper active={stepIndex} onStepClick={setStepIndex} allowNextStepsSelect={false} mb="xl">
@@ -236,6 +240,16 @@ function TcoCalculatorInner() {
               )}
             </Box>
           </Stepper.Step>
+          <Stepper.Step label="Business impact" description="Optional, by industry">
+            <Box mt="xl">
+              {solA && solB && (
+                <BusinessImpactStep
+                  scenario={scenario} solA={solA} solB={solB} colorA={colorA} colorB={colorB}
+                  onScenarioChange={setScenario} onSolAChange={setSolA} onSolBChange={setSolB}
+                />
+              )}
+            </Box>
+          </Stepper.Step>
         </Stepper>
 
         <Group justify="flex-end">
@@ -243,7 +257,7 @@ function TcoCalculatorInner() {
             Back
           </Button>
           <Button onClick={next} disabled={!canProceed}>
-            {stepIndex < 2 ? "Next" : "Generate comparison"}
+            {stepIndex < LAST_STEP ? "Next" : "Generate comparison"}
           </Button>
         </Group>
       </Container>

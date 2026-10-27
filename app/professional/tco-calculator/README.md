@@ -318,6 +318,62 @@ auth-gated, "dampened" on purpose.
   silently ignored a real known cost such as replacing end-of-life NVRs. `normalizeSolution()` (`lib/defaults.ts`) migrates an older
   share link/saved comparison's flat `miscUpfrontCost`/`miscAnnualCost` into
   equivalent named items on load, so old data isn't silently dropped.
+  Industry costs like theft and injury claims now have their own home in
+  business impact (below); misc items stay the catch-all for anything else.
+- **Business impact (`lib/verticals.ts`, `BusinessImpactStep`)**: the
+  wizard's optional fourth step, also on the results page as its own
+  accordion panel. `ScenarioInputs.vertical` picks an industry (Retail,
+  Education, Manufacturing, Healthcare, Finance; only Retail is modeled so
+  far, and the others show as "coming soon" and can't be selected). Each
+  vertical is pure data, a `VerticalDef`: shared inputs (facts about the
+  business, stored in `ScenarioInputs.outcomeBaseline`, falling back to
+  each input's default) and categories of two kinds. An `"existing"`
+  category is a cost the business has today (shrink, liability and workers'
+  comp claims, break-ins, false-alarm fines, people counters, guards), sized
+  per site from the shared inputs; each solution enters a % change in
+  `SolutionInputs.outcomeChanges`. A `"new"` category is a cost the
+  business doesn't have today (face recognition compliance, alert review
+  time at the investigator rate, remote monitoring), where each solution
+  enters its own amount. Adding a vertical means filling in its
+  `VerticalDef` and flipping `modeled` to true; no model or UI code needs
+  to change.
+  - Categories sit in themed `groups` (retail: Shrink, Safety & liability,
+    Crime & security operations, Tools a system could replace, New costs),
+    each rendered as its own card, and every category has a checkbox
+    (`ScenarioInputs.outcomeEnabled`). All start off: a card shows only its
+    checkboxes until one is ticked, then just the shared inputs those
+    categories need (`inputsInUse`) and their change rows. A category
+    that's off counts for nothing, but keeps its entered values for when
+    it's switched back on. Every input, category, and group names an icon
+    (`OutcomeIcon`, a string so `lib/` stays React-free;
+    `BusinessImpactStep`'s `ICONS` maps it to a lucide icon) shown beside
+    its label.
+  - Every value is a change *from today*, so **the incumbent never carries
+    one**: today's shrink and claims already reflect the system that's
+    installed. `computeSolution` skips the incumbent's changes even if
+    present. On a new site, both sides are changes from having no system.
+  - Every change defaults to 0 and the shared inputs' placeholder defaults
+    don't move any total on their own. This is deliberate and the main
+    bias guard: these are the least verifiable numbers in the tool, and
+    vendor case studies are the usual source of "X% shrink reduction"
+    claims. Don't ship non-zero default changes per vendor or per deployment
+    model; most of these effects come from having cameras and analytics at
+    all, not from cloud vs. on-prem.
+  - Results go into two categories, "Business impact: savings" (negative)
+    and "Business impact: added costs", from year 1 on, escalated with
+    labor. Both are in every total but reported separately
+    (`OUTCOME_CATEGORIES`, `SolutionResult.outcomeTotal`, so `cashTotal`
+    excludes them), and the checklist flags a gap that's mostly business
+    impact, plus any placeholder input behind a change someone entered.
+  - A side's total can go negative once its savings exceed its costs. The
+    results summary drops its "N% less" sentence then (it stops meaning
+    anything) and says the savings exceed the costs instead.
+  - Not yet built: tying a change to a feature the solution actually has
+    (POS integration for employee theft, camera-based counting for people
+    counters, the way the on-prem analytics switch ties cost and benefit
+    together), and linking liability claims to `retentionDays` (footage
+    overwritten before a late-filed claim can't help with it). The help
+    text tells users to claim these only where they apply.
 - **Crossover detection**: `computeComparison`'s search starts its baseline
   at whichever year first has a nonzero cost gap (usually year 0, not year
   1, since an incumbent's side often starts at $0) and reports every later

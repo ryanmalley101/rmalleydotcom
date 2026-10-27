@@ -25,9 +25,9 @@ export default function MiscItemsEditor({ items, onChange }: { items: MiscCostIt
   return (
     <Stack gap="xs" style={{ gridColumn: "1 / -1" }}>
       <Text size="xs" c={TEXT_MUTED}>
-        Add your own cost or savings line items — enter a negative amount for a cost offset (e.g. a
-        workers&apos; comp claim reduction). Each applies at deployment, every year, or once in a year you choose,
-        including on the incumbent.
+        Add your own cost or savings line items — enter a negative amount for a cost offset. Theft, claims, and
+        other industry costs have their own place in the business impact step. Each item applies at deployment,
+        every year, or once in a year you choose, including on the incumbent.
       </Text>
       {safeItems.map((item) => (
         <Group key={item.id} gap="xs" wrap="wrap" align="flex-end">

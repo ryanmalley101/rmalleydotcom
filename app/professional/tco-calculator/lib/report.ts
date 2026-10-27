@@ -6,6 +6,7 @@ import { CATEGORIES, type ComparisonResult, type SolutionInputs, type SolutionRe
 import type { SharedState } from "./shareState";
 import { SCENARIO_FIELDS, fieldsFor } from "./fields";
 import { fieldSourceInfo, vendorEntriesFor } from "./vendorDefaults";
+import { outcomeReportRows } from "./verticals";
 
 export function sourceStatus(sol: SolutionInputs, key: keyof SolutionInputs): string {
   const meta = fieldSourceInfo(key, sol[key], ...vendorEntriesFor(sol));
@@ -58,6 +59,12 @@ export function buildCsv(state: SharedState, c: ComparisonResult): string {
     ]);
   }
   rows.push(["Misc items", solA.miscItems, "", solB.miscItems, ""]);
+  const impact = outcomeReportRows(state.scenario, solA, solB);
+  rows.push([]);
+  rows.push(["Business impact industry", impact.industry]);
+  for (const [label, v] of impact.inputs) rows.push([label, v]);
+  if (impact.changes.length) rows.push(["Business impact change", solA.name, "", solB.name, ""]);
+  for (const [label, a, b] of impact.changes) rows.push([label, a, "", b, ""]);
   rows.push([]);
   rows.push(["Year", ...CATEGORIES.map((cat) => `${solA.name}: ${cat}`), `${solA.name}: year total`, `${solA.name}: cumulative`,
     ...CATEGORIES.map((cat) => `${solB.name}: ${cat}`), `${solB.name}: year total`, `${solB.name}: cumulative`]);
@@ -73,6 +80,7 @@ export function buildCsv(state: SharedState, c: ComparisonResult): string {
   rows.push(["Years 1+ (ongoing)", sa.ongoing, sb.ongoing]);
   rows.push(["Cash costs", c.a.cashTotal, c.b.cashTotal]);
   rows.push(["Estimated staff time", c.a.staffTimeTotal, c.b.staffTimeTotal]);
+  rows.push(["Estimated business impact", c.a.outcomeTotal, c.b.outcomeTotal]);
   rows.push(["Total", c.a.total, c.b.total]);
   return rows.map((r) => r.map(csvCell).join(",")).join("\n") + "\n";
 }
@@ -83,6 +91,7 @@ const usd = (n: number) => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLoca
 export function buildReportHtml(state: SharedState, c: ComparisonResult, notes: string[]): string {
   const { scenario, solA, solB } = state;
   const sa = upfrontAndOngoing(c.a), sb = upfrontAndOngoing(c.b);
+  const impact = outcomeReportRows(scenario, solA, solB);
   const applies = (sol: SolutionInputs, key: keyof SolutionInputs) => fieldsFor(sol.model).some((f) => f.key === key);
   const keys = Array.from(new Set([...fieldsFor(solA.model), ...fieldsFor(solB.model)].map((f) => f.key)));
   const labelFor = new Map([...fieldsFor(solA.model), ...fieldsFor(solB.model)].map((f) => [f.key, f.label]));
@@ -104,6 +113,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}.src{color:#666;fon
 <tr><td>Years 1+ (ongoing)</td><td class="n">${usd(sa.ongoing)}</td><td class="n">${usd(sb.ongoing)}</td></tr>
 <tr><td>Cash costs</td><td class="n">${usd(c.a.cashTotal)}</td><td class="n">${usd(c.b.cashTotal)}</td></tr>
 <tr><td>Estimated staff time</td><td class="n">${usd(c.a.staffTimeTotal)}</td><td class="n">${usd(c.b.staffTimeTotal)}</td></tr>
+<tr><td>Estimated business impact</td><td class="n">${usd(c.a.outcomeTotal)}</td><td class="n">${usd(c.b.outcomeTotal)}</td></tr>
 <tr><th>Total</th><th class="n">${usd(c.a.total)}</th><th class="n">${usd(c.b.total)}</th></tr></table>
 <h2>By category</h2>
 <table><tr><th>Category</th><th class="n">${esc(solA.name)}</th><th class="n">${esc(solB.name)}</th></tr>
@@ -117,6 +127,10 @@ ${c.labels.map((l, y) => `<tr><td>${l}</td><td class="n">${usd(yearTotal(c.a, y)
 <table><tr><th>Input</th><th>${esc(solA.name)}</th><th>${esc(solB.name)}</th></tr>
 ${keys.map((k) => `<tr><td>${labelFor.get(k)}</td><td>${cell(solA, k)}</td><td>${cell(solB, k)}</td></tr>`).join("")}
 <tr><td>Misc items</td><td>${esc(solA.miscItems)}</td><td>${esc(solB.miscItems)}</td></tr></table>
+${impact.changes.length ? `<h2>Business impact: ${esc(impact.industry)}</h2>
+<table>${impact.inputs.map(([l, v]) => `<tr><td>${esc(l)}</td><td>${esc(v)}</td></tr>`).join("")}</table>
+<table><tr><th>Change</th><th>${esc(solA.name)}</th><th>${esc(solB.name)}</th></tr>
+${impact.changes.map(([l, a, b]) => `<tr><td>${esc(l)}</td><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</table>` : ""}
 <h2>How this is calculated</h2>
 <ul>${notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>
 </body></html>`;

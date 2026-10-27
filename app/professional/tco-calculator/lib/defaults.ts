@@ -72,6 +72,9 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   storageOverheadMultiplier: DEFAULT_STORAGE_OVERHEAD_MULTIPLIER,
   spareServers: DEFAULT_SPARE_SERVERS,
   creditResidualValue: true,
+  vertical: null,
+  outcomeBaseline: {},
+  outcomeEnabled: [],
 };
 
 // Backfills any fields missing from a SolutionInputs decoded from an older
@@ -170,6 +173,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       serverSoftwareCost: 0,
       managementServers: 0,
       miscItems: [],
+      outcomeChanges: {},
     };
   }
   return {
@@ -214,6 +218,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     serverSoftwareCost: 0,
     managementServers: 0,
     miscItems: [],
+    outcomeChanges: {},
   };
 }
 

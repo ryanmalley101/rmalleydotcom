@@ -12,5 +12,6 @@ export const METHODOLOGY_NOTES: string[] = [
   "Purchases with a fixed service life that runs past the horizon are credited for their unused share in the final year, unless that option is turned off.",
   "Cloud solutions are assumed to include AI video search in their license. On-prem solutions include it only when analytics is turned on, which adds analytics hardware and software costs and the faster with-search investigation time together.",
   "Admin and investigation labor are estimates of staff time, shown separately from cash costs.",
+  "Business impact is optional and industry-specific. Each solution's change to a cost the business has today (theft, claims, guards) is a percentage of that cost, and new costs it brings are entered directly. Changes start in year 1, grow with labor escalation, and are shown separately from cash costs. The incumbent has no change, since today's figures already reflect it.",
   "Defaults are directional placeholders, not quotes. This tool is not affiliated with or endorsed by any vendor named here.",
 ];

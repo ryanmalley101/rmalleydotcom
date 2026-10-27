@@ -23,6 +23,9 @@ export const BITRATE_HELP =
 export const STAFF_TIME_NOTE =
   "Admin and investigation labor are estimates of staff time rather than invoices, so they're shown separately from cash costs.";
 
+export const OUTCOME_NOTE =
+  "Business impact is your own estimate of how a solution changes costs like theft and claims, from the business impact step, so it's shown separately too. A negative figure is a net saving.";
+
 export const HALF_LIFE_HELP =
   "How long until about half of a batch of cameras has failed, half of the rest by twice that, and so on. By default it's 1.5 times the warranty period for every vendor, and it follows the warranty when that changes, unless you set your own number here.";
 

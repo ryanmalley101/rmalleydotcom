@@ -7,7 +7,7 @@ import { Check, ChevronDown, Copy, Download, FileSpreadsheet, FileText, History,
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
 import { COLOR_SWATCHES, TEXT_MUTED, fmtUsd } from "../lib/colors";
-import { STAFF_TIME_NOTE } from "../lib/fieldHelp";
+import { OUTCOME_NOTE, STAFF_TIME_NOTE } from "../lib/fieldHelp";
 import InfoLabel from "./InfoLabel";
 import { exportSnapshot } from "../lib/exportSnapshot";
 import { saveComparison } from "../lib/savedComparisons";
@@ -21,6 +21,7 @@ import ShareChecklist from "./ShareChecklist";
 import { buildCsv, buildReportHtml } from "../lib/report";
 import { METHODOLOGY_NOTES } from "../lib/methodology";
 import IncumbentPicker from "./IncumbentPicker";
+import BusinessImpactStep from "./BusinessImpactStep";
 
 // Color by meaning (which side actually costs less), not by A/B slot or
 // hardcoded to any vendor — computed fresh from the totals every render, so
@@ -103,6 +104,9 @@ export default function ResultsView({
   const diff = Math.abs(a.total - b.total);
   const maxTotal = Math.max(a.total, b.total);
   const pctSaved = maxTotal > 0 ? Math.round((diff / maxTotal) * 100) : 0;
+  // Business impact savings can push a total below zero (the system saves
+  // more than it costs), where "N% less" stops meaning anything.
+  const bothPositive = a.total > 0 && b.total > 0;
   const pricier = cheaper.id === solA.id ? solB : solA;
   const yearsLabel = `${scenario.horizonYears} ${scenario.horizonYears === 1 ? "year" : "years"}`;
   const isTie = diff < 0.5;
@@ -267,7 +271,10 @@ export default function ResultsView({
                     )}
                     {!isTie && (
                       <Text size="sm" c={TEXT_MUTED}>
-                        That&apos;s {pctSaved}% less than {pricier.name}. {timingSentence}
+                        {bothPositive
+                          ? <>That&apos;s {pctSaved}% less than {pricier.name}. </>
+                          : (cheaper.id === solA.id ? a.total : b.total) < 0 && `${cheaper.name}'s estimated savings exceed its costs. `}
+                        {timingSentence}
                       </Text>
                     )}
                   </Stack>
@@ -305,7 +312,7 @@ export default function ResultsView({
                             <Box
                               style={{
                                 height: "100%",
-                                width: `${maxTotal > 0 ? (result.total / maxTotal) * 100 : 0}%`,
+                                width: `${maxTotal > 0 ? (Math.max(0, result.total) / maxTotal) * 100 : 0}%`,
                                 borderRadius: 4,
                                 background: isCheaper ? CHEAPER_COLOR : PRICIER_COLOR,
                               }}
@@ -313,8 +320,12 @@ export default function ResultsView({
                           </Box>
                           <Box mt={4}>
                             <InfoLabel
-                              label={`${fmtUsd(result.cashTotal)} cash · ${fmtUsd(result.staffTimeTotal)} est. staff time`}
-                              help={STAFF_TIME_NOTE} size="var(--mantine-font-size-xs)" color={TEXT_MUTED}
+                              label={
+                                `${fmtUsd(result.cashTotal)} cash · ${fmtUsd(result.staffTimeTotal)} est. staff time` +
+                                (Math.abs(result.outcomeTotal) > 0.5 ? ` · ${fmtUsd(result.outcomeTotal)} est. business impact` : "")
+                              }
+                              help={Math.abs(result.outcomeTotal) > 0.5 ? `${STAFF_TIME_NOTE} ${OUTCOME_NOTE}` : STAFF_TIME_NOTE}
+                              size="var(--mantine-font-size-xs)" color={TEXT_MUTED}
                             />
                           </Box>
                           {hwText && <Text size="xs" c={TEXT_MUTED}>{hwText}</Text>}
@@ -382,6 +393,18 @@ export default function ResultsView({
               <Accordion.Panel>
                 <ChartColor color={colorB} onChange={onColorBChange} />
                 <AssumptionsPanel sol={solB} onChange={onSolBChange} scenario={scenario} />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="impact">
+              <Accordion.Control>
+                <Text fw={500}>Business impact</Text>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <BusinessImpactStep
+                  scenario={scenario} solA={solA} solB={solB} colorA={colorA} colorB={colorB}
+                  onScenarioChange={onScenarioChange} onSolAChange={onSolAChange} onSolBChange={onSolBChange}
+                  showIntro={false}
+                />
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
