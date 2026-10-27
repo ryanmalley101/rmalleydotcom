@@ -181,8 +181,9 @@ operations) → Business impact (optional) → Results. Same share-link,
 - **Researched vendor defaults** (step 5): provider lists exist
   (`lib/providers.ts`) and the vendor-default machinery is wired, but no
   vendor has an entry, so every provider uses the generic placeholders below.
-  Do this with a research prompt like the video calculator's
-  `RESEARCH_PROMPT.md`, with per-field sources and confidence.
+  `RESEARCH_PROMPT.md` is the hand-off prompt for that research, with the
+  fields to fill, the ones to leave alone (staff time, labor, door
+  hardware), and the sourcing rules. Review its output before merging.
 - **Wireless locks**: integrated lock-and-reader hardware and its gateways
   aren't a separate door type. For a mixed site, enter blended per-door
   figures or use misc items.
