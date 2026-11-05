@@ -182,7 +182,7 @@ export default function ImportPage() {
             if (!file.name.endsWith(".json")) continue;
             try {
                 const text = await file.text();
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                 
                 const json = JSON.parse(text) as any;
 
                 if (Array.isArray(json)) {
@@ -296,7 +296,7 @@ export default function ImportPage() {
                 </Typography>
                 <Typography variant="body2" sx={{ color: "text.secondary", mb: 4 }}>
                     Import from a <strong>WorldAnvil export</strong> (select all JSON files from the <code>articles/</code> folder)
-                    or upload a <strong>wiki batch file</strong> (a single <code>.json</code> file with a <code>"format": "wiki-batch"</code> header and an <code>articles</code> array).
+                    or upload a <strong>wiki batch file</strong> (a single <code>.json</code> file with a <code>&quot;format&quot;: &quot;wiki-batch&quot;</code> header and an <code>articles</code> array).
                     Both formats can be mixed in one upload.
                 </Typography>
 

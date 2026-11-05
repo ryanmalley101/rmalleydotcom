@@ -265,15 +265,22 @@ const CreateMonsterStatblock = () => {
         }));
     };
 
-    useEffect(() => {
+    // Recompute HP whenever hit dice, die size, or CON change. Done during
+    // render (keyed on the inputs) rather than in an effect, so the statblock
+    // never renders a frame with a stale hit_points value.
+    const hpInputs = `${monsterStatblock.hit_dice_num}|${monsterStatblock.constitution}|${hitDieSize}`;
+    const [prevHpInputs, setPrevHpInputs] = useState<string | null>(null);
+    if (hpInputs !== prevHpInputs) {
+        setPrevHpInputs(hpInputs);
         const dieSize = Number(hitDieSize.replace('d', ''));
-        if (isNaN(dieSize)) return;
-        const hp = Math.ceil(
-            monsterStatblock.hit_dice_num * (dieSize / 2 + 0.5) +
-            monsterStatblock.hit_dice_num * scoreToMod(monsterStatblock.constitution)
-        );
-        setMonsterStatblock(prev => ({ ...prev, hit_points: hp }));
-    }, [monsterStatblock.hit_dice_num, monsterStatblock.constitution, hitDieSize]);
+        if (!isNaN(dieSize)) {
+            const hp = Math.ceil(
+                monsterStatblock.hit_dice_num * (dieSize / 2 + 0.5) +
+                monsterStatblock.hit_dice_num * scoreToMod(monsterStatblock.constitution)
+            );
+            setMonsterStatblock(prev => ({ ...prev, hit_points: hp }));
+        }
+    }
 
     const initializedMonsterId = useRef(monsterStatblock.id);
     useEffect(() => {

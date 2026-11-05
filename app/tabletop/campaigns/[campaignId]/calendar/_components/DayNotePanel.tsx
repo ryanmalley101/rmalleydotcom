@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
     Box, Button, Chip, CircularProgress, Divider, IconButton,
     TextField, Tooltip, Typography,
@@ -11,6 +11,7 @@ import type { Schema } from "@/amplify/data/resource";
 import { MarkdownContent } from "@/lib/MarkdownContent";
 import { WikiSearchPin } from "../../_dashboard-shared/WikiSearchPin";
 import { type CalendarConfig, dayToDate, formatDate } from "../_lib/calendarMath";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type DailyNote = Schema["DailyNote"]["type"];
@@ -39,11 +40,11 @@ export function DayNotePanel({
     const [deleting, setDeleting] = useState(false);
     const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    useEffect(() => {
+    if (useDepsChanged([note, dayNumber])) {
         setTitle(note?.title ?? "");
         setNotes(note?.notes ?? "");
         setArticleIds((note?.articleIds ?? []).filter((id): id is string => !!id));
-    }, [note, dayNumber]);
+    }
 
     const persist = useCallback(async (t: string, n: string, ids: string[]) => {
         setSaving(true);

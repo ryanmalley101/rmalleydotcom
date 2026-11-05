@@ -96,6 +96,7 @@ export default function FactionsPage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [campaignId]);
 
     async function handleCreate() {
@@ -180,7 +181,7 @@ export default function FactionsPage() {
                     <Box sx={{ textAlign: "center", py: 10 }}>
                         <Shield size={40} color="#c9a87c" style={{ marginBottom: 12 }} />
                         <Typography sx={{ color: "text.secondary" }}>
-                            No factions yet. Track organizations and the party's standing with them.
+                            No factions yet. Track organizations and the party&apos;s standing with them.
                         </Typography>
                     </Box>
                 ) : (
@@ -276,7 +277,7 @@ export default function FactionsPage() {
 
                 {/* Delete confirmation */}
                 <Dialog open={!!deleteFaction} onClose={() => setDeleteFaction(null)}>
-                    <DialogTitle>Delete "{deleteFaction?.name}"?</DialogTitle>
+                    <DialogTitle>Delete &quot;{deleteFaction?.name}&quot;?</DialogTitle>
                     <DialogContent><Typography>This cannot be undone.</Typography></DialogContent>
                     <DialogActions>
                         <Button onClick={() => setDeleteFaction(null)}>Cancel</Button>

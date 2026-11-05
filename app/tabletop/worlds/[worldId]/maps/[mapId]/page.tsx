@@ -124,6 +124,7 @@ export default function MapPage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [mapId]);
 
     // When ?campaign= is present, fetch sessions/NPCs/events and build
@@ -149,7 +150,7 @@ export default function MapPage() {
             events.forEach(e => (e.articleIds ?? []).filter(Boolean).forEach(id => ensure(id!).events.push(e)));
             setArticleCampaignIndex(index);
         });
-    }, [campaignId]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [campaignId]);  
 
     // ── Persist pins ────────────────────────────────────────────────────────
 

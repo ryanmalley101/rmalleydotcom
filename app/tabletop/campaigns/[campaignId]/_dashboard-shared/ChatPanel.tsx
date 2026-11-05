@@ -112,7 +112,7 @@ export function ChatPanel({ campaignId, authorName, currentUserId }: ChatPanelPr
             <Box sx={{ flex: 1, overflowY: "auto", p: 1.5, display: "flex", flexDirection: "column", gap: 1, minHeight: 0 }}>
                 {visibleMessages.length === 0 && (
                     <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                        No messages yet. Try "/roll 2d6+4".
+                        No messages yet. Try &quot;/roll 2d6+4&quot;.
                     </Typography>
                 )}
                 {visibleMessages.map(m => (

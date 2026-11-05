@@ -253,7 +253,7 @@ export default function CharacterPage() {
     const { autosaveDefault, autosaveDefaultLoaded, setAutosaveDefault } = useAutosaveDefault();
     const [autosaveEnabled, setAutosaveEnabled] = useState(true);
     const autosaveSeededRef = useRef(false);
-    const lastSavedRef = useRef<string>("");
+    const [lastSaved, setLastSaved] = useState<string>("");
     const [tab, setTab]           = useState(0);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [importOpen, setImportOpen]       = useState(false);
@@ -358,12 +358,12 @@ export default function CharacterPage() {
         setDss(newDss);
         setDsf(newDsf);
 
-        lastSavedRef.current = JSON.stringify({
+        setLastSaved(JSON.stringify({
             form: newForm, classes: newClasses, saveProfs: newSaveProfs,
             skillProfs: newSkillProfs, attacks: newAttacks, inventory: newInventory,
             spellSlots: newSpellSlots, spells: newSpells, features: newFeatures,
             dss: newDss, dsf: newDsf,
-        });
+        }));
     }
 
     useEffect(() => {
@@ -376,8 +376,8 @@ export default function CharacterPage() {
     const isDirty = useMemo(() => {
         if (!editing) return false;
         const current = JSON.stringify({ form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf });
-        return current !== lastSavedRef.current;
-    }, [editing, form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf]);
+        return current !== lastSaved;
+    }, [editing, lastSaved, form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf]);
 
     useEffect(() => {
         function handler(e: BeforeUnloadEvent) {
@@ -387,76 +387,7 @@ export default function CharacterPage() {
         return () => window.removeEventListener("beforeunload", handler);
     }, [isDirty]);
 
-    useEffect(() => {
-        if (!editing || !autosaveEnabled || !isDirty) return;
-        const timer = setTimeout(() => { silentSave(); }, 4000);
-        return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [editing, autosaveEnabled, isDirty, form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf]);
 
-    async function silentSave() {
-        if (!pc) return;
-        setAutosaving(true);
-        await client.models.PlayerCharacter.update({
-            id: pc.id,
-            characterName: form.characterName.trim(),
-            playerName:    form.playerName.trim() || undefined,
-            race:          form.race.trim() || undefined,
-            background:    form.background.trim() || undefined,
-            alignment:     form.alignment || undefined,
-            xp:            num("xp"),
-            classesJson:   JSON.stringify(classes),
-            characterClass: classes[0]?.class || undefined,
-            subclass:      classes[0]?.subclass || undefined,
-            level:         totalLevel || undefined,
-            strength:      num("strength"),
-            dexterity:     num("dexterity"),
-            constitution:  num("constitution"),
-            intelligence:  num("intelligence"),
-            wisdom:        num("wisdom"),
-            charisma:      num("charisma"),
-            saveProficienciesJson:  JSON.stringify(saveProfs),
-            skillProficienciesJson: JSON.stringify(skillProfs),
-            maxHp:         num("maxHp") || undefined,
-            currentHp:     num("currentHp") || undefined,
-            tempHp:        num("tempHp") || undefined,
-            armorClass:    num("armorClass") || undefined,
-            speed:         num("speed") || undefined,
-            initiative:    num("initiative") || undefined,
-            hitDice:       form.hitDice || undefined,
-            deathSaveSuccesses: dss,
-            deathSaveFailures:  dsf,
-            inspiration:   form.inspiration === "true",
-            exhaustion:    num("exhaustion"),
-            attacksJson:   JSON.stringify(attacks),
-            inventoryJson: JSON.stringify(inventory),
-            copper:        num("copper"), silver: num("silver"),
-            electrum:      num("electrum"), gold: num("gold"), platinum: num("platinum"),
-            spellcastingAbility: form.spellcastingAbility || undefined,
-            spellSlotsJson: JSON.stringify(spellSlots),
-            spellsJson:    JSON.stringify(spells),
-            featuresJson:  JSON.stringify(features),
-            personality:   form.personality || undefined,
-            ideals:        form.ideals || undefined,
-            bonds:         form.bonds || undefined,
-            flaws:         form.flaws || undefined,
-            backstory:     form.backstory || undefined,
-            notes:         form.notes || undefined,
-            allies:        form.allies || undefined,
-            gender:        form.gender || undefined,
-            age:           form.age || undefined,
-            height:        form.height || undefined,
-            weight:        form.weight || undefined,
-            eyes:          form.eyes || undefined,
-            skin:          form.skin || undefined,
-            hair:          form.hair || undefined,
-            languages:     form.languages || undefined,
-            proficiencies: form.proficiencies || undefined,
-        });
-        lastSavedRef.current = JSON.stringify({ form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf });
-        setAutosaving(false);
-        setLastAutosaved(new Date());
-    }
 
     async function load() {
         const [pcRes, compRes] = await Promise.all([
@@ -547,6 +478,7 @@ export default function CharacterPage() {
         setPortraitUploading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [characterId]);
 
     const f = (field: string) =>
@@ -557,6 +489,77 @@ export default function CharacterPage() {
 
     const totalLevel = classes.reduce((s, c) => s + c.level, 0);
     const pb = profBonus(totalLevel || num("level") || 1);
+
+    async function silentSave() {
+        if (!pc) return;
+        setAutosaving(true);
+        await client.models.PlayerCharacter.update({
+            id: pc.id,
+            characterName: form.characterName.trim(),
+            playerName:    form.playerName.trim() || undefined,
+            race:          form.race.trim() || undefined,
+            background:    form.background.trim() || undefined,
+            alignment:     form.alignment || undefined,
+            xp:            num("xp"),
+            classesJson:   JSON.stringify(classes),
+            characterClass: classes[0]?.class || undefined,
+            subclass:      classes[0]?.subclass || undefined,
+            level:         totalLevel || undefined,
+            strength:      num("strength"),
+            dexterity:     num("dexterity"),
+            constitution:  num("constitution"),
+            intelligence:  num("intelligence"),
+            wisdom:        num("wisdom"),
+            charisma:      num("charisma"),
+            saveProficienciesJson:  JSON.stringify(saveProfs),
+            skillProficienciesJson: JSON.stringify(skillProfs),
+            maxHp:         num("maxHp") || undefined,
+            currentHp:     num("currentHp") || undefined,
+            tempHp:        num("tempHp") || undefined,
+            armorClass:    num("armorClass") || undefined,
+            speed:         num("speed") || undefined,
+            initiative:    num("initiative") || undefined,
+            hitDice:       form.hitDice || undefined,
+            deathSaveSuccesses: dss,
+            deathSaveFailures:  dsf,
+            inspiration:   form.inspiration === "true",
+            exhaustion:    num("exhaustion"),
+            attacksJson:   JSON.stringify(attacks),
+            inventoryJson: JSON.stringify(inventory),
+            copper:        num("copper"), silver: num("silver"),
+            electrum:      num("electrum"), gold: num("gold"), platinum: num("platinum"),
+            spellcastingAbility: form.spellcastingAbility || undefined,
+            spellSlotsJson: JSON.stringify(spellSlots),
+            spellsJson:    JSON.stringify(spells),
+            featuresJson:  JSON.stringify(features),
+            personality:   form.personality || undefined,
+            ideals:        form.ideals || undefined,
+            bonds:         form.bonds || undefined,
+            flaws:         form.flaws || undefined,
+            backstory:     form.backstory || undefined,
+            notes:         form.notes || undefined,
+            allies:        form.allies || undefined,
+            gender:        form.gender || undefined,
+            age:           form.age || undefined,
+            height:        form.height || undefined,
+            weight:        form.weight || undefined,
+            eyes:          form.eyes || undefined,
+            skin:          form.skin || undefined,
+            hair:          form.hair || undefined,
+            languages:     form.languages || undefined,
+            proficiencies: form.proficiencies || undefined,
+        });
+        setLastSaved(JSON.stringify({ form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf }));
+        setAutosaving(false);
+        setLastAutosaved(new Date());
+    }
+
+    useEffect(() => {
+        if (!editing || !autosaveEnabled || !isDirty) return;
+        const timer = setTimeout(() => { silentSave(); }, 4000);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editing, autosaveEnabled, isDirty, form, classes, saveProfs, skillProfs, attacks, inventory, spellSlots, spells, features, dss, dsf]);
 
     async function save() {
         if (!pc) return;
@@ -1605,7 +1608,7 @@ export default function CharacterPage() {
                 {/* ── Dialogs ─────────────────────────────────────────────────────── */}
 
                 <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
-                    <DialogTitle>Delete "{pc.characterName}"?</DialogTitle>
+                    <DialogTitle>Delete &quot;{pc.characterName}&quot;?</DialogTitle>
                     <DialogContent><Typography>This cannot be undone.</Typography></DialogContent>
                     <DialogActions>
                         <Button onClick={() => setConfirmDelete(false)}>Cancel</Button>
@@ -1690,7 +1693,7 @@ export default function CharacterPage() {
 
                 {/* Companion delete confirmation */}
                 <Dialog open={!!deleteComp} onClose={() => setDeleteComp(null)}>
-                    <DialogTitle>Delete "{deleteComp?.name}"?</DialogTitle>
+                    <DialogTitle>Delete &quot;{deleteComp?.name}&quot;?</DialogTitle>
                     <DialogContent><Typography>This cannot be undone.</Typography></DialogContent>
                     <DialogActions>
                         <Button onClick={() => setDeleteComp(null)}>Cancel</Button>

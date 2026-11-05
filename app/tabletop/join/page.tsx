@@ -28,7 +28,7 @@ function JoinCampaignContent() {
     const [joined, setJoined]         = useState(false);
 
     useEffect(() => {
-        if (!code) { setLoading(false); return; }
+        if (!code) return;
         async function fetchInvite() {
             const { data: inv } = await client.models.CampaignInvite.get({ id: code });
             if (!inv) { setError("Invite not found or expired."); setLoading(false); return; }
@@ -57,7 +57,8 @@ function JoinCampaignContent() {
         setJoining(false);
     }
 
-    if (loading) return (
+    // With no code there's nothing to load; skip straight to the error/empty state.
+    if (loading && code) return (
         <Box sx={{ display: "flex", justifyContent: "center", pt: 12 }}>
             <CircularProgress sx={{ color: "primary.main" }} />
         </Box>

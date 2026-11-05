@@ -53,6 +53,7 @@ export default function TimelinePlayerView() {
         setLoading(false);
     }, [campaignId]);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [load]);
 
     return (

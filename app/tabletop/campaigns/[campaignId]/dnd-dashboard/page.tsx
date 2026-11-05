@@ -168,7 +168,7 @@ export default function DndDashboardPage() {
             onUpdate.unsubscribe();
             onDelete.unsubscribe();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [campaignId]);
 
     const saveGmScreen = useCallback((next: GmScreenData) => {
@@ -368,7 +368,7 @@ export default function DndDashboardPage() {
                                     Apply Long Rest to Party
                                 </Button>
                                 <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mt: 1 }}>
-                                    Restores full HP, all spell slots, and 1 Exhaustion level for everyone. Hit Dice recovery and class feature recharges aren't tracked here — check those manually.
+                                    Restores full HP, all spell slots, and 1 Exhaustion level for everyone. Hit Dice recovery and class feature recharges aren&apos;t tracked here — check those manually.
                                 </Typography>
                             </Paper>
                         )}

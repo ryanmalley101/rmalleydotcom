@@ -154,6 +154,7 @@ export default function QuestsPage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [campaignId]);
 
     async function handleCreate() {
@@ -374,7 +375,7 @@ export default function QuestsPage() {
 
                 {/* Delete confirmation */}
                 <Dialog open={!!deleteQuest} onClose={() => setDeleteQuest(null)}>
-                    <DialogTitle>Delete "{deleteQuest?.title}"?</DialogTitle>
+                    <DialogTitle>Delete &quot;{deleteQuest?.title}&quot;?</DialogTitle>
                     <DialogContent><Typography>This cannot be undone.</Typography></DialogContent>
                     <DialogActions>
                         <Button onClick={() => setDeleteQuest(null)}>Cancel</Button>

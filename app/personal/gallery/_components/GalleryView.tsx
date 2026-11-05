@@ -44,6 +44,23 @@ interface GalleryViewProps {
 // Shared by the master gallery and every sub-gallery page: grid + lightbox +
 // upload + per-photo gallery-assignment management. Callers just supply the
 // (already filtered) photo list and a couple of header strings.
+// Seeded PRNG so the shuffle order is a pure function of the seed: it only
+// changes when the user asks for a new shuffle, not on every re-render.
+function mulberry32(seed: number) {
+    let a = seed >>> 0;
+    return () => {
+        a = (a + 0x6D2B79F5) >>> 0;
+        let t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function randomSeed() {
+    return Math.floor(Math.random() * 2 ** 32);
+}
+
 export function GalleryView({
     icon: Icon, title, subtitle, photos, allTags, subGalleries, urls, loading, reload,
     defaultSubGalleryId, emptyMessage, headerActions,
@@ -72,14 +89,14 @@ export function GalleryView({
         if (sortMode === "oldest") return [...filteredPhotos].reverse();
         if (sortMode === "shuffle") {
             const arr = [...filteredPhotos];
+            const rand = mulberry32(shuffleSeed);
             for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
+                const j = Math.floor(rand() * (i + 1));
                 [arr[i], arr[j]] = [arr[j], arr[i]];
             }
             return arr;
         }
         return filteredPhotos;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filteredPhotos, sortMode, shuffleSeed]);
 
     const pageCount = Math.max(1, Math.ceil(sortedPhotos.length / PAGE_SIZE));
@@ -93,6 +110,7 @@ export function GalleryView({
     }
 
     function changeSortMode(mode: SortMode) {
+        if (mode === "shuffle") setShuffleSeed(randomSeed());
         setSortMode(mode);
         setPage(1);
     }
@@ -162,9 +180,10 @@ export function GalleryView({
                             value={activeTags}
                             onChange={(_, v) => changeTagFilter(v)}
                             renderTags={(value, getTagProps) =>
-                                value.map((option, index) => (
-                                    <Chip label={option} size="small" {...getTagProps({ index })} />
-                                ))
+                                value.map((option, index) => {
+                                    const { key, ...tagProps } = getTagProps({ index });
+                                    return <Chip key={key} label={option} size="small" {...tagProps} />;
+                                })
                             }
                             renderInput={params => <TextField {...params} placeholder="Filter by tag…" />}
                             sx={{ minWidth: 220, flex: "1 1 220px" }}
@@ -180,7 +199,7 @@ export function GalleryView({
                         </FormControl>
                         {sortMode === "shuffle" && (
                             <Tooltip title="Shuffle again">
-                                <IconButton size="small" onClick={() => setShuffleSeed(s => s + 1)}>
+                                <IconButton size="small" onClick={() => setShuffleSeed(randomSeed())}>
                                     <Shuffle size={16} />
                                 </IconButton>
                             </Tooltip>

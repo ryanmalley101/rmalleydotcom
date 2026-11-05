@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Autocomplete, Box, Button, Checkbox, Chip, CircularProgress, Dialog, DialogActions,
     DialogContent, DialogTitle, FormControlLabel, TextField, Typography,
@@ -9,6 +9,7 @@ import { Sparkles, Trash2 } from "lucide-react";
 import { remove } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type GalleryPhoto = Schema["GalleryPhoto"]["type"];
@@ -35,14 +36,12 @@ export function ManagePhotoGalleriesDialog({
     const [tagging, setTagging] = useState(false);
     const [tagError, setTagError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (open && photo) {
-            setSelectedIds((photo.subGalleryIds ?? []).filter((id): id is string => !!id));
-            setTags((photo.tags ?? []).filter((t): t is string => !!t));
-            setConfirmingDelete(false);
-            setTagError(null);
-        }
-    }, [open, photo]);
+    if (useDepsChanged([open, photo]) && open && photo) {
+        setSelectedIds((photo.subGalleryIds ?? []).filter((id): id is string => !!id));
+        setTags((photo.tags ?? []).filter((t): t is string => !!t));
+        setConfirmingDelete(false);
+        setTagError(null);
+    }
 
     function toggle(id: string) {
         setSelectedIds(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
@@ -115,9 +114,10 @@ export function ManagePhotoGalleriesDialog({
                     value={tags}
                     onChange={(_, newValue) => setTags(newValue)}
                     renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                            <Chip label={option} size="small" {...getTagProps({ index })} />
-                        ))
+                        value.map((option, index) => {
+                            const { key, ...tagProps } = getTagProps({ index });
+                            return <Chip key={key} label={option} size="small" {...tagProps} />;
+                        })
                     }
                     renderInput={params => (
                         <TextField {...params} placeholder="warm, bohemian, minimalist…" />

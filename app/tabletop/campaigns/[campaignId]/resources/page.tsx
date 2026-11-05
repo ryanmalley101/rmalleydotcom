@@ -13,6 +13,7 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { useCampaignRole } from "@/lib/useCampaignRole";
 import { useDocumentTitle } from "@/lib/useDocumentTitle";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type CampaignResource = Schema["CampaignResource"]["type"];
@@ -175,18 +176,16 @@ function ResourceDialog({
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             setForm(v => ({ ...v, [field]: e.target.value }));
 
-    useEffect(() => {
-        if (open) {
-            setForm(editing ? {
-                name: editing.name,
-                description: editing.description ?? "",
-                value: String(editing.value),
-                maxValue: editing.maxValue != null ? String(editing.maxValue) : "",
-                unit: editing.unit ?? "",
-                color: editing.color ?? "#d97706",
-            } : EMPTY_FORM);
-        }
-    }, [open, editing]);
+    if (useDepsChanged([open, editing]) && open) {
+        setForm(editing ? {
+            name: editing.name,
+            description: editing.description ?? "",
+            value: String(editing.value),
+            maxValue: editing.maxValue != null ? String(editing.maxValue) : "",
+            unit: editing.unit ?? "",
+            color: editing.color ?? "#d97706",
+        } : EMPTY_FORM);
+    }
 
     async function save() {
         if (!form.name.trim()) return;
@@ -283,6 +282,7 @@ export default function ResourcesPage() {
         setLoading(false);
     }, [campaignId]);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [load]);
 
     async function adjust(resource: CampaignResource, delta: number) {
@@ -369,7 +369,7 @@ export default function ResourcesPage() {
                 />
 
                 <Dialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)}>
-                    <DialogTitle>Delete "{deleteTarget?.name}"?</DialogTitle>
+                    <DialogTitle>Delete &quot;{deleteTarget?.name}&quot;?</DialogTitle>
                     <DialogContent>
                         <Typography>This cannot be undone.</Typography>
                     </DialogContent>

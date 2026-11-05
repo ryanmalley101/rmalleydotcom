@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useSyncExternalStore } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Stage, Layer, Rect, Line, Image as KonvaImage, Group, Circle, Text, Transformer } from "react-konva";
 import type Konva from "konva";
@@ -30,6 +30,7 @@ import { ChatPanel } from "../../_dashboard-shared/ChatPanel";
 import { FloatingWindow } from "../../_dashboard-shared/FloatingWindow";
 import { SessionAudioPlayer } from "../../_dashboard-shared/SessionAudioPlayer";
 import type { DamageTrack } from "@/lib/cypherRules";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const DND_SYSTEMS = ["D&D 5e", "D&D 5.5e (2024)"];
 const SHEET_SYSTEMS = [...DND_SYSTEMS, "Cypher System"];
@@ -97,18 +98,23 @@ interface AoeTemplate {
     color: string;
 }
 
+const subscribeNoop = () => () => {};
+
 export default function VttBoardPage() {
     const { campaignId, boardId } = useParams<{ campaignId: string; boardId: string }>();
     const router = useRouter();
     const { isGm, userId: currentUserId } = useCampaignRole(campaignId);
 
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
+    // false during SSR/hydration, true once running in the browser — Konva
+    // needs `window`, so the stage only renders client-side.
+    const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
 
     const [board, setBoard] = useState<VttBoard | null>(null);
     const [loading, setLoading] = useState(true);
     const [mapUrl, setMapUrl] = useState("");
-    const [mapImage, setMapImage] = useState<HTMLImageElement | null>(null);
+    const [loadedMap, setLoadedMap] = useState<{ url: string; img: HTMLImageElement } | null>(null);
+    // Only show an image that was loaded for the *current* URL.
+    const mapImage = loadedMap && loadedMap.url === mapUrl ? loadedMap.img : null;
     const [uploading, setUploading] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [offsetXInput, setOffsetXInput] = useState("0");
@@ -221,9 +227,9 @@ export default function VttBoardPage() {
     // Fog and drawing are GM-only tools — if role resolves to non-GM after
     // the fact (or a player had a GM-only tool selected from a stale state),
     // fall back to select rather than leaving an inaccessible tool active.
-    useEffect(() => {
-        if (!isGm && (tool.startsWith("fog-") || tool.startsWith("draw-"))) setTool("select");
-    }, [isGm, tool]);
+    if (useDepsChanged([isGm, tool]) && !isGm && (tool.startsWith("fog-") || tool.startsWith("draw-"))) {
+        setTool("select");
+    }
 
     const containerRef = useRef<HTMLDivElement>(null);
     const transformerRef = useRef<Konva.Transformer>(null);
@@ -247,6 +253,7 @@ export default function VttBoardPage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [boardId, campaignId]);
 
     // ── Token list + live sync (manual list + subscribe, not observeQuery —
@@ -320,10 +327,12 @@ export default function VttBoardPage() {
 
     // Konva's <Image> needs an actual HTMLImageElement, not just a URL string.
     useEffect(() => {
-        if (!mapUrl) { setMapImage(null); return; }
+        if (!mapUrl) return;
+        let cancelled = false;
         const img = new window.Image();
-        img.onload = () => setMapImage(img);
+        img.onload = () => { if (!cancelled) setLoadedMap({ url: mapUrl, img }); };
         img.src = mapUrl;
+        return () => { cancelled = true; };
     }, [mapUrl]);
 
     // Resolve + cache token art the same way (only for keys we don't have yet).
@@ -1115,7 +1124,7 @@ export default function VttBoardPage() {
                 <Box sx={{ width: 280, p: 3 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>Board Settings</Typography>
                     <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 2 }}>
-                        Fine-tune grid alignment if an uploaded map doesn't line up with the grid by default.
+                        Fine-tune grid alignment if an uploaded map doesn&apos;t line up with the grid by default.
                     </Typography>
                     <TextField label="Grid offset X (px)" type="number" size="small" fullWidth sx={{ mb: 2 }}
                         value={offsetXInput} onChange={e => setOffsetXInput(e.target.value)} />

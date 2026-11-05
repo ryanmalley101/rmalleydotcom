@@ -339,6 +339,7 @@ export default function InitiativePage() {
                     ...c,
                     deathSaves: c.deathSaves ?? { successes: 0, failures: 0 },
                 }));
+                // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore from localStorage; must run after hydration, not during render
                 setCombatants(migrated);
                 setActiveId(s.activeId ?? null);
                 setRound(s.round ?? 1);

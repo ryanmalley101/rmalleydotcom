@@ -163,6 +163,7 @@ export default function ArticlePage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [articleId]);
 
     const titleToId = useMemo(() => {
@@ -207,14 +208,6 @@ export default function ArticlePage() {
         return () => window.removeEventListener("beforeunload", handler);
     }, [isDirty]);
 
-    // Debounced autosave while editing.
-    useEffect(() => {
-        if (!editing || !autosaveEnabled || !isDirty) return;
-        const timer = setTimeout(() => { silentSave(); }, 4000);
-        return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [editing, autosaveEnabled, isDirty, title, articleType, content,
-        excerpt, coverImageUrl, coverImageKey, status, visibleToPlayers, parentTitle, tags, galleryKeys]);
 
     async function uploadCover(file: File) {
         setCoverUploading(true);
@@ -314,6 +307,15 @@ export default function ArticlePage() {
         setAutosaving(false);
         setLastAutosaved(new Date());
     }
+
+    // Debounced autosave while editing.
+    useEffect(() => {
+        if (!editing || !autosaveEnabled || !isDirty) return;
+        const timer = setTimeout(() => { silentSave(); }, 4000);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editing, autosaveEnabled, isDirty, title, articleType, content,
+        excerpt, coverImageUrl, coverImageKey, status, visibleToPlayers, parentTitle, tags, galleryKeys]);
 
     async function deleteArticle() {
         if (!article) return;
@@ -820,7 +822,7 @@ export default function ArticlePage() {
                 )}
 
                 <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
-                    <DialogTitle>Delete "{article.title}"?</DialogTitle>
+                    <DialogTitle>Delete &quot;{article.title}&quot;?</DialogTitle>
                     <DialogContent>
                         <Typography>This cannot be undone. Links to this article will become unresolved.</Typography>
                     </DialogContent>

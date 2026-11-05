@@ -174,7 +174,7 @@ export default function AutoLinkPage() {
                     results.length === 0 ? (
                         <Alert severity="info" sx={{ mb: 3 }}>
                             No unlinked mentions found — all article titles are either already linked or
-                            don't appear in other articles' content.
+                            don&apos;t appear in other articles&apos; content.
                         </Alert>
                     ) : (
                         <>

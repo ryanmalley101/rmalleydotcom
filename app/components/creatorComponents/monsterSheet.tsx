@@ -8,6 +8,15 @@ import { createDefaultKnightStatblock } from "@/5eReference/monsterStatblockGene
 import type { SkillName } from "@/5eReference/converters";
 
 const client = generateClient<Schema>();
+
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <div className={styles.sectionHeader}>{children}</div>
+      <div className={styles.hr}></div>
+    </>
+  );
+}
 type MyMonsterStatblock = Schema['MonsterStatblock']['type'];
 type MyMonsterAbility = Schema['MonsterAbility']['type'];
 type MyMonsterAttack = Schema['MonsterAttack']['type'];
@@ -85,18 +94,20 @@ interface MonsterSheetProps {
 }
 
 const MonsterSheet: React.FC<MonsterSheetProps> = ({ slug, statblock, printRef }) => {
-  const defaultStatblock = createDefaultKnightStatblock("knight", "default-publisher");
-  const [monsterData, setMonsterData] = useState<MyMonsterStatblock>(defaultStatblock);
+  const [defaultStatblock] = useState(() => createDefaultKnightStatblock("knight", "default-publisher"));
+  const [fetchedData, setFetchedData] = useState<MyMonsterStatblock | null>(null);
 
+  // A passed-in statblock always wins; only fetch by slug when there isn't one.
   useEffect(() => {
-    async function fetchData() {
-      if (!slug) return;
-      const { data } = await client.models.MonsterStatblock.get({ id: slug });
-      if (data) setMonsterData(cleanMonster(data));
-    }
-    if (statblock) setMonsterData(statblock);
-    else fetchData();
+    if (statblock || !slug) return;
+    let cancelled = false;
+    client.models.MonsterStatblock.get({ id: slug }).then(({ data }) => {
+      if (data && !cancelled) setFetchedData(cleanMonster(data));
+    });
+    return () => { cancelled = true; };
   }, [slug, statblock]);
+
+  const monsterData: MyMonsterStatblock = statblock ?? fetchedData ?? defaultStatblock;
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -261,13 +272,6 @@ const MonsterSheet: React.FC<MonsterSheetProps> = ({ slug, statblock, printRef }
       );
     });
   };
-
-  const SectionHeader = ({ children }: { children: React.ReactNode }) => (
-    <>
-      <div className={styles.sectionHeader}>{children}</div>
-      <div className={styles.hr}></div>
-    </>
-  );
 
   const getBonusActions = () => {
     if (!monsterData.bonus_actions || monsterData.bonus_actions.length === 0) return null;

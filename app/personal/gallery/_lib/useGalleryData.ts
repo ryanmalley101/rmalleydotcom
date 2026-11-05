@@ -68,6 +68,7 @@ export function useGalleryData() {
         setLoading(false);
     }, []);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { reload(); }, [reload]);
 
     return { photos, subGalleries, urls, loading, reload };

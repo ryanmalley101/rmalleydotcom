@@ -113,7 +113,7 @@ export function SpotlightNpcs({ campaignId, worldIds, pinnedIds, onTogglePin }: 
             )}
             {search.trim() && results.length === 0 && (
                 <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mt: 1 }}>
-                    No matching "Character" wiki articles. Create one from the Wiki section above, then it'll show up here.
+                    No matching &quot;Character&quot; wiki articles. Create one from the Wiki section above, then it&apos;ll show up here.
                 </Typography>
             )}
         </Paper>
