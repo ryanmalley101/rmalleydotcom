@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { PreviousSessionSidebar } from "../_components/PreviousSessionSidebar";
 
 const client = generateClient<Schema>();
 
@@ -89,7 +90,7 @@ export default function NewSessionPage() {
 
     return (
         <Box sx={{ minHeight: "100vh", backgroundColor: "background.default", py: 8 }}>
-            <Container maxWidth="md">
+            <Container maxWidth="lg">
                 <Button component={Link} href={`/tabletop/campaigns/${campaignId}`}
                     startIcon={<ArrowLeft size={16} />} sx={{ mb: 4, color: "primary.main" }}>
                     Back to Campaign
@@ -104,7 +105,8 @@ export default function NewSessionPage() {
 
                 <Divider sx={{ mb: 4 }} />
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, alignItems: "flex-start" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3, flex: 1, minWidth: 0, width: "100%" }}>
                     <Box sx={{ display: "flex", gap: 2 }}>
                         <TextField
                             label="Session #" type="number" sx={{ width: 120 }}
@@ -144,6 +146,11 @@ export default function NewSessionPage() {
                             {saving ? <CircularProgress size={18} /> : "Create Session"}
                         </Button>
                     </Box>
+                </Box>
+
+                <Box component="aside" sx={{ width: { xs: "100%", md: 360 }, flexShrink: 0, alignSelf: { md: "stretch" } }}>
+                    <PreviousSessionSidebar campaignId={campaignId} />
+                </Box>
                 </Box>
             </Container>
         </Box>
