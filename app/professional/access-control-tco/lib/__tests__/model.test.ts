@@ -1,8 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { computeComparison, computeSolution, controllersFor, type ScenarioInputs, type SolutionInputs } from "../model";
-import { DEFAULT_SCENARIO, defaultSolution } from "../defaults";
+import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution } from "../defaults";
 import { VERTICALS } from "../verticals";
+import { seedSolution } from "../seeds";
 
 const scenario = (o: Partial<ScenarioInputs> = {}): ScenarioInputs => ({ ...DEFAULT_SCENARIO, ...o });
 const NO_ESCALATION = { laborEscalationPct: 0, hardwareEscalationPct: 0, licenseEscalationPct: 0 };
@@ -11,16 +12,26 @@ const cloud = (id: "a" | "b" = "b", o: Partial<SolutionInputs> = {}) => ({ ...de
 const round = Math.round;
 const yearZero = (sol: SolutionInputs, o: Partial<ScenarioInputs> = {}) => computeSolution(scenario({ ...NO_ESCALATION, ...o }), sol, false).byYear[0];
 
-// Pins the headline numbers of the default comparison (server-based
-// incumbent vs. a fresh cloud system, every number a placeholder). Any
-// change to these is a change to what the tool tells people, so update them
-// deliberately and note the new totals in the commit message.
+// Pins the headline numbers of the comparison a first-time visitor sees
+// (an incumbent LenelS2 OnGuard vs. Verkada, seeded the way the wizard seeds
+// them). Any change to these is a change to what the tool tells people, so
+// update them deliberately and note the new totals in the commit message.
 test("default comparison snapshot", () => {
-  const c = computeComparison(scenario({ incumbent: "a" }), onprem("a"), cloud("b"));
+  const shape = SHAPE_OPTIONS.find((s) => s.id === "onprem-cloud")!;
+  const c = computeComparison(scenario({ incumbent: "a" }), seedSolution("a", shape), seedSolution("b", shape));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 289213, b: 389907, crossover: null },
+    { a: 288732, b: 378604, crossover: null },
   );
+});
+
+test("the wizard pre-fills researched vendors, leaving slot B open when both share a model", () => {
+  const byId = (id: string) => SHAPE_OPTIONS.find((s) => s.id === id)!;
+  assert.deepEqual([seedSolution("a", byId("onprem-cloud")).name, seedSolution("b", byId("onprem-cloud")).name], ["LenelS2 OnGuard", "Verkada"]);
+  assert.equal(seedSolution("b", byId("onprem-cloud")).tierPrice, 249);
+  assert.equal(seedSolution("a", byId("onprem-cloud")).baseLicense, 3760);
+  assert.deepEqual([seedSolution("a", byId("cloud-cloud")).name, seedSolution("b", byId("cloud-cloud")).name], ["Verkada", "Solution B (Cloud)"]);
+  assert.deepEqual([seedSolution("a", byId("onprem-onprem")).name, seedSolution("b", byId("onprem-onprem")).name], ["LenelS2 OnGuard", "Solution B (Server-based)"]);
 });
 
 test("totals split into cash, staff time, and business impact", () => {

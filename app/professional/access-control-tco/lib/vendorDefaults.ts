@@ -50,7 +50,7 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
     fieldMeta: {
       tierPrice: sourced(249, "high", [VERKADA_DATASHEET], "LIC-AC-1Y, per door, 1-year term. Also 3yr $599, 5yr $999, 10yr $1,999 per door. From an AC41-generation datasheet (the current pricing page didn't expose license rows); confirmed current by the reviewer.", "2026-11-12"),
       tierYears: sourced(1, "high", [VERKADA_DATASHEET], "Shortest term sold; 3, 5, and 10-year terms are cheaper per year.", "2026-11-12"),
-      controllerCost: sourced(1999, "high", [VERKADA_PRICING], "AC43 4-door controller, US MSRP. The price includes a 1-year license, which overlaps the first year's door licenses slightly. The 16-door AC62 is $5,999."),
+      controllerCost: sourced(1999, "high", [VERKADA_PRICING], "AC43 4-door controller, US MSRP. Door licenses are separate and per door in use: an AC43 running four doors needs four, running two needs two (confirmed by the reviewer). The 16-door AC62 is $5,999."),
       doorsPerController: sourced(4, "high", [VERKADA_PRICING], "AC43."),
       readerCost: sourced(349, "high", [VERKADA_PRICING], "AD34 door reader, US MSRP."),
       warrantyYears: sourced(10, "high", [VERKADA_DATASHEET], "\"All Verkada hardware purchases are backed by our 10-year limited warranty\"; confirmed by the reviewer for access control hardware.", "2026-11-12"),
@@ -58,7 +58,7 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
       reusesReaders: sourced(true, "high", ["https://help.verkada.com/access-control/installation/badge-reader-support"], "Third-party OSDP readers over RS-485 and Wiegand readers on the Wiegand ports; HID Signo and R series verified."),
       reusesControllers: estimated(false, "high", "Verkada controllers can't take over existing Mercury panels (confirmed by the reviewer); Verkada documents only its own controllers.", ["https://www.k12mt.com/hubfs/K12Montana-and-VERKADA-access-control-overview.pdf"], "2026-11-12"),
     },
-    notes: "Encrypted cards are $799 per 100 (not set; card price stays generic). Open question: whether the AC43's bundled 1-year license covers all four doors.",
+    notes: "Encrypted cards are $799 per 100 (not set; card price stays generic).",
   },
   Rhombus: {
     values: { tierPrice: 199, tierYears: 1, controllerCost: 1399, doorsPerController: 4, readerCost: 299, warrantyYears: 10, reusesReaders: true, reusesControllers: false },

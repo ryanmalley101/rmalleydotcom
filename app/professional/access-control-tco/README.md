@@ -30,11 +30,14 @@ fair:
    difference, on-prem servers, is modeled as its own line (server hardware,
    server software, server patching hours) rather than baked into a bigger
    per-door admin number for on-prem.
-2. **No vendor is pre-filled.** The wizard seeds each side with a
-   placeholder name, not a vendor. When the user picks a researched vendor,
-   only its sourced (or reviewer-confirmed) numbers apply, each with a source
-   dot; a vendor whose license price is quote-only keeps the generic one and
-   says so in its picker badge. See "Vendor defaults".
+2. **Only researched numbers are vendor-specific.** The wizard pre-fills
+   Verkada against an incumbent LenelS2 OnGuard (`lib/seeds.ts`), the most
+   common real comparison; both are researched, so what's pre-filled is
+   their own sourced (or reviewer-confirmed) numbers, each with a source dot,
+   and every other field keeps the same generic default as any vendor. A
+   vendor whose license price is quote-only keeps the generic one and says
+   so in its picker badge. When both sides share a deployment model, only
+   slot A gets a vendor. See "Vendor defaults".
 3. **Reuse is per layer and per solution.** Whether existing hardware can stay
    decides most of a migration's year-0 cost, and it's where vendors differ
    most. See "Reuse".
