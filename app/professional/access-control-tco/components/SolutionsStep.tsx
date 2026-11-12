@@ -10,8 +10,8 @@ import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
 import { ConfidenceBadge, IconLabel, OTHER_PROVIDER, providerSelectData } from "../../_tco-shared/components/FormParts";
 import SolutionForm from "./SolutionForm";
 
-// The provider picker. Picking a researched vendor would apply its defaults
-// (none are researched yet), and switching away resets them.
+// The provider picker. Picking a researched vendor applies its defaults, and
+// switching away resets them.
 function ProviderPicker({ sol, onChange }: { sol: SolutionInputs; onChange: (v: SolutionInputs) => void }) {
   const providers = sol.model === "cloud" ? CLOUD_PROVIDERS : ONPREM_PROVIDERS;
   const isPlaceholder = PLACEHOLDER_NAMES.includes(sol.name);
@@ -68,9 +68,9 @@ export default function SolutionsStep({ solA, solB, onChangeA, onChangeB, colorA
       <div>
         <Title order={4} mb={4}>Name & configure each solution</Title>
         <Text size="sm" c={TEXT_MUTED}>
-          Pick a provider for each side and adjust what matters most. No vendor&apos;s numbers are pre-filled yet, so
-          every default is a generic placeholder; replace the ones you have quotes for. Everything stays editable on the
-          results page.
+          Pick a provider for each side and adjust what matters most. Researched vendors fill in their published prices
+          and hardware compatibility (the dots show which); every other default is a generic placeholder, so replace the
+          ones you have quotes for. Everything stays editable on the results page.
         </Text>
       </div>
       <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">

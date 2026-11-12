@@ -1,9 +1,7 @@
 // How the wizard fills each side when a comparison type is picked. Neither
-// side is pre-filled with a vendor: no vendor has researched defaults yet,
-// and a vendor's name over generic numbers would look vendor-specific
-// without being so (see the README's design principles). Once vendors are
-// researched, seeding one here is a workflow convenience, as in the video
-// calculator, never a change to the math.
+// side is pre-filled with a vendor (see the README's design principles).
+// Seeding a researched vendor here would be a workflow convenience, as in
+// the video calculator, never a change to the math.
 import type { ShapeOption } from "../../_tco-shared/lib/fields";
 import type { SolutionInputs } from "./model";
 import { defaultSolution } from "./defaults";

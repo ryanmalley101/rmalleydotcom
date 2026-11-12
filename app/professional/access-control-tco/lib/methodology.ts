@@ -12,5 +12,5 @@ export const METHODOLOGY_NOTES: string[] = [
   "Prices grow at three separate escalation rates: one for labor and services, one for hardware, and one for licenses and subscriptions. Purchases with a fixed service life that runs past the horizon are credited for their unused share in the final year, unless that option is turned off.",
   "Admin, cardholder admin, and alarm handling are estimates of staff time, shown separately from cash costs.",
   "Business impact is optional and industry-specific. Each solution's change to a cost the business has today (theft, rekeying, staffed doors) is a percentage of that cost, and new costs it brings are entered directly. Changes start in year 1, grow with labor escalation, and are shown separately from cash costs. The incumbent has no change, since today's figures already reflect it.",
-  "Defaults are unsourced placeholders, not quotes, and no vendor's numbers are pre-filled yet. This tool is not affiliated with or endorsed by any vendor named here.",
+  "Picking a researched vendor fills in its published prices and hardware compatibility, each marked with a source dot; everything else is an unsourced placeholder, not a quote. Many vendors only quote prices privately, so their license price stays generic. This tool is not affiliated with or endorsed by any vendor named here.",
 ];

@@ -30,11 +30,11 @@ fair:
    difference, on-prem servers, is modeled as its own line (server hardware,
    server software, server patching hours) rather than baked into a bigger
    per-door admin number for on-prem.
-2. **No vendor is pre-filled until it's researched.** The wizard seeds each
-   side with a placeholder name, not a vendor, because there's no researched
-   per-vendor data yet. Pre-filling a vendor name over generic numbers would
-   look vendor-specific without being so. Researched defaults are step 5 of
-   the build (see "Not built yet").
+2. **No vendor is pre-filled.** The wizard seeds each side with a
+   placeholder name, not a vendor. When the user picks a researched vendor,
+   only its sourced (or reviewer-confirmed) numbers apply, each with a source
+   dot; a vendor whose license price is quote-only keeps the generic one and
+   says so in its picker badge. See "Vendor defaults".
 3. **Reuse is per layer and per solution.** Whether existing hardware can stay
    decides most of a migration's year-0 cost, and it's where vendors differ
    most. See "Reuse".
@@ -176,14 +176,37 @@ Solutions (provider, discount, licensing, hardware and reuse, credentials,
 operations) → Business impact (optional) → Results. Same share-link,
 `?step=`, save, export and checklist behavior as the video calculator.
 
+## Vendor defaults (`lib/vendorDefaults.ts`)
+
+Researched from `RESEARCH_PROMPT.md` (2026-10-27) and reviewed before merging
+(2026-11-12). Vendor research only fills prices, warranty, and hardware
+compatibility; staff time, labor, door hardware, discount, servers, and card
+prices are never set per vendor.
+
+- **Prices found**: Verkada and Rhombus (license, controller, reader,
+  warranty), Kisi (hardware only), LenelS2 OnGuard and Software House C•CURE
+  (from MSRP price books posted on Minnesota's state procurement site),
+  Paxton Net2 (2022 US price notice), Genetec Synergis (door license only,
+  from IPVM).
+- **Panel compatibility only**: Brivo, Avigilon Alta, Genea, Feenics/Acre,
+  Avigilon Unity (all keep existing Mercury panels), AMAG and Gallagher (own
+  controllers only). Their license prices are quote-only, and the secondary
+  figures found were mostly competitors' blogs that disagreed by several
+  times, so none was used.
+- **Not researched**: Honeywell Pro-Watch, Identiv Hirsch Velocity, LenelS2
+  NetBox.
+- A value confirmed by a reviewer with access to the vendor's own sources
+  but with no public page (Verkada's free Bluetooth unlock, its lack of
+  Mercury support) is `estimated` with high confidence, not `sourced`:
+  `sourced` means there's a page to cite.
+- OnGuard's and C•CURE's researched licenses are reader-count tiers that hold
+  only up to 64 readers (`LICENSE_READER_LIMITS`); the checklist warns past
+  that while the researched price is still in place.
+
 ## Not built yet
 
-- **Researched vendor defaults** (step 5): provider lists exist
-  (`lib/providers.ts`) and the vendor-default machinery is wired, but no
-  vendor has an entry, so every provider uses the generic placeholders below.
-  `RESEARCH_PROMPT.md` is the hand-off prompt for that research, with the
-  fields to fill, the ones to leave alone (staff time, labor, door
-  hardware), and the sourcing rules. Review its output before merging.
+- **Vendor research gaps**: see above. Re-run `RESEARCH_PROMPT.md` for the
+  quote-only and unresearched vendors when better sources turn up.
 - **Wireless locks**: integrated lock-and-reader hardware and its gateways
   aren't a separate door type. For a mixed site, enter blended per-door
   figures or use misc items.
@@ -193,8 +216,8 @@ operations) → Business impact (optional) → Results. Same share-link,
 
 ## Default numbers
 
-Every default is an unsourced placeholder, the same for both deployment
-models unless noted: reader $300, controller $2,000 for 4 doors, door
+Every generic default is an unsourced placeholder, the same for both
+deployment models unless noted: reader $300, controller $2,000 for 4 doors, door
 hardware $1,000/door, new-door install $1,500/door, migration labor
 $250/door, replacement labor $200/device, 12-year hardware half-life, 3-year
 warranty, card $5, cloud license $250/door/yr (on-prem: $5,000 base,

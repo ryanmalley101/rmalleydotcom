@@ -4,7 +4,7 @@
 import type { ComparisonResult, ScenarioInputs, SolutionInputs } from "./model";
 import { defaultSolution } from "./defaults";
 import { SOLUTION_FIELD_MAP } from "./fields";
-import { fieldSourceInfo } from "./vendorDefaults";
+import { LICENSE_READER_LIMITS, fieldSourceInfo } from "./vendorDefaults";
 import { IMPACT, changeValue, isCategoryEnabled } from "./verticals";
 
 // Inputs that most often decide a comparison, checked for still holding an
@@ -27,6 +27,16 @@ export function buildChecklist(scenario: ScenarioInputs, solA: SolutionInputs, s
     });
     if (genericKeys.length) {
       items.push(`${sol.name}: ${genericKeys.map((k) => SOLUTION_FIELD_MAP[k].label).join(", ")} still use generic placeholder values. Replace them with quotes or the customer's own numbers.`);
+    }
+    const estimated = (Object.keys(SOLUTION_FIELD_MAP) as (keyof SolutionInputs)[]).filter((k) => fieldSourceInfo(sol, k)?.status === "estimated");
+    if (estimated.length) {
+      items.push(`${sol.name}: ${estimated.length} pre-filled vendor value${estimated.length === 1 ? " is an estimate" : "s are estimates"} rather than sourced (gray dots).`);
+    }
+    // A researched license priced by reader-count tier only holds up to its tier.
+    const limit = LICENSE_READER_LIMITS[sol.name];
+    const readers = scenario.doors * scenario.readersPerDoor;
+    if (sol.model === "onprem" && limit && sol.baseLicense === limit.baseLicense && readers > limit.readers) {
+      items.push(`${sol.name}: the researched license covers up to ${limit.readers} readers, and this comparison has ${readers}. Enter the license for the larger tier.`);
     }
     if (wired && scenario.incumbent !== sol.id) {
       items.push(

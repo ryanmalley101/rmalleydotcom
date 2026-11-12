@@ -1,7 +1,7 @@
 // Provider names offered in the wizard's dropdowns, per deployment model.
-// "Other" lets the user type any name. None has researched defaults yet
-// (lib/vendorDefaults.ts is empty), so every one uses the generic
-// placeholders until that research is done.
+// "Other" lets the user type any name. Researched defaults, where there are
+// any, live in lib/vendorDefaults.ts under these exact names; a provider
+// without an entry uses the generic placeholders.
 
 export const CLOUD_PROVIDERS = [
   "Verkada",
