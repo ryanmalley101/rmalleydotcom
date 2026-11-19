@@ -11,7 +11,10 @@ export async function exportSnapshot(element: HTMLElement, filename: string) {
 }
 
 export function downloadText(text: string, filename: string, type: string) {
-  const blob = new Blob([text], { type });
+  downloadBlob(new Blob([text], { type }), filename);
+}
+
+export function downloadBlob(blob: Blob, filename: string) {
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = filename;

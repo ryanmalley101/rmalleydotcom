@@ -97,6 +97,7 @@ const PRICED: Record<string, (o?: Overrides) => Spec> = {
       merge<InputSpec>({ name: "rate", unit: "usd", label: "Guard rate ($/hr)", icon: "dollar", help: "Billed hourly rate for a contract guard, or the loaded cost of an in-house one.", default: 35 }, o?.cost),
     ],
     annualPerSite: (v) => v("hours") * v("rate") * 52,
+    formula: "{hours}*{rate}*52",
   }),
   OI3: (o) => annual("OI3",
     text({ label: "Process & SOP failures", icon: "clipboard", help: "What missed procedures cost today: rework, defects, and failed checks. Reviewing footage of how work is actually done can show where procedures slip." }, o),
@@ -112,6 +113,7 @@ const PRICED: Record<string, (o?: Overrides) => Spec> = {
     ...text({ label: "Audit preparation", icon: "fileCheck", help: "Staff hours × the admin rate. Long retention and quick footage search make it faster to produce evidence for auditors and inspectors." }, o),
     inputs: [merge<InputSpec>({ name: "hours", unit: "hours", label: "Audit prep hours per site per year", icon: "clock", help: "Staff hours per site per year spent gathering records and footage for audits and inspections. Costed at the admin rate in the scenario's advanced settings.", default: 40 }, o?.hours)],
     annualPerSite: (v) => v("hours") * v("scenario.adminRate"),
+    formula: "{hours}*{scenario.adminRate}",
   }),
   CG3: (o) => ({
     id: "CG3", code: "CG3",
@@ -121,6 +123,7 @@ const PRICED: Record<string, (o?: Overrides) => Spec> = {
       merge<InputSpec>({ name: "hours", unit: "hours", label: "Hours to redact one request", icon: "clock", help: "Staff hours to find, redact, and release the footage for one request. Costed at the admin rate in the scenario's advanced settings.", default: 3 }, o?.hours),
     ],
     annualPerSite: (v) => v("count") * v("hours") * v("scenario.adminRate"),
+    formula: "{count}*{hours}*{scenario.adminRate}",
   }),
   CG5: (o) => incidents("CG5",
     text({ label: "Safety & health citations", icon: "citation", help: "Citations × average cost. Footage that shows a safety procedure was followed can answer an inspector's question on the spot." }, o),
@@ -190,6 +193,7 @@ const RETAIL_SHRINK: Spec[] = [
       help: "How much of shrink comes from shoplifting and organized retail crime. NRF's survey has put it at roughly a third. Use your own loss-prevention numbers where you have them.",
     }],
     annualPerSite: (v) => v("sales") * (v("shrink") / 100) * (v("share") / 100),
+    formula: "{sales}*({shrink}/100)*({share}/100)",
   },
   {
     id: "RL2.internal", code: "RL2", label: "Employee theft & POS fraud", icon: "employeeTheft",
@@ -199,6 +203,7 @@ const RETAIL_SHRINK: Spec[] = [
       help: "How much of shrink comes from employee theft and POS fraud (sweethearting, void and refund abuse). NRF's survey has put it at a little under a third.",
     }],
     annualPerSite: (v) => v("sales") * (v("shrink") / 100) * (v("share") / 100),
+    formula: "{sales}*({shrink}/100)*({share}/100)",
   },
 ];
 

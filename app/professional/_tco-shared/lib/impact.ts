@@ -62,6 +62,9 @@ export type OutcomeCategory =
       // Yearly cost per site today. `v` reads a shared input by key, or a
       // scenario rate as "scenario.adminRate" / "scenario.investigatorRate".
       annualPerSite: (v: (key: string) => number) => number;
+      // The same calculation as a spreadsheet formula over {key} placeholders
+      // (keys as `v` takes them), for the spreadsheet export. See Spec.formula.
+      formula?: string;
     }
   | {
       id: string;
@@ -122,6 +125,12 @@ export interface Spec {
   icon: OutcomeIcon;
   inputs: InputSpec[];
   annualPerSite: (v: (name: string) => number) => number;
+  // annualPerSite as a spreadsheet formula over {name} placeholders (input
+  // names, or "scenario.adminRate" / "scenario.investigatorRate"), e.g.
+  // "{count}*{cost}", so the spreadsheet export can keep it live. Optional:
+  // without it the export writes today's value instead of a formula. A test
+  // checks every category's formula against annualPerSite.
+  formula?: string;
 }
 
 export interface Text { label: string; help: string; icon: OutcomeIcon }
@@ -133,12 +142,13 @@ export function incidents(code: string, t: Text, count: InputText, cost: InputTe
     id, code, ...t,
     inputs: [{ name: "count", unit: "count", ...count }, { name: "cost", unit: "usd", ...cost }],
     annualPerSite: (v) => v("count") * v("cost"),
+    formula: "{count}*{cost}",
   };
 }
 
 // A yearly dollar amount per site.
 export function annual(code: string, t: Text, amount: InputText, id = code): Spec {
-  return { id, code, ...t, inputs: [{ name: "amount", unit: "usd", ...amount }], annualPerSite: (v) => v("amount") };
+  return { id, code, ...t, inputs: [{ name: "amount", unit: "usd", ...amount }], annualPerSite: (v) => v("amount"), formula: "{amount}" };
 }
 
 // Staff hours per site per year × the admin rate.
@@ -147,6 +157,7 @@ export function adminHours(code: string, t: Text, hours: InputText, id = code): 
     id, code, ...t,
     inputs: [{ name: "hours", unit: "hours", ...hours }],
     annualPerSite: (v) => v("hours") * v("scenario.adminRate"),
+    formula: "{hours}*{scenario.adminRate}",
   };
 }
 
@@ -185,6 +196,7 @@ export function buildVertical(
       id: `${id}.${spec.id}`, code: spec.code, label: spec.label, help: spec.help, icon: spec.icon, kind: "existing" as const,
       inputKeys: Array.from(keyFor.values()),
       annualPerSite: (v: (key: string) => number) => spec.annualPerSite((name) => v(name.startsWith("scenario.") ? name : keyFor.get(name)!)),
+      formula: spec.formula?.replace(/\{([^}]+)\}/g, (_, name: string) => `{${name.startsWith("scenario.") ? name : keyFor.get(name)}}`),
     };
   });
   for (const c of newCosts) categories.push({ ...c, id: `${id}.${c.id}`, code: "NEW", kind: "new" });

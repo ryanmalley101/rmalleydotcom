@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Alert, Button, CopyButton, Group, Menu, Modal, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Check, ChevronDown, Copy, Download, FileSpreadsheet, FileText, Image as ImageIcon, RotateCcw, Save } from "lucide-react";
+import { Check, ChevronDown, Copy, Download, FileSpreadsheet, FileText, Image as ImageIcon, RotateCcw, Save, Sheet } from "lucide-react";
 import { TEXT_MUTED } from "../lib/colors";
 
 // The results page's title row and actions: save locally, copy the share
@@ -11,7 +11,7 @@ import { TEXT_MUTED } from "../lib/colors";
 // under an older cost model.
 export default function ResultsHeader({
   title, subtitle, shareUrl, staleModel, onDismissStaleModel, defaultSaveName, onSave,
-  onSnapshot, onCsv, onPrintable, onEditSetup,
+  onSnapshot, onCsv, onSpreadsheet, onPrintable, onEditSetup,
 }: {
   title: string;
   subtitle: string;
@@ -22,6 +22,8 @@ export default function ResultsHeader({
   onSave: (name: string) => void;
   onSnapshot: () => Promise<void>;
   onCsv: () => void;
+  // The live-formula Excel workbook; left out by a calculator that doesn't have one.
+  onSpreadsheet?: () => Promise<void>;
   onPrintable: () => void;
   onEditSetup: () => void;
 }) {
@@ -30,10 +32,10 @@ export default function ResultsHeader({
   const [saveName, setSaveName] = useState("");
   const [justSaved, setJustSaved] = useState(false);
 
-  async function handleSnapshot() {
+  async function runExport(task: () => Promise<void>) {
     setExporting(true);
     try {
-      await onSnapshot();
+      await task();
     } finally {
       setExporting(false);
     }
@@ -76,7 +78,12 @@ export default function ResultsHeader({
               </Button>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item leftSection={<ImageIcon size={14} />} onClick={handleSnapshot}>Snapshot image (PNG)</Menu.Item>
+              <Menu.Item leftSection={<ImageIcon size={14} />} onClick={() => runExport(onSnapshot)}>Snapshot image (PNG)</Menu.Item>
+              {onSpreadsheet && (
+                <Menu.Item leftSection={<Sheet size={14} />} onClick={() => runExport(onSpreadsheet)}>
+                  Spreadsheet with formulas and charts (Excel)
+                </Menu.Item>
+              )}
               <Menu.Item leftSection={<FileSpreadsheet size={14} />} onClick={onCsv}>Data and inputs (CSV)</Menu.Item>
               <Menu.Item leftSection={<FileText size={14} />} onClick={onPrintable}>Printable report (PDF)</Menu.Item>
             </Menu.Dropdown>

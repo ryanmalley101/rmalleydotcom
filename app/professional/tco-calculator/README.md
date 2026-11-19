@@ -18,7 +18,7 @@ access control calculator (`/professional/access-control-tco`) and live in
 (`lib/engine.ts`: misc items, refresh timing, failure cohorts, residual
 credit, totals, crossovers), input clamping, vendor-default helpers, share
 links and saved comparisons, the flip-point search, the CSV/printable
-report builder, the business impact engine (`lib/impact.ts`), and the UI
+report builder, the spreadsheet writer and its comparison sheets, the business impact engine (`lib/impact.ts`), and the UI
 around them (intro, shape cards, results header and summary, charts, year
 table, gap drivers, checklist, business impact step, misc items). This
 calculator's `lib/` keeps its own cost model, fields, defaults, vendor
@@ -29,6 +29,18 @@ calculators.
 
 ## Cost model (`lib/model.ts`, `lib/defaults.ts`, `lib/vendorDefaults.ts`)
 
+- **Each quantity is written twice, side by side**: `lib/model.ts` defines
+  the cost model as a table of entries (`DERIVED`, `LINES`, `RESIDUAL_LINES`,
+  `RESIDUAL`, plus `simulateFleet` / `FLEET_SHEET` for camera failures). Each
+  entry has `value`, the TypeScript the app runs, and `formula`, the same
+  math as the Excel formula the spreadsheet export writes. `computeSolution`
+  just runs the values in order, and `lib/spreadsheet.ts` just lays out the
+  formulas. To change the cost math, edit both halves of the entry. `npm
+  test` fails if they disagree: `spreadsheet.test.ts` builds a range of
+  comparisons and checks every category's cost in every year against
+  `computeComparison`, and checks every formula against HyperFormula, an
+  independent spreadsheet engine. Each `value` keeps the original model's
+  order of operations, so the table form gives bit-identical results.
 - **Per-vendor defaults**: `lib/vendorDefaults.ts` holds three lookup tables
   (`CLOUD_VENDOR_DEFAULTS`, `ONPREM_VMS_VENDOR_DEFAULTS`,
   `ONPREM_CAMERA_VENDOR_DEFAULTS`) keyed by the exact strings in
@@ -515,6 +527,23 @@ before trusting an unedited comparison:
   `useSearchParams()` requirement. "Download snapshot"
   (`lib/exportSnapshot.ts`, `html2canvas`) captures the stat tiles and
   charts as a PNG.
+- The Excel export (`lib/spreadsheet.ts`) is a working model, not a dump of
+  numbers. An Inputs sheet holds every assumption as blue input cells, with
+  dropdowns for choices and source notes. A model sheet per solution, laid
+  out from `model.ts`'s entries, derives every cost line year by year from
+  those cells: unit counts and storage
+  sizing, refresh and renewal timing, camera failures by install batch, and
+  the residual credit. The shared Summary and Year by year sheets
+  (`_tco-shared/lib/spreadsheet.ts`) add totals, crossover, and three native
+  charts. Some choices are fixed when the file is exported: the horizon
+  (number of year columns), each side's deployment model, and which business
+  impact categories are on. Each side also gets five spare misc rows. The
+  file is written by `_tco-shared/lib/xlsx/` with no runtime dependency, and
+  `xlsx/formula.ts` fills in every formula's cached value, so previews that
+  don't recalculate still show numbers. Business impact baselines stay live
+  through each category's `formula` (`_tco-shared/lib/impact.ts`). A new
+  custom `annualPerSite` needs a matching `formula`; the tests check that
+  every category has one and that it matches.
 - `ScenarioStep`'s and `AssumptionsPanel`'s `SimpleGrid`s use narrow,
   multi-column layouts (`{ base: 2, sm: 4 }` and `{ base: 2, sm: 3 }`) with
   a `leftSection` icon per field in `ScenarioStep`; values here top out in

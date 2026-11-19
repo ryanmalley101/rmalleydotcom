@@ -19,7 +19,7 @@
 import { sanitizeScenario, sanitizeSolution } from "./sanitize";
 import { annualOutcomes, type Vertical } from "./verticals";
 import {
-  advanceCohorts, compareTotals, emptyYear, isRefreshYear, miscForYear, residualCredit, splitTotals, tallyYears,
+  advanceCohorts, compareTotals, isRefreshYear, miscForYear, residualCredit, splitTotals, tallyYears,
   type Cohort, type ComparisonTotals, type DeploymentModel, type IncumbentChoice, type Lump, type MiscCostItem, type SolutionTotals,
 } from "../../_tco-shared/lib/engine";
 
@@ -64,15 +64,19 @@ const RAID_MIN_DRIVES: Record<RaidLevel, number> = {
 // `arrayDrives` drives. You can't buy a fraction of a drive, and each level
 // has a minimum array size.
 export function drivesForArray(usableTb: number, raidLevel: RaidLevel, driveCapacityTb: number, arrayDrives: number): number {
-  const data = Math.max(1, Math.ceil(usableTb / Math.max(1, driveCapacityTb)));
-  let drives: number;
-  if (raidLevel === "raid1" || raidLevel === "raid10") drives = data * 2;
-  else if (raidLevel === "raid5" || raidLevel === "raid6") {
-    const parity = raidLevel === "raid5" ? 1 : 2;
-    const dataPerArray = Math.max(1, arrayDrives - parity);
-    drives = data + Math.ceil(data / dataPerArray) * parity;
-  } else drives = data;
-  return Math.max(RAID_MIN_DRIVES[raidLevel], drives);
+  return Math.max(RAID_MIN_DRIVES[raidLevel], drivesBeforeMinimum(dataDrives(usableTb, driveCapacityTb), raidLevel, arrayDrives));
+}
+
+// drivesForArray's steps, which the cost model's storage sizing (DERIVED,
+// below) shows one per spreadsheet row.
+export const dataDrives = (usableTb: number, driveCapacityTb: number) => Math.max(1, Math.ceil(usableTb / Math.max(1, driveCapacityTb)));
+export const raidParity = (raidLevel: RaidLevel) => (raidLevel === "raid5" ? 1 : raidLevel === "raid6" ? 2 : 0);
+export function drivesBeforeMinimum(data: number, raidLevel: RaidLevel, arrayDrives: number): number {
+  if (raidLevel === "raid1" || raidLevel === "raid10") return data * 2;
+  const parity = raidParity(raidLevel);
+  if (parity === 0) return data;
+  const dataPerArray = Math.max(1, arrayDrives - parity);
+  return data + Math.ceil(data / dataPerArray) * parity;
 }
 
 // Needed to convert a raw physical TB figure into a drive count for
@@ -359,6 +363,616 @@ export interface SolutionResult extends SolutionTotals<Category> {
   hardware: HardwareFootprint;
 }
 
+// ---------------------------------------------------------------------------
+// The cost model, written once for both the app and the spreadsheet export.
+//
+// Every quantity below is one entry with two halves side by side: `value`,
+// the TypeScript math computeSolution runs, and `formula`, the same math as
+// an Excel formula that lib/spreadsheet.ts writes into the exported model
+// sheet. Change one half, change the other in the same place. The
+// spreadsheet tests rebuild a range of comparisons and fail if any year's
+// category cost differs between the two, and check every formula against an
+// independent spreadsheet engine.
+//
+// The flow: DERIVED quantities first (unit counts, storage sizing,
+// discounted prices, refresh timing), then the camera fleet's failures
+// (simulateFleet / FLEET_SHEET), then LINES year by year (escalation, what's
+// bought, each cost category), then RESIDUAL, the end-of-horizon credit.
+// Each `value` keeps the original model's order of operations, so results
+// match it to the last bit.
+
+// How a quantity is shown in the spreadsheet (a subset of its cell styles).
+export type ModelFormat = "usd" | "usdCents" | "num" | "int" | "factor" | "flag";
+
+// Choice inputs as the spreadsheet shows them: readable words in a dropdown,
+// which the formulas below compare against.
+export const SHEET_CHOICES = {
+  yes: "Yes",
+  no: "No",
+  migration: { connector: "Connector", ripReplace: "Rip and replace" } as Record<CloudMigrationStrategy, string>,
+  cameraStrategy: { reuse: "Reuse", replace: "Replace" } as Record<OnpremCameraStrategy, string>,
+  retentionPricing: { scaled: "Scaled", flat: "Flat" } as Record<RetentionPricing, string>,
+  raid: { raid5: "RAID 5", raid6: "RAID 6", raid1: "RAID 1", raid10: "RAID 10", none: "No RAID", raid0: "RAID 0" } as Record<RaidLevel, string>,
+  miscTiming: { upfront: "Upfront", recurring: "Recurring", once: "Once" },
+} as const;
+const { yes: YES, no: NO, migration: MIGRATION, cameraStrategy: CAMERA_STRATEGY, retentionPricing: RETENTION, raid: RAID, miscTiming: TIMING } = SHEET_CHOICES;
+
+// What a formula can refer to. lib/spreadsheet.ts supplies the cells.
+export interface ModelRefs {
+  // Fixed by the export: this solution's deployment model, and the horizon.
+  model: DeploymentModel;
+  H: number;
+  S: Record<keyof ScenarioInputs, string>; // scenario inputs
+  P: Record<keyof SolutionInputs, string>; // this solution's inputs
+  O: Record<keyof SolutionInputs, string>; // the other solution's inputs
+  me: "A" | "B";
+  them: "A" | "B";
+  d: (key: string) => string; // a DERIVED (or RESIDUAL) cell
+  at: (key: string, y: number) => string; // a LINES cell in year y
+  span: (key: string) => string; // a LINES row across every year
+  year: (y: number) => string; // the cell holding year number y
+  misc: { amount: string; timing: string; year: string };
+  // This solution's yearly business impact, or null for none.
+  impact: { savings: string; costs: string } | null;
+  fleet: {
+    start: (y: number) => string; // the starting fleet's failures in year y
+    // Every replacement batch's failures in year y, and the column of the
+    // years they were installed; null when the horizon is too short for any.
+    batches: (y: number) => string | null;
+    installed: string | null;
+  };
+}
+
+// What a value can read: the sanitized inputs, and everything computed so far.
+export interface ModelContext {
+  scn: ScenarioInputs;
+  sol: SolutionInputs;
+  // The incumbent's solution, when this side keeps the incumbent's cameras.
+  existingFleet?: SolutionInputs;
+  isInc: boolean;
+  H: number;
+  // Yearly business impact at today's prices: savings (negative) and added costs.
+  outcomes: { savings: number; costs: number };
+  d: Record<string, number>;
+  at: (key: string, y: number) => number;
+  fleet: { failed: number[]; outOfWarranty: number[]; startRemaining: number; swaps: number };
+}
+
+type Formula = string | number;
+
+export interface DerivedDef {
+  key: string;
+  label: string;
+  note?: string;
+  format: ModelFormat;
+  // Only for these deployment models; both when absent.
+  models?: DeploymentModel[];
+  value: (x: ModelContext) => number;
+  formula: (r: ModelRefs) => Formula;
+}
+
+export interface LineDef {
+  key: string;
+  label: string;
+  note?: string;
+  format: ModelFormat;
+  models?: DeploymentModel[];
+  // Show a horizon total beside the line.
+  total?: boolean;
+  value: (x: ModelContext, y: number) => number;
+  formula: (r: ModelRefs, y: number) => Formula;
+}
+
+export type LineEntry = LineDef | { section: string; models?: DeploymentModel[] };
+
+const CLOUD: DeploymentModel[] = ["cloud"];
+const ONPREM: DeploymentModel[] = ["onprem"];
+const b01 = (b: boolean) => (b ? 1 : 0);
+const isCloud = (x: ModelContext) => x.sol.model === "cloud";
+// Whether a purchase on a cycle lands in year y, as a formula (see isRefreshYear).
+const refreshFormula = (r: ModelRefs, y: number, first: string, cycle: string) =>
+  `IF(AND(${r.year(y)}>=${first},MOD(${r.year(y)}-${first},${cycle})=0,${r.year(y)}<${r.S.horizonYears}),1,0)`;
+
+export const DERIVED: DerivedDef[] = [
+  {
+    key: "isInc", label: "Is the incumbent (1 = yes)", format: "flag",
+    value: (x) => b01(x.isInc),
+    formula: (r) => `IF(${r.S.incumbent}="${r.me}",1,0)`,
+  },
+  {
+    key: "otherInc", label: "Other solution is the incumbent (1 = yes)", format: "flag",
+    value: (x) => b01(!x.isInc && x.scn.incumbent === (x.sol.id === "a" ? "b" : "a")),
+    formula: (r) => `IF(${r.S.incumbent}="${r.them}",1,0)`,
+  },
+  {
+    key: "disc", label: "Price factor after discount", format: "factor",
+    note: "Applies to cameras, licenses, and hardware; not to labor or misc items.",
+    value: (x) => 1 - x.sol.discountPct / 100,
+    formula: (r) => `1-${r.P.discountPct}/100`,
+  },
+  // Whether this side buys a camera fleet at year 0 (when it isn't the
+  // incumbent): always on a new site, and otherwise only if it chose to
+  // replace the existing cameras.
+  {
+    key: "buys", label: "Buys a camera fleet at year 0 (1 = yes)", format: "flag",
+    note: "A new site, or a solution set to replace the existing cameras. Not charged for the incumbent.",
+    value: (x) => b01(x.scn.existingCamerasReusable === false ||
+      (isCloud(x) ? x.sol.migrationStrategy === "ripReplace" : x.sol.onpremCameraStrategy === "replace")),
+    formula: (r) => `IF(OR(${r.S.existingCamerasReusable}="${NO}",` +
+      (r.model === "cloud" ? `${r.P.migrationStrategy}="${MIGRATION.ripReplace}"` : `${r.P.onpremCameraStrategy}="${CAMERA_STRATEGY.replace}"`) + "),1,0)",
+  },
+  // The year-0 fleet is the cameras already on site whenever this side keeps
+  // them: the incumbent, or a side reusing them (a cloud connector, or an
+  // on-prem VMS adding them).
+  {
+    key: "keeps", label: "Keeps the cameras already on site (1 = yes)", format: "flag",
+    value: (x) => b01(x.isInc || x.d.buys === 0),
+    formula: (r) => `IF(OR(${r.d("isInc")}=1,${r.d("buys")}=0),1,0)`,
+  },
+  // When the other side is the incumbent, kept cameras are its hardware, so
+  // they fail and carry warranty on its numbers, not this solution's.
+  // (computeComparison passes `existingFleet` exactly when cameras are
+  // reusable and the other side is the incumbent.)
+  {
+    key: "useOther", label: "Kept cameras are the other solution's (1 = yes)", format: "flag",
+    note: "Then they fail and carry warranty on the incumbent's numbers.",
+    value: (x) => b01(x.d.keeps === 1 && x.existingFleet !== undefined),
+    formula: (r) => `IF(AND(${r.d("keeps")}=1,${r.S.existingCamerasReusable}="${YES}",${r.d("otherInc")}=1),1,0)`,
+  },
+  {
+    key: "startHalfLife", label: "Starting fleet half-life (yrs)", format: "num",
+    value: (x) => (x.d.useOther ? x.existingFleet! : x.sol).fleetHalfLifeYears,
+    formula: (r) => `IF(${r.d("useOther")}=1,${r.O.fleetHalfLifeYears},${r.P.fleetHalfLifeYears})`,
+  },
+  {
+    key: "startWarranty", label: "Starting fleet warranty (yrs)", format: "num",
+    value: (x) => (x.d.useOther ? x.existingFleet! : x.sol).warrantyYears,
+    formula: (r) => `IF(${r.d("useOther")}=1,${r.O.warrantyYears},${r.P.warrantyYears})`,
+  },
+  // Cameras already on site are `existingFleetAgeYears` old, so their
+  // warranty may already be used up.
+  {
+    key: "startInstalled", label: "Starting fleet installed in year", format: "num",
+    note: "Negative: installed before year 0. Warranty is counted from here.",
+    value: (x) => (x.d.keeps ? -x.scn.existingFleetAgeYears : 0),
+    formula: (r) => `IF(${r.d("keeps")}=1,-${r.S.existingFleetAgeYears},0)`,
+  },
+  {
+    key: "startDecay", label: "Starting fleet: share failing each year", format: "factor",
+    value: (x) => 1 - Math.pow(0.5, 1 / x.d.startHalfLife),
+    formula: (r) => `1-0.5^(1/${r.d("startHalfLife")})`,
+  },
+  {
+    key: "replDecay", label: "Replacement cameras: share failing each year", format: "factor",
+    value: (x) => 1 - Math.pow(0.5, 1 / x.sol.fleetHalfLifeYears),
+    formula: (r) => `1-0.5^(1/${r.P.fleetHalfLifeYears})`,
+  },
+
+  // ---- Cloud/hybrid
+  // Retention scales the license along retentionMultiplier, unless this
+  // vendor's price doesn't depend on retention.
+  {
+    key: "retFactor", label: "License retention multiplier", format: "factor", models: CLOUD,
+    note: "(days/30)^0.4, from 30 days up; 1 for flat-priced licenses.",
+    value: (x) => (x.sol.retentionPricing === "flat" ? 1 : retentionMultiplier(x.scn.retentionDays)),
+    formula: (r) => `IF(${r.P.retentionPricing}="${RETENTION.flat}",1,(MAX(${r.S.retentionDays},30)/30)^0.4)`,
+  },
+  // Charged as a lump sum at purchase/renewal (year 0, then every term), not
+  // smoothed: a 5-year license is a single 5-year payment.
+  {
+    key: "termCost", label: "License per camera per term, after discount", format: "usdCents", models: CLOUD,
+    value: (x) => x.sol.tierPrice * x.d.retFactor * x.d.disc,
+    formula: (r) => `${r.P.tierPrice}*${r.d("retFactor")}*${r.d("disc")}`,
+  },
+  // Not storage-driven, so not scaled by retention, but discounted; charged
+  // every year regardless of where the term-renewal cycle is.
+  {
+    key: "addon", label: "Support/analytics add-on per camera per year, after discount", format: "usdCents", models: CLOUD,
+    value: (x) => x.sol.supportAddonPerCamYr * x.d.disc,
+    formula: (r) => `${r.P.supportAddonPerCamYr}*${r.d("disc")}`,
+  },
+  // A connector/NVR-style box is needed whenever cameras other than the
+  // vendor's own native ones are in use; native ("ripReplace") cameras talk
+  // to the cloud directly.
+  {
+    key: "hasConnector", label: "Uses connector appliances (1 = yes)", format: "flag", models: CLOUD,
+    value: (x) => b01(x.sol.migrationStrategy === "connector"),
+    formula: (r) => `IF(${r.P.migrationStrategy}="${MIGRATION.connector}",1,0)`,
+  },
+  // At least one box per site (a connector is physically local to the
+  // cameras it serves), or more if the camera count demands it.
+  {
+    key: "units", label: "Connector appliances", format: "int", models: CLOUD, note: "At least one per site.",
+    value: (x) => Math.max(x.scn.sites, Math.ceil(x.scn.cameras / x.sol.applianceCapacity)),
+    formula: (r) => `MAX(${r.S.sites},ROUNDUP(${r.S.cameras}/${r.P.applianceCapacity},0))`,
+  },
+  {
+    key: "hwCycle", label: "Appliance refresh cycle (yrs)", format: "int", models: CLOUD,
+    value: (x) => x.sol.applianceRefreshCycleYears,
+    formula: (r) => r.P.applianceRefreshCycleYears,
+  },
+  // "Years until next refresh" describes hardware already installed and
+  // aging, so only the incumbent uses it. A side that buys new hardware at
+  // year 0 gets its first refresh one full cycle later.
+  {
+    key: "firstHw", label: "First appliance refresh in year", format: "int", models: CLOUD,
+    note: "The incumbent's follows its years until next refresh; a new deployment's comes one cycle after year 0.",
+    value: (x) => (x.isInc ? x.sol.yearsUntilNextApplianceRefresh : x.d.hwCycle),
+    formula: (r) => `IF(${r.d("isInc")}=1,${r.P.yearsUntilNextApplianceRefresh},${r.d("hwCycle")})`,
+  },
+  // Renewals: every term after year 0 for a new purchase; for the incumbent,
+  // starting when its current term actually ends.
+  {
+    key: "firstRenewal", label: "First license renewal in year", format: "int", models: CLOUD,
+    value: (x) => (x.isInc && x.sol.yearsUntilLicenseRenewal !== undefined ? x.sol.yearsUntilLicenseRenewal : x.sol.tierYears),
+    formula: (r) => `IF(AND(${r.d("isInc")}=1,ISNUMBER(${r.P.yearsUntilLicenseRenewal})),${r.P.yearsUntilLicenseRenewal},${r.P.tierYears})`,
+  },
+
+  // ---- On-prem
+  {
+    key: "nSrv", label: "Recording servers", format: "int", models: ONPREM, note: "At least one per site, plus spares.",
+    value: (x) => Math.max(x.scn.sites, Math.ceil(x.scn.cameras / x.sol.serverCapacity)) + x.scn.spareServers,
+    formula: (r) => `MAX(${r.S.sites},ROUNDUP(${r.S.cameras}/${r.P.serverCapacity},0))+${r.S.spareServers}`,
+  },
+  // Each active (non-spare) recording server holds its share of the footage
+  // on its own array, so a RAID level's minimum drive count applies per
+  // server: five small sites on RAID 10 need five 4-drive arrays, not one.
+  {
+    key: "activeServers", label: "Active (non-spare) recording servers", format: "int", models: ONPREM,
+    value: (x) => Math.max(1, x.d.nSrv - x.scn.spareServers),
+    formula: (r) => `MAX(1,${r.d("nSrv")}-${r.S.spareServers})`,
+  },
+  // Everything an on-prem build (or refresh) buys: recording servers plus any
+  // management servers, each with its server software.
+  {
+    key: "serverUnits", label: "Servers bought (recording + management)", format: "int", models: ONPREM,
+    value: (x) => x.d.nSrv + x.sol.managementServers,
+    formula: (r) => `${r.d("nSrv")}+${r.P.managementServers}`,
+  },
+  {
+    key: "analyticsOn", label: "Includes analytics (1 = yes)", format: "flag", models: ONPREM,
+    value: (x) => b01(x.sol.analyticsEnabled === true),
+    formula: (r) => `IF(${r.P.analyticsEnabled}="${YES}",1,0)`,
+  },
+  {
+    key: "analyticsUnits", label: "Analytics appliances", format: "int", models: ONPREM,
+    value: (x) => (x.d.analyticsOn ? Math.ceil(x.scn.cameras / x.sol.analyticsApplianceCapacity) : 0),
+    formula: (r) => `${r.d("analyticsOn")}*ROUNDUP(${r.S.cameras}/${r.P.analyticsApplianceCapacity},0)`,
+  },
+  {
+    key: "tbUsable", label: "Usable storage needed (TB)", format: "num", models: ONPREM, note: "Cameras × bitrate × retention × overhead.",
+    value: (x) => (x.scn.cameras * (x.scn.bitrateMbps / 8) * 86400 * x.scn.retentionDays) / 1e6 * x.scn.storageOverheadMultiplier,
+    formula: (r) => `${r.S.cameras}*(${r.S.bitrateMbps}/8)*86400*${r.S.retentionDays}/1000000*${r.S.storageOverheadMultiplier}`,
+  },
+  // Whole drives, per active server's array; see drivesForArray.
+  {
+    key: "dataDrives", label: "Data drives per active server", format: "int", models: ONPREM,
+    value: (x) => dataDrives(x.d.tbUsable / x.d.activeServers, x.scn.driveCapacityTb),
+    formula: (r) => `MAX(1,ROUNDUP(${r.d("tbUsable")}/${r.d("activeServers")}/MAX(1,${r.S.driveCapacityTb}),0))`,
+  },
+  {
+    key: "parity", label: "Parity drives per RAID 5/6 array", format: "int", models: ONPREM,
+    value: (x) => raidParity(x.sol.raidLevel),
+    formula: (r) => `IF(${r.P.raidLevel}="${RAID.raid5}",1,IF(${r.P.raidLevel}="${RAID.raid6}",2,0))`,
+  },
+  {
+    key: "drivesRaw", label: "Drives per server before the RAID minimum", format: "int", models: ONPREM,
+    note: "Mirrors double the data drives; RAID 5/6 add parity drives per array.",
+    value: (x) => drivesBeforeMinimum(x.d.dataDrives, x.sol.raidLevel, x.sol.raidArrayDrives),
+    formula: (r) => `IF(OR(${r.P.raidLevel}="${RAID.raid1}",${r.P.raidLevel}="${RAID.raid10}"),${r.d("dataDrives")}*2,` +
+      `IF(${r.d("parity")}>0,${r.d("dataDrives")}+ROUNDUP(${r.d("dataDrives")}/MAX(1,${r.P.raidArrayDrives}-${r.d("parity")}),0)*${r.d("parity")},${r.d("dataDrives")}))`,
+  },
+  {
+    key: "minDrives", label: "Minimum drives for this RAID level", format: "int", models: ONPREM,
+    value: (x) => RAID_MIN_DRIVES[x.sol.raidLevel],
+    formula: (r) => `IF(OR(${r.P.raidLevel}="${RAID.raid10}",${r.P.raidLevel}="${RAID.raid6}"),4,IF(${r.P.raidLevel}="${RAID.raid5}",3,` +
+      `IF(OR(${r.P.raidLevel}="${RAID.raid1}",${r.P.raidLevel}="${RAID.raid0}"),2,1)))`,
+  },
+  {
+    key: "drivesPerServer", label: "Drives per active server", format: "int", models: ONPREM,
+    value: (x) => Math.max(x.d.minDrives, x.d.drivesRaw),
+    formula: (r) => `MAX(${r.d("minDrives")},${r.d("drivesRaw")})`,
+  },
+  {
+    key: "tbBilled", label: "Storage bought (TB, whole drives)", format: "num", models: ONPREM,
+    value: (x) => x.d.drivesPerServer * x.d.activeServers * x.scn.driveCapacityTb,
+    formula: (r) => `${r.d("drivesPerServer")}*${r.d("activeServers")}*${r.S.driveCapacityTb}`,
+  },
+  {
+    key: "hwPurchase", label: "Hardware purchase at today's prices, after discount", format: "usd", models: ONPREM,
+    note: "Servers with their software, storage, and analytics appliances.",
+    value: (x) => (x.sol.serverCost + x.sol.serverSoftwareCost) * x.d.disc * x.d.serverUnits + x.sol.storageCostPerTB * x.d.disc * x.d.tbBilled +
+      x.sol.analyticsApplianceCost * x.d.disc * x.d.analyticsUnits,
+    formula: (r) => `(${r.P.serverCost}+${r.P.serverSoftwareCost})*${r.d("disc")}*${r.d("serverUnits")}+${r.P.storageCostPerTB}*${r.d("disc")}*${r.d("tbBilled")}` +
+      `+${r.P.analyticsApplianceCost}*${r.d("disc")}*${r.d("analyticsUnits")}`,
+  },
+  // A fresh on-prem deployment buys its perpetual license at year 0; only
+  // the support renewal (and any analytics subscription) recurs.
+  {
+    key: "perpetual", label: "Perpetual licenses, after discount", format: "usd", models: ONPREM, note: "Bought at year 0 unless this is the incumbent.",
+    value: (x) => (x.sol.baseLicense + x.sol.deviceLicense * x.scn.cameras + x.d.analyticsOn * x.sol.analyticsSoftwareCostPerCam * x.scn.cameras) * x.d.disc,
+    formula: (r) => `(${r.P.baseLicense}+${r.P.deviceLicense}*${r.S.cameras}+${r.d("analyticsOn")}*${r.P.analyticsSoftwareCostPerCam}*${r.S.cameras})*${r.d("disc")}`,
+  },
+  {
+    key: "care", label: "Support renewal per year, after discount", format: "usd", models: ONPREM,
+    value: (x) => (x.sol.baseLicense + x.sol.deviceLicense * x.scn.cameras) * x.d.disc * (x.sol.carePct / 100),
+    formula: (r) => `(${r.P.baseLicense}+${r.P.deviceLicense}*${r.S.cameras})*${r.d("disc")}*(${r.P.carePct}/100)`,
+  },
+  {
+    key: "analyticsSub", label: "Analytics subscription per year, after discount", format: "usd", models: ONPREM,
+    value: (x) => x.d.analyticsOn * x.sol.analyticsSoftwareCostPerCamYr * x.scn.cameras * x.d.disc,
+    formula: (r) => `${r.d("analyticsOn")}*${r.P.analyticsSoftwareCostPerCamYr}*${r.S.cameras}*${r.d("disc")}`,
+  },
+  {
+    key: "hwCycle", label: "Hardware refresh cycle (yrs)", format: "int", models: ONPREM,
+    value: (x) => x.sol.refreshCycleYears,
+    formula: (r) => r.P.refreshCycleYears,
+  },
+  {
+    key: "firstHw", label: "First hardware refresh in year", format: "int", models: ONPREM,
+    note: "The incumbent's follows its years until next refresh; a new deployment's comes one cycle after year 0.",
+    value: (x) => (x.isInc ? x.sol.yearsUntilNextRefresh : x.d.hwCycle),
+    formula: (r) => `IF(${r.d("isInc")}=1,${r.P.yearsUntilNextRefresh},${r.d("hwCycle")})`,
+  },
+
+  // ---- Business impact (lib/verticals.ts): a change from today, so none for
+  // the incumbent, which is today. The spreadsheet's business impact table
+  // zeroes the incumbent's column itself.
+  {
+    key: "impactSavings", label: "Business impact savings per year (today's prices)", format: "usd",
+    note: "From the Inputs sheet's business impact table, when an industry is selected.",
+    value: (x) => x.outcomes.savings,
+    formula: (r) => r.impact?.savings ?? 0,
+  },
+  {
+    key: "impactCosts", label: "Business impact added costs per year (today's prices)", format: "usd",
+    value: (x) => x.outcomes.costs,
+    formula: (r) => r.impact?.costs ?? 0,
+  },
+];
+
+// The camera fleet, tracked as batches by install year. Each camera fails at
+// a constant yearly rate set by its batch's half-life, and a failure inside
+// that batch's warranty window costs only replacement labor. Every failure
+// is replaced at this solution's own camera price and becomes a new batch
+// that can fail in turn (the old model only ever decayed the original
+// fleet, undercounting swaps by a quarter to a half).
+//
+// The app simulates the batches year by year; the spreadsheet lays the same
+// batches out as a table, one row per install batch (FLEET_SHEET), in closed
+// form: a batch of size n with yearly failure share d loses
+// n(1-d)^(t-1)d cameras in its t-th year.
+export function simulateFleet(x: ModelContext): ModelContext["fleet"] {
+  const start: Cohort = { size: x.scn.cameras, installedYear: x.d.startInstalled, halfLife: x.d.startHalfLife, warrantyYears: x.d.startWarranty };
+  const cohorts = [start];
+  const failed = [0], outOfWarranty = [0];
+  let swaps = 0;
+  for (let y = 1; y <= x.H; y++) {
+    const year = advanceCohorts(cohorts, y, { halfLife: x.sol.fleetHalfLifeYears, warrantyYears: x.sol.warrantyYears });
+    failed.push(year.failed);
+    outOfWarranty.push(year.outOfWarranty);
+    swaps += year.failed;
+  }
+  return { failed, outOfWarranty, startRemaining: start.size, swaps };
+}
+
+export const FLEET_SHEET = {
+  // The starting fleet, `size` cameras, fails from year 1.
+  start: (r: ModelRefs, size: string, y: number): Formula =>
+    y === 0 ? 0 : `${size}*(1-${r.d("startDecay")})^(${r.year(y)}-1)*${r.d("startDecay")}`,
+  // A replacement batch installed in year k fails from year k+1.
+  batch: (r: ModelRefs, size: string, installed: string, k: number, y: number): Formula =>
+    y <= k ? 0 : `${size}*(1-${r.d("replDecay")})^(${r.year(y)}-${installed}-1)*${r.d("replDecay")}`,
+};
+
+export const LINES: LineEntry[] = [
+  // Escalation factors; every amount is escalated as it's assigned (year 0's are all 1).
+  { section: "Escalation (price factor vs. year 0)" },
+  {
+    key: "labor", label: "Labor & services", format: "factor",
+    value: (x, y) => Math.pow(1 + x.scn.laborEscalationPct / 100, y),
+    formula: (r, y) => `(1+${r.S.laborEscalationPct}/100)^${r.year(y)}`,
+  },
+  {
+    key: "hw", label: "Hardware", format: "factor",
+    value: (x, y) => Math.pow(1 + x.scn.hardwareEscalationPct / 100, y),
+    formula: (r, y) => `(1+${r.S.hardwareEscalationPct}/100)^${r.year(y)}`,
+  },
+  {
+    key: "lic", label: "Licenses & subscriptions", format: "factor",
+    value: (x, y) => Math.pow(1 + x.scn.licenseEscalationPct / 100, y),
+    formula: (r, y) => `(1+${r.S.licenseEscalationPct}/100)^${r.year(y)}`,
+  },
+
+  // What's bought when: year 0 for a new deployment (nothing for the
+  // incumbent), then on each refresh/renewal cycle, never in the horizon's
+  // final year (see isRefreshYear).
+  { section: "Purchases (1 = bought this year)" },
+  {
+    key: "hwBuy", label: "Hardware bought", format: "flag", note: "Year 0 for a new deployment, then each refresh; never in the final year.",
+    // ripReplace has no connector appliance, so no cloud hardware at all.
+    value: (x, y) => (isCloud(x) ? x.d.hasConnector : 1) * (y === 0 ? 1 - x.d.isInc : b01(isRefreshYear(y, x.d.firstHw, x.d.hwCycle, x.H))),
+    formula: (r, y) => (r.model === "cloud" ? `${r.d("hasConnector")}*` : "") +
+      (y === 0 ? `(1-${r.d("isInc")})` : refreshFormula(r, y, r.d("firstHw"), r.d("hwCycle"))),
+  },
+  {
+    key: "term", label: "License term bought", format: "flag", models: CLOUD, note: "Year 0 for a new deployment, then each renewal; never in the final year.",
+    value: (x, y) => (y === 0 ? 1 - x.d.isInc : b01(isRefreshYear(y, x.d.firstRenewal, x.sol.tierYears, x.H))),
+    formula: (r, y) => (y === 0 ? `1-${r.d("isInc")}` : refreshFormula(r, y, r.d("firstRenewal"), r.P.tierYears)),
+  },
+
+  { section: "Camera fleet" },
+  {
+    key: "failed", label: "Cameras failing", format: "num", total: true, note: "All install batches; see the table at the bottom.",
+    value: (x, y) => x.fleet.failed[y],
+    formula: (r, y) => {
+      if (y === 0) return 0;
+      const batches = r.fleet.batches(y);
+      return `SUM(${r.fleet.start(y)}${batches ? `,${batches}` : ""})`;
+    },
+  },
+  {
+    key: "oow", label: "Failures out of warranty", format: "num", total: true, note: "Only these cost a new camera; every failure costs labor.",
+    value: (x, y) => x.fleet.outOfWarranty[y],
+    formula: (r, y) => {
+      if (y === 0) return 0;
+      const start = `IF(${r.year(y)}-${r.d("startInstalled")}>${r.d("startWarranty")},${r.fleet.start(y)},0)`;
+      const batches = r.fleet.batches(y);
+      return batches ? `${start}+SUMIF(${r.fleet.installed},"<"&(${r.year(y)}-${r.P.warrantyYears}),${batches})` : start;
+    },
+  },
+
+  { section: "Costs by category" },
+  // Every failure costs replacement labor; only out-of-warranty ones cost
+  // the camera too. Year 0 buys a fleet only if this side buys cameras.
+  {
+    key: "Cameras", label: "Cameras", format: "usd", total: true,
+    value: (x, y) => (y === 0
+      ? (1 - x.d.isInc) * x.d.buys * x.scn.cameras * x.sol.cameraCost * x.d.disc * x.at("hw", y)
+      : x.at("failed", y) * x.sol.replacementInstallLaborCost * x.at("labor", y) + x.at("oow", y) * x.sol.cameraCost * x.d.disc * x.at("hw", y)),
+    formula: (r, y) => (y === 0
+      ? `(1-${r.d("isInc")})*${r.d("buys")}*${r.S.cameras}*${r.P.cameraCost}*${r.d("disc")}*${r.at("hw", y)}`
+      : `${r.at("failed", y)}*${r.P.replacementInstallLaborCost}*${r.at("labor", y)}+${r.at("oow", y)}*${r.P.cameraCost}*${r.d("disc")}*${r.at("hw", y)}`),
+  },
+  {
+    key: "Hardware (initial & refresh)", label: "Hardware (initial & refresh)", format: "usd", total: true,
+    value: (x, y) => (isCloud(x)
+      ? x.at("hwBuy", y) * x.sol.applianceCost * x.d.disc * x.d.units * x.at("hw", y)
+      : x.at("hwBuy", y) * x.d.hwPurchase * x.at("hw", y)),
+    formula: (r, y) => (r.model === "cloud"
+      ? `${r.at("hwBuy", y)}*${r.P.applianceCost}*${r.d("disc")}*${r.d("units")}*${r.at("hw", y)}`
+      : `${r.at("hwBuy", y)}*${r.d("hwPurchase")}*${r.at("hw", y)}`),
+  },
+  // Cloud: the first term up front, then each renewal as a lump sum, plus the
+  // yearly add-on. On-prem: the perpetual license at year 0, then the
+  // support renewal and any analytics subscription every year.
+  {
+    key: "Licenses/subscription", label: "Licenses/subscription", format: "usd", total: true,
+    value: (x, y) => {
+      if (isCloud(x)) {
+        if (y === 0) return x.at("term", y) * x.d.termCost * x.scn.cameras * x.at("lic", y);
+        return (x.d.addon * x.scn.cameras + x.at("term", y) * x.d.termCost * x.scn.cameras) * x.at("lic", y);
+      }
+      if (y === 0) return (1 - x.d.isInc) * x.d.perpetual * x.at("lic", y);
+      return (x.d.care + x.d.analyticsSub) * x.at("lic", y);
+    },
+    formula: (r, y) => {
+      if (r.model === "cloud") {
+        if (y === 0) return `${r.at("term", y)}*${r.d("termCost")}*${r.S.cameras}*${r.at("lic", y)}`;
+        return `(${r.d("addon")}*${r.S.cameras}+${r.at("term", y)}*${r.d("termCost")}*${r.S.cameras})*${r.at("lic", y)}`;
+      }
+      if (y === 0) return `(1-${r.d("isInc")})*${r.d("perpetual")}*${r.at("lic", y)}`;
+      return `(${r.d("care")}+${r.d("analyticsSub")})*${r.at("lic", y)}`;
+    },
+  },
+  // Install labor for a new fleet, or onboarding labor when the existing
+  // cameras are kept and added to the new system.
+  {
+    key: "Installation", label: "Installation", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? (1 - x.d.isInc) * x.sol.bulkInstallLaborCost * x.scn.cameras * x.at("labor", y) : 0),
+    formula: (r, y) => (y === 0 ? `(1-${r.d("isInc")})*${r.P.bulkInstallLaborCost}*${r.S.cameras}*${r.at("labor", y)}` : 0),
+  },
+  {
+    key: "Truck rolls", label: "Truck rolls", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? 0 : x.scn.sites * x.sol.truckRollsPerSiteYr * x.scn.truckRollCost * x.at("labor", y)),
+    formula: (r, y) => (y === 0 ? 0 : `${r.S.sites}*${r.P.truckRollsPerSiteYr}*${r.S.truckRollCost}*${r.at("labor", y)}`),
+  },
+  {
+    key: "Admin labor", label: "Admin labor", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? 0 : x.sol.adminHrsPerCamYr * x.scn.cameras * x.scn.adminRate * x.at("labor", y)),
+    formula: (r, y) => (y === 0 ? 0 : `${r.P.adminHrsPerCamYr}*${r.S.cameras}*${r.S.adminRate}*${r.at("labor", y)}`),
+  },
+  {
+    key: "Investigations", label: "Investigations", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? 0 : x.scn.investigationsPerMonth * 12 * x.sol.investigationHrsPerIncident * x.scn.investigatorRate * x.at("labor", y)),
+    formula: (r, y) => (y === 0 ? 0 : `${r.S.investigationsPerMonth}*12*${r.P.investigationHrsPerIncident}*${r.S.investigatorRate}*${r.at("labor", y)}`),
+  },
+  {
+    key: "Network / bandwidth", label: "Network / bandwidth", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? 0 : x.scn.sites * x.sol.networkCostPerSiteYr * x.at("labor", y)),
+    formula: (r, y) => (y === 0 ? 0 : `${r.S.sites}*${r.P.networkCostPerSiteYr}*${r.at("labor", y)}`),
+  },
+  // User-authored, so they always apply, incumbent or not, at face value (no
+  // vendor discount), growing with labor and services.
+  {
+    key: "Misc / other", label: "Misc / other", format: "usd", total: true,
+    value: (x, y) => miscForYear(x.sol.miscItems, y) * x.at("labor", y),
+    formula: (r, y) => {
+      const m = r.misc;
+      const timed = `SUMIF(${m.timing},"${y === 0 ? TIMING.upfront : TIMING.recurring}",${m.amount})`;
+      return `(${timed}+SUMIFS(${m.amount},${m.timing},"${TIMING.once}",${m.year},${r.year(y)}))*${r.at("labor", y)}`;
+    },
+  },
+  // Recurring from year 1, once the system is in, and escalated with labor
+  // and services, since losses and claims track wages and prices.
+  {
+    key: "Business impact: savings", label: "Business impact: savings", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? 0 : x.d.impactSavings * x.at("labor", y)),
+    formula: (r, y) => (y === 0 ? 0 : `${r.d("impactSavings")}*${r.at("labor", y)}`),
+  },
+  {
+    key: "Business impact: added costs", label: "Business impact: added costs", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? 0 : x.d.impactCosts * x.at("labor", y)),
+    formula: (r, y) => (y === 0 ? 0 : `${r.d("impactCosts")}*${r.at("labor", y)}`),
+  },
+  // Booked in the final year from RESIDUAL below. The app leaves it at 0 here
+  // and lets tallyYears book it, as for every calculator.
+  {
+    key: "Residual value (credit)", label: "Residual value (credit)", format: "usd", total: true,
+    value: () => 0,
+    formula: (r, y) => (y === r.H ? `-${r.d("residual")}` : 0),
+  },
+];
+
+// The unused share of every lump purchase that outlasts the horizon,
+// straight-line over its service life (see residualCredit). Lumps are each
+// year's hardware purchase (life: its refresh cycle) and, for cloud, each
+// license term bought (life: the term).
+export const RESIDUAL_LINES: LineEntry[] = [
+  { section: "Residual value (unused service life at the horizon's end)" },
+  {
+    key: "hwUnused", label: "Hardware bought this year: share of its life unused", format: "factor", note: "Applied to the hardware cost line above.",
+    value: (x, y) => unusedShare(x.d.hwCycle, x.H, y),
+    formula: (r, y) => unusedShareFormula(r, r.d("hwCycle"), y),
+  },
+  {
+    key: "termLump", label: "License term bought this year (lump)", format: "usd", models: CLOUD,
+    value: (x, y) => x.at("term", y) * x.d.termCost * x.scn.cameras * x.at("lic", y),
+    formula: (r, y) => `${r.at("term", y)}*${r.d("termCost")}*${r.S.cameras}*${r.at("lic", y)}`,
+  },
+  {
+    key: "termUnused", label: "License term bought this year: share unused", format: "factor", models: CLOUD,
+    value: (x, y) => unusedShare(x.sol.tierYears, x.H, y),
+    formula: (r, y) => unusedShareFormula(r, r.P.tierYears, y),
+  },
+];
+
+const unusedShare = (life: number, H: number, y: number) => (life - Math.min(life, Math.max(0, H - y))) / life;
+const unusedShareFormula = (r: ModelRefs, life: string, y: number) =>
+  `(${life}-MIN(${life},MAX(0,${r.S.horizonYears}-${r.year(y)})))/${life}`;
+
+export const RESIDUAL: DerivedDef = {
+  key: "residual", label: "Residual value credit", format: "usd",
+  note: "Credited in the final year when the scenario's residual-value option is on.",
+  value: (x) => {
+    if (x.scn.creditResidualValue === false) return 0;
+    const lumps: Lump[] = [];
+    for (let y = 0; y <= x.H; y++) {
+      const hardware = x.at("Hardware (initial & refresh)", y);
+      if (hardware > 0) lumps.push({ year: y, amount: hardware, life: x.d.hwCycle });
+      if (isCloud(x) && x.at("term", y)) lumps.push({ year: y, amount: x.at("termLump", y), life: x.sol.tierYears });
+    }
+    return residualCredit(lumps, x.H);
+  },
+  formula: (r) => `IF(${r.S.creditResidualValue}="${YES}",SUMPRODUCT(${r.span("Hardware (initial & refresh)")},${r.span("hwUnused")})` +
+    (r.model === "cloud" ? `+SUMPRODUCT(${r.span("termLump")},${r.span("termUnused")})` : "") + ",0)",
+};
+
+const applies = (entry: { models?: DeploymentModel[] }, model: DeploymentModel) => !entry.models || entry.models.includes(model);
+export const derivedFor = (model: DeploymentModel) => DERIVED.filter((d) => applies(d, model));
+export const linesFor = (entries: LineEntry[], model: DeploymentModel) => entries.filter((e) => applies(e, model));
+const isLine = (e: LineEntry): e is LineDef => "key" in e;
+
 export function computeSolution(
   rawScenario: ScenarioInputs,
   rawSol: SolutionInputs,
@@ -366,226 +980,44 @@ export function computeSolution(
   rawExistingFleet?: SolutionInputs
 ): SolutionResult {
   // Every input is clamped to a usable range first (see lib/sanitize.ts), so
-  // nothing below needs its own guard against a cleared or missing field.
-  const scenario = sanitizeScenario(rawScenario);
+  // nothing in the definitions above needs its own guard against a cleared
+  // or missing field.
+  const scn = sanitizeScenario(rawScenario);
   const sol = sanitizeSolution(rawSol);
   const existingFleet = rawExistingFleet && sanitizeSolution(rawExistingFleet);
-  const { cameras: cams, sites, retentionDays: ret, horizonYears: yrs, bitrateMbps: br, investigationsPerMonth: invMo } = scenario;
-  const escLabor = scenario.laborEscalationPct / 100;
-  const escHardware = scenario.hardwareEscalationPct / 100;
-  const escLicense = scenario.licenseEscalationPct / 100;
-  const disc = 1 - sol.discountPct / 100;
-  const tierYears = sol.tierYears;
-
-
-  // Whether this side buys a camera fleet at year 0 (when it isn't the
-  // incumbent): always on a new site, and otherwise only if it chose to
-  // replace the existing cameras.
-  const buysCameras =
-    scenario.existingCamerasReusable === false ||
-    (sol.model === "cloud" ? sol.migrationStrategy === "ripReplace" : sol.onpremCameraStrategy === "replace");
-
-  // Camera fleet, tracked as cohorts by install year. Each camera fails at a
-  // constant yearly rate set by its own fleet's half-life, and a failure
-  // inside that cohort's warranty window costs only replacement labor. Every
-  // failure is replaced at this solution's own camera price and becomes a
-  // new cohort that can fail in turn (the old model only ever decayed the
-  // original fleet, undercounting swaps by a quarter to a half).
-  //
-  // The year-0 fleet is the cameras already on site whenever this side keeps
-  // them: the incumbent, or a side reusing them (a cloud connector, or an
-  // on-prem VMS adding them). Those are `existingFleetAgeYears` old, so their
-  // warranty may already be used up. When the other side is the incumbent
-  // (`existingFleet`), the reused cameras are its hardware, so they fail and
-  // carry warranty on its numbers, not this solution's.
-  const keepsExistingCameras = isIncumbent || !buysCameras;
-  const startSource = keepsExistingCameras && existingFleet ? existingFleet : sol;
-  const fleetAge = keepsExistingCameras ? scenario.existingFleetAgeYears : 0;
-  const startCohort: Cohort = {
-    size: cams,
-    installedYear: -fleetAge,
-    halfLife: startSource.fleetHalfLifeYears,
-    warrantyYears: startSource.warrantyYears,
+  const outcomes = isIncumbent ? [] : annualOutcomes(scn, sol);
+  const lineValues: Record<string, number[]> = {};
+  const x: ModelContext = {
+    scn, sol, existingFleet, isInc: isIncumbent, H: scn.horizonYears,
+    outcomes: {
+      savings: outcomes.reduce((sum, o) => sum + Math.min(0, o.amount), 0),
+      costs: outcomes.reduce((sum, o) => sum + Math.max(0, o.amount), 0),
+    },
+    d: {},
+    at: (key, y) => lineValues[key][y],
+    fleet: { failed: [], outOfWarranty: [], startRemaining: 0, swaps: 0 },
   };
-  const cohorts = [startCohort];
-  let cameraSwaps = 0;
-
-  // Resolved storage-billing assumptions — see the ScenarioInputs comment for
-  // why the fallback pattern.
-  // A spare-server count of 0 used to fall back to the default of 1 here.
-  const { driveCapacityTb, storageOverheadMultiplier, spareServers } = scenario;
-
-  // Charged as a lump sum at purchase/renewal (year 0, then every `tierYears`
-  // thereafter), not smoothed evenly across every year of the term — a 5-year
-  // license is a single 5-year payment, not a de-facto annual subscription at
-  // 1/5th the price. The add-on isn't storage-driven, so it doesn't scale with
-  // retentionMultiplier the way the base license does, but the vendor's own
-  // negotiated discount still applies to it; unlike the term price, it's
-  // named/priced as a genuinely annual cost, so it's charged every year
-  // regardless of where the term-renewal cycle is.
-  const retentionFactor = sol.retentionPricing === "flat" ? 1 : retentionMultiplier(ret);
-  const licenseTermCost = sol.model === "cloud" ? sol.tierPrice * retentionFactor * disc : 0;
-  const supportAddonAnnual = sol.model === "cloud" ? sol.supportAddonPerCamYr * disc : 0;
-  // At least one box per site (a connector/NVR is physically local to the cameras it
-  // serves, you can't split one across sites), or more if total camera count demands it.
-  const applianceUnits = sol.model === "cloud" ? Math.max(sites, Math.ceil(cams / sol.applianceCapacity)) : 0;
-  const nSrv =
-    sol.model === "onprem" ? Math.max(sites, Math.ceil(cams / sol.serverCapacity)) + spareServers : 0;
-  // Everything an on-prem build (or refresh) buys: recording servers plus any
-  // management servers, each with its server software (OS, database), the
-  // storage, and the analytics appliances.
-  const serverUnits = nSrv + sol.managementServers;
-  const analyticsOn = sol.model === "onprem" && sol.analyticsEnabled === true;
-  const analyticsUnits = analyticsOn ? Math.ceil(cams / sol.analyticsApplianceCapacity) : 0;
-  const onpremHardwarePurchase = () =>
-    (sol.serverCost + sol.serverSoftwareCost) * disc * serverUnits + sol.storageCostPerTB * disc * tbBilled + sol.analyticsApplianceCost * disc * analyticsUnits;
-  const tbUsable = (cams * (br / 8) * 86400 * ret) / 1e6 * storageOverheadMultiplier;
-  // Physical drives to buy: usable capacity times RAID overhead (1x for RAID 0/none, 2x for
-  // mirrored RAID 1/10).
-  // Each active (non-spare) recording server holds its share of the footage
-  // on its own array, so a RAID level's minimum drive count applies per
-  // server: five small sites on RAID 10 need five 4-drive arrays, not one.
-  const activeServers = Math.max(1, nSrv - spareServers);
-  const tbBilled =
-    sol.model === "onprem"
-      ? drivesForArray(tbUsable / activeServers, sol.raidLevel, driveCapacityTb, sol.raidArrayDrives) * activeServers * driveCapacityTb
-      : tbUsable;
-  const careCost = sol.model === "onprem" ? (sol.baseLicense + sol.deviceLicense * cams) * disc * (sol.carePct / 100) : 0;
-  // Business impact, a change from today: none for the incumbent, which is
-  // today. Recurring from year 1, once the system is in, and escalated with
-  // labor and services, since losses and claims track wages and prices.
-  const outcomes = isIncumbent ? [] : annualOutcomes(scenario, sol);
-  const outcomeSavings = outcomes.reduce((sum, o) => sum + Math.min(0, o.amount), 0);
-  const outcomeCosts = outcomes.reduce((sum, o) => sum + Math.max(0, o.amount), 0);
-
-  // Refresh timing. "Years until next refresh" describes hardware that's
-  // already installed and aging, so only the incumbent uses it. A side that
-  // buys new hardware at year 0 gets its first refresh one full cycle later;
-  // using the offset there too used to buy a brand-new deployment's hardware
-  // twice within a couple of years.
-  const refreshCycle = sol.refreshCycleYears;
-  const firstRefresh = isIncumbent ? sol.yearsUntilNextRefresh : refreshCycle;
-  const applianceCycle = sol.applianceRefreshCycleYears;
-  const firstApplianceRefresh = isIncumbent ? sol.yearsUntilNextApplianceRefresh : applianceCycle;
-  // Cloud license renewals: every term after year 0 for a new purchase; for
-  // the incumbent, starting when its current term actually ends.
-  const firstRenewal = isIncumbent && sol.yearsUntilLicenseRenewal !== undefined ? sol.yearsUntilLicenseRenewal : tierYears;
-  const isRenewalYear = (y: number) => y > 0 && isRefreshYear(y, firstRenewal, tierYears, yrs);
-
-  // Lump purchases with a fixed service life, for the residual-value credit.
-  const lumps: Lump[] = [];
-  const hardwareLife = sol.model === "cloud" ? applianceCycle : refreshCycle;
-
-  const years: Record<Category, number>[] = [];
-
-  for (let y = 0; y <= yrs; y++) {
-    // Escalation factors for this year; every amount below is escalated as
-    // it's assigned (year 0 factors are all 1).
-    const labor = Math.pow(1 + escLabor, y);
-    const hw = Math.pow(1 + escHardware, y);
-    const lic = Math.pow(1 + escLicense, y);
-    const yearCosts = emptyYear(CATEGORIES);
-
-    if (y === 0) {
-      // Nothing new is deployed for the incumbent, so its year 0 is empty.
-      if (!isIncumbent) {
-        // Install labor for a full camera fleet, or onboarding labor when the
-        // existing cameras are kept and added to the new system.
-        yearCosts["Installation"] = sol.bulkInstallLaborCost * cams * labor;
-        if (buysCameras) yearCosts["Cameras"] = cams * sol.cameraCost * disc * hw;
-        if (sol.model === "cloud") {
-          // A connector/NVR-style box is needed whenever cameras other than the
-          // vendor's own native ones are in use; native ("ripReplace") cameras
-          // talk to the cloud directly.
-          if (sol.migrationStrategy === "connector") {
-            yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits * hw;
-          }
-          // First license term, bought up front.
-          yearCosts["Licenses/subscription"] = licenseTermCost * cams * lic;
-        } else {
-          yearCosts["Hardware (initial & refresh)"] =
-            onpremHardwarePurchase() * hw;
-          // A fresh on-prem deployment buys its perpetual license too; only the
-          // ongoing care/SUP renewal (and analyticsSoftwareCostPerCamYr) recur
-          // after this. Number(...) || 0 guards an older saved state missing
-          // analyticsSoftwareCostPerCam (normalization normally backfills it).
-          yearCosts["Licenses/subscription"] =
-            (sol.baseLicense + sol.deviceLicense * cams + (analyticsOn ? sol.analyticsSoftwareCostPerCam * cams : 0)) * disc * lic;
-        }
-      }
-    } else {
-      // Every failure costs replacement labor; only out-of-warranty ones
-      // cost the camera too.
-      const { failed, outOfWarranty } = advanceCohorts(cohorts, y, { halfLife: sol.fleetHalfLifeYears, warrantyYears: sol.warrantyYears });
-      cameraSwaps += failed;
-      yearCosts["Cameras"] = failed * sol.replacementInstallLaborCost * labor + outOfWarranty * sol.cameraCost * disc * hw;
-
-      if (sol.model === "cloud") {
-        // The support/analytics add-on is genuinely annual, charged every year;
-        // the term price itself only lands on renewal years (a lump sum, not
-        // smoothed), same cadence as an on-prem hardware refresh — skipped in
-        // the horizon's final year, no benefit renewing a term you won't use.
-        let cloudLicenseCost = supportAddonAnnual * cams;
-        if (isRenewalYear(y)) {
-          cloudLicenseCost += licenseTermCost * cams;
-        }
-        yearCosts["Licenses/subscription"] = cloudLicenseCost * lic;
-      } else {
-        yearCosts["Licenses/subscription"] = (careCost + (analyticsOn ? sol.analyticsSoftwareCostPerCamYr * cams * disc : 0)) * lic;
-      }
-
-      yearCosts["Truck rolls"] = sites * sol.truckRollsPerSiteYr * scenario.truckRollCost * labor;
-      yearCosts["Network / bandwidth"] = sites * sol.networkCostPerSiteYr * labor;
-      yearCosts["Admin labor"] = sol.adminHrsPerCamYr * cams * scenario.adminRate * labor;
-      yearCosts["Investigations"] = invMo * 12 * sol.investigationHrsPerIncident * scenario.investigatorRate * labor;
-      yearCosts["Business impact: savings"] = outcomeSavings * labor;
-      yearCosts["Business impact: added costs"] = outcomeCosts * labor;
-
-      if (sol.model === "cloud") {
-        // ripReplace has no connector appliance, so no ongoing hardware refresh.
-        if (sol.migrationStrategy === "connector") {
-          if (isRefreshYear(y, firstApplianceRefresh, applianceCycle, yrs)) {
-            yearCosts["Hardware (initial & refresh)"] = sol.applianceCost * disc * applianceUnits * hw;
-          }
-        }
-      } else {
-        if (isRefreshYear(y, firstRefresh, refreshCycle, yrs)) {
-          yearCosts["Hardware (initial & refresh)"] =
-            onpremHardwarePurchase() * hw;
-        }
-      }
-    }
-
-    // User-authored, so they always apply, incumbent or not: an incumbent can
-    // face real one-time costs too (replacing end-of-life NVRs, adding
-    // analytics). Applied at face value (no vendor disc).
-    yearCosts["Misc / other"] = miscForYear(sol.miscItems, y) * labor;
-
-    // Every Hardware line is a lump purchase on its refresh cycle; for cloud,
-    // so is every license term (the add-on is annual, so it's excluded).
-    if (yearCosts["Hardware (initial & refresh)"] > 0) {
-      lumps.push({ year: y, amount: yearCosts["Hardware (initial & refresh)"], life: hardwareLife });
-    }
-    if (sol.model === "cloud") {
-      const termBought = (y === 0 && !isIncumbent) || isRenewalYear(y);
-      if (termBought) lumps.push({ year: y, amount: licenseTermCost * cams * lic, life: tierYears });
-    }
-
-    years.push(yearCosts);
+  for (const def of derivedFor(sol.model)) x.d[def.key] = def.value(x);
+  x.fleet = simulateFleet(x);
+  const lines = [...linesFor(LINES, sol.model), ...linesFor(RESIDUAL_LINES, sol.model)].filter(isLine);
+  for (let y = 0; y <= x.H; y++) {
+    for (const line of lines) (lineValues[line.key] ??= [])[y] = line.value(x, y);
   }
-
-  const credit = scenario.creditResidualValue !== false ? residualCredit(lumps, yrs) : 0;
+  const credit = RESIDUAL.value(x);
+  const years = Array.from({ length: x.H + 1 }, (_, y) => Object.fromEntries(CATEGORIES.map((c) => [c, lineValues[c][y]])) as Record<Category, number>);
   const totals = splitTotals(tallyYears(CATEGORIES, years, credit, "Residual value (credit)"), STAFF_TIME_CATEGORIES, OUTCOME_CATEGORIES);
+
+  const cams = scn.cameras;
+  const connector = sol.model === "cloud" && sol.migrationStrategy === "connector";
   const hardware: HardwareFootprint = {
-    unitsLabel:
-      sol.model === "onprem" ? "Recording servers" : sol.migrationStrategy === "connector" ? "Connector appliances" : null,
-    units: sol.model === "onprem" ? nSrv : sol.migrationStrategy === "connector" ? applianceUnits : 0,
-    // tbBilled, the whole-drive figure the cost lines above actually charged for.
-    storageTB: sol.model === "onprem" ? tbBilled : null,
+    unitsLabel: sol.model === "onprem" ? "Recording servers" : connector ? "Connector appliances" : null,
+    units: sol.model === "onprem" ? x.d.nSrv : connector ? x.d.units : 0,
+    // tbBilled, the whole-drive figure the cost lines actually charged for.
+    storageTB: sol.model === "onprem" ? x.d.tbBilled : null,
     managementServers: sol.model === "onprem" ? sol.managementServers : 0,
     cameras: cams,
-    cameraSwaps,
-    originalFleetReplacedPct: cams > 0 ? Math.min(100, Math.max(0, (100 * (cams - startCohort.size)) / cams)) : 0,
+    cameraSwaps: x.fleet.swaps,
+    originalFleetReplacedPct: cams > 0 ? Math.min(100, Math.max(0, (100 * (cams - x.fleet.startRemaining)) / cams)) : 0,
   };
   return { ...totals, hardware };
 }

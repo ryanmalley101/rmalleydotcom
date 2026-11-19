@@ -40,6 +40,7 @@ function weeklyHours(code: string, t: Text, hours: InputText, rate: InputText): 
     id: code, code, ...t,
     inputs: [{ name: "hours", unit: "hours", ...hours }, { name: "rate", unit: "usd", ...rate }],
     annualPerSite: (v) => v("hours") * v("rate") * 52,
+    formula: "{hours}*{rate}*52",
   };
 }
 

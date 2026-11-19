@@ -8,7 +8,7 @@ import { computeComparison } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../../_tco-shared/lib/colors";
 import { OUTCOME_NOTE, STAFF_TIME_NOTE } from "../lib/fieldHelp";
 import InfoLabel from "../../_tco-shared/components/InfoLabel";
-import { downloadText, exportSnapshot, openPrintable } from "../../_tco-shared/lib/exportSnapshot";
+import { downloadBlob, downloadText, exportSnapshot, openPrintable } from "../../_tco-shared/lib/exportSnapshot";
 import { SAVED_COMPARISONS } from "../lib/savedComparisons";
 import ScenarioStep from "./ScenarioStep";
 import AssumptionsPanel from "./AssumptionsPanel";
@@ -118,6 +118,12 @@ export default function ResultsView({
           if (snapshotRef.current) await exportSnapshot(snapshotRef.current, `${solA.name}-vs-${solB.name}-tco.png`.replace(/\s+/g, "-"));
         }}
         onCsv={() => downloadText(buildCsv(exportState, comparison), `${fileBase}.csv`, "text/csv;charset=utf-8")}
+        onSpreadsheet={async () => {
+          // Loaded on demand: the formula model and xlsx writer are only needed for this export.
+          const { buildSpreadsheet } = await import("../lib/spreadsheet");
+          const bytes = buildSpreadsheet(exportState, shareUrl || undefined);
+          downloadBlob(new Blob([bytes as BlobPart], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${fileBase}.xlsx`);
+        }}
         onPrintable={() => openPrintable(buildReportHtml(exportState, comparison, METHODOLOGY_NOTES))}
         onEditSetup={onEditSetup}
       />
