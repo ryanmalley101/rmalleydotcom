@@ -385,6 +385,7 @@ export default function CypherInitiativePage() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const s = JSON.parse(saved);
+                // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore from localStorage; must run after hydration, not during render
                 setCombatants(s.combatants ?? []);
                 setPhase(s.phase ?? "players");
                 setRound(s.round ?? 1);
