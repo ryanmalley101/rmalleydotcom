@@ -184,6 +184,15 @@ export default function TabletopContent({ encounterTables }: Props) {
 
                 {/* Cypher System */}
                 <SystemHeader icon={Atom} label="Cypher System" />
+
+                <SectionDivider label="Combat" />
+                <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm" mb="xl">
+                    <ToolCard icon={ListOrdered} title="Combat Tracker"
+                        description="Track PC pools, NPC Health, and the Players' Turn / GM's Turn phase structure."
+                        href="/tabletop/cypher-initiative" />
+                </SimpleGrid>
+
+                <SectionDivider label="Reference" />
                 <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
                     <ToolCard icon={BookMarked} title="Cypher System SRD"
                         description="Searchable Cypher System reference — abilities, cyphers, foci, and more."
