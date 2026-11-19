@@ -727,7 +727,7 @@ export default function CypherSheet({ pc, campaignId }: { pc: PC; campaignId: st
                             </Button>
                         </Box>
                         <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                            No SRD list for artifacts — they're unique, GM-created items, so this is manual entry only.
+                            No SRD list for artifacts — they&apos;re unique, GM-created items, so this is manual entry only.
                         </Typography>
                     </Box>
                 </Paper>

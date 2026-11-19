@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styles from "@/styles/CreateMonsterStatblock.module.css";
 import IconButton from "@mui/material/IconButton";
 import {BsFillTrashFill} from "react-icons/bs";
@@ -120,7 +120,11 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
     }
 
 
-    useEffect(() => {
+    // Re-seed the form when a different action is passed in (adjusting state
+    // during render rather than in an effect avoids a wasted extra render).
+    const [prevAction, setPrevAction] = useState(null)
+    if (action !== prevAction) {
+        setPrevAction(action)
         if (action) {
             setName(action.name)
             setEffect(action.desc)
@@ -133,7 +137,7 @@ const ActionDialog = ({open, action, index, onClose, handleActionUpdate}) => {
             setEffect(action.effect)
             setDamage(action.damage)
         }
-    }, [action]);
+    }
 
     const confirm = () => {
         handleActionUpdate({

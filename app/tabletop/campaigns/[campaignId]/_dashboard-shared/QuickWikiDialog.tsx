@@ -71,7 +71,7 @@ export function QuickWikiDialog({ open, onClose, worldIds, defaultArticleType, o
                     </Typography>
                 ) : createdId ? (
                     <Box sx={{ textAlign: "center", py: 2 }}>
-                        <Typography variant="body1" sx={{ mb: 1.5 }}>"{title}" created.</Typography>
+                        <Typography variant="body1" sx={{ mb: 1.5 }}>&quot;{title}&quot; created.</Typography>
                         <Button component={Link} href={`/tabletop/worlds/${worldId}/wiki/${createdId}`}
                             variant="outlined">
                             Open full editor

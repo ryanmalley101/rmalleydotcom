@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type SubGallery = Schema["SubGallery"]["type"];
@@ -20,12 +21,10 @@ export function SubGalleryFormDialog({ open, editing, onClose, onSaved }: SubGal
     const [description, setDescription] = useState("");
     const [saving, setSaving] = useState(false);
 
-    useEffect(() => {
-        if (open) {
-            setName(editing?.name ?? "");
-            setDescription(editing?.description ?? "");
-        }
-    }, [open, editing]);
+    if (useDepsChanged([open, editing]) && open) {
+        setName(editing?.name ?? "");
+        setDescription(editing?.description ?? "");
+    }
 
     async function save() {
         if (!name.trim()) return;

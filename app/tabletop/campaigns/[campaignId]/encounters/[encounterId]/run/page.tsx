@@ -20,6 +20,7 @@ import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import type { EncounterEntry } from "../page";
 import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "../../../combatSettings";
 import CypherEncounterRun from "./CypherEncounterRun";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type MonsterStatblock = Schema["MonsterStatblock"]["type"];
@@ -258,9 +259,10 @@ function CombatantRow(props: RowProps) {
     const [spellDraft, setSpellDraft] = useState(c.concentrationSpell ?? "");
     const [effectDraft, setEffectDraft] = useState({ name: "", timing: "start" as "start"|"end", desc: "", damage: "", saveType: "", saveDC: "" });
 
-    useEffect(() => {
+    // Re-sync the initiative draft when the combatant's initiative changes elsewhere.
+    if (useDepsChanged([c.initiative])) {
         setInitDraft(c.initiative != null ? String(c.initiative) : "");
-    }, [c.initiative]);
+    }
 
     const color   = TYPE_COLOR[c.type];
     const hpPct   = Math.max(0, Math.min(100, (c.currentHp / c.maxHp) * 100));
@@ -888,6 +890,7 @@ function DnDRunEncounterPage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { initFromDB(); }, [encounterId]);
 
     // Keep refs in sync
@@ -1429,7 +1432,7 @@ function DnDRunEncounterPage() {
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-                        Session-only toggles — changes here aren't saved. Edit the encounter or campaign to persist.
+                        Session-only toggles — changes here aren&apos;t saved. Edit the encounter or campaign to persist.
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                         {(Object.keys(SETTING_META) as (keyof CombatSettings)[]).map(k => (

@@ -248,7 +248,7 @@ export function PartyCard({ pc, isSpotlight, onUpdate }: PartyCardProps) {
             <Collapse in={concDC !== null}>
                 <Divider sx={{ my: 1 }} />
                 <Typography variant="caption" sx={{ color: "warning.main", display: "block" }}>
-                    Concentration check: DC {concDC} (Constitution save) to keep "{pc.concentratingOn}".
+                    Concentration check: DC {concDC} (Constitution save) to keep &quot;{pc.concentratingOn}&quot;.
                 </Typography>
                 <Button size="small" onClick={() => setConcDC(null)} sx={{ fontSize: "0.65rem", mt: 0.5 }}>Dismiss</Button>
             </Collapse>

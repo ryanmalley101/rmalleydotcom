@@ -51,6 +51,7 @@ export default function NpcsPage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [campaignId]);
 
     const articleById = useMemo(() => new Map(articles.map(a => [a.id, a])), [articles]);
@@ -127,8 +128,8 @@ export default function NpcsPage() {
                     </Box>
                 </Box>
                 <Typography variant="caption" sx={{ color: "text.disabled", display: "block", mb: 3 }}>
-                    Each NPC is a "Character" wiki article — its name, description, and lore live there. This page
-                    tracks who's currently relevant to this campaign, plus alive/dead status and notes.
+                    Each NPC is a &quot;Character&quot; wiki article — its name, description, and lore live there. This page
+                    tracks who&apos;s currently relevant to this campaign, plus alive/dead status and notes.
                 </Typography>
 
                 {filtered.length === 0 ? (
@@ -213,7 +214,7 @@ export default function NpcsPage() {
                             </Typography>
                         ) : unlinkedArticles.length === 0 ? (
                             <Typography variant="body2" sx={{ color: "text.disabled" }}>
-                                No untracked "Character" wiki articles in this campaign's worlds. Create one instead.
+                                No untracked &quot;Character&quot; wiki articles in this campaign&apos;s worlds. Create one instead.
                             </Typography>
                         ) : (
                             <Autocomplete
@@ -237,7 +238,7 @@ export default function NpcsPage() {
                 <Dialog open={!!deleteNpc} onClose={() => setDeleteNpc(null)}>
                     <DialogTitle>Stop tracking {articleById.get(deleteNpc?.articleId ?? "")?.title ?? "this NPC"}?</DialogTitle>
                     <DialogContent>
-                        <Typography>This removes it from this campaign's NPC tracker. The wiki article itself is untouched.</Typography>
+                        <Typography>This removes it from this campaign&apos;s NPC tracker. The wiki article itself is untouched.</Typography>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => setDeleteNpc(null)}>Cancel</Button>

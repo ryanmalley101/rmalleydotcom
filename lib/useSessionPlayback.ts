@@ -29,7 +29,7 @@ function computePosition(playback: SessionPlayback | null, track: SessionTrack |
 export function useSessionPlayback(campaignId: string, displayName: string) {
     const [tracks, setTracks] = useState<SessionTrack[]>([]);
     const [playback, setPlayback] = useState<SessionPlayback | null>(null);
-    const [audioUrl, setAudioUrl] = useState("");
+    const [resolvedUrl, setResolvedUrl] = useState<{ key: string; url: string } | null>(null);
     const [masterVolume, setMasterVolumeState] = useState(1);
     const [prefId, setPrefId] = useState<string | null>(null);
     const [unlocked, setUnlocked] = useState(false);
@@ -92,13 +92,17 @@ export function useSessionPlayback(campaignId: string, displayName: string) {
     }, [campaignId]);
 
     const activeTrack = tracks.find(t => t.id === playback?.trackId);
+    // Only expose a URL resolved for the *current* track, so switching tracks
+    // never briefly plays the previous one while the new URL is signed.
+    const audioUrl = activeTrack && resolvedUrl?.key === activeTrack.storageKey ? resolvedUrl.url : "";
 
     // ── Resolve a fresh signed URL whenever the active track changes ─────────
     useEffect(() => {
-        if (!activeTrack) { setAudioUrl(""); return; }
+        if (!activeTrack) return;
+        const key = activeTrack.storageKey;
         let cancelled = false;
-        getUrl({ path: activeTrack.storageKey, options: { expiresIn: 3600 } })
-            .then(({ url }) => { if (!cancelled) setAudioUrl(url.toString()); })
+        getUrl({ path: key, options: { expiresIn: 3600 } })
+            .then(({ url }) => { if (!cancelled) setResolvedUrl({ key, url: url.toString() }); })
             .catch(err => console.error("[SessionPlayback] failed to resolve track URL", err));
         return () => { cancelled = true; };
     }, [activeTrack?.storageKey]);

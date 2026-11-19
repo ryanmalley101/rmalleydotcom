@@ -492,6 +492,7 @@ export default function CypherEncounterRun() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { initFromDB(); }, [encounterId]);
 
     useEffect(() => {
@@ -757,7 +758,7 @@ export default function CypherEncounterRun() {
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                        This will mark the encounter complete and write each PC's current pools and damage track
+                        This will mark the encounter complete and write each PC&apos;s current pools and damage track
                         back to their character sheet.
                     </Typography>
                 </DialogContent>

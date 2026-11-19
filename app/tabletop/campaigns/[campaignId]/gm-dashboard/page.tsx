@@ -179,7 +179,7 @@ export default function GmDashboardPage() {
             onUpdate.unsubscribe();
             onDelete.unsubscribe();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [campaignId]);
 
     const saveGmScreen = useCallback((next: GmScreenData) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Box, Button, CircularProgress, Dialog, DialogActions, DialogContent,
     DialogTitle, Divider, IconButton, TextField, Typography,
@@ -9,6 +9,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { DEFAULT_CONFIG, type CalendarMonth } from "../_lib/calendarMath";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type CampaignCalendar = Schema["CampaignCalendar"]["type"];
@@ -30,8 +31,7 @@ export function CalendarConfigDialog({
     const [currentDay, setCurrentDay]   = useState<string>("");
     const [saving, setSaving]           = useState(false);
 
-    useEffect(() => {
-        if (!open) return;
+    if (useDepsChanged([open, existing]) && open) {
         if (existing) {
             try { setMonths(existing.monthsJson ? JSON.parse(existing.monthsJson) : DEFAULT_CONFIG.months); } catch { setMonths(DEFAULT_CONFIG.months); }
             try { setWeekdays(existing.weekdayNamesJson ? JSON.parse(existing.weekdayNamesJson) : DEFAULT_CONFIG.weekdayNames); } catch { setWeekdays(DEFAULT_CONFIG.weekdayNames); }
@@ -43,7 +43,7 @@ export function CalendarConfigDialog({
             setEpochName("");
             setCurrentDay("1");
         }
-    }, [open, existing]);
+    }
 
     function updateMonth(i: number, field: "name" | "days", value: string) {
         setMonths(prev => prev.map((m, idx) =>

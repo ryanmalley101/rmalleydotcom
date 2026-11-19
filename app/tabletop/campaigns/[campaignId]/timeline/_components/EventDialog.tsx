@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle,
     Divider, FormControl, FormControlLabel, InputLabel, MenuItem, Select,
@@ -10,6 +10,7 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { WikiSearchPin } from "../../_dashboard-shared/WikiSearchPin";
 import { EVENT_TYPE_META } from "./EventCard";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type TimelineEvent = Schema["TimelineEvent"]["type"];
@@ -37,23 +38,21 @@ export function EventDialog({ open, editing, campaignId, worldIds, onClose, onSa
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
 
-    useEffect(() => {
-        if (open) {
-            if (editing) {
-                setForm({
-                    title: editing.title,
-                    eventType: editing.eventType ?? "other",
-                    realDate: editing.realDate ?? "",
-                    inWorldDate: editing.inWorldDate ?? "",
-                    description: editing.description ?? "",
-                    visibleToPlayers: editing.visibleToPlayers !== false,
-                    articleIds: (editing.articleIds ?? []).filter((id): id is string => !!id),
-                });
-            } else {
-                setForm(emptyForm);
-            }
+    if (useDepsChanged([open, editing]) && open) {
+        if (editing) {
+            setForm({
+                title: editing.title,
+                eventType: editing.eventType ?? "other",
+                realDate: editing.realDate ?? "",
+                inWorldDate: editing.inWorldDate ?? "",
+                description: editing.description ?? "",
+                visibleToPlayers: editing.visibleToPlayers !== false,
+                articleIds: (editing.articleIds ?? []).filter((id): id is string => !!id),
+            });
+        } else {
+            setForm(emptyForm);
         }
-    }, [open, editing]);
+    }
 
     function toggleArticle(id: string) {
         setForm(f => ({

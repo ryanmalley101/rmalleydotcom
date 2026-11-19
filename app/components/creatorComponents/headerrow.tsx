@@ -130,7 +130,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
         }
     };
 
-    const saveMonster = async (monsterToSave: MyMonsterStatblock) => {
+    async function saveMonster(monsterToSave: MyMonsterStatblock) {
         const { __typename, ...input } = monsterToSave as any;
 
         if (input.publisher !== 'homebrew') {
@@ -153,7 +153,7 @@ const HeaderRow: React.FC<HeaderRowProps> = ({ monster, setMonster, downloadFile
             setSaveError(e?.message ?? 'Save failed. Check your connection and try again.');
             setSaveStatus('error');
         }
-    };
+    }
 
     const handleCreateNewMonster = async () => {
         const name = newMonsterName.trim();

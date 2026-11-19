@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styles from "@/styles/CreateMonsterStatblock.module.css";
 import IconButton from "@mui/material/IconButton";
 import { BsFillTrashFill } from "react-icons/bs";
@@ -53,12 +53,16 @@ const AbilityDialog = ({open, ability, index, onClose, handleAbilityUpdate}) => 
     const [abilityName, setAbilityName] = useState('')
     const [abilityDesc, setAbilityDesc] = useState('')
 
-    useEffect(() => {
+    // Re-seed the form when a different ability is passed in (adjusting state
+    // during render rather than in an effect avoids a wasted extra render).
+    const [prevAbility, setPrevAbility] = useState(null)
+    if (ability !== prevAbility) {
+        setPrevAbility(ability)
         if (ability) {
             setAbilityName(ability.name)
             setAbilityDesc(ability.desc)
         }
-    }, [ability]);
+    }
 
     const confirm = () => {
         handleAbilityUpdate({name: abilityName, desc: abilityDesc}, index)

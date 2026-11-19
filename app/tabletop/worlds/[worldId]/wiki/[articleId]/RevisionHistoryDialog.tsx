@@ -8,6 +8,7 @@ import { RotateCcw } from "lucide-react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { snapshotRevision } from "@/lib/wikiRevisions";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type Revision = Schema["WikiArticleRevision"]["type"];
@@ -26,15 +27,21 @@ export function RevisionHistoryDialog({ open, onClose, article, onRestored }: Re
     const [restoringId, setRestoringId] = useState<string | null>(null);
     const [confirmId, setConfirmId] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (!open) return;
+    if (useDepsChanged([open, article.id]) && open) {
         setLoading(true);
         setConfirmId(null);
+    }
+
+    useEffect(() => {
+        if (!open) return;
+        let cancelled = false;
         client.models.WikiArticleRevision.list({ filter: { articleId: { eq: article.id } } }).then(({ data }) => {
+            if (cancelled) return;
             const sorted = (data ?? []).sort((a, b) => (b.savedAt ?? "").localeCompare(a.savedAt ?? ""));
             setRevisions(sorted);
             setLoading(false);
         });
+        return () => { cancelled = true; };
     }, [open, article.id]);
 
     async function restore(rev: Revision) {

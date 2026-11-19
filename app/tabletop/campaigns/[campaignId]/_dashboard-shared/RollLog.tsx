@@ -52,7 +52,7 @@ export function RollLog({ campaignId }: { campaignId: string }) {
         return (
             <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
                 <Typography variant="body2" sx={{ color: "text.disabled" }}>
-                    No rolls yet — they'll show up here as players roll in Roll20 (requires the Roll20 bridge extension).
+                    No rolls yet — they&apos;ll show up here as players roll in Roll20 (requires the Roll20 bridge extension).
                 </Typography>
             </Paper>
         );

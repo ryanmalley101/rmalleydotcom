@@ -6,6 +6,7 @@ import {
     Button, TextField, Typography, CircularProgress, InputAdornment,
 } from "@mui/material";
 import { Search } from "lucide-react";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 interface SrdPickerDialogProps<T> {
     open: boolean;
@@ -29,13 +30,18 @@ export function SrdPickerDialog<T>({
     const [loading, setLoading] = useState(false);
     const [query, setQuery] = useState("");
 
+    // Show the spinner as soon as the dialog opens; clear the search on close.
+    if (useDepsChanged([open, load])) {
+        if (open) setLoading(true);
+        else setQuery("");
+    }
+
     useEffect(() => {
         if (!open) return;
-        setLoading(true);
-        load().then(data => { setItems(data); setLoading(false); });
+        let cancelled = false;
+        load().then(data => { if (!cancelled) { setItems(data); setLoading(false); } });
+        return () => { cancelled = true; };
     }, [open, load]);
-
-    useEffect(() => { if (!open) setQuery(""); }, [open]);
 
     const results = useMemo(() => filter(items, query), [items, query, filter]);
 

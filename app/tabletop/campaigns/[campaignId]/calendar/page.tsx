@@ -80,6 +80,7 @@ export default function CalendarPage() {
     // Refreshes notes in the background without blanking the calendar grid.
     const silentReload = useCallback(() => fetchData(false), [fetchData]);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [load]);
 
     const config = useMemo(() => parseCalendarConfig(calendarRecord), [calendarRecord]);

@@ -240,10 +240,10 @@ const MarkdownExport: React.FC<Props> = ({ monster }) => {
     const copyMarkdown = async () => {
         try {
             await navigator.clipboard.writeText(markdownOutput);
-            // eslint-disable-next-line no-alert
+             
             alert('Markdown copied to clipboard');
         } catch (e) {
-            // eslint-disable-next-line no-alert
+             
             alert('Failed to copy markdown');
         }
     }

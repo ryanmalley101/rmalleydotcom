@@ -9,7 +9,7 @@ import {
     Chip, InputAdornment, Switch,
 } from "@mui/material";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Save, X, Trash2, CalendarDays, BookOpen, Search, Plus, Image } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Trash2, CalendarDays, BookOpen, Search, Plus, Image as ImageIcon } from "lucide-react";
 import { MarkdownContent } from "@/lib/MarkdownContent";
 import { useDocumentTitle } from "@/lib/useDocumentTitle";
 import { generateClient } from "aws-amplify/data";
@@ -84,12 +84,6 @@ export default function SessionPage() {
         return () => window.removeEventListener("beforeunload", handler);
     }, [isDirty]);
 
-    useEffect(() => {
-        if (!editing || !autosaveEnabled || !isDirty) return;
-        const timer = setTimeout(() => { silentSave(); }, 4000);
-        return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [editing, autosaveEnabled, isDirty, title, number, date, prepNotes, sessionNotes, playerSummary]);
 
     async function load() {
         const { data: s } = await client.models.CampaignSession.get({ id: sessionId });
@@ -118,6 +112,7 @@ export default function SessionPage() {
         setLoading(false);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [sessionId]);
 
     async function silentSave() {
@@ -144,6 +139,13 @@ export default function SessionPage() {
         setAutosaving(false);
         setLastAutosaved(new Date());
     }
+
+    useEffect(() => {
+        if (!editing || !autosaveEnabled || !isDirty) return;
+        const timer = setTimeout(() => { silentSave(); }, 4000);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editing, autosaveEnabled, isDirty, title, number, date, prepNotes, sessionNotes, playerSummary]);
 
     async function save() {
         if (!session) return;
@@ -460,7 +462,7 @@ export default function SessionPage() {
                 {/* ── Attachments ── */}
                 <Divider sx={{ my: 3 }} />
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-                    <Image size={18} color="#8C5A3A" />
+                    <ImageIcon size={18} color="#8C5A3A" />
                     <Typography variant="h6" sx={{ fontWeight: 600, color: "primary.dark" }}>
                         Attachments
                     </Typography>

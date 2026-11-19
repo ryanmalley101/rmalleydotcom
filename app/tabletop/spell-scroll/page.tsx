@@ -70,6 +70,7 @@ export default function SpellScrollPage() {
     const [cls, setCls] = useState("any");
     const [result, setResult] = useState<Spell | null>(null);
     const [hasRolled, setHasRolled] = useState(false);
+    const [rollCount, setRollCount] = useState(0); // remounts the result card so its animation replays
 
     useEffect(() => {
         fetch("/5_5_SRD/spells.json")
@@ -94,6 +95,7 @@ export default function SpellScrollPage() {
         if (!pool.length) return;
         setResult(pool[Math.floor(Math.random() * pool.length)]);
         setHasRolled(true);
+        setRollCount(c => c + 1);
     }
 
     const rarity = result ? RARITY[result.level] : null;
@@ -187,7 +189,7 @@ export default function SpellScrollPage() {
                 {/* Scroll result */}
                 {hasRolled && result && rarity && (
                     <Paper
-                        key={result.name + Date.now()}
+                        key={rollCount}
                         elevation={6}
                         sx={{
                             backgroundColor: "#F5E6C8",

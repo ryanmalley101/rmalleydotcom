@@ -377,8 +377,9 @@ const MonsterUploader = () => {
 
   return (
     <div className="p-8 max-w-2xl mx-auto bg-gray-50 min-h-screen">
-    <h1>{user?.signInDetails?.loginId}'s todos</h1>
+    <h1>{user?.signInDetails?.loginId}&apos;s todos</h1>
       <button onClick={signOut}>Sign out</button>
+      {/* eslint-disable-next-line @next/next/no-sync-scripts -- Tailwind Play CDN styles this legacy page */}
       <script src="https://cdn.tailwindcss.com"></script>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap'); body { font-family: 'Inter', sans-serif; }`}</style>
 

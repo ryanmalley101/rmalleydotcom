@@ -26,6 +26,7 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { DEFAULT_COMBAT_SETTINGS, SETTING_META, parseSettings, type CombatSettings } from "./combatSettings";
 import { useCampaignRole } from "@/lib/useCampaignRole";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 type Campaign        = Schema["Campaign"]["type"];
@@ -72,7 +73,7 @@ function CombatSettingsDialog({ open, value, title, subtitle, inheritLabel, onCl
     inheritLabel?: string; onClose: () => void; onSave: (s: CombatSettings) => void; onReset?: () => void;
 }) {
     const [draft, setDraft] = useState<CombatSettings>({ ...DEFAULT_COMBAT_SETTINGS });
-    useEffect(() => { if (open) setDraft({ ...value }); }, [open, value]);
+    if (useDepsChanged([open, value]) && open) setDraft({ ...value });
     const toggle = (k: keyof CombatSettings) => setDraft(prev => ({ ...prev, [k]: !prev[k] }));
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -255,6 +256,7 @@ export default function CampaignPage() {
         setCopiedSnack(true);
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount; state is set from the awaited results
     useEffect(() => { load(); }, [campaignId]);
 
     async function confirmDeleteSession() {

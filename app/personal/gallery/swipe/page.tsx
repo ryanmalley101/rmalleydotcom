@@ -16,6 +16,7 @@ import { SwipeCard } from "../_components/SwipeCard";
 import { PhotoGrid } from "../_components/PhotoGrid";
 import { PhotoLightbox } from "../_components/PhotoLightbox";
 import { ManagePhotoGalleriesDialog } from "../_components/ManagePhotoGalleriesDialog";
+import { useDepsChanged } from "@/lib/useDepsChanged";
 
 const client = generateClient<Schema>();
 const ACCENT = "#ec4899";
@@ -48,13 +49,11 @@ export default function SwipePage() {
 
     // Keep the liked set in sync with reloads (tag edits / deletes) made
     // from the results screen's manage dialog.
-    useEffect(() => {
-        if (phase !== "results") return;
+    if (useDepsChanged([photos, phase]) && phase === "results") {
         const stillExists = (p: GalleryPhoto) => photos.find(np => np.id === p.id);
         setLiked(prev => prev.map(stillExists).filter((p): p is GalleryPhoto => !!p));
         setDisliked(prev => prev.map(stillExists).filter((p): p is GalleryPhoto => !!p));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [photos, phase]);
+    }
 
     function poolForSource(id: string) {
         const base = id === "master" ? photos : photos.filter(p => p.subGalleryIds?.includes(id));
