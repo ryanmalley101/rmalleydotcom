@@ -44,13 +44,13 @@ test("a share link round-trips and backfills missing fields", () => {
 
 test("the checklist asks to confirm hardware reuse and flags placeholders", () => {
   const items = buildChecklist(state.scenario, state.solA, state.solB, c);
-  assert.ok(items.some((i) => i.startsWith("Cloud is set to replace the existing controllers and keep the existing readers")));
-  assert.ok(items.some((i) => i.includes("still use generic placeholder values")));
-  assert.ok(items.some((i) => i.includes("age of the existing readers and controllers")));
+  assert.ok(items.some((i) => i.text.startsWith("Cloud is set to replace the existing controllers and keep the existing readers")));
+  assert.ok(items.some((i) => i.text.includes("still use generic placeholder values")));
+  assert.ok(items.some((i) => i.text.includes("age of the existing readers and controllers")));
   const reissue = buildChecklist(state.scenario, state.solA, { ...state.solB, reissueCredentials: true }, c);
-  assert.ok(reissue.some((i) => i.includes("reissues credentials but keeps the existing readers")));
+  assert.ok(reissue.some((i) => i.text.includes("reissues credentials but keeps the existing readers")));
   const newDoors = buildChecklist({ ...state.scenario, existingDoorsInstalled: false }, state.solA, state.solB, c);
-  assert.ok(!newDoors.some((i) => i.includes("existing controllers")));
+  assert.ok(!newDoors.some((i) => i.text.includes("existing controllers")));
 });
 
 test("flip points move the winner when applied", () => {

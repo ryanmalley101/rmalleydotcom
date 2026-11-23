@@ -2,7 +2,7 @@
 // in step with the model: every change to the cost math should update the
 // matching line here (and the README's cost model section).
 export const METHODOLOGY_NOTES: string[] = [
-  "Year 0 is the buildout. A solution marked incumbent pays nothing then, since it's already installed. Every other solution pays its first license term or perpetual license, any servers, and installation.",
+  "Year 0 is the buildout. A solution marked incumbent pays nothing then, since it's already installed, unless its server refresh or license renewal is due now (0 years away). Every other solution pays its first license term or perpetual license, any servers, and installation.",
   "On doors that aren't wired yet, every newly deployed solution buys door hardware, readers, and controllers, pays a full install per door, and issues every cardholder a credential. On wired doors, the door hardware stays whoever wins; each solution keeps or replaces the readers and controllers by its own setting, and pays migration labor per door.",
   "Controllers are sized by doors per controller, with at least one per site.",
   "Readers and controllers fail at a steady rate set by each solution's half-life, and replacements can fail again. Each batch has its own warranty, counted from when it was installed; hardware already on site starts at the age entered for it. A failure under warranty costs only replacement labor.",

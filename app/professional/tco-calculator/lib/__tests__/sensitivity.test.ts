@@ -18,7 +18,7 @@ test("every flip point is where the totals actually cross", () => {
   assert.ok(points.length >= 3, `expected several flip points, got ${points.length}`);
   const keyFor: Record<string, string> = {
     "hours per investigation": "investigationHrsPerIncident", "admin hours per camera per year": "adminHrsPerCamYr",
-    "truck rolls per site per year": "truckRollsPerSiteYr", discount: "discountPct", "camera price": "cameraCost",
+    "truck rolls per site per year": "truckRollsPerSiteYr", "hardware discount": "discountPct", "license discount": "licenseDiscountPct", "camera price": "cameraCost",
     "camera half-life": "fleetHalfLifeYears", "license price per term": "tierPrice", "connector price": "applianceCost",
     "per-camera license": "deviceLicense", "recording server price": "serverCost", "analytics appliance price": "analyticsApplianceCost",
     "support renewal rate": "carePct",

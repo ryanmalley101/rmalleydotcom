@@ -19,8 +19,9 @@ access control calculator (`/professional/access-control-tco`) and live in
 credit, totals, crossovers), input clamping, vendor-default helpers, share
 links and saved comparisons, the flip-point search, the CSV/printable
 report builder, the spreadsheet writer and its comparison sheets, the business impact engine (`lib/impact.ts`), and the UI
-around them (intro, shape cards, results header and summary, charts, year
-table, gap drivers, checklist, business impact step, misc items). This
+around them (intro, shape cards, the whole results page layout, the
+side-by-side cost editor's grid, charts, year table, gap drivers,
+checklist, business impact step, misc items). This
 calculator's `lib/` keeps its own cost model, fields, defaults, vendor
 tables, and business impact catalog, and wraps the shared pieces under the
 same export names, so the rules below still describe where each behavior
@@ -77,7 +78,14 @@ calculators.
   comparison, while rip-and-replace always did.
 - **Incumbent**: `ScenarioInputs.incumbent` zeroes one side's year-0
   buildout cost when it represents an already-deployed system (its later
-  hardware refreshes still apply on schedule). Both sides pay their own
+  hardware refreshes still apply on schedule). The exception is a refresh
+  or renewal that's due now: an incumbent with `yearsUntilNextRefresh`,
+  `yearsUntilNextApplianceRefresh`, or `yearsUntilLicenseRenewal` at 0 buys
+  that hardware or license term at year 0, then every cycle after. Before
+  `MODEL_VERSION` 3, 0 bought nothing until a full cycle later, so a
+  "servers due for replacement now" comparison couldn't be entered (found
+  comparing against field TCO tools whose main scenario is exactly that).
+  The access control calculator has the same rule. Both sides pay their own
   year-0 cost symmetrically otherwise. This includes an on-prem side's
   perpetual license purchase (`baseLicense` + `deviceLicense * cameras`),
   charged once at year 0 alongside the hardware for a non-incumbent side —
@@ -90,7 +98,7 @@ calculators.
   incumbent — fixed since it contradicted this same symmetry principle.
 - **Refresh timing differs by incumbency**: `yearsUntilNextRefresh` /
   `yearsUntilNextApplianceRefresh` describe hardware that's already installed
-  and aging, so only the incumbent uses them (and `AssumptionsPanel` only
+  and aging, so only the incumbent uses them (and `CostsCompare` only
   shows them for the incumbent). A side that buys new hardware at year 0
   gets its first refresh one full cycle later (`refreshCycleYears` /
   `applianceRefreshCycleYears`). Before this, a fresh deployment also used
@@ -103,13 +111,21 @@ calculators.
   `yearsUntilNextApplianceRefresh`) is set to the horizon length or beyond,
   that whole cost line silently never appears anywhere in the comparison —
   discovered when incrementing `analyticsApplianceCost` visibly did nothing.
-  `AssumptionsPanel`'s `StaleRefreshWarning` surfaces this inline (an
+  `CostsCompare`'s `StaleRefreshWarning` surfaces this inline (an
   `Alert` under the relevant "Years until next refresh" field) exactly when
   `isIncumbent && yearsUntilNextRefresh >= horizonYears`, so it's visible
   rather than a silent gap. Never fires for a non-incumbent: it always pays
   the full cost at year 0 regardless of refresh timing, so a refresh
   falling past the horizon there is a legitimate, harmless scenario, not a
   cost line quietly disappearing.
+- **Separate hardware and license discounts**: `discountPct` (cameras,
+  connectors, servers with their software, storage, analytics appliances)
+  and `licenseDiscountPct` (cloud license terms and add-ons, on-prem
+  perpetual licenses, support renewals, analytics software), since quotes
+  commonly discount the two differently. One field used to cover both;
+  `normalizeSolution` (and `sanitizeSolution`, for anything not normalized)
+  copies an older link's discount into `licenseDiscountPct`, so old totals
+  don't move. The generic defaults set both to the same 30% / 25%.
 - **Per-solution, not scenario-level**: `fleetHalfLifeYears` and
   `warrantyYears` live on `SolutionInputs` since each side's camera
   hardware can have its own reliability/warranty, even when comparing two
@@ -176,7 +192,8 @@ calculators.
   forms or exports, since it never affected a cost (connector replacement
   follows the refresh cycle). The wizard shows "Cameras per appliance"
   there instead, which does. Chart color pickers live on the results page,
-  next to each solution's assumptions, not in the setup cards.
+  as the color dot beside each solution's name at the top of the cost
+  editor, not in the setup cards.
 - **Cloud licensing**: free-form term/price per solution (not a fixed
   vendor's pricing tiers), plus a `supportAddonPerCamYr` field (default 0,
   "bundled into the license") for vendors that price support/analytics/
@@ -215,9 +232,14 @@ calculators.
   floored at 30 days (it used to extrapolate below, cutting the license 44%
   at 7 days, beyond the data it was fit to), and it only applies when
   `SolutionInputs.retentionPricing` is `"scaled"` (the default). Vendors
-  that record on the camera or a local appliance, like Meraki, use `"flat"`:
-  their longer retention is bigger hardware or a separate archive add-on,
-  not a pricier license, so it belongs in those fields.
+  that record on the camera or a local appliance, like Meraki and Verkada,
+  use `"flat"`: their longer retention is bigger hardware or a separate
+  archive add-on, not a pricier license, so it belongs in those fields.
+  Verkada's longer retention is priced through its connector models' 60-day
+  tiers; for a flat vendor without retention-sized connector models (any
+  rip-and-replace side, or Meraki), the pre-share checklist warns above 30
+  days that the camera or connector price has to be for a model that holds
+  that retention.
 - **RAID**: on-prem storage is bought per recording server, since each
   active (non-spare) server holds its share of the footage on its own
   array. `drivesForArray()` (`lib/model.ts`) turns that server's usable TB
@@ -326,6 +348,26 @@ calculators.
 - **Site-driven hardware minimums**: appliance/server unit counts assume at
   least one per site, not just enough for total camera count, since a
   connector/NVR box is physically local.
+- **Connector models** (`SolutionInputs.applianceOptions`, `ConnectorFields`):
+  a cloud vendor whose connectors come in sizes and storage tiers lists them
+  as `{ label, cost, capacity, retentionDays }`, and the model uses the
+  cheapest that covers the cameras (`chooseApplianceOption`), in place of
+  the single `applianceCost`/`applianceCapacity`. A model holding
+  `retentionDays` at full load serves `floor(capacity × min(1,
+  retentionDays / scenario retention))` cameras at longer retention (null
+  days: capacity doesn't depend on retention); units are `max(sites,
+  ceil(cameras / that))`, as for the single appliance; ties go to the first
+  listed. Every unit is the same model, and cameras are assumed spread
+  evenly across sites, as before. The spreadsheet sizes each model on the
+  Inputs sheet (`APPLIANCE_SHEET`, with spare rows) and picks the cheapest
+  with `INDEX`/`MATCH`/`MIN`, so it stays live. Only Verkada has a list
+  today, its six Command Connector models from its own datasheet: other
+  connector vendors don't publish a range of models with prices and
+  capacities (Avigilon Alta's A600 comes in 8TB and 16TB at the same 25
+  cameras, with no published retention for either, so a list would add
+  nothing). Anyone can add models for any vendor in the form. The default
+  comparison's Verkada total moved from 520,015 to 503,980 with this, since
+  the CC500 fits its 20-camera sites for less than the CC700.
 - **Misc / other**: `SolutionInputs.miscItems` is a free-form list
   (`MiscCostItem[]`, `lib/model.ts`) rather than the two fixed
   `miscUpfrontCost`/`miscAnnualCost` fields this replaced — each item has its
@@ -349,7 +391,7 @@ calculators.
   business impact (below); misc items stay the catch-all for anything else.
 - **Business impact (`lib/verticals.ts`, `BusinessImpactStep`)**: the
   wizard's optional fourth step, also on the results page as its own
-  accordion panel. Built from a value-proposition framework of 34 props in
+  inputs tab. Built from a value-proposition framework of 34 props in
   five pillars (Safety SF1-8, Risk & liability RL1-5, Operational impact
   OI1-9, Compliance & governance CG1-6, Total cost of ownership TCO1-6),
   with each category's framework `code` kept in the data (never shown in
@@ -480,6 +522,20 @@ before trusting an unedited comparison:
   investigations, `STAFF_TIME_CATEGORIES` in `lib/model.ts`) separately
   from its cash cost, so a reader can see how much of a gap rests on them.
 
+- **Electricity** (`powerWattsPerCam` per solution, `electricityRatePerKwh`
+  in the scenario): cameras x all-in watts per camera x 8.76 kWh per watt-year
+  x the rate, every year after year 0, growing with labor and services like
+  the network line. "All-in" means the camera plus its share of whatever
+  else the solution keeps powered on site. Both solutions default to the
+  same 10 W (`DEFAULT_POWER_WATTS_PER_CAM`), whatever their deployment
+  model: on-prem usually draws more for its servers and storage, but
+  without researched figures a different default would decide comparisons
+  on a guess. At equal draws electricity raises both totals by the same
+  amount and never changes the gap, so the drivers list (which hides
+  categories that differ by under $1) only shows it once the two draws
+  differ. Both inputs are advanced. Added in `MODEL_VERSION` 4, so share
+  links made earlier get the "recalculated" notice.
+
 ## Wizard UX and defaults (`page.tsx`)
 
 - `Phase` is `"intro" | "wizard" | "results"`. A dedicated `IntroScreen`
@@ -505,7 +561,7 @@ before trusting an unedited comparison:
   reused (`IncumbentPicker`), because both change every year-0 cost and
   which fields later steps show (refresh offsets and license renewal only
   for the incumbent, camera age only when existing cameras matter). It
-  used to sit at the bottom of step 3. The results page's Scenario panel
+  used to sit at the bottom of step 3. The results page's Scenario tab
   shows the same picker.
 - The address bar tracks the wizard too, not just the results: once a
   comparison type is picked it carries `?s=` plus `&step=N`, so a refresh
@@ -515,18 +571,23 @@ before trusting an unedited comparison:
   leaving the calculator) and confirms before leaving an unfinished setup.
 - Training aids: the Scenario step offers example sizes
   (`lib/presets.ts`; they set only cameras, sites, and investigations, not
-  any cost assumption); the results page opens with a "Before you share
-  this" checklist (`lib/checklist.ts`) built from the inputs, flagging key
+  any cost assumption); the results page has a "Before you share this"
+  checklist (`lib/checklist.ts`) built from the inputs, flagging key
   fields still on generic placeholders, estimated vendor values, an
   incumbent fleet age or refresh/renewal timing left at its default, and a
   gap driven mostly by estimated staff time; and the intro screen links to
   the same calculation notes shown under the results (`lib/methodology.ts`).
+  Checklist items are structured (`_tco-shared/lib/checklist.ts`: which
+  solution, which fields, which inputs tab) rather than sentences, so the
+  results page can group them by solution, mark the flagged fields in the
+  cost editor, and jump to each one.
 - Share links round-trip the whole scenario through a `?s=`-encoded JSON
   query param (`lib/shareState.ts`); the address bar stays in sync via a
   debounced `router.replace`, wrapped in `Suspense` per Next's
-  `useSearchParams()` requirement. "Download snapshot"
-  (`lib/exportSnapshot.ts`, `html2canvas`) captures the stat tiles and
-  charts as a PNG.
+  `useSearchParams()` requirement. The snapshot export
+  (`lib/exportSnapshot.ts`, `html2canvas`) captures the verdict, the
+  cumulative chart, and the drivers as a PNG, from a copy `ResultsLayout`
+  renders only while exporting (on the page they're in different tabs).
 - The Excel export (`lib/spreadsheet.ts`) is a working model, not a dump of
   numbers. An Inputs sheet holds every assumption as blue input cells, with
   dropdowns for choices and source notes. A model sheet per solution, laid
@@ -544,26 +605,89 @@ before trusting an unedited comparison:
   through each category's `formula` (`_tco-shared/lib/impact.ts`). A new
   custom `annualPerSite` needs a matching `formula`; the tests check that
   every category has one and that it matches.
-- `ScenarioStep`'s and `AssumptionsPanel`'s `SimpleGrid`s use narrow,
-  multi-column layouts (`{ base: 2, sm: 4 }` and `{ base: 2, sm: 3 }`) with
-  a `leftSection` icon per field in `ScenarioStep`; values here top out in
-  the tens of thousands, they don't need full-width inputs, and the icons
-  help anchor a dense grid.
-- `ScenarioStep`'s top-level "Key variables" grid only holds the handful of
-  facts that actually define a comparison (camera count, sites, retention,
-  horizon, bitrate, investigations/mo); escalation, market rates, and the
-  storage-sizing assumptions (`driveCapacityTb`, `storageOverheadMultiplier`,
-  `spareServers`) all live in one collapsed-by-default "Advanced" accordion
-  instead, so a first pass at a comparison doesn't need to see them.
+- `ScenarioStep`'s `SimpleGrid` uses a narrow, multi-column layout
+  (`{ base: 2, sm: 4 }`) with a `leftSection` icon per field; values here
+  top out in the tens of thousands, they don't need full-width inputs, and
+  the icons help anchor a dense grid. On the results page it's shown with
+  `showIntro={false}`, without the wizard's heading and example sizes (an
+  example size clicked there would silently resize a finished comparison).
+- `ScenarioStep`'s top-level "Key variables" grid only holds the facts
+  that actually define a comparison (camera count, sites, retention,
+  horizon, investigations/mo) plus the admin and investigator hourly rates,
+  which multiply every staff-hour input and estimated staff time is often
+  most of a total. Escalation, truck roll price, electricity rate, and the
+  storage-sizing assumptions (bitrate, `driveCapacityTb`,
+  `storageOverheadMultiplier`, `spareServers`) all live in one
+  collapsed-by-default "Advanced" accordion instead, so a first pass at a
+  comparison doesn't need to see them.
 
 - **Field definitions live in one place**: `lib/fields.ts`
   (`SOLUTION_FIELDS` / `SCENARIO_FIELDS`) holds each input's label, help
   text, and valid range. Numeric solution inputs render through
-  `components/SolutionField.tsx` in both the wizard and the results page, so
+  `components/SolutionField.tsx` in both the wizard and the results page
+  (`bare` there, with the label in the cost editor's row instead), so
   a field can't be labeled or explained differently in the two places (they
   had drifted: e.g. "Support renewal (% of license/yr)" vs. "(%/yr)"), and
   the CSV/printable exports use the same labels. Add a new numeric input by
   adding it there, not by hand-building a `NumberInput`.
+
+## Results page (`_tco-shared/components/ResultsLayout.tsx`)
+
+Shared by both calculators; each one's `components/ResultsView.tsx` only
+supplies its own labels, inputs, and checklist. It was rebuilt after a UI
+audit found the old page hard to read (see git history for the before):
+
+- **Verdict first, full width** (`CostSummary`): who costs less and by how
+  much, when they take the lead, and per side the total split into cash,
+  estimated staff time, and business impact as segments of one bar, plus
+  year-0 vs. ongoing cost. Everything about a solution is drawn in that
+  solution's own chart color; there is no separate "cheaper = teal"
+  scheme any more, which used to color the same solution two ways on one
+  screen. Its footer holds the checklist button and the last change.
+- **A verdict strip** pinned to the top of the window once the card scrolls
+  away, so the bottom line stays visible while editing far down the page.
+- **"Why" as tabs** (over time, the default / drivers and what would change the winner /
+  by year), sticky beside the inputs on a wide screen. These used to be
+  stacked in a capped, separately scrolling column where everything below
+  the first chart was hidden unless you scrolled inside it. The category
+  bar chart was dropped: the drivers list shows the same numbers as signed,
+  sorted differences in the favored side's color.
+- **Inputs as tabs**: Scenario, Costs, Business impact. Costs is one
+  side-by-side editor (`components/CostsCompare.tsx` on
+  `_tco-shared/components/CompareGrid.tsx`): a row per field, a column per
+  solution, `—` where a field doesn't apply, and on a phone a toggle
+  between the two columns. It replaced two per-solution accordions, where
+  comparing one input across both meant opening both and scrolling between
+  them. Lists too big for a cell (connector models, misc items) show a
+  summary with the full editor in a dialog.
+- **Essential vs. all inputs**: the cost editor opens on "Essential", the
+  inputs that the flip-point search (`lib/sensitivity.ts`) and the
+  checklist treat as deciding a comparison and that a user can supply from
+  a quote or their own operations: discounts, camera price and reuse,
+  license prices and terms, connector or server price, staff hours, truck
+  rolls, incumbent refresh/renewal timing, and the analytics switch. "All
+  inputs" adds the rest (install and replacement labor, half-life and
+  warranty, server sizing, storage, RAID, refresh cycles, network,
+  electricity, misc items). Half-life and warranty are advanced even though
+  they can decide a result: they're vendor-researched, and the "what would
+  change the winner" table already surfaces them when they matter. An
+  advanced row still shows in Essential when the checklist flags it or it's
+  been edited away from its default (generic or vendor-researched), so a
+  change that moves a total is never hidden. Each `CompareRow` takes
+  `advanced` and `keep`; a section whose rows are all hidden hides its
+  heading too (CSS `:has()`, `CompareGrid.module.css`).
+- **Short names** (`_tco-shared/lib/names.ts`): the part of a name before
+  " · ", so "Milestone XProtect · Axis Communications cameras" reads
+  "Milestone XProtect" on this page (full name on hover in the cost editor
+  and in every export), unless that would make both sides read the same.
+- **Undo** (`_tco-shared/lib/useEditHistory.ts`): edits on this page are
+  live; each change (keystrokes within 800 ms count as one) can be undone,
+  and the verdict shows what the last change did to each total. Wired into
+  the change handlers rather than an effect, so loading or undoing never
+  records itself.
+- Every input is editable here, so the only way back into the wizard is the
+  "Change what's being compared" link (to step 1, for a different
+  comparison type), not an "Edit setup" button.
 
 ## Platform notes
 

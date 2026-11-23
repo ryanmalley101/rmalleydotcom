@@ -49,6 +49,12 @@ export function withWarranty(sol: SolutionInputs, warrantyYears: number): Soluti
   return { ...sol, warrantyYears, fleetHalfLifeYears: follows ? halfLifeForWarranty(warrantyYears) : sol.fleetHalfLifeYears };
 }
 
+// All-in watts per camera (camera, plus its share of recorders, storage, and
+// switches), the same for every solution and deployment model by default:
+// see SolutionInputs.powerWattsPerCam. About what a PoE camera draws on its
+// own; enter each solution's real figure to make electricity count.
+export const DEFAULT_POWER_WATTS_PER_CAM = 10;
+
 export const DEFAULT_SCENARIO: ScenarioInputs = {
   cameras: 100,
   sites: 5,
@@ -65,6 +71,8 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
+  // A placeholder near the US commercial average; enter the site's own rate.
+  electricityRatePerKwh: 0.15,
   // Seeded from the same constants computeSolution() falls back to for
   // missing values, so a fresh scenario and an old one missing these fields
   // start from identical numbers either way.
@@ -87,6 +95,9 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
 // values always win; only genuinely absent keys fall back.
 export function normalizeSolution(sol: SolutionInputs): SolutionInputs {
   const merged = { ...defaultSolution(sol.id, sol.name, sol.model), ...sol };
+  // Hardware and license discounts used to be one field (discountPct); an
+  // older link's single discount carries into both.
+  if (sol.licenseDiscountPct === undefined) merged.licenseDiscountPct = merged.discountPct;
   // Migrate the old flat miscUpfrontCost/miscAnnualCost fields (replaced by
   // the free-form miscItems list) into equivalent named items, so an older
   // share link/saved comparison's misc costs aren't silently dropped. Only
@@ -133,6 +144,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     return {
       id, name, model,
       discountPct: 30,
+      licenseDiscountPct: 30,
       cameraCost: 1200,
       bulkInstallLaborCost: 100,
       replacementInstallLaborCost: 250,
@@ -146,6 +158,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       tierYears: 5,
       applianceCost: 9999,
       applianceCapacity: 50,
+      applianceOptions: [],
       applianceWarrantyYears: 5,
       applianceRefreshCycleYears: 7,
       yearsUntilNextApplianceRefresh: 2,
@@ -170,6 +183,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       refreshCycleYears: 5,
       yearsUntilNextRefresh: 2,
       networkCostPerSiteYr: 0,
+      powerWattsPerCam: DEFAULT_POWER_WATTS_PER_CAM,
       serverSoftwareCost: 0,
       managementServers: 0,
       miscItems: [],
@@ -180,6 +194,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
   return {
     id, name, model,
     discountPct: 25,
+    licenseDiscountPct: 25,
     cameraCost: 700,
     bulkInstallLaborCost: 100,
     replacementInstallLaborCost: 250,
@@ -210,12 +225,14 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     tierYears: 5,
     applianceCost: 9999,
     applianceCapacity: 50,
+    applianceOptions: [],
     applianceWarrantyYears: 5,
     applianceRefreshCycleYears: 7,
     yearsUntilNextApplianceRefresh: 2,
     supportAddonPerCamYr: 0,
     retentionPricing: "scaled",
     networkCostPerSiteYr: 0,
+    powerWattsPerCam: DEFAULT_POWER_WATTS_PER_CAM,
     serverSoftwareCost: 0,
     managementServers: 0,
     miscItems: [],

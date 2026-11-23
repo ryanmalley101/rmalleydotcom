@@ -124,13 +124,15 @@ every total but are reported separately, as in the video calculator.
 - **Cloud licensing**: `tierPrice` per door per `tierYears` term, a lump sum
   at purchase and each renewal, plus `siteFeePerYr` for vendors that also
   charge per site. The incumbent's first renewal is at
-  `yearsUntilLicenseRenewal`. Terms get the residual credit.
+  `yearsUntilLicenseRenewal`; at 0 it's due now and bought at year 0.
+  Terms get the residual credit.
 - **On-prem licensing**: `baseLicense + doorLicense × doors` once at year 0
   (not for the incumbent), then `carePct` of that every year, incumbent
   included.
 - **On-prem servers**: `serverCount` (default 1) at `serverCost +
   serverSoftwareCost`, bought at year 0 and on `refreshCycleYears` (the
-  incumbent's first at `yearsUntilNextRefresh`), with residual credit.
+  incumbent's first at `yearsUntilNextRefresh`; at 0 it's due now and
+  bought at year 0), with residual credit.
   `serverAdminHrsPerYr` per server goes to Admin labor. Cloud has none of
   these.
 - **Credentials**: physical cards for `cardholders × (1 − mobileSharePct)`
@@ -177,7 +179,16 @@ Intro → Comparison (shape, incumbent, are doors already wired, hardware age)
 advanced: losses, access changes, alarms, rates, escalation, residual) →
 Solutions (provider, discount, licensing, hardware and reuse, credentials,
 operations) → Business impact (optional) → Results. Same share-link,
-`?step=`, save, export and checklist behavior as the video calculator.
+`?step=`, save, export and checklist behavior as the video calculator, and
+the same results page (the video README's "Results page" section); this
+calculator's side-by-side cost editor is `components/CostsCompare.tsx`,
+with the same fields and help as the wizard's `SolutionForm`. Its
+"Essential" view keeps discount, reader/controller reuse and prices,
+migration labor, licensing, server count and upkeep hours, incumbent
+timing, credential reissue, and the four staff-time and truck-roll inputs;
+the rest are advanced. The admin and security-staff hourly rates sit in the
+Scenario step's main grid rather than under Advanced, for the same reason
+as the video calculator's.
 
 ## Vendor defaults (`lib/vendorDefaults.ts`)
 

@@ -1,5 +1,5 @@
 // Help text shared by the wizard (SolutionsStep/ScenarioStep) and the results
-// page (AssumptionsPanel), so the same field explains itself the same way in
+// page (CostsCompare), so the same field explains itself the same way in
 // both places.
 
 export const TRUCK_ROLLS_HELP =

@@ -113,9 +113,9 @@ test("the checklist flags a gap driven by business impact, and placeholder input
   const a = seedOnprem("a");
   const b = { ...seedVerkada("b"), outcomeChanges: { "retail.RL2.external": -30 } };
   const items = buildChecklist(scn, a, b, computeComparison(scn, a, b));
-  assert.ok(items.some((i) => i.includes("estimated business impact")));
-  assert.ok(items.some((i) => i.includes("Shrink (% of sales)")));
-  assert.ok(!items.some((i) => i.includes("Slip-and-fall claims")), "only inputs behind a claimed change");
+  assert.ok(items.some((i) => i.text.includes("estimated business impact")));
+  assert.ok(items.some((i) => i.text.includes("Shrink (% of sales)")));
+  assert.ok(!items.some((i) => i.text.includes("Slip-and-fall claims")), "only inputs behind a claimed change");
 });
 
 test("older links without business impact fields normalize to none", () => {

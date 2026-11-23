@@ -1,9 +1,9 @@
 "use client";
 
 // Small pieces both calculators' solution forms use.
-import { Alert, Badge, ColorInput, Group, Radio, Stack, Text, Tooltip } from "@mantine/core";
+import { Alert, Badge, Group, Radio, Stack, Text, Tooltip } from "@mantine/core";
 import { AlertTriangle } from "lucide-react";
-import { COLOR_SWATCHES, TEXT_MUTED } from "../lib/colors";
+import { TEXT_MUTED } from "../lib/colors";
 import type { IncumbentChoice } from "../lib/engine";
 import type { ConfidenceSummary } from "../lib/vendorData";
 import InfoLabel from "./InfoLabel";
@@ -39,15 +39,17 @@ export const SectionLabel = ({ children, first }: { children: React.ReactNode; f
 // appear, and if the next refresh falls at or beyond the horizon, it never
 // does. Silent otherwise, since a non-incumbent always pays at year 0, and a
 // refresh past the horizon for it is a legitimate, harmless scenario.
-export function StaleRefreshWarning({ isIncumbent, yearsUntilNextRefresh, horizonYears, what }: {
+export function StaleRefreshWarning({ isIncumbent, yearsUntilNextRefresh, horizonYears, what, name }: {
   isIncumbent: boolean; yearsUntilNextRefresh: number; horizonYears: number; what: string;
+  // Which solution, where both are shown together.
+  name?: string;
 }) {
   if (!isIncumbent || yearsUntilNextRefresh < horizonYears) return null;
   return (
     <div style={{ gridColumn: "1 / -1" }}>
       <Alert color="yellow" variant="light" icon={<AlertTriangle size={16} />} p="xs">
         <Text size="xs">
-          This solution is marked incumbent and its next refresh ({yearsUntilNextRefresh}yr) falls at or beyond the{" "}
+          {name ?? "This solution"} is marked incumbent and its next refresh ({yearsUntilNextRefresh}yr) falls at or beyond the{" "}
           {horizonYears}-year horizon — {what} won&apos;t appear anywhere in this comparison.
         </Text>
       </Alert>
@@ -77,17 +79,6 @@ export function ConfidenceBadge({ summary }: { summary: ConfidenceSummary }) {
 export const OTHER_PROVIDER = "other";
 export function providerSelectData(options: string[]) {
   return [...options.map((p) => ({ value: p, label: p })), { value: OTHER_PROVIDER, label: "Other…" }];
-}
-
-// Chart line color for one solution, on the results page next to that
-// solution's assumptions.
-export function ChartColor({ color, onChange }: { color: string; onChange: (v: string) => void }) {
-  return (
-    <ColorInput
-      label="Chart color" value={color} onChange={onChange} format="hex" size="xs" w={160} mb="sm"
-      swatches={COLOR_SWATCHES}
-    />
-  );
 }
 
 const INCUMBENT_HELP =

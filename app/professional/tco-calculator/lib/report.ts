@@ -18,6 +18,15 @@ export function sourceStatus(sol: SolutionInputs, key: keyof SolutionInputs): st
   return `${meta.status} (${meta.confidence} confidence)${meta.sources[0] ? " " + meta.sources[0] : ""}`;
 }
 
+// A cloud connector solution's listed connector models, as one line, or ""
+// when it uses a single price.
+function connectorModels(sol: SolutionInputs): string {
+  if (sol.model !== "cloud" || sol.migrationStrategy !== "connector" || !sol.applianceOptions?.length) return "";
+  return sol.applianceOptions
+    .map((o) => `${o.label || "Model"}: $${o.cost.toLocaleString()}, ${o.capacity} cameras${o.retentionDays ? ` at ${o.retentionDays} days` : ""}`)
+    .join("; ");
+}
+
 // Scenario values as a reader should see them: the incumbent by name.
 function scenarioValue(state: SharedState, key: keyof SharedState["scenario"]): unknown {
   const v = state.scenario[key];
@@ -37,11 +46,18 @@ function reportSpec(state: SharedState, notes: string[]): ReportSpec<(typeof CAT
     nameB: solB.name,
     subtitle: `${scenario.cameras} cameras · ${scenario.sites} sites · ${scenario.horizonYears}-year horizon`,
     scenarioRows: SCENARIO_FIELDS.map((f) => [f.label, scenarioValue(state, f.key)]),
-    inputRows: keys.map((key) => ({
-      label: labelFor.get(key) ?? key,
-      a: applies(solA, key) ? solA[key] : "n/a", aSource: applies(solA, key) ? sourceStatus(solA, key) : "",
-      b: applies(solB, key) ? solB[key] : "n/a", bSource: applies(solB, key) ? sourceStatus(solB, key) : "",
-    })),
+    inputRows: [
+      ...keys.map((key) => ({
+        label: labelFor.get(key) ?? key,
+        a: applies(solA, key) ? solA[key] : "n/a", aSource: applies(solA, key) ? sourceStatus(solA, key) : "",
+        b: applies(solB, key) ? solB[key] : "n/a", bSource: applies(solB, key) ? sourceStatus(solB, key) : "",
+      })),
+      ...(connectorModels(solA) || connectorModels(solB) ? [{
+        label: "Connector models (cheapest fit used)",
+        a: connectorModels(solA) || "n/a", aSource: connectorModels(solA) ? sourceStatus(solA, "applianceOptions") : "",
+        b: connectorModels(solB) || "n/a", bSource: connectorModels(solB) ? sourceStatus(solB, "applianceOptions") : "",
+      }] : []),
+    ],
     miscA: solA.miscItems,
     miscB: solB.miscItems,
     impact: outcomeReportRows(scenario, solA, solB),

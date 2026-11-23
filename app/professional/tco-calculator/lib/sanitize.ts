@@ -23,6 +23,7 @@ const SCENARIO_RULES: Partial<Record<keyof ScenarioInputs, Rule>> = {
   adminRate: { min: 0, fallback: 0 },
   investigatorRate: { min: 0, fallback: 0 },
   truckRollCost: { min: 0, fallback: 0 },
+  electricityRatePerKwh: { min: 0, fallback: 0 },
   driveCapacityTb: { min: 1, fallback: 16 },
   storageOverheadMultiplier: { min: 1, fallback: 1.3 },
   spareServers: { min: 0, int: true, fallback: 1 },
@@ -54,6 +55,7 @@ const SOLUTION_RULES: Partial<Record<keyof SolutionInputs, Rule>> = {
   serverCapacity: { min: 1, int: true, fallback: 1 },
   storageCostPerTB: { min: 0, fallback: 0 },
   networkCostPerSiteYr: { min: 0, fallback: 0 },
+  powerWattsPerCam: { min: 0, fallback: 0 },
   serverSoftwareCost: { min: 0, fallback: 0 },
   managementServers: { min: 0, int: true, fallback: 0 },
   raidArrayDrives: { min: 3, max: 24, int: true, fallback: 8 },
@@ -68,6 +70,16 @@ const SOLUTION_RULES: Partial<Record<keyof SolutionInputs, Rule>> = {
 export const sanitizeScenario = (s: ScenarioInputs): ScenarioInputs => applyRules(s, SCENARIO_RULES);
 export const sanitizeSolution = (s: SolutionInputs): SolutionInputs => {
   const out = applyRules(s, SOLUTION_RULES);
+  // A solution from before the split discount has one discount for both.
+  out.licenseDiscountPct = clamp(s.licenseDiscountPct ?? out.discountPct, { min: 0, max: 100, fallback: out.discountPct });
+  out.applianceOptions = (Array.isArray(s.applianceOptions) ? s.applianceOptions : []).map((o) => ({
+    id: String(o?.id ?? ""),
+    label: String(o?.label ?? ""),
+    cost: clamp(o?.cost, { min: 0, fallback: 0 }),
+    capacity: clamp(o?.capacity, { min: 1, int: true, fallback: 1 }),
+    // Blank or 0: capacity doesn't depend on retention.
+    retentionDays: o?.retentionDays ? clamp(o.retentionDays, { min: 1, int: true, fallback: 30 }) : null,
+  }));
   // Optional: left absent unless set, since absent has its own meaning.
   if (out.yearsUntilLicenseRenewal !== undefined) {
     out.yearsUntilLicenseRenewal = clamp(out.yearsUntilLicenseRenewal, { min: 0, int: true, fallback: out.tierYears });

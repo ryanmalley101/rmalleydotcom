@@ -1,6 +1,6 @@
 // The single list of input definitions: labels, help text, and valid ranges
 // for every field. The wizard (SolutionsStep), the results page
-// (AssumptionsPanel, via SolutionField), and the exports all read from it,
+// (CostsCompare, via SolutionField), and the exports all read from it,
 // so the same input can't be labeled or explained differently in two
 // places. `models` limits a solution field to the deployment model(s) it
 // applies to.
@@ -16,7 +16,7 @@ export type { FieldDef } from "../../_tco-shared/lib/fields";
 const ONPREM_LICENSE_HELP =
   "Charged once at year 0, like the hardware, unless this solution is the incumbent (already owned). Only the support renewal recurs afterward.";
 const NEXT_REFRESH_HELP =
-  "How many years until the already-installed hardware is next replaced. Only shown for the incumbent: a solution bought new at year 0 gets its first refresh one full cycle later.";
+  "How many years until the already-installed hardware is next replaced; 0 means it's due now and is bought at year 0. Only shown for the incumbent: a solution bought new at year 0 gets its first refresh one full cycle later.";
 
 export const SCENARIO_FIELDS: FieldDef<keyof ScenarioInputs>[] = [
   { key: "cameras", label: "Camera count" },
@@ -34,6 +34,7 @@ export const SCENARIO_FIELDS: FieldDef<keyof ScenarioInputs>[] = [
   { key: "adminRate", label: "Admin ($/hr)" },
   { key: "investigatorRate", label: "Investigator ($/hr)" },
   { key: "truckRollCost", label: "Truck roll ($)" },
+  { key: "electricityRatePerKwh", label: "Electricity ($/kWh)" },
   { key: "driveCapacityTb", label: "Drive capacity (TB/drive)" },
   { key: "storageOverheadMultiplier", label: "Storage overhead (x)" },
   { key: "spareServers", label: "Spare recording servers" },
@@ -45,8 +46,12 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
   { key: "vmsProvider", label: "VMS software", models: ["onprem"] },
   { key: "cameraProvider", label: "Camera hardware", models: ["onprem"] },
   {
-    key: "discountPct", label: "Discount off list (%)", min: 0, max: 100,
-    help: "This vendor's negotiated discount off list price. Applies to cameras, licenses, appliances, servers, storage, and analytics alike; not to labor or your misc items.",
+    key: "discountPct", label: "Hardware discount off list (%)", min: 0, max: 100,
+    help: "This vendor's negotiated discount off list price on hardware: cameras, connector appliances, servers (with their software), storage, and analytics appliances. Not applied to labor or your misc items.",
+  },
+  {
+    key: "licenseDiscountPct", label: "License discount off list (%)", min: 0, max: 100,
+    help: "This vendor's negotiated discount off list price on software: licenses, subscriptions, add-ons, and support renewals. Often different from the hardware discount.",
   },
   { key: "migrationStrategy", label: "Migration strategy", models: ["cloud"] },
   { key: "onpremCameraStrategy", label: "Cameras (reuse or buy new)", models: ["onprem"] },
@@ -124,6 +129,10 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
     help: "A recurring per-camera analytics subscription on top of the one-time license, if this vendor charges one.",
   },
   { key: "networkCostPerSiteYr", label: "Internet / WAN ($/site/yr)", help: NETWORK_HELP },
+  {
+    key: "powerWattsPerCam", label: "Power draw (W/cam, all-in)", step: 1, decimalScale: 1,
+    help: "Average watts per camera running all year: the camera itself plus its share of everything else this solution keeps powered on site (recording servers, storage, analytics, connectors, PoE switches). The same placeholder for both solutions by default; enter each one's real figure. Priced at the scenario's electricity rate.",
+  },
   { key: "truckRollsPerSiteYr", label: "Truck rolls / site / yr", step: 0.5, decimalScale: 1, help: TRUCK_ROLLS_HELP },
   { key: "adminHrsPerCamYr", label: "Admin hrs / cam / yr", step: 0.1, decimalScale: 1, help: ADMIN_HOURS_HELP },
   { key: "investigationHrsPerIncident", label: "Hrs per investigation", step: 0.25, decimalScale: 2, help: INVESTIGATION_HOURS_HELP },

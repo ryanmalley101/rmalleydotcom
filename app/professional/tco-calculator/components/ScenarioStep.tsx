@@ -3,7 +3,7 @@
 import { Accordion, Button, Group, NumberInput, SimpleGrid, Stack, Switch, Text, Title } from "@mantine/core";
 import {
   Activity, Building2, Camera, CalendarRange, Database, DollarSign,
-  HardDrive, Layers, Search, Server, TrendingUp, Truck,
+  HardDrive, Layers, Search, Server, TrendingUp, Truck, Zap,
 } from "lucide-react";
 import type { ScenarioInputs } from "../lib/model";
 import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
@@ -33,6 +33,14 @@ const ESCALATION_FIELDS = [
   },
 ];
 
+const ADMIN_RATE_HELP =
+  "Loaded hourly cost of whoever administers the system: wages plus benefits and overhead. Multiplies every admin hour in the comparison.";
+const INVESTIGATOR_RATE_HELP =
+  "Loaded hourly cost of whoever pulls and reviews footage for investigations. Multiplies every investigation hour in the comparison.";
+
+const ELECTRICITY_RATE_HELP =
+  "What the site pays per kWh, for both solutions. Each solution's power draw per camera is set with its costs (all inputs). 0.15 is a placeholder near the US commercial average.";
+
 const STORAGE_OVERHEAD_HELP =
   "Multiplier on top of the raw video-bitrate math for metadata/audio/keyframe-indexing overhead beyond the encoded video stream itself. Feeds on-prem storage sizing. 1.3 (30% overhead) is a general placeholder — some VMSes run leaner or heavier than this.";
 
@@ -44,26 +52,33 @@ const RESIDUAL_HELP =
 
 const icon = (Icon: React.ElementType) => <Icon size={15} />;
 
-export default function ScenarioStep({ value, onChange }: { value: ScenarioInputs; onChange: (v: ScenarioInputs) => void }) {
+// `showIntro` is off on the results page: the heading, the "defaults are
+// placeholders" note, and the example sizes are for setting up a comparison,
+// and an example size clicked there would silently resize a finished one.
+export default function ScenarioStep({ value, onChange, showIntro = true }: {
+  value: ScenarioInputs; onChange: (v: ScenarioInputs) => void; showIntro?: boolean;
+}) {
   const set = <K extends keyof ScenarioInputs>(key: K, v: ScenarioInputs[K]) => onChange({ ...value, [key]: v });
   const num = (v: unknown) => (typeof v === "number" ? v : 0);
 
   return (
     <Stack gap="lg">
-      <div>
-        <Title order={4} mb={4}>Key variables</Title>
-        <Text size="sm" c={TEXT_MUTED}>
-          Shared facts for both solutions. Defaults are placeholders, adjust as needed.
-        </Text>
-        <Group gap="xs" mt="sm">
-          <Text size="xs" c={TEXT_MUTED}>Example sizes:</Text>
-          {SCENARIO_PRESETS.map((p) => (
-            <Button key={p.id} size="compact-xs" variant="light" title={p.description} onClick={() => onChange({ ...value, ...p.values })}>
-              {p.label}
-            </Button>
-          ))}
-        </Group>
-      </div>
+      {showIntro && (
+        <div>
+          <Title order={4} mb={4}>Key variables</Title>
+          <Text size="sm" c={TEXT_MUTED}>
+            Shared facts for both solutions. Defaults are placeholders, adjust as needed.
+          </Text>
+          <Group gap="xs" mt="sm">
+            <Text size="xs" c={TEXT_MUTED}>Example sizes:</Text>
+            {SCENARIO_PRESETS.map((p) => (
+              <Button key={p.id} size="compact-xs" variant="light" title={p.description} onClick={() => onChange({ ...value, ...p.values })}>
+                {p.label}
+              </Button>
+            ))}
+          </Group>
+        </div>
+      )}
       <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="lg">
         <NumberInput label="Camera count" leftSection={icon(Camera)} allowDecimal={false} value={value.cameras} min={1} thousandSeparator=","
           onChange={(v) => set("cameras", num(v))} />
@@ -73,20 +88,26 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
           onChange={(v) => set("retentionDays", num(v))} />
         <NumberInput label="Horizon (years)" leftSection={icon(CalendarRange)} allowDecimal={false} value={value.horizonYears} min={1} max={30}
           onChange={(v) => set("horizonYears", num(v))} />
-        <NumberInput label={<InfoLabel label="Avg bitrate/cam (Mbps)" help={BITRATE_HELP} />} leftSection={icon(Activity)} value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
-          onChange={(v) => set("bitrateMbps", num(v))} />
         <NumberInput label={<InfoLabel label="Investigations/mo" help={INVESTIGATIONS_PER_MONTH_HELP} />} leftSection={icon(Search)} value={value.investigationsPerMonth} min={0}
           onChange={(v) => set("investigationsPerMonth", num(v))} />
+        {/* Staff rates are up here rather than under Advanced: estimated staff
+            time is often most of a total, and every staff-hour input is
+            multiplied by one of these. */}
+        <NumberInput label={<InfoLabel label="Admin ($/hr)" help={ADMIN_RATE_HELP} />} leftSection={icon(DollarSign)} value={value.adminRate} min={0}
+          onChange={(v) => set("adminRate", num(v))} />
+        <NumberInput label={<InfoLabel label="Investigator ($/hr)" help={INVESTIGATOR_RATE_HELP} />} leftSection={icon(DollarSign)} value={value.investigatorRate} min={0}
+          onChange={(v) => set("investigatorRate", num(v))} />
       </SimpleGrid>
 
-      {/* Collapsed by default, deliberately: escalation, market rates, and the
-          storage-sizing assumptions are all real inputs, but not ones a first
-          pass at a comparison needs — burying them behind one accordion keeps the
-          main form to the handful of facts that actually define the comparison. */}
+      {/* Collapsed by default, deliberately: escalation, truck roll pricing, and
+          the storage-sizing assumptions (bitrate included, which only sizes
+          on-prem storage) are all real inputs, but not ones a first pass at a
+          comparison needs — burying them behind one accordion keeps the main
+          form to the facts that actually define the comparison. */}
       <Accordion variant="separated">
         <Accordion.Item value="advanced">
           <Accordion.Control>
-            <Text size="sm" fw={500}>Advanced (price escalation, market rates, storage sizing)</Text>
+            <Text size="sm" fw={500}>Advanced (price escalation, truck rolls, electricity, storage sizing)</Text>
           </Accordion.Control>
           <Accordion.Panel>
             <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
@@ -95,8 +116,13 @@ export default function ScenarioStep({ value, onChange }: { value: ScenarioInput
                   value={value[f.key]} min={-20} max={100} step={0.5} decimalScale={1}
                   onChange={(v) => set(f.key, num(v))} />
               ))}
-              <NumberInput label="Admin ($/hr)" leftSection={icon(DollarSign)} value={value.adminRate} min={0} onChange={(v) => set("adminRate", num(v))} />
-              <NumberInput label="Investigator ($/hr)" leftSection={icon(DollarSign)} value={value.investigatorRate} min={0} onChange={(v) => set("investigatorRate", num(v))} />
+              <NumberInput label={<InfoLabel label="Avg bitrate/cam (Mbps)" help={BITRATE_HELP} />} leftSection={icon(Activity)} value={value.bitrateMbps} min={0.1} step={0.5} decimalScale={1}
+                onChange={(v) => set("bitrateMbps", num(v))} />
+              <NumberInput
+                label={<InfoLabel label="Electricity ($/kWh)" help={ELECTRICITY_RATE_HELP} />} leftSection={icon(Zap)}
+                value={value.electricityRatePerKwh} min={0} step={0.01} decimalScale={3}
+                onChange={(v) => set("electricityRatePerKwh", num(v))}
+              />
               <NumberInput label="Truck roll ($)" leftSection={icon(Truck)} value={value.truckRollCost} min={0} onChange={(v) => set("truckRollCost", num(v))} />
               <NumberInput label="Drive capacity (TB/drive)" leftSection={icon(HardDrive)} value={value.driveCapacityTb} min={1}
                 onChange={(v) => set("driveCapacityTb", num(v))} />

@@ -65,7 +65,7 @@ test("the checklist warns when a tiered license is past its reader count", () =>
   const cloud = defaultSolution("b", "Cloud", "cloud");
   const warns = (doors: number) => {
     const scenario = { ...DEFAULT_SCENARIO, doors, readersPerDoor: 1 };
-    return buildChecklist(scenario, onguard, cloud, computeComparison(scenario, onguard, cloud)).some((i) => i.includes("researched license covers up to 64 readers"));
+    return buildChecklist(scenario, onguard, cloud, computeComparison(scenario, onguard, cloud)).some((i) => i.text.includes("researched license covers up to 64 readers"));
   };
   assert.equal(LICENSE_READER_LIMITS["LenelS2 OnGuard"].readers, 64);
   assert.equal(warns(50), false);

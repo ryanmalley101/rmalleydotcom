@@ -16,7 +16,7 @@
 // categories there are (each gets a row; a few blank misc rows are added
 // for new items). Changing those means exporting again.
 import {
-  CATEGORIES, FLEET_SHEET, LINES, OUTCOME_CATEGORIES, RESIDUAL, RESIDUAL_LINES, SHEET_CHOICES, STAFF_TIME_CATEGORIES,
+  APPLIANCE_SHEET, CATEGORIES, FLEET_SHEET, LINES, OUTCOME_CATEGORIES, RESIDUAL, RESIDUAL_LINES, SHEET_CHOICES, STAFF_TIME_CATEGORIES,
   derivedFor, linesFor,
   type Category, type DerivedDef, type LineDef, type LineEntry, type ModelRefs, type ScenarioInputs, type SolutionInputs,
 } from "./model";
@@ -36,6 +36,8 @@ const INPUTS = "Inputs";
 const MODEL_SHEET = { a: "Model A", b: "Model B" } as const;
 // Blank rows added under each solution's misc items, for new ones.
 const SPARE_MISC_ROWS = 5;
+// Blank rows added under a cloud solution's connector models.
+const SPARE_APPLIANCE_ROWS = 3;
 
 // Choice fields as the spreadsheet shows them, which model.ts's formulas compare against.
 const {
@@ -53,11 +55,14 @@ type Side = "a" | "b";
 type Refs = Record<string, string>;
 
 interface MiscRanges { amount: string; timing: string; year: string }
+interface ApplianceRanges { price: string; units: string; total: string }
 
 interface InputRefs {
   scen: Refs;
   sol: Record<Side, Refs>;
   misc: Record<Side, MiscRanges>;
+  // Cloud sides only.
+  appliance: Record<Side, ApplianceRanges | null>;
   // Business impact: this side's yearly savings (negative) and added costs.
   impact: Record<Side, { savings: string; costs: string } | null>;
 }
@@ -67,7 +72,7 @@ interface InputRefs {
 
 function buildInputs(wb: Workbook, scenario: ScenarioInputs, sols: Record<Side, SolutionInputs>, raw: Record<Side, SolutionInputs>): InputRefs {
   const sh = wb.add(INPUTS);
-  [48, 26, 26, 44, 44].forEach((w, i) => sh.width(i, w));
+  [48, 26, 26, 44, 44, 18, 18].forEach((w, i) => sh.width(i, w));
   sh.freeze = { cols: 1, rows: 0 };
   sh.set("A1", "Inputs", "title");
   sh.set("A2", "Blue cells are inputs: change any of them and every sheet recalculates. Gray cells are fixed by how the workbook was exported (see Notes).", "note");
@@ -171,6 +176,37 @@ function buildInputs(wb: Workbook, scenario: ScenarioInputs, sols: Record<Side, 
     misc[side] = { amount: range(1), timing: range(2), year: range(3) };
   }
 
+  // ---- Connector models (cloud sides): model.ts's APPLIANCE_SHEET sizes each
+  // one; the model sheet picks the cheapest.
+  const appliance: InputRefs["appliance"] = { a: null, b: null };
+  for (const side of ["a", "b"] as const) {
+    if (sols[side].model !== "cloud") continue;
+    r++;
+    sh.set(cellAt(0, r), `Connector models: ${names[side]}`, "section");
+    r++;
+    sh.set(cellAt(0, r), "With any model listed, the cheapest that covers the cameras at the scenario's retention (at least one per site) replaces the single connector price and capacity above. Days: retention with every channel in use; leave blank if capacity doesn't depend on it.", "note");
+    r++;
+    ["Model", "Price ($)", "Cameras per unit", "Days at full load", "Cameras per unit at this retention", "Units needed", "Total list price ($)"]
+      .forEach((h, i) => sh.set(cellAt(i, r), h, i === 0 ? "header" : "headerRight"));
+    r++;
+    const options = sols[side].applianceOptions;
+    const first = r;
+    for (let i = 0; i < options.length + SPARE_APPLIANCE_ROWS; i++, r++) {
+      const o = options[i];
+      sh.set(cellAt(0, r), o ? o.label || "Model" : null, "inText");
+      sh.set(cellAt(1, r), o ? o.cost : null, "inUsd");
+      sh.set(cellAt(2, r), o ? o.capacity : null, "inNum");
+      sh.set(cellAt(3, r), o ? o.retentionDays : null, "inNum");
+      const S = scen as ModelRefs["S"];
+      const [price, cap, days, eff, units] = [1, 2, 3, 4, 5].map((c) => cellAt(c, r));
+      sh.set(eff, { f: APPLIANCE_SHEET.effCap(S, price, cap, days) }, "int");
+      sh.set(units, { f: APPLIANCE_SHEET.units(S, price, eff) }, "int");
+      sh.set(cellAt(6, r), { f: APPLIANCE_SHEET.total(price, units) }, "usd");
+    }
+    const range = (col: number) => xrange(INPUTS, cellAt(col, first), cellAt(col, r - 1));
+    appliance[side] = { price: range(1), units: range(5), total: range(6) };
+  }
+
   // ---- Business impact
   const impact: InputRefs["impact"] = { a: null, b: null };
   const vertical = verticalFor(scenario);
@@ -246,7 +282,7 @@ function buildInputs(wb: Workbook, scenario: ScenarioInputs, sols: Record<Side, 
     }
   }
 
-  return { scen, sol, misc, impact };
+  return { scen, sol, misc, appliance, impact };
 }
 
 // ---------------------------------------------------------------------------
@@ -318,6 +354,7 @@ function buildModelSheet(
     span: (key) => `${at(key, 0)}:${at(key, H)}`,
     year: (y) => `${colOf(y)}$${rowOf("__years")}`,
     misc: refs.misc[side],
+    appliance: refs.appliance[side],
     impact: refs.impact[side],
     fleet: {
       start: (y) => at("batch0", y),

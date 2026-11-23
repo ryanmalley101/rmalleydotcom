@@ -73,3 +73,13 @@ test("Verkada's provider badge reads as researched", () => {
   assert.equal(summary.tone, "sourced");
   assert.equal(summary.sourced, summary.total);
 });
+
+test("Verkada's connector models are reset on a vendor switch, even after a share link round trip", () => {
+  const roundTripped = JSON.parse(JSON.stringify(seedVerkada("b")));
+  assert.notEqual(roundTripped.applianceOptions, seedVerkada("b").applianceOptions);
+  const alta = switchVendor(roundTripped, "Verkada", "Avigilon Alta (Motorola Solutions)", CLOUD_VENDOR_DEFAULTS);
+  assert.deepEqual(alta.applianceOptions, []);
+  assert.equal(alta.retentionPricing, generic.retentionPricing);
+  // And its source dot survives the round trip too.
+  assert.ok(fieldSourceInfo("applianceOptions", roundTripped.applianceOptions, CLOUD_VENDOR_DEFAULTS.Verkada));
+});
