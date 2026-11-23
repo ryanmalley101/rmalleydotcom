@@ -2,15 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import { Chart, type Plugin } from "chart.js/auto";
-import { Paper, Stack } from "@mantine/core";
+import { Box } from "@mantine/core";
 import type { ComparisonTotals } from "../lib/engine";
 import { TEXT_MUTED, fmtUsdK } from "../lib/colors";
 
 Chart.defaults.color = TEXT_MUTED;
 
 // Amber, deliberately distinct from either solution's line color (which the
-// user can change) and from the results-summary's teal/gray — a crossover
-// is its own kind of event, not "belonging" to either solution's color.
+// user can change) — a crossover is its own kind of event, not "belonging"
+// to either solution's color.
 const CROSSOVER_COLOR = "#f59e0b";
 
 // Custom draw instead of a plugin dependency (chartjs-plugin-annotation etc.)
@@ -65,13 +65,16 @@ function makeCrossoverPlugin(yearsRef: { current: number[] }): Plugin<"line"> {
   };
 }
 
-export default function ChartsPanel({
-  comparison, nameA, nameB, colorA, colorB,
-}: { comparison: ComparisonTotals; nameA: string; nameB: string; colorA: string; colorB: string }) {
+// Cumulative cost by year for both solutions, with the crossover marked.
+// The per-category comparison that used to sit under it is the "What drives
+// the difference" list now, which shows the same numbers as signed, sorted
+// differences. `animate: false` for the snapshot, which is captured as soon
+// as it's drawn.
+export default function CumulativeChart({
+  comparison, nameA, nameB, colorA, colorB, height = 300, animate = true,
+}: { comparison: ComparisonTotals; nameA: string; nameB: string; colorA: string; colorB: string; height?: number; animate?: boolean }) {
   const cumRef = useRef<HTMLCanvasElement>(null);
-  const catRef = useRef<HTMLCanvasElement>(null);
   const cumChart = useRef<Chart | null>(null);
-  const catChart = useRef<Chart | null>(null);
   const crossoverYearsRef = useRef<number[]>([]);
 
   useEffect(() => {
@@ -91,7 +94,12 @@ export default function ChartsPanel({
         },
         options: {
           responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: true, position: "top", labels: { boxWidth: 12, boxHeight: 12, color: TEXT_MUTED } } },
+          animation: animate ? undefined : false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: { display: true, position: "top", labels: { boxWidth: 12, boxHeight: 12, color: TEXT_MUTED } },
+            tooltip: { callbacks: { label: (item) => `${item.dataset.label}: ${fmtUsdK(Number(item.raw))}` } },
+          },
           scales: {
             y: { ticks: { callback: (v) => fmtUsdK(Number(v)), color: TEXT_MUTED }, grid: { color: "rgba(255,255,255,0.1)" } },
             x: { ticks: { color: TEXT_MUTED }, grid: { display: false } },
@@ -112,59 +120,16 @@ export default function ChartsPanel({
       c.data.datasets[1].backgroundColor = colorB + "1f";
       c.update("none");
     }
-  }, [comparison, nameA, nameB, colorA, colorB]);
-
-  useEffect(() => {
-    if (!catRef.current) return;
-    const catsA = comparison.activeCategories.map((c) => Math.round(comparison.a.totalsByCategory[c]));
-    const catsB = comparison.activeCategories.map((c) => Math.round(comparison.b.totalsByCategory[c]));
-    if (!catChart.current) {
-      catChart.current = new Chart(catRef.current, {
-        type: "bar",
-        data: {
-          labels: [...comparison.activeCategories],
-          datasets: [
-            { label: nameA, data: catsA, backgroundColor: colorA, maxBarThickness: 20, borderRadius: 4 },
-            { label: nameB, data: catsB, backgroundColor: colorB, maxBarThickness: 20, borderRadius: 4 },
-          ],
-        },
-        options: {
-          indexAxis: "y", responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { callback: (v) => fmtUsdK(Number(v)), color: TEXT_MUTED }, grid: { color: "rgba(255,255,255,0.1)" } },
-            y: { ticks: { color: TEXT_MUTED }, grid: { display: false } },
-          },
-        },
-      });
-    } else {
-      const c = catChart.current;
-      c.data.labels = [...comparison.activeCategories];
-      c.data.datasets[0].data = catsA;
-      c.data.datasets[0].label = nameA;
-      c.data.datasets[0].backgroundColor = colorA;
-      c.data.datasets[1].data = catsB;
-      c.data.datasets[1].label = nameB;
-      c.data.datasets[1].backgroundColor = colorB;
-      c.update("none");
-    }
-  }, [comparison, nameA, nameB, colorA, colorB]);
+  }, [comparison, nameA, nameB, colorA, colorB, animate]);
 
   useEffect(() => () => {
     cumChart.current?.destroy();
     cumChart.current = null;
-    catChart.current?.destroy();
-    catChart.current = null;
   }, []);
 
   return (
-    <Stack gap="md">
-      <Paper withBorder p="md" radius="md" h={320} pos="relative">
-        <canvas ref={cumRef} role="img" aria-label="Cumulative cost by year for both solutions" />
-      </Paper>
-      <Paper withBorder p="md" radius="md" h={Math.max(280, comparison.activeCategories.length * 46)} pos="relative">
-        <canvas ref={catRef} role="img" aria-label="Total cost by category for both solutions" />
-      </Paper>
-    </Stack>
+    <Box h={height} pos="relative">
+      <canvas ref={cumRef} role="img" aria-label="Cumulative cost by year for both solutions" />
+    </Box>
   );
 }

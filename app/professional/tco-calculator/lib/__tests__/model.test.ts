@@ -13,9 +13,29 @@ test("default comparison snapshot", () => {
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
     // B was 520,015 before Verkada's connector models: the CC500-8TB fits its
-    // 20-camera sites for less than the CC700 it used to be priced at.
-    { a: 979872, b: 503980, crossover: 2 },
+    // 20-camera sites for less than the CC700 it used to be priced at. Both
+    // rose by the same 15,515 when electricity was added (equal by default).
+    { a: 995387, b: 519496, crossover: 2 },
   );
+});
+
+test("electricity is equal for both solutions by default, so it never moves the gap", () => {
+  const scn = scenario({ incumbent: "a" });
+  const a = seedOnprem("a"), b = seedVerkada("b");
+  const c = computeComparison(scn, a, b);
+  assert.ok(c.a.totalsByCategory.Electricity > 0);
+  assert.equal(round(c.a.totalsByCategory.Electricity), round(c.b.totalsByCategory.Electricity));
+  const off = computeComparison({ ...scn, electricityRatePerKwh: 0 }, a, b);
+  assert.equal(round(c.a.total - c.b.total), round(off.a.total - off.b.total));
+});
+
+test("electricity is cameras x watts x 8,760 hours x rate, from year 1", () => {
+  const scn = scenario({ incumbent: "a", cameras: 100, electricityRatePerKwh: 0.2, laborEscalationPct: 0, horizonYears: 3 });
+  const a = { ...seedOnprem("a"), powerWattsPerCam: 25 }, b = { ...seedVerkada("b"), powerWattsPerCam: 10 };
+  const c = computeComparison(scn, a, b);
+  assert.equal(c.a.byYear[0].Electricity, 0);
+  assert.equal(round(c.a.byYear[1].Electricity), round(100 * 25 * 8.76 * 0.2));
+  assert.equal(round(c.a.totalsByCategory.Electricity - c.b.totalsByCategory.Electricity), round(3 * 100 * 15 * 8.76 * 0.2));
 });
 
 test("staff time is reported separately and sums back to the total", () => {

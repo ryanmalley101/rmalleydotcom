@@ -179,7 +179,16 @@ Intro → Comparison (shape, incumbent, are doors already wired, hardware age)
 advanced: losses, access changes, alarms, rates, escalation, residual) →
 Solutions (provider, discount, licensing, hardware and reuse, credentials,
 operations) → Business impact (optional) → Results. Same share-link,
-`?step=`, save, export and checklist behavior as the video calculator.
+`?step=`, save, export and checklist behavior as the video calculator, and
+the same results page (the video README's "Results page" section); this
+calculator's side-by-side cost editor is `components/CostsCompare.tsx`,
+with the same fields and help as the wizard's `SolutionForm`. Its
+"Essential" view keeps discount, reader/controller reuse and prices,
+migration labor, licensing, server count and upkeep hours, incumbent
+timing, credential reissue, and the four staff-time and truck-roll inputs;
+the rest are advanced. The admin and security-staff hourly rates sit in the
+Scenario step's main grid rather than under Advanced, for the same reason
+as the video calculator's.
 
 ## Vendor defaults (`lib/vendorDefaults.ts`)
 

@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Alert, Button, CopyButton, Group, Menu, Modal, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Alert, Anchor, Button, CopyButton, Group, Menu, Modal, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Check, ChevronDown, Copy, Download, FileSpreadsheet, FileText, Image as ImageIcon, RotateCcw, Save, Sheet } from "lucide-react";
+import { ArrowLeftRight, Check, ChevronDown, Copy, Download, FileSpreadsheet, FileText, Image as ImageIcon, Save, Sheet } from "lucide-react";
 import { TEXT_MUTED } from "../lib/colors";
 
 // The results page's title row and actions: save locally, copy the share
-// link, export, and go back to the setup. Plus the notice for a link made
-// under an older cost model.
+// link, export. Plus the notice for a link made under an older cost model.
+// Every input can be edited on the results page itself, so going back to the
+// wizard is only for changing what's compared (the comparison type), a small
+// link under the subtitle rather than a fourth button.
 export default function ResultsHeader({
   title, subtitle, shareUrl, staleModel, onDismissStaleModel, defaultSaveName, onSave,
-  onSnapshot, onCsv, onSpreadsheet, onPrintable, onEditSetup,
+  onSnapshot, onCsv, onSpreadsheet, onPrintable, onChangeComparison,
 }: {
   title: string;
   subtitle: string;
@@ -25,7 +27,7 @@ export default function ResultsHeader({
   // The live-formula Excel workbook; left out by a calculator that doesn't have one.
   onSpreadsheet?: () => Promise<void>;
   onPrintable: () => void;
-  onEditSetup: () => void;
+  onChangeComparison: () => void;
 }) {
   const [exporting, setExporting] = useState(false);
   const [saveModalOpen, { open: openSaveModal, close: closeSaveModal }] = useDisclosure(false);
@@ -56,9 +58,12 @@ export default function ResultsHeader({
   return (
     <>
       <Group justify="space-between" align="flex-start">
-        <div>
+        <div style={{ minWidth: 0, flex: "1 1 320px" }}>
           <Title order={3}>{title}</Title>
           <Text size="sm" c={TEXT_MUTED}>{subtitle}</Text>
+          <Anchor component="button" type="button" size="xs" mt={4} onClick={onChangeComparison}>
+            <Group gap={4} wrap="nowrap" component="span"><ArrowLeftRight size={12} />Change what&apos;s being compared</Group>
+          </Anchor>
         </div>
         <Group gap="xs">
           <Button variant="default" leftSection={justSaved ? <Check size={14} /> : <Save size={14} />} onClick={handleOpenSaveModal}>
@@ -88,9 +93,6 @@ export default function ResultsHeader({
               <Menu.Item leftSection={<FileText size={14} />} onClick={onPrintable}>Printable report (PDF)</Menu.Item>
             </Menu.Dropdown>
           </Menu>
-          <Button variant="default" leftSection={<RotateCcw size={14} />} onClick={onEditSetup}>
-            Edit setup
-          </Button>
         </Group>
       </Group>
 

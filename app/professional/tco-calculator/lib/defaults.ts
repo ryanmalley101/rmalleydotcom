@@ -49,6 +49,12 @@ export function withWarranty(sol: SolutionInputs, warrantyYears: number): Soluti
   return { ...sol, warrantyYears, fleetHalfLifeYears: follows ? halfLifeForWarranty(warrantyYears) : sol.fleetHalfLifeYears };
 }
 
+// All-in watts per camera (camera, plus its share of recorders, storage, and
+// switches), the same for every solution and deployment model by default:
+// see SolutionInputs.powerWattsPerCam. About what a PoE camera draws on its
+// own; enter each solution's real figure to make electricity count.
+export const DEFAULT_POWER_WATTS_PER_CAM = 10;
+
 export const DEFAULT_SCENARIO: ScenarioInputs = {
   cameras: 100,
   sites: 5,
@@ -65,6 +71,8 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
   adminRate: 85,
   investigatorRate: 45,
   truckRollCost: 400,
+  // A placeholder near the US commercial average; enter the site's own rate.
+  electricityRatePerKwh: 0.15,
   // Seeded from the same constants computeSolution() falls back to for
   // missing values, so a fresh scenario and an old one missing these fields
   // start from identical numbers either way.
@@ -175,6 +183,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       refreshCycleYears: 5,
       yearsUntilNextRefresh: 2,
       networkCostPerSiteYr: 0,
+      powerWattsPerCam: DEFAULT_POWER_WATTS_PER_CAM,
       serverSoftwareCost: 0,
       managementServers: 0,
       miscItems: [],
@@ -223,6 +232,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     supportAddonPerCamYr: 0,
     retentionPricing: "scaled",
     networkCostPerSiteYr: 0,
+    powerWattsPerCam: DEFAULT_POWER_WATTS_PER_CAM,
     serverSoftwareCost: 0,
     managementServers: 0,
     miscItems: [],

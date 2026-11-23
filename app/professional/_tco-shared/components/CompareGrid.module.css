@@ -1,0 +1,5 @@
+/* A section with no rows left to show (every one advanced and hidden, or
+   not applicable to either solution) hides its heading too. */
+.section:not(:has(.row)) {
+  display: none;
+}

@@ -180,9 +180,9 @@ function TcoCalculatorInner() {
             onScenarioChange={setScenario}
             onSolAChange={setSolA}
             onSolBChange={setSolB}
-            onEditSetup={() => {
+            onChangeComparison={() => {
               setPhase("wizard");
-              setStepIndex(2);
+              setStepIndex(0);
             }}
           />
       </CalculatorFrame>

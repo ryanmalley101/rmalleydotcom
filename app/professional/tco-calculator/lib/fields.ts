@@ -1,6 +1,6 @@
 // The single list of input definitions: labels, help text, and valid ranges
 // for every field. The wizard (SolutionsStep), the results page
-// (AssumptionsPanel, via SolutionField), and the exports all read from it,
+// (CostsCompare, via SolutionField), and the exports all read from it,
 // so the same input can't be labeled or explained differently in two
 // places. `models` limits a solution field to the deployment model(s) it
 // applies to.
@@ -34,6 +34,7 @@ export const SCENARIO_FIELDS: FieldDef<keyof ScenarioInputs>[] = [
   { key: "adminRate", label: "Admin ($/hr)" },
   { key: "investigatorRate", label: "Investigator ($/hr)" },
   { key: "truckRollCost", label: "Truck roll ($)" },
+  { key: "electricityRatePerKwh", label: "Electricity ($/kWh)" },
   { key: "driveCapacityTb", label: "Drive capacity (TB/drive)" },
   { key: "storageOverheadMultiplier", label: "Storage overhead (x)" },
   { key: "spareServers", label: "Spare recording servers" },
@@ -128,6 +129,10 @@ export const SOLUTION_FIELDS: FieldDef<keyof SolutionInputs>[] = [
     help: "A recurring per-camera analytics subscription on top of the one-time license, if this vendor charges one.",
   },
   { key: "networkCostPerSiteYr", label: "Internet / WAN ($/site/yr)", help: NETWORK_HELP },
+  {
+    key: "powerWattsPerCam", label: "Power draw (W/cam, all-in)", step: 1, decimalScale: 1,
+    help: "Average watts per camera running all year: the camera itself plus its share of everything else this solution keeps powered on site (recording servers, storage, analytics, connectors, PoE switches). The same placeholder for both solutions by default; enter each one's real figure. Priced at the scenario's electricity rate.",
+  },
   { key: "truckRollsPerSiteYr", label: "Truck rolls / site / yr", step: 0.5, decimalScale: 1, help: TRUCK_ROLLS_HELP },
   { key: "adminHrsPerCamYr", label: "Admin hrs / cam / yr", step: 0.1, decimalScale: 1, help: ADMIN_HOURS_HELP },
   { key: "investigationHrsPerIncident", label: "Hrs per investigation", step: 0.25, decimalScale: 2, help: INVESTIGATION_HOURS_HELP },

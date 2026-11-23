@@ -29,11 +29,11 @@ const REISSUE_HELP =
 const RENEWAL_HELP =
   "How many years until the license already in place has to be renewed; 0 means it's due now and is bought at year 0. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
 
-// Every input for one solution, in themed sections. The wizard shows it in
-// each solution's card; the results page shows it in each solution's
-// assumptions panel (`compact`, three columns, with the misc items below).
-export default function SolutionForm({ sol, onChange, scenario, compact }: {
-  sol: SolutionInputs; onChange: (v: SolutionInputs) => void; scenario: ScenarioInputs; compact?: boolean;
+// Every input for one solution, in themed sections, for the wizard's
+// solution cards. The results page edits the same fields side by side
+// instead (CostsCompare).
+export default function SolutionForm({ sol, onChange, scenario }: {
+  sol: SolutionInputs; onChange: (v: SolutionInputs) => void; scenario: ScenarioInputs;
 }) {
   const field = (key: keyof SolutionInputs, icon: React.ElementType) => <SolutionField sol={sol} field={key} onChange={onChange} icon={icon} />;
   const toggleLabel = (key: keyof SolutionInputs, icon: React.ElementType, help: string) => (
@@ -48,7 +48,7 @@ export default function SolutionForm({ sol, onChange, scenario, compact }: {
   const perYear = sol.tierPrice / Math.max(1, sol.tierYears);
 
   return (
-    <SimpleGrid cols={compact ? { base: 2, sm: 3 } : { base: 1, xs: 2 }} spacing="sm">
+    <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="sm">
       <SectionLabel first>Pricing</SectionLabel>
       {field("discountPct", Percent)}
 

@@ -1,25 +1,20 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import { Accordion, Badge, Box, Group, Stack, Text } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMemo } from "react";
+import { Stack, Text } from "@mantine/core";
 import type { HardwareFootprint, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { computeComparison } from "../lib/model";
 import { TEXT_MUTED, fmtUsd } from "../../_tco-shared/lib/colors";
 import { OUTCOME_NOTE, STAFF_TIME_NOTE } from "../lib/fieldHelp";
 import InfoLabel from "../../_tco-shared/components/InfoLabel";
-import { downloadBlob, downloadText, exportSnapshot, openPrintable } from "../../_tco-shared/lib/exportSnapshot";
+import { downloadBlob, downloadText, openPrintable } from "../../_tco-shared/lib/exportSnapshot";
+import { shortNames } from "../../_tco-shared/lib/names";
+import { useEditHistory } from "../../_tco-shared/lib/useEditHistory";
 import { SAVED_COMPARISONS } from "../lib/savedComparisons";
 import ScenarioStep from "./ScenarioStep";
-import AssumptionsPanel from "./AssumptionsPanel";
-import ChartsPanel from "../../_tco-shared/components/ChartsPanel";
-import MethodologyNotes from "../../_tco-shared/components/MethodologyNotes";
-import GapDrivers from "../../_tco-shared/components/GapDrivers";
-import YearTable from "../../_tco-shared/components/YearTable";
-import ShareChecklist from "../../_tco-shared/components/ShareChecklist";
+import CostsCompare, { modelLabel } from "./CostsCompare";
 import ResultsHeader from "../../_tco-shared/components/ResultsHeader";
-import CostSummary from "../../_tco-shared/components/CostSummary";
-import { ChartColor } from "../../_tco-shared/components/FormParts";
+import ResultsLayout from "../../_tco-shared/components/ResultsLayout";
 import { buildCsv, buildReportHtml } from "../lib/report";
 import { METHODOLOGY_NOTES } from "../lib/methodology";
 import { buildChecklist } from "../lib/checklist";
@@ -40,12 +35,16 @@ function hardwareSummaryText(hw: HardwareFootprint): string | null {
     const tb = hw.storageTB >= 100 ? Math.round(hw.storageTB).toLocaleString() : hw.storageTB.toFixed(1);
     parts.push(`${tb} TB storage`);
   }
-  return parts.length ? parts.join(" · ") : null;
+  // From the cost model's own camera cohorts, so it can't disagree with what was charged.
+  parts.push(`${Math.round(hw.originalFleetReplacedPct)}% of the original cameras replaced`);
+  return parts.join(" · ");
 }
+
+type Inputs = { scenario: ScenarioInputs; solA: SolutionInputs; solB: SolutionInputs };
 
 export default function ResultsView({
   shapeId, scenario, solA, solB, colorA, colorB, shareUrl, staleModel = false, onDismissStaleModel, onColorAChange, onColorBChange,
-  onScenarioChange, onSolAChange, onSolBChange, onEditSetup,
+  onScenarioChange, onSolAChange, onSolBChange, onChangeComparison,
 }: {
   shapeId: string;
   scenario: ScenarioInputs;
@@ -61,34 +60,40 @@ export default function ResultsView({
   onScenarioChange: (v: ScenarioInputs) => void;
   onSolAChange: (v: SolutionInputs) => void;
   onSolBChange: (v: SolutionInputs) => void;
-  onEditSetup: () => void;
+  onChangeComparison: () => void;
 }) {
   const comparison = useMemo(() => computeComparison(scenario, solA, solB), [scenario, solA, solB]);
   const flips = useMemo(() => findFlipPoints(scenario, solA, solB), [scenario, solA, solB]);
   const checklist = useMemo(() => buildChecklist(scenario, solA, solB, comparison), [scenario, solA, solB, comparison]);
-  const { a, b, crossoverYear, laterCrossoverYears } = comparison;
-  const snapshotRef = useRef<HTMLDivElement>(null);
-  // Below this width the assumptions accordion is too cramped to sit beside the
-  // chart, so it drops back to today's single stacked column instead; sticky
-  // positioning is skipped entirely there rather than fighting a column that's
-  // no longer meaningfully "beside" anything, which would just make the summary
-  // float oddly over the fields as you scroll past it on a narrow screen.
-  const isDesktop = useMediaQuery("(min-width: 75em)");
 
-  // From the cost model's own camera cohorts, so the stat can't disagree
-  // with what was charged.
-  const fleetPctA = Math.round(a.hardware.originalFleetReplacedPct);
-  const fleetPctB = Math.round(b.hardware.originalFleetReplacedPct);
+  const history = useEditHistory<Inputs>({ scenario, solA, solB }, (s) => {
+    onScenarioChange(s.scenario);
+    onSolAChange(s.solA);
+    onSolBChange(s.solB);
+  });
+  const previous = useMemo(
+    () => (history.previous ? computeComparison(history.previous.scenario, history.previous.solA, history.previous.solB) : null),
+    [history.previous],
+  );
+  const setScenario = history.edit(onScenarioChange);
+  const setSolA = history.edit(onSolAChange);
+  const setSolB = history.edit(onSolBChange);
 
+  const { a, b } = comparison;
+  const [nameA, nameB] = shortNames(solA.name, solB.name);
   const fileBase = `${solA.name}-vs-${solB.name}-tco`.replace(/[^\w.-]+/g, "-");
   const exportState = { shapeId, scenario, solA, solB, colorA, colorB };
+  const incumbentName = scenario.incumbent === "a" ? nameA : scenario.incumbent === "b" ? nameB : null;
+  const title = `${nameA} vs. ${nameB}`;
+  const subtitle =
+    `${scenario.cameras.toLocaleString()} cameras · ${scenario.sites.toLocaleString()} sites · ${scenario.horizonYears}-year horizon` +
+    (incumbentName ? ` · ${incumbentName} is incumbent` : "");
 
   const sideDetails = (sol: SolutionInputs, hw: HardwareFootprint) => {
-    const hwText = hardwareSummaryText(hw);
     const considerations = considerationsFor(sol);
     return (
-      <>
-        {hwText && <Text size="xs" c={TEXT_MUTED}>{hwText}</Text>}
+      <Stack gap={0}>
+        <Text size="xs" c={TEXT_MUTED}>{hardwareSummaryText(hw)}</Text>
         {verticalFor(scenario) && considerations.length > 0 && (
           <InfoLabel
             label={`+ ${considerations.length} other consideration${considerations.length === 1 ? "" : "s"}, not in totals`}
@@ -96,143 +101,81 @@ export default function ResultsView({
             size="var(--mantine-font-size-xs)" color={TEXT_MUTED}
           />
         )}
-      </>
+      </Stack>
     );
   };
   const perCamMo = (total: number) => `${fmtUsd(total / (Math.max(1, scenario.cameras) * Math.max(1, scenario.horizonYears) * 12))} / cam / mo`;
 
+  const sides = [
+    { id: "a" as const, name: nameA, fullName: solA.name, color: colorA, onColorChange: onColorAChange, modelLabel: modelLabel(solA), isIncumbent: scenario.incumbent === "a" },
+    { id: "b" as const, name: nameB, fullName: solB.name, color: colorB, onColorChange: onColorBChange, modelLabel: modelLabel(solB), isIncumbent: scenario.incumbent === "b" },
+  ] as const;
+
   return (
-    <Stack gap="xl">
-      <ResultsHeader
-        title={`${solA.name} vs. ${solB.name}`}
-        subtitle={
-          `${scenario.cameras.toLocaleString()} cameras · ${scenario.sites.toLocaleString()} sites · ${scenario.horizonYears}-year horizon` +
-          (scenario.incumbent !== "none" ? ` · ${scenario.incumbent === "a" ? solA.name : solB.name} is incumbent` : "")
-        }
-        shareUrl={shareUrl}
-        staleModel={staleModel}
-        onDismissStaleModel={onDismissStaleModel}
-        defaultSaveName={`${solA.name} vs. ${solB.name}`}
-        onSave={(name) => SAVED_COMPARISONS.save(name, exportState)}
-        onSnapshot={async () => {
-          if (snapshotRef.current) await exportSnapshot(snapshotRef.current, `${solA.name}-vs-${solB.name}-tco.png`.replace(/\s+/g, "-"));
-        }}
-        onCsv={() => downloadText(buildCsv(exportState, comparison), `${fileBase}.csv`, "text/csv;charset=utf-8")}
-        onSpreadsheet={async () => {
-          // Loaded on demand: the formula model and xlsx writer are only needed for this export.
-          const { buildSpreadsheet } = await import("../lib/spreadsheet");
-          const bytes = buildSpreadsheet(exportState, shareUrl || undefined);
-          downloadBlob(new Blob([bytes as BlobPart], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${fileBase}.xlsx`);
-        }}
-        onPrintable={() => openPrintable(buildReportHtml(exportState, comparison, METHODOLOGY_NOTES))}
-        onEditSetup={onEditSetup}
-      />
-
-      <Box style={{ display: "flex", flexDirection: isDesktop ? "row" : "column", gap: "var(--mantine-spacing-xl)", alignItems: "flex-start" }}>
-        <Box
-          style={{
-            flex: isDesktop ? "0 0 44%" : "1 1 auto",
-            minWidth: 0,
-            width: "100%",
-            position: isDesktop ? "sticky" : "static",
-            top: isDesktop ? 16 : undefined,
-            // Capped and internally scrollable rather than left to clip against the
-            // viewport edge: the summary card (the numbers this whole layout exists to
-            // keep visible) sits first, so an uncapped sticky block taller than the
-            // viewport would scroll the hero figure itself off the top well before the
-            // chart below it did, the opposite of the point.
-            maxHeight: isDesktop ? "calc(100vh - 32px)" : undefined,
-            overflowY: isDesktop ? "auto" : undefined,
+    <ResultsLayout
+      header={(takeSnapshot) => (
+        <ResultsHeader
+          title={title}
+          subtitle={subtitle}
+          shareUrl={shareUrl}
+          staleModel={staleModel}
+          onDismissStaleModel={onDismissStaleModel}
+          defaultSaveName={`${solA.name} vs. ${solB.name}`}
+          onSave={(name) => SAVED_COMPARISONS.save(name, exportState)}
+          onSnapshot={takeSnapshot}
+          onCsv={() => downloadText(buildCsv(exportState, comparison), `${fileBase}.csv`, "text/csv;charset=utf-8")}
+          onSpreadsheet={async () => {
+            // Loaded on demand: the formula model and xlsx writer are only needed for this export.
+            const { buildSpreadsheet } = await import("../lib/spreadsheet");
+            const bytes = buildSpreadsheet(exportState, shareUrl || undefined);
+            downloadBlob(new Blob([bytes as BlobPart], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `${fileBase}.xlsx`);
           }}
-        >
-          <Box ref={snapshotRef} style={{ background: "#0f1117" }}>
-            <Stack gap="xl">
-              <CostSummary
-                sides={[
-                  { id: "a", name: solA.name, result: a, isIncumbent: scenario.incumbent === "a", perUnit: perCamMo(a.total), details: sideDetails(solA, a.hardware) },
-                  { id: "b", name: solB.name, result: b, isIncumbent: scenario.incumbent === "b", perUnit: perCamMo(b.total), details: sideDetails(solB, b.hardware) },
-                ]}
-                horizonYears={scenario.horizonYears}
-                crossoverYear={crossoverYear}
-                laterCrossoverYears={laterCrossoverYears}
-                footerStats={[
-                  { label: `${solA.name} fleet replaced`, value: fleetPctA + "%" },
-                  { label: `${solB.name} fleet replaced`, value: fleetPctB + "%" },
-                ]}
-                staffTimeNote={STAFF_TIME_NOTE}
-                outcomeNote={OUTCOME_NOTE}
-              />
-
-              <ChartsPanel comparison={comparison} nameA={solA.name} nameB={solB.name} colorA={colorA} colorB={colorB} />
-              <GapDrivers comparison={comparison} flips={flips} nameA={solA.name} nameB={solB.name} colorA={colorA} colorB={colorB} />
-            </Stack>
-          </Box>
-          <Box mt="xl">
-            <YearTable comparison={comparison} nameA={solA.name} nameB={solB.name} />
-          </Box>
-        </Box>
-
-        <Box style={{ flex: "1 1 0%", minWidth: 0, width: "100%" }}>
-          {/* Scenario (camera count, sites, horizon, ...) is system-agnostic and stays
-              open, since it's what the reviewer is most likely to want to check or tweak
-              first; the two per-solution assumption panels are dense vendor-specific data
-              that's more useful collapsed by default on this results/review screen, unlike
-              the wizard's own editing steps where those same fields need to stay discoverable. */}
-          <ShareChecklist items={checklist} />
-          <Accordion variant="separated" multiple defaultValue={["scenario"]}>
-            <Accordion.Item value="scenario">
-              <Accordion.Control>
-                <Text fw={500}>Scenario</Text>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <Stack gap="lg">
-                  <IncumbentPicker scenario={scenario} onScenarioChange={onScenarioChange} nameA={solA.name} nameB={solB.name} />
-                  <ScenarioStep value={scenario} onChange={onScenarioChange} />
-                </Stack>
-              </Accordion.Panel>
-            </Accordion.Item>
-            <Accordion.Item value="solA">
-              <Accordion.Control>
-                <Group gap="xs">
-                  <Badge variant="dot" color={colorA}>{solA.name}</Badge>
-                  <Text fw={500} size="sm">assumptions</Text>
-                </Group>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <ChartColor color={colorA} onChange={onColorAChange} />
-                <AssumptionsPanel sol={solA} onChange={onSolAChange} scenario={scenario} />
-              </Accordion.Panel>
-            </Accordion.Item>
-            <Accordion.Item value="solB">
-              <Accordion.Control>
-                <Group gap="xs">
-                  <Badge variant="dot" color={colorB}>{solB.name}</Badge>
-                  <Text fw={500} size="sm">assumptions</Text>
-                </Group>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <ChartColor color={colorB} onChange={onColorBChange} />
-                <AssumptionsPanel sol={solB} onChange={onSolBChange} scenario={scenario} />
-              </Accordion.Panel>
-            </Accordion.Item>
-            <Accordion.Item value="impact">
-              <Accordion.Control>
-                <Text fw={500}>Business impact</Text>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <BusinessImpactStep
-                  impact={IMPACT} copy={IMPACT_COPY}
-                  scenario={scenario} solA={solA} solB={solB} colorA={colorA} colorB={colorB}
-                  onScenarioChange={onScenarioChange} onSolAChange={onSolAChange} onSolBChange={onSolBChange}
-                  showIntro={false}
-                />
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
-        </Box>
-      </Box>
-
-      <MethodologyNotes notes={METHODOLOGY_NOTES} />
-    </Stack>
+          onPrintable={() => openPrintable(buildReportHtml(exportState, comparison, METHODOLOGY_NOTES))}
+          onChangeComparison={onChangeComparison}
+        />
+      )}
+      title={title}
+      subtitle={subtitle}
+      snapshotFileName={`${fileBase}.png`}
+      summary={{
+        sides: [
+          { id: "a", name: nameA, color: colorA, result: a, isIncumbent: scenario.incumbent === "a", perUnit: perCamMo(a.total), details: sideDetails(solA, a.hardware) },
+          { id: "b", name: nameB, color: colorB, result: b, isIncumbent: scenario.incumbent === "b", perUnit: perCamMo(b.total), details: sideDetails(solB, b.hardware) },
+        ],
+        horizonYears: scenario.horizonYears,
+        staffTimeNote: STAFF_TIME_NOTE,
+        outcomeNote: OUTCOME_NOTE,
+      }}
+      comparison={comparison}
+      previous={previous}
+      onUndo={history.undo}
+      flips={flips}
+      checklist={checklist}
+      notes={METHODOLOGY_NOTES}
+      inputs={{
+        scenario: (
+          <Stack gap="lg">
+            <IncumbentPicker scenario={scenario} onScenarioChange={setScenario} nameA={nameA} nameB={nameB} />
+            <ScenarioStep value={scenario} onChange={setScenario} showIntro={false} />
+          </Stack>
+        ),
+        costs: (
+          <CostsCompare
+            solA={solA} solB={solB} scenario={scenario} onChangeA={setSolA} onChangeB={setSolB}
+            sides={[sides[0], sides[1]]} checklist={checklist}
+          />
+        ),
+        impact: (
+          <BusinessImpactStep
+            impact={IMPACT} copy={IMPACT_COPY}
+            scenario={scenario} solA={{ ...solA, name: nameA }} solB={{ ...solB, name: nameB }} colorA={colorA} colorB={colorB}
+            onScenarioChange={setScenario}
+            onSolAChange={(s) => setSolA({ ...s, name: solA.name })}
+            onSolBChange={(s) => setSolB({ ...s, name: solB.name })}
+            showIntro={false}
+          />
+        ),
+      }}
+    />
   );
 }

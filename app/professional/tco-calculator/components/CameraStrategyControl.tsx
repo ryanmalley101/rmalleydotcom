@@ -3,7 +3,6 @@
 import { Box, Group, SegmentedControl } from "@mantine/core";
 import { Camera } from "lucide-react";
 import type { OnpremCameraStrategy, ScenarioInputs, SolutionInputs } from "../lib/model";
-import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
 import InfoLabel from "../../_tco-shared/components/InfoLabel";
 
 const HELP =
@@ -12,8 +11,8 @@ const HELP =
 // On-prem counterpart of the cloud "migration strategy" control. Renders
 // nothing when it can't matter: on a new site every newly deployed side buys
 // cameras regardless.
-export default function CameraStrategyControl({ sol, scenario, onChange, compact }: {
-  sol: SolutionInputs; scenario: ScenarioInputs; onChange: (v: SolutionInputs) => void; compact?: boolean;
+export default function CameraStrategyControl({ sol, scenario, onChange }: {
+  sol: SolutionInputs; scenario: ScenarioInputs; onChange: (v: SolutionInputs) => void;
 }) {
   if (sol.model !== "onprem" || scenario.existingCamerasReusable === false) return null;
   return (
@@ -22,9 +21,7 @@ export default function CameraStrategyControl({ sol, scenario, onChange, compact
         <Group gap={6}>
           <Camera size={15} />
           <InfoLabel
-            label="Cameras" help={HELP}
-            size={compact ? "var(--mantine-font-size-xs)" : "var(--mantine-font-size-sm)"}
-            color={compact ? TEXT_MUTED : undefined}
+            label="Cameras" help={HELP} size="var(--mantine-font-size-sm)"
           />
         </Group>
       </Box>

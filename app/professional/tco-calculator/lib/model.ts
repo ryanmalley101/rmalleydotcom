@@ -26,7 +26,9 @@ import {
 export type { DeploymentModel, IncumbentChoice, MiscCostItem, MiscItemTiming } from "../../_tco-shared/lib/engine";
 
 // 3: an incumbent whose refresh or renewal is 0 years away buys at year 0.
-export const MODEL_VERSION = 3;
+// 4: electricity (power draw per camera x the scenario's $/kWh), the same
+//    default for both deployment models.
+export const MODEL_VERSION = 4;
 
 // How a cloud/hybrid solution's cameras get onto the new platform:
 // "connector" reuses the existing camera fleet behind a connector/NVR-style
@@ -171,6 +173,9 @@ export interface ScenarioInputs {
   adminRate: number;
   investigatorRate: number;
   truckRollCost: number;
+  // What the site pays for electricity, $/kWh. Shared by both solutions;
+  // each one's power draw is its own (SolutionInputs.powerWattsPerCam).
+  electricityRatePerKwh: number;
   // See the DEFAULT_* constants above. A missing or invalid value (older
   // share link/saved comparison, cleared field) is replaced by
   // lib/sanitize.ts before any math runs.
@@ -313,6 +318,14 @@ export interface SolutionInputs {
   // upload bandwidth for a vendor that records to the cloud. Both models;
   // default 0.
   networkCostPerSiteYr: number;
+  // Average power draw per camera, in watts, all-in: the camera itself plus
+  // its share of whatever else this solution keeps running on site
+  // (recording servers, storage, analytics, connectors, switches). Both
+  // models, and the same default for both (DEFAULT_POWER_WATTS_PER_CAM):
+  // on-prem usually draws more, but without researched figures a different
+  // default would decide the comparison on a guess. Billed every year after
+  // year 0 at the scenario's electricity rate.
+  powerWattsPerCam: number;
   // On-prem only: server software bought with each server (Windows Server,
   // SQL Server, other OS/database licensing), and non-recording management
   // servers (management/SQL/failover) bought alongside the recording
@@ -346,6 +359,7 @@ export const CATEGORIES = [
   "Admin labor",
   "Investigations",
   "Network / bandwidth",
+  "Electricity",
   "Misc / other",
   "Business impact: savings",
   "Business impact: added costs",
@@ -990,6 +1004,14 @@ export const LINES: LineEntry[] = [
     key: "Network / bandwidth", label: "Network / bandwidth", format: "usd", total: true,
     value: (x, y) => (y === 0 ? 0 : x.scn.sites * x.sol.networkCostPerSiteYr * x.at("labor", y)),
     formula: (r, y) => (y === 0 ? 0 : `${r.S.sites}*${r.P.networkCostPerSiteYr}*${r.at("labor", y)}`),
+  },
+  // Watts per camera running all year (8,760 hours = 8.76 kWh per watt), at
+  // the scenario's rate. Grows with labor and services, like the network line,
+  // since there's no separate energy escalation rate.
+  {
+    key: "Electricity", label: "Electricity", format: "usd", total: true,
+    value: (x, y) => (y === 0 ? 0 : x.scn.cameras * x.sol.powerWattsPerCam * 8.76 * x.scn.electricityRatePerKwh * x.at("labor", y)),
+    formula: (r, y) => (y === 0 ? 0 : `${r.S.cameras}*${r.P.powerWattsPerCam}*8.76*${r.S.electricityRatePerKwh}*${r.at("labor", y)}`),
   },
   // User-authored, so they always apply, incumbent or not, at face value (no
   // vendor discount), growing with labor and services.
