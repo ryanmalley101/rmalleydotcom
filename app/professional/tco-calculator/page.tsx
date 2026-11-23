@@ -5,10 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { Box, Button, Card, Group, Stepper, Text, Title } from "@mantine/core";
 import { CalendarRange, Database, Share2 } from "lucide-react";
 import { SOLUTION_A_COLOR, SOLUTION_B_COLOR, TEXT_MUTED } from "../_tco-shared/lib/colors";
-import { DEFAULT_SCENARIO, SHAPE_OPTIONS, defaultSolution, type ShapeOption } from "./lib/defaults";
+import { DEFAULT_SCENARIO, SHAPE_OPTIONS } from "./lib/defaults";
+import { seedSolution } from "./lib/seeds";
 import type { ScenarioInputs, SolutionInputs } from "./lib/model";
 import { decodeShareState, encodeShareState, isStaleModel, normalizeSharedState, type SharedState } from "./lib/shareState";
-import { CLOUD_VENDOR_DEFAULTS, ONPREM_VMS_VENDOR_DEFAULTS, ONPREM_CAMERA_VENDOR_DEFAULTS, withVendorDefaults } from "./lib/vendorDefaults";
 import { SAVED_COMPARISONS } from "./lib/savedComparisons";
 import { METHODOLOGY_NOTES } from "./lib/methodology";
 import { IMPACT } from "./lib/verticals";
@@ -33,32 +33,6 @@ const HIGHLIGHTS = [
   { icon: CalendarRange, text: "Model any horizon, from a 1-year pilot to a 15-year refresh cycle" },
   { icon: Share2, text: "Share a link with your numbers baked in, no login required" },
 ];
-
-// Convenience defaults for this tool's actual primary audience, comparing
-// against whatever a prospect already runs. Neither is forced, both stay
-// fully editable, they just save a click for the most common starting
-// point instead of leaving every field blank. On-prem defaults to
-// Milestone/Axis (the same pairing the original single-vendor tool's
-// numeric defaults were drawn from), so the name lines up with the numbers
-// rather than sitting under a generic placeholder. Runs the same
-// withVendorDefaults() merge the wizard's Selects use, so a pre-filled
-// vendor with researched data (e.g. Milestone, Axis) starts from its real
-// numbers instead of the generic defaults, same as picking it manually would.
-function seedSolution(slot: "a" | "b", opt: ShapeOption): SolutionInputs {
-  const model = slot === "a" ? opt.modelA : opt.modelB;
-  const bothSameModel = opt.modelA === opt.modelB;
-  const leaveOpen = bothSameModel && slot === "b"; // the "compared against" side, when both sides share a model
-
-  if (model === "cloud") {
-    if (leaveOpen) return defaultSolution(slot, "Solution B (Cloud)", model);
-    return withVendorDefaults(defaultSolution(slot, "Verkada", model), "Verkada", CLOUD_VENDOR_DEFAULTS);
-  }
-  if (leaveOpen) return defaultSolution(slot, "Solution B (On-Prem)", model);
-  let sol = defaultSolution(slot, "", model);
-  sol = withVendorDefaults(sol, "Milestone XProtect", ONPREM_VMS_VENDOR_DEFAULTS);
-  sol = withVendorDefaults(sol, "Axis Communications", ONPREM_CAMERA_VENDOR_DEFAULTS);
-  return { ...sol, vmsProvider: "Milestone XProtect", cameraProvider: "Axis Communications", name: "Milestone XProtect · Axis Communications cameras" };
-}
 
 function TcoCalculatorInner() {
   const searchParams = useSearchParams();

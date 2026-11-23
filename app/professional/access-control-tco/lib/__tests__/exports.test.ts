@@ -4,7 +4,13 @@ import { computeComparison } from "../model";
 import { DEFAULT_SCENARIO, defaultSolution } from "../defaults";
 import { buildCsv, buildReportHtml } from "../report";
 import { buildChecklist } from "../checklist";
-import { decodeShareState, encodeShareState, isStaleModel } from "../shareState";
+import { decodeShareState, encodeShareState, isStaleModel, solutionBaseline } from "../shareState";
+import { SHAPE_OPTIONS } from "../defaults";
+import { MODEL_VERSION } from "../model";
+import { seedSolution } from "../seeds";
+import { CLOUD_VENDOR_DEFAULTS, switchVendor } from "../vendorDefaults";
+import { SOLUTION_A_COLOR, SOLUTION_B_COLOR } from "../../../_tco-shared/lib/colors";
+import { defaultIncumbentFor } from "../../../_tco-shared/lib/fields";
 import { findFlipPoints } from "../sensitivity";
 
 const state = {
@@ -40,6 +46,32 @@ test("a share link round-trips and backfills missing fields", () => {
   void _drop;
   const backfilled = decodeShareState(encodeShareState({ ...state, solB: older as typeof state.solB }));
   assert.equal(backfilled?.solB.alarmMinutes, state.solB.alarmMinutes);
+});
+
+// Links store only what differs from solutionBaseline, so it has to rebuild
+// exactly what the wizard seeds; otherwise every link carries the gap.
+test("the link baseline matches the wizard's seeding for every comparison shape", () => {
+  for (const opt of SHAPE_OPTIONS) {
+    for (const slot of ["a", "b"] as const) {
+      const sol = seedSolution(slot, opt);
+      assert.deepEqual(solutionBaseline({ id: sol.id, name: sol.name, model: sol.model }), sol, `${opt.id} ${slot}`);
+    }
+    const fresh = {
+      shapeId: opt.id, scenario: { ...DEFAULT_SCENARIO, incumbent: defaultIncumbentFor(opt) },
+      solA: seedSolution("a", opt), solB: seedSolution("b", opt), colorA: SOLUTION_A_COLOR, colorB: SOLUTION_B_COLOR,
+    };
+    const link = encodeShareState(fresh);
+    assert.ok(link.length < 200, `${opt.id}: ${link.length} chars`);
+    assert.deepEqual(decodeShareState(link), { ...fresh, modelVersion: MODEL_VERSION });
+  }
+});
+
+test("a switched vendor round-trips exactly", () => {
+  const cloud = seedSolution("b", SHAPE_OPTIONS.find((o) => o.id === "onprem-cloud")!);
+  const others = Object.keys(CLOUD_VENDOR_DEFAULTS).filter((v) => v !== cloud.name);
+  const solB = { ...switchVendor(cloud, cloud.name, others[0]), name: others[0], alarmMinutes: 12 } as typeof cloud;
+  const edited = { ...state, solB };
+  assert.deepEqual(decodeShareState(encodeShareState(edited)), { ...edited, modelVersion: MODEL_VERSION });
 });
 
 test("the checklist asks to confirm hardware reuse and flags placeholders", () => {
