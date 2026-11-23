@@ -348,6 +348,12 @@ const FUNCTIONS: Record<string, Fn> = {
     const m = Math.pow(10, toNum(d ?? 0)), n = toNum(x);
     return (Math.sign(n) * Math.ceil(Math.abs(n) * m)) / m;
   }),
+  ROUNDDOWN: eager(([x, d]) => {
+    const m = Math.pow(10, toNum(d ?? 0)), n = toNum(x);
+    return (Math.sign(n) * Math.floor(Math.abs(n) * m)) / m;
+  }),
+  // Numbers only: text, booleans, and blanks in a range aren't counted.
+  COUNT: eager((a) => flatten(a).filter((x) => typeof x === "number").length),
   AND: eager((a) => flatten(a).filter((x) => x !== null).every((x) => toBool(x))),
   OR: eager((a) => flatten(a).filter((x) => x !== null).some((x) => toBool(x))),
   NOT: eager(([x]) => !toBool(x)),

@@ -1,4 +1,4 @@
-import type { SolutionInputs } from "./model";
+import type { ApplianceOption, SolutionInputs } from "./model";
 import { defaultSolution, halfLifeForWarranty } from "./defaults";
 import {
   confidenceSummary as sharedConfidenceSummary, fieldSourceInfo as sharedFieldSourceInfo, switchVendor as sharedSwitchVendor,
@@ -26,9 +26,13 @@ import {
 // list. These match the figures the generic cloud defaults in
 // lib/defaults.ts were built from. A second research pass had proposed
 // different figures from secondary sources (applianceCost 6999/25ch, the
-// CC500 tier, vs. the CC700's 9999/50ch; tierPrice 899/5yr) and was
-// rejected. The connector figures, warrantyYears, and applianceWarrantyYears
-// are likewise confirmed against Verkada's pricing page and warranty docs.
+// CC500 tier, in place of the CC700's 9999/50ch; tierPrice 899/5yr) and was
+// rejected for its sourcing. The CC500 is now in Verkada's entry anyway, as
+// one of its connector models (applianceOptions), sourced to Verkada's own
+// Command Connector datasheet (rev 0926) rather than a secondary source; the
+// single CC700 figures stay as the fallback if that list is cleared. The
+// warrantyYears and applianceWarrantyYears are likewise confirmed against
+// Verkada's pricing page and warranty docs.
 //
 // `fieldMeta` carries source/confidence/reasoning per field for future audit;
 // it isn't surfaced in the UI today, only `values` is applied on selection.
@@ -121,10 +125,22 @@ export function confidenceSummary(
   return sharedConfidenceSummary(vendorName, table, headlineField);
 }
 
+// Verkada's Command Connector models (see the Verkada entry's fieldMeta for
+// sources). Capacity is channels at 5MP or less; retentionDays is with
+// every channel in use.
+const VERKADA_CONNECTORS: ApplianceOption[] = [
+  { id: "verkada-cc300-4tb", label: "CC300-4TB", cost: 4499, capacity: 10, retentionDays: 30 },
+  { id: "verkada-cc300-8tb", label: "CC300-8TB", cost: 4999, capacity: 10, retentionDays: 60 },
+  { id: "verkada-cc500-8tb", label: "CC500-8TB", cost: 6999, capacity: 25, retentionDays: 30 },
+  { id: "verkada-cc500-16tb", label: "CC500-16TB", cost: 7999, capacity: 25, retentionDays: 60 },
+  { id: "verkada-cc700-16tb", label: "CC700-16TB", cost: 9999, capacity: 50, retentionDays: 30 },
+  { id: "verkada-cc700-32tb", label: "CC700-32TB", cost: 11999, capacity: 50, retentionDays: 60 },
+];
+
 // ---------- CLOUD / HYBRID VMS ----------
 export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
   "Meraki (Cisco)": {
-    values: { migrationStrategy: "ripReplace", tierPrice: 900, tierYears: 5, cameraCost: 1499, supportAddonPerCamYr: 110.59, discountPct: 10, retentionPricing: "flat" },
+    values: { migrationStrategy: "ripReplace", tierPrice: 900, tierYears: 5, cameraCost: 1499, supportAddonPerCamYr: 110.59, discountPct: 10, licenseDiscountPct: 10, retentionPricing: "flat" },
     fieldMeta: {
       migrationStrategy: { value: "ripReplace", status: "sourced", confidence: "high", sources: ["https://documentation.meraki.com/Platform_Management/Product_Information/Licensing/Meraki_Licensing_FAQs"], reasoning: "Meraki MV cameras are proprietary with on-camera storage; no third-party connector.", checkedOn: "2026-07-26" },
       retentionPricing: { value: "flat", status: "estimated", confidence: "medium", sources: ["https://documentation.meraki.com/Platform_Management/Product_Information/Licensing/Meraki_Licensing_FAQs"], reasoning: "MV records to on-camera storage, so retention depends on the camera model's storage and recording settings, and longer retention is sold as a separate Cloud Archive license rather than a pricier camera license. The per-camera license price doesn't scale with retention.", checkedOn: "2026-10-15" },
@@ -133,6 +149,7 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
       cameraCost: { value: 1499, status: "sourced", confidence: "high", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Outdoor MV MSRP $1,499 (indoor is cheaper at $1,299); switched to outdoor for consistency with the outdoor-rated spec used across the on-prem camera table.", checkedOn: "2026-07-27" },
       supportAddonPerCamYr: { value: 110.59, status: "sourced", confidence: "medium", sources: ["https://www.cdw.com/product/cisco-meraki-mv-sense-subscription-license-3-years-1-license/5388198", "https://www.lttpartners.com/products/cisco-meraki-mv-sense-license"], reasoning: "24x7 enterprise SUPPORT is bundled into the base license (confirmed), but Meraki's base MV license does not include camera analytics comparable to what Verkada bundles by default (people/vehicle search); that requires the separately-sold MV Sense license. 3yr MV Sense list price confirmed directly at $331.16 (LIC-MV-SEN-3YR); the matching 5yr list figure ($552.93, to align with this entry's tierYears:5) comes from the same distributor ladder, not independently reconfirmed at 5yr specifically. Annualized: $552.93 / 5 = $110.59/cam/yr. Without this, an unedited comparison understates Meraki's cost to actually match Verkada's out-of-the-box capability.", checkedOn: "2026-07-27" },
       discountPct: { value: 10, status: "sourced", confidence: "medium", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Integrator street ~10% below MSRP.", checkedOn: "2026-07-26" },
+      licenseDiscountPct: { value: 10, status: "sourced", confidence: "medium", sources: ["https://ipvm.com/discussions/cisco-meraki-camera-launch"], reasoning: "Integrator street ~10% below MSRP; the source gives one figure, applied to licenses as to hardware.", checkedOn: "2026-07-26" },
     },
     notes: "Per-device license, one-time (no RMR). On-camera storage; no cloud storage tier, no connector. supportAddonPerCamYr captures MV Sense (the analytics parity gap vs. Verkada's bundled analytics) rather than folding it into tierPrice, so the base license stays comparable across vendors and the add-on stays visible/editable on its own line.",
   },
@@ -216,18 +233,23 @@ export const CLOUD_VENDOR_DEFAULTS: Record<string, VendorDefaultEntry> = {
     notes: "No NVR/DVR, no on-prem storage line; applianceCost left unset (n/a for the ripReplace path). Multi-year licensing saves up to ~30%, but that's a term discount, not negotiated off-list.",
   },
   Verkada: {
-    values: { migrationStrategy: "connector", tierPrice: 1099, tierYears: 5, cameraCost: 1199, applianceCost: 9999, applianceCapacity: 50, applianceWarrantyYears: 5, warrantyYears: 10, supportAddonPerCamYr: 0 },
+    values: {
+      migrationStrategy: "connector", tierPrice: 1099, tierYears: 5, cameraCost: 1199, applianceCost: 9999, applianceCapacity: 50,
+      applianceOptions: VERKADA_CONNECTORS, retentionPricing: "flat", applianceWarrantyYears: 5, warrantyYears: 10, supportAddonPerCamYr: 0,
+    },
     fieldMeta: {
       tierPrice: { value: 1099, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "Verkada 5-Year Camera License (LIC-CAM-5Y), $1,099 US MSRP per camera, from the US price list on Verkada's public pricing page (1-year $249, 3-year and 10-year terms also listed).", checkedOn: "2026-10-15" },
       tierYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "5-year term of the LIC-CAM-5Y camera license above.", checkedOn: "2026-10-15" },
       cameraCost: { value: 1199, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "CD43 indoor dome (5MP, fixed lens, 256GB, 30-day retention), $1,199 US MSRP on Verkada's public pricing page, matching the 5MP spec used across the camera tables. The outdoor CD32-E is also $1,199; the 5MP outdoor CD43-E is $1,399. Longer retention means a camera with more storage at a higher price, not a pricier license.", checkedOn: "2026-10-15" },
       applianceCost: { value: 9999, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing"], reasoning: "Command Connector CC700 (the tier already baked into this vendor's generic defaults) confirmed directly on Verkada's public pricing page at $9,999 MSRP.", checkedOn: "2026-07-25" },
       applianceCapacity: { value: 50, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "CC700 is the top connector tier by channel count, 50 channels, confirmed directly on Verkada's public pricing page.", checkedOn: "2026-08-12" },
-      applianceWarrantyYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty", "https://docs.verkada.com/docs/command-connector-faq.pdf"], reasoning: "Verkada's own warranty documentation: \"Each model of Command Connector comes with a 5-year warranty.\"", checkedOn: "2026-07-25" },
+      applianceWarrantyYears: { value: 5, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty", "https://docs.verkada.com/docs/command-connector-faq.pdf", "https://docs.verkada.com/docs/command-connector-overview.pdf"], reasoning: "Verkada's own warranty documentation: \"Each model of Command Connector comes with a 5-year warranty.\"", checkedOn: "2026-07-25" },
       warrantyYears: { value: 10, status: "sourced", confidence: "high", sources: ["https://help.verkada.com/en/articles/1736967-verkada-product-warranty"], reasoning: "Verkada's own warranty documentation: most cameras carry a 10-year product warranty; PTZ models are the exception at 5 years. 10yr used here as the representative default across the dome/bullet/mini lineup used elsewhere in this tool.", checkedOn: "2026-07-25" },
+      applianceOptions: { value: VERKADA_CONNECTORS, status: "sourced", confidence: "high", sources: ["https://docs.verkada.com/docs/command-connector-overview.pdf", "https://www.verkada.com/pricing/"], reasoning: "Command Connector ordering table, US MSRP, from Verkada's Command Connector overview datasheet (rev 0926): CC300-4TB $4,499 and CC300-8TB $4,999 (10 channels at 5MP), CC500-8TB $6,999 and CC500-16TB $7,999 (25 channels), CC700-16TB $9,999 and CC700-32TB $11,999 (50 channels); the smaller storage tier of each holds 30 days with every channel in use and the larger 60. The 30-day tiers' prices match Verkada's pricing page. Channel counts are at 5MP or less; 4K channels count roughly double, which this model doesn't distinguish. The government CC700-F ($11,099, 30 days) is left out: it costs more than the CC700-16TB for the same capacity, so it would never be picked. An older reseller-hosted copy of the datasheet (rev 0824) lists lower prices; don't cite it.", checkedOn: "2026-11-23" },
+      retentionPricing: { value: "flat", status: "sourced", confidence: "high", sources: ["https://docs.verkada.com/docs/command-connector-overview.pdf", "https://www.verkada.com/pricing/"], reasoning: "Verkada's camera licenses are priced by term only ($249 / $659 / $1,099 / $2,199 for 1 / 3 / 5 / 10 years, the same for renewals), with no retention tiers. Retention comes from storage: each Command Connector model is sold in a 30-day and a 60-day storage tier (see applianceOptions), and native cameras in storage sizes (a camera with more storage costs more). So longer retention costs more hardware, not a pricier license.", checkedOn: "2026-11-23" },
       supportAddonPerCamYr: { value: 0, status: "sourced", confidence: "high", sources: ["https://www.verkada.com/pricing/"], reasoning: "Support/analytics are Verkada's own all-inclusive baseline this tool's generic defaults are built around, genuinely bundled at $0, not a separate SKU, confirmed directly on Verkada's public pricing page.", checkedOn: "2026-08-12" },
     },
-    notes: "License price and term (LIC-CAM-5Y, $1,099) and camera price (CD43, $1,199) are US MSRP from Verkada's public pricing page, as are the connector, warranty, and add-on values.",
+    notes: "License price and term (LIC-CAM-5Y, $1,099) and camera price (CD43, $1,199) are US MSRP from Verkada's public pricing page, as are the warranty and add-on values. Connector models and prices are from Verkada's Command Connector overview datasheet (rev 0926). applianceCost/applianceCapacity (the CC700-16TB) apply only if the connector model list is cleared.",
   },
   "Eagle Eye Networks": {
     values: { migrationStrategy: "connector", tierPrice: 240, tierYears: 1, applianceCost: 1000, applianceCapacity: 20, applianceRefreshCycleYears: 5, supportAddonPerCamYr: 0, cameraCost: 400, warrantyYears: 3 },

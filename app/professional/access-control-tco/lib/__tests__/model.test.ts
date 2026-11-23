@@ -190,3 +190,18 @@ test("cleared fields don't produce NaN", () => {
   const c = computeComparison(scenario({ doors: 0, sites: 0 }), onprem("a"), broken);
   assert.ok(Number.isFinite(c.a.total) && Number.isFinite(c.b.total));
 });
+
+test("an incumbent whose servers or license are due now buys them at year 0", () => {
+  for (const shape of SHAPE_OPTIONS) {
+    for (const side of ["a", "b"] as const) {
+      const scn: ScenarioInputs = { ...DEFAULT_SCENARIO, incumbent: side };
+      const sol = seedSolution(side, shape);
+      const due = computeSolution(scn, { ...sol, yearsUntilNextRefresh: 0, yearsUntilLicenseRenewal: 0 }, true);
+      const later = computeSolution(scn, { ...sol, yearsUntilNextRefresh: 1, yearsUntilLicenseRenewal: 1 }, true);
+      const key = sol.model === "cloud" ? "Licenses/subscription" : "Servers (initial & refresh)";
+      if (sol.model === "onprem" && !sol.serverCount) continue;
+      assert.ok(due.byYear[0][key] > 0, `${shape.id} ${side}: ${key} due now`);
+      assert.equal(later.byYear[0][key], 0, `${shape.id} ${side}: ${key} not yet due`);
+    }
+  }
+});

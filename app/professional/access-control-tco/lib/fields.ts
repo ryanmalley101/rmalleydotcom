@@ -9,7 +9,7 @@ import type { FieldDef } from "../../_tco-shared/lib/fields";
 const UNSOURCED = "The default is an unsourced placeholder, the same for both deployment models; replace it with your own number.";
 
 const NEXT_REFRESH_HELP =
-  "How many years until the servers already installed are next replaced. Only shown for the incumbent: servers bought new at year 0 get their first refresh one full cycle later.";
+  "How many years until the servers already installed are next replaced; 0 means they're due now and are bought at year 0. Only shown for the incumbent: servers bought new at year 0 get their first refresh one full cycle later.";
 
 export const SCENARIO_FIELDS: FieldDef<keyof ScenarioInputs>[] = [
   { key: "doors", label: "Doors", min: 1, int: true, help: "Controlled openings: doors, gates, and turnstiles with a reader. Drives hardware, installation, door licenses, and door alarms." },

@@ -4,7 +4,7 @@ import { Box, Group, NumberInput, SegmentedControl, Select, SimpleGrid } from "@
 import {
   ArrowRightLeft, BrainCircuit, CalendarRange, Camera, Clock, Cpu, DollarSign,
   FileText, Globe, Hammer, HardDrive, Headset, Hourglass, Layers, Percent,
-  RefreshCw, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
+  RefreshCw, Search, Server, ShieldCheck, Tag, Truck, UserCog, Wrench,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, RetentionPricing, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
@@ -12,6 +12,7 @@ import { fieldSourceInfo, vendorEntriesFor } from "../lib/vendorDefaults";
 import InfoLabel from "../../_tco-shared/components/InfoLabel";
 import SourceDot from "../../_tco-shared/components/SourceDot";
 import SolutionField from "./SolutionField";
+import ConnectorFields from "./ConnectorFields";
 import MiscItemsEditor from "../../_tco-shared/components/MiscItemsEditor";
 import CameraStrategyControl from "./CameraStrategyControl";
 import AnalyticsToggle from "./AnalyticsToggle";
@@ -32,7 +33,7 @@ const RETENTION_PRICING_HELP =
   "Whether this vendor charges more for its license as retention goes up. \"Rises with retention\" scales the license by (days/30)^0.4 above 30 days. \"Fixed\" is for vendors that record on the camera or a local appliance and sell longer retention as bigger hardware or a separate archive add-on; enter that cost in the camera or add-on fields.";
 
 const RENEWAL_HELP =
-  "How many years until the license already in place has to be renewed. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
+  "How many years until the license already in place has to be renewed; 0 means it's due now and is bought at year 0. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
 
 export default function AssumptionsPanel({ sol, onChange, scenario }: {
   sol: SolutionInputs; onChange: (v: SolutionInputs) => void; scenario: ScenarioInputs;
@@ -56,6 +57,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
     <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="sm">
       <SectionLabel first>Pricing</SectionLabel>
       {field("discountPct", Percent)}
+      {field("licenseDiscountPct", Percent)}
 
       <SectionLabel>Camera hardware</SectionLabel>
       <CameraStrategyControl sol={sol} scenario={scenario} onChange={onChange} compact />
@@ -133,8 +135,7 @@ export default function AssumptionsPanel({ sol, onChange, scenario }: {
       {sol.model === "cloud" ? (
         sol.migrationStrategy === "connector" && (
           <>
-            {field("applianceCost", Router)}
-            {field("applianceCapacity", Layers)}
+            <ConnectorFields sol={sol} scenario={scenario} onChange={onChange} />
             {field("applianceRefreshCycleYears", RefreshCw)}
             {isIncumbent && field("yearsUntilNextApplianceRefresh", Clock)}
             <StaleRefreshWarning

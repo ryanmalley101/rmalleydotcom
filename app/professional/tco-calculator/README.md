@@ -77,7 +77,14 @@ calculators.
   comparison, while rip-and-replace always did.
 - **Incumbent**: `ScenarioInputs.incumbent` zeroes one side's year-0
   buildout cost when it represents an already-deployed system (its later
-  hardware refreshes still apply on schedule). Both sides pay their own
+  hardware refreshes still apply on schedule). The exception is a refresh
+  or renewal that's due now: an incumbent with `yearsUntilNextRefresh`,
+  `yearsUntilNextApplianceRefresh`, or `yearsUntilLicenseRenewal` at 0 buys
+  that hardware or license term at year 0, then every cycle after. Before
+  `MODEL_VERSION` 3, 0 bought nothing until a full cycle later, so a
+  "servers due for replacement now" comparison couldn't be entered (found
+  comparing against field TCO tools whose main scenario is exactly that).
+  The access control calculator has the same rule. Both sides pay their own
   year-0 cost symmetrically otherwise. This includes an on-prem side's
   perpetual license purchase (`baseLicense` + `deviceLicense * cameras`),
   charged once at year 0 alongside the hardware for a non-incumbent side —
@@ -110,6 +117,14 @@ calculators.
   the full cost at year 0 regardless of refresh timing, so a refresh
   falling past the horizon there is a legitimate, harmless scenario, not a
   cost line quietly disappearing.
+- **Separate hardware and license discounts**: `discountPct` (cameras,
+  connectors, servers with their software, storage, analytics appliances)
+  and `licenseDiscountPct` (cloud license terms and add-ons, on-prem
+  perpetual licenses, support renewals, analytics software), since quotes
+  commonly discount the two differently. One field used to cover both;
+  `normalizeSolution` (and `sanitizeSolution`, for anything not normalized)
+  copies an older link's discount into `licenseDiscountPct`, so old totals
+  don't move. The generic defaults set both to the same 30% / 25%.
 - **Per-solution, not scenario-level**: `fleetHalfLifeYears` and
   `warrantyYears` live on `SolutionInputs` since each side's camera
   hardware can have its own reliability/warranty, even when comparing two
@@ -215,9 +230,14 @@ calculators.
   floored at 30 days (it used to extrapolate below, cutting the license 44%
   at 7 days, beyond the data it was fit to), and it only applies when
   `SolutionInputs.retentionPricing` is `"scaled"` (the default). Vendors
-  that record on the camera or a local appliance, like Meraki, use `"flat"`:
-  their longer retention is bigger hardware or a separate archive add-on,
-  not a pricier license, so it belongs in those fields.
+  that record on the camera or a local appliance, like Meraki and Verkada,
+  use `"flat"`: their longer retention is bigger hardware or a separate
+  archive add-on, not a pricier license, so it belongs in those fields.
+  Verkada's longer retention is priced through its connector models' 60-day
+  tiers; for a flat vendor without retention-sized connector models (any
+  rip-and-replace side, or Meraki), the pre-share checklist warns above 30
+  days that the camera or connector price has to be for a model that holds
+  that retention.
 - **RAID**: on-prem storage is bought per recording server, since each
   active (non-spare) server holds its share of the footage on its own
   array. `drivesForArray()` (`lib/model.ts`) turns that server's usable TB
@@ -326,6 +346,26 @@ calculators.
 - **Site-driven hardware minimums**: appliance/server unit counts assume at
   least one per site, not just enough for total camera count, since a
   connector/NVR box is physically local.
+- **Connector models** (`SolutionInputs.applianceOptions`, `ConnectorFields`):
+  a cloud vendor whose connectors come in sizes and storage tiers lists them
+  as `{ label, cost, capacity, retentionDays }`, and the model uses the
+  cheapest that covers the cameras (`chooseApplianceOption`), in place of
+  the single `applianceCost`/`applianceCapacity`. A model holding
+  `retentionDays` at full load serves `floor(capacity × min(1,
+  retentionDays / scenario retention))` cameras at longer retention (null
+  days: capacity doesn't depend on retention); units are `max(sites,
+  ceil(cameras / that))`, as for the single appliance; ties go to the first
+  listed. Every unit is the same model, and cameras are assumed spread
+  evenly across sites, as before. The spreadsheet sizes each model on the
+  Inputs sheet (`APPLIANCE_SHEET`, with spare rows) and picks the cheapest
+  with `INDEX`/`MATCH`/`MIN`, so it stays live. Only Verkada has a list
+  today, its six Command Connector models from its own datasheet: other
+  connector vendors don't publish a range of models with prices and
+  capacities (Avigilon Alta's A600 comes in 8TB and 16TB at the same 25
+  cameras, with no published retention for either, so a list would add
+  nothing). Anyone can add models for any vendor in the form. The default
+  comparison's Verkada total moved from 520,015 to 503,980 with this, since
+  the CC500 fits its 20-camera sites for less than the CC700.
 - **Misc / other**: `SolutionInputs.miscItems` is a free-form list
   (`MiscCostItem[]`, `lib/model.ts`) rather than the two fixed
   `miscUpfrontCost`/`miscAnnualCost` fields this replaced — each item has its

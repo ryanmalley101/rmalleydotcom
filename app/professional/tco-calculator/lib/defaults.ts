@@ -87,6 +87,9 @@ export const DEFAULT_SCENARIO: ScenarioInputs = {
 // values always win; only genuinely absent keys fall back.
 export function normalizeSolution(sol: SolutionInputs): SolutionInputs {
   const merged = { ...defaultSolution(sol.id, sol.name, sol.model), ...sol };
+  // Hardware and license discounts used to be one field (discountPct); an
+  // older link's single discount carries into both.
+  if (sol.licenseDiscountPct === undefined) merged.licenseDiscountPct = merged.discountPct;
   // Migrate the old flat miscUpfrontCost/miscAnnualCost fields (replaced by
   // the free-form miscItems list) into equivalent named items, so an older
   // share link/saved comparison's misc costs aren't silently dropped. Only
@@ -133,6 +136,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     return {
       id, name, model,
       discountPct: 30,
+      licenseDiscountPct: 30,
       cameraCost: 1200,
       bulkInstallLaborCost: 100,
       replacementInstallLaborCost: 250,
@@ -146,6 +150,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
       tierYears: 5,
       applianceCost: 9999,
       applianceCapacity: 50,
+      applianceOptions: [],
       applianceWarrantyYears: 5,
       applianceRefreshCycleYears: 7,
       yearsUntilNextApplianceRefresh: 2,
@@ -180,6 +185,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
   return {
     id, name, model,
     discountPct: 25,
+    licenseDiscountPct: 25,
     cameraCost: 700,
     bulkInstallLaborCost: 100,
     replacementInstallLaborCost: 250,
@@ -210,6 +216,7 @@ export function defaultSolution(id: "a" | "b", name: string, model: DeploymentMo
     tierYears: 5,
     applianceCost: 9999,
     applianceCapacity: 50,
+    applianceOptions: [],
     applianceWarrantyYears: 5,
     applianceRefreshCycleYears: 7,
     yearsUntilNextApplianceRefresh: 2,

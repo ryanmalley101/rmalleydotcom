@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeComparison, computeSolution, drivesForArray, retentionMultiplier } from "../model";
+import { chooseApplianceOption, computeComparison, computeSolution, drivesForArray, retentionMultiplier, type ApplianceOption, type SolutionInputs } from "../model";
 import { defaultSolution, normalizeScenario, normalizeSolution, withAnalytics } from "../defaults";
 import { seedOnprem, seedVerkada, scenario, round, NO_ESCALATION } from "./helpers";
 
@@ -12,7 +12,9 @@ test("default comparison snapshot", () => {
   const c = computeComparison(scenario({ incumbent: "a" }), seedOnprem("a"), seedVerkada("b"));
   assert.deepEqual(
     { a: round(c.a.total), b: round(c.b.total), crossover: c.crossoverYear },
-    { a: 979872, b: 520015, crossover: 2 },
+    // B was 520,015 before Verkada's connector models: the CC500-8TB fits its
+    // 20-camera sites for less than the CC700 it used to be priced at.
+    { a: 979872, b: 503980, crossover: 2 },
   );
 });
 
@@ -216,8 +218,8 @@ test("each active recording server gets its own array", () => {
 test("retention pricing: no discount below 30 days, and flat vendors don't scale", () => {
   assert.equal(retentionMultiplier(7), 1);
   assert.ok(retentionMultiplier(90) > 1.5);
-  const sol = { ...seedVerkada("b"), supportAddonPerCamYr: 0 };
-  const lic = (s: typeof sol, days: number) => computeSolution(scenario({ retentionDays: days }), s, false).byYear[0]["Licenses/subscription"];
+  const sol: SolutionInputs = { ...seedVerkada("b"), supportAddonPerCamYr: 0, retentionPricing: "scaled" };
+  const lic = (s: SolutionInputs, days: number) => computeSolution(scenario({ retentionDays: days }), s, false).byYear[0]["Licenses/subscription"];
   assert.ok(lic(sol, 90) > lic(sol, 30));
   assert.equal(lic({ ...sol, retentionPricing: "flat" }, 90), lic(sol, 30));
 });
@@ -311,4 +313,102 @@ test("normalizeSolution backfills missing fields and migrates legacy misc costs"
   const n = normalizeSolution(legacy);
   assert.equal(n.serverCost, defaultSolution("a", "Old", "onprem").serverCost);
   assert.deepEqual(n.miscItems.map((i) => [i.amount, i.timing]), [[500, "upfront"], [50, "recurring"]]);
+});
+
+// ---------------------------------------------------------------------------
+// An incumbent whose refresh or renewal is due now
+
+test("an incumbent whose server refresh is due now buys at year 0, then every cycle", () => {
+  const scn = scenario({ incumbent: "a" });
+  const due = computeSolution(scn, { ...seedOnprem("a"), yearsUntilNextRefresh: 0 }, true);
+  const hw = due.byYear.map((y) => y["Hardware (initial & refresh)"] > 0);
+  assert.deepEqual(hw.map((b, y) => (b ? y : -1)).filter((y) => y >= 0), [0, 5]);
+  // Its perpetual license is still owned: nothing at year 0 but the hardware.
+  assert.equal(due.byYear[0]["Licenses/subscription"], 0);
+});
+
+test("an incumbent cloud side due now renews its license and connectors at year 0", () => {
+  const scn = scenario({ incumbent: "b" });
+  const sol = { ...seedVerkada("b"), yearsUntilLicenseRenewal: 0, yearsUntilNextApplianceRefresh: 0 };
+  const due = computeSolution(scn, sol, true);
+  const later = computeSolution(scn, { ...sol, yearsUntilLicenseRenewal: 1, yearsUntilNextApplianceRefresh: 1 }, true);
+  assert.ok(due.byYear[0]["Licenses/subscription"] > 0);
+  assert.ok(due.byYear[0]["Hardware (initial & refresh)"] > 0);
+  assert.equal(later.byYear[0]["Licenses/subscription"], 0);
+  assert.equal(later.byYear[0]["Hardware (initial & refresh)"], 0);
+});
+
+// ---------------------------------------------------------------------------
+// Connector models
+
+const MODELS: ApplianceOption[] = [
+  { id: "s30", label: "Small 30d", cost: 4499, capacity: 10, retentionDays: 30 },
+  { id: "m30", label: "Mid 30d", cost: 6999, capacity: 25, retentionDays: 30 },
+  { id: "m60", label: "Mid 60d", cost: 7999, capacity: 25, retentionDays: 60 },
+  { id: "l30", label: "Large 30d", cost: 9999, capacity: 50, retentionDays: 30 },
+];
+
+test("the cheapest connector model that covers the cameras is used", () => {
+  // 20 cameras a site: one mid unit each beats one large or two small.
+  assert.equal(chooseApplianceOption(MODELS, { cameras: 100, sites: 5, retentionDays: 30 })!.option.id, "m30");
+  // 400 cameras at one site: 8 large (79,992) beats 16 mid (111,984).
+  assert.equal(chooseApplianceOption(MODELS, { cameras: 400, sites: 1, retentionDays: 30 })!.option.id, "l30");
+  assert.equal(chooseApplianceOption([], { cameras: 100, sites: 5, retentionDays: 30 }), null);
+});
+
+test("retention past a model's days spreads its storage over fewer cameras", () => {
+  // At 60 days a 30-day mid unit holds 12 cameras, so 20-camera sites need two
+  // (13,998 a site); the 60-day mid tier still holds 25 (7,999).
+  const pick = chooseApplianceOption(MODELS, { cameras: 100, sites: 5, retentionDays: 60 })!;
+  assert.equal(pick.option.id, "m60");
+  assert.equal(pick.units, 5);
+  // A model without retention days doesn't care.
+  const flat = chooseApplianceOption([{ ...MODELS[1], retentionDays: null }], { cameras: 100, sites: 5, retentionDays: 90 })!;
+  assert.equal(flat.units, 5);
+});
+
+test("connector models replace the single connector price, and an empty list falls back to it", () => {
+  const scn = scenario({ ...NO_ESCALATION, incumbent: "none", creditResidualValue: false, horizonYears: 5 });
+  const sol = { ...seedVerkada("b"), applianceOptions: MODELS };
+  const disc = 1 - sol.discountPct / 100;
+  assert.equal(round(computeSolution(scn, sol, false).byYear[0]["Hardware (initial & refresh)"]), round(6999 * disc * 5));
+  const single = computeSolution(scn, { ...sol, applianceOptions: [] }, false);
+  assert.equal(round(single.byYear[0]["Hardware (initial & refresh)"]), round(sol.applianceCost * disc * 5));
+  assert.equal(computeSolution(scn, sol, false).hardware.unitsModel, "Mid 30d");
+});
+
+test("Verkada's license is flat, and longer retention costs connector hardware instead", () => {
+  const sol = seedVerkada("b");
+  const at = (days: number) => computeSolution(scenario({ incumbent: "none", retentionDays: days }), sol, false).totalsByCategory;
+  assert.equal(at(60)["Licenses/subscription"], at(30)["Licenses/subscription"]);
+  assert.ok(at(60)["Hardware (initial & refresh)"] > at(30)["Hardware (initial & refresh)"]);
+});
+
+// ---------------------------------------------------------------------------
+// Separate hardware and license discounts
+
+test("the license discount moves only license lines, the hardware discount only hardware", () => {
+  const scn = scenario({ incumbent: "none" });
+  for (const base of [seedOnprem("a"), seedVerkada("b")]) {
+    const t = computeSolution(scn, base, false).totalsByCategory;
+    const lic = computeSolution(scn, { ...base, licenseDiscountPct: base.licenseDiscountPct + 10 }, false).totalsByCategory;
+    assert.ok(lic["Licenses/subscription"] < t["Licenses/subscription"], base.model);
+    assert.equal(lic["Hardware (initial & refresh)"], t["Hardware (initial & refresh)"], base.model);
+    assert.equal(lic["Cameras"], t["Cameras"], base.model);
+    const hw = computeSolution(scn, { ...base, discountPct: base.discountPct + 10 }, false).totalsByCategory;
+    assert.equal(hw["Licenses/subscription"], t["Licenses/subscription"], base.model);
+    assert.ok(hw["Hardware (initial & refresh)"] < t["Hardware (initial & refresh)"], base.model);
+  }
+});
+
+test("an old link's single discount carries into the license discount", () => {
+  const old = { ...seedVerkada("b"), discountPct: 17 } as Partial<ReturnType<typeof seedVerkada>>;
+  delete old.licenseDiscountPct;
+  delete old.applianceOptions;
+  const sol = normalizeSolution(old as ReturnType<typeof seedVerkada>);
+  assert.equal(sol.licenseDiscountPct, 17);
+  assert.deepEqual(sol.applianceOptions, []);
+  // And even without normalizing, the model reads it the same way.
+  const scn = scenario({ incumbent: "none" });
+  assert.equal(computeSolution(scn, old as ReturnType<typeof seedVerkada>, false).total, computeSolution(scn, sol, false).total);
 });

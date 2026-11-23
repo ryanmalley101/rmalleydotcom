@@ -10,7 +10,7 @@ import { changeValue, isCategoryEnabled, verticalFor } from "./verticals";
 // Inputs that most often decide a comparison, checked for still holding an
 // unsourced generic default.
 const KEY_FIELDS: (keyof SolutionInputs)[] = [
-  "discountPct", "cameraCost", "investigationHrsPerIncident", "adminHrsPerCamYr", "truckRollsPerSiteYr",
+  "discountPct", "licenseDiscountPct", "cameraCost", "investigationHrsPerIncident", "adminHrsPerCamYr", "truckRollsPerSiteYr",
   "tierPrice", "applianceCost", "deviceLicense", "baseLicense", "serverCost", "analyticsApplianceCost",
 ];
 
@@ -22,7 +22,7 @@ export function buildChecklist(scenario: ScenarioInputs, solA: SolutionInputs, s
     const genericKeys = KEY_FIELDS.filter((k) => {
       const def = SOLUTION_FIELD_MAP[k];
       if (def.models && !def.models.includes(sol.model)) return false;
-      if (k === "applianceCost" && sol.migrationStrategy !== "connector") return false;
+      if (k === "applianceCost" && (sol.migrationStrategy !== "connector" || sol.applianceOptions?.length)) return false;
       if (k === "analyticsApplianceCost" && !sol.analyticsEnabled) return false;
       return sol[k] === generic[k] && !fieldSourceInfo(k, sol[k], ...entries);
     });
@@ -33,6 +33,17 @@ export function buildChecklist(scenario: ScenarioInputs, solA: SolutionInputs, s
       .filter((k) => fieldSourceInfo(k, sol[k], ...entries)?.status === "estimated");
     if (estimated.length) {
       items.push(`${sol.name}: ${estimated.length} pre-filled vendor value${estimated.length === 1 ? " is an estimate" : "s are estimates"} rather than sourced (gray dots).`);
+    }
+  }
+
+  // A license that doesn't rise with retention means longer retention has to
+  // be paid for in storage somewhere else. Connector models with retention
+  // days cover that; otherwise it's on the user to price it.
+  for (const sol of [solA, solB]) {
+    if (sol.model !== "cloud" || sol.retentionPricing !== "flat" || scenario.retentionDays <= 30) continue;
+    const sized = sol.migrationStrategy === "connector" && sol.applianceOptions?.some((o) => o.retentionDays);
+    if (!sized) {
+      items.push(`${sol.name}: its license price doesn't change with retention, so ${scenario.retentionDays}-day retention has to come from storage: cameras or connectors with more storage, or an archive add-on. Make sure the camera or connector price is for a model that holds ${scenario.retentionDays} days.`);
     }
   }
 

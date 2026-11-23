@@ -34,7 +34,7 @@ import { IMPACT_COPY } from "../lib/impactCopy";
 // misleading "0 connector appliances".
 function hardwareSummaryText(hw: HardwareFootprint): string | null {
   const parts: string[] = [];
-  if (hw.unitsLabel && hw.units > 0) parts.push(`${hw.units.toLocaleString()} ${hw.unitsLabel.toLowerCase()}`);
+  if (hw.unitsLabel && hw.units > 0) parts.push(`${hw.units.toLocaleString()} ${hw.unitsLabel.toLowerCase()}${hw.unitsModel ? ` (${hw.unitsModel})` : ""}`);
   if (hw.managementServers > 0) parts.push(`${hw.managementServers} management server${hw.managementServers === 1 ? "" : "s"}`);
   if (hw.storageTB !== null && hw.storageTB > 0) {
     const tb = hw.storageTB >= 100 ? Math.round(hw.storageTB).toLocaleString() : hw.storageTB.toFixed(1);

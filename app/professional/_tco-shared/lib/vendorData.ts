@@ -25,6 +25,12 @@ export interface VendorDefaultEntry<T> {
 export type ValuesOf<T> = (entry: VendorDefaultEntry<T>) => Partial<T>;
 const storedValues = <T,>(entry: VendorDefaultEntry<T>) => entry.values;
 
+// Whether a field still holds a vendor's value. By value rather than
+// identity, so a list (connector models) still matches after a share link
+// or saved comparison has rebuilt it as a new array.
+const sameValue = (a: unknown, b: unknown) =>
+  a === b || (typeof a === "object" && a !== null && typeof b === "object" && b !== null && JSON.stringify(a) === JSON.stringify(b));
+
 // Picking (or pre-seeding) a vendor with researched data merges its values
 // on top of whatever's already filled in; vendors without an entry
 // (including "Other") pass `sol` through untouched.
@@ -57,7 +63,7 @@ export function switchVendor<T>(
     const genericValues = generic as Record<string, unknown>;
     const current = sol as Record<string, unknown>;
     for (const [key, value] of Object.entries(valuesOf(prev))) {
-      if (current[key] === value) reset[key] = genericValues[key];
+      if (sameValue(current[key], value)) reset[key] = genericValues[key];
     }
   }
   return withVendorDefaults(reset as T, nextVendor, table, valuesOf);
@@ -81,7 +87,7 @@ export function fieldSourceInfo<T>(
     if (!entry) continue;
     const values = valuesOf(entry) as Record<string, unknown>;
     if (!(key in values)) continue;
-    if (values[key as string] !== currentValue) continue;
+    if (!sameValue(values[key as string], currentValue)) continue;
     return entry.fieldMeta[key as string] ?? derivedMeta?.(key, entry, currentValue) ?? null;
   }
   return null;

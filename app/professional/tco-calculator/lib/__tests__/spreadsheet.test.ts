@@ -35,6 +35,19 @@ const CASES: [string, SharedState][] = [
     cloudB({ migrationStrategy: "ripReplace", retentionPricing: "flat", supportAddonPerCamYr: 15, networkCostPerSiteYr: 600 }),
   )],
   ["one-year horizon", state(scenario({ incumbent: "none", horizonYears: 1 }), onpremA(), cloudB())],
+  ["connector models at 45 days, separate license discount", state(
+    scenario({ incumbent: "none", retentionDays: 45, cameras: 260, sites: 3 }),
+    onpremA({ licenseDiscountPct: 12 }),
+    cloudB({ licenseDiscountPct: 5, applianceOptions: [
+      ...seedVerkada("b").applianceOptions,
+      { id: "any", label: "No retention limit", cost: 30_000, capacity: 40, retentionDays: null },
+    ] }),
+  )],
+  ["incumbents due now: on-prem refresh and cloud renewal at year 0", state(
+    scenario({ incumbent: "b", retentionDays: 60 }),
+    onpremA(),
+    cloudB({ yearsUntilLicenseRenewal: 0, yearsUntilNextApplianceRefresh: 0 }),
+  )],
   ["thirty-year horizon, old fleet", state(scenario({ incumbent: "a", horizonYears: 30, existingFleetAgeYears: 9, ...ESCALATING }), onpremA(), cloudB())],
   ["cloud vs. cloud with misc items of every timing", state(
     scenario({ incumbent: "a", cameras: 37, sites: 6, retentionDays: 14 }),
@@ -169,13 +182,14 @@ test("editing an input in the sheet recalculates like the model would", () => {
   };
   set("Camera count", "B", 412);
   set("Incumbent", "B", "Neither");
-  set("Discount off list (%)", "C", 22);
+  set("Hardware discount off list (%)", "C", 22);
+  set("License discount off list (%)", "C", 9);
   set("Storage redundancy", "B", "RAID 6");
   computeCachedValues(wb);
   const c = computeComparison(
     { ...st.scenario, cameras: 412, incumbent: "none" },
     { ...st.solA, raidLevel: "raid6" },
-    { ...st.solB, discountPct: 22 },
+    { ...st.solB, discountPct: 22, licenseDiscountPct: 9 },
   );
   const at = (col: string) => num(wb, "Summary", `${col}${rowOf(wb, "Summary", "Total cost of ownership") + 1}`);
   close(at("B"), c.a.total, "A total after edits");

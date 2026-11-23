@@ -27,7 +27,7 @@ const REISSUE_HELP =
   "Issue a new card to every card-carrying cardholder at year 0, for example to move off 125 kHz proximity cards to secure ones, with the staff time to enroll each. That usually needs readers that can read the new cards. New doors always issue credentials.";
 
 const RENEWAL_HELP =
-  "How many years until the license already in place has to be renewed. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
+  "How many years until the license already in place has to be renewed; 0 means it's due now and is bought at year 0. After that it renews every term. Only shown for the incumbent: a new purchase buys its first term at year 0.";
 
 // Every input for one solution, in themed sections. The wizard shows it in
 // each solution's card; the results page shows it in each solution's

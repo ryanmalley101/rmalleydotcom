@@ -23,7 +23,8 @@ export type { DeploymentModel, IncumbentChoice, MiscCostItem, MiscItemTiming } f
 // Bumped whenever a change to this file (or to the defaults it's fed) changes
 // what an existing share link or saved comparison would compute, so a link
 // made under an older model can say its totals were recalculated.
-export const MODEL_VERSION = 1;
+// 2: an incumbent whose server refresh or license renewal is 0 years away buys at year 0.
+export const MODEL_VERSION = 2;
 
 export interface ScenarioInputs {
   // Controlled openings: drive hardware, installation, door licenses, and
@@ -255,6 +256,9 @@ export function computeSolution(
   const servers = cloud ? 0 : sol.serverCount;
   const serverPurchase = servers * (sol.serverCost + sol.serverSoftwareCost) * disc;
   const firstRefresh = isIncumbent ? sol.yearsUntilNextRefresh : sol.refreshCycleYears;
+  // The incumbent buys nothing at year 0 except what's due now (0 years away).
+  const serversDueNow = isIncumbent && !cloud && firstRefresh === 0;
+  const termDueNow = isIncumbent && cloud && firstRenewal === 0;
 
   // Credentials and cardholder admin.
   const physical = cardholders * (1 - sol.mobileSharePct / 100);
@@ -281,7 +285,8 @@ export function computeSolution(
 
     if (y === 0) {
       // Nothing new is deployed for the incumbent, so its year 0 is empty
-      // apart from misc items.
+      // apart from misc items and a server refresh or license renewal that's
+      // due now.
       if (!isIncumbent) {
         // Door hardware isn't a vendor product, so no discount: it's the same
         // doors either way.
@@ -296,6 +301,9 @@ export function computeSolution(
           // Enrolling everyone onto the new credentials.
           cost["Cardholder admin"] = cardholders * minutesCost(sol.cardholderChangeMinutes) * labor;
         }
+      } else {
+        if (serversDueNow) cost["Servers (initial & refresh)"] = serverPurchase * hw;
+        if (termDueNow) cost["Licenses/subscription"] = licenseTermCost * lic;
       }
     } else {
       // Every failure costs replacement labor; only out-of-warranty ones
@@ -331,7 +339,7 @@ export function computeSolution(
     if (cost["Servers (initial & refresh)"] > 0) {
       lumps.push({ year: y, amount: cost["Servers (initial & refresh)"], life: sol.refreshCycleYears });
     }
-    if (cloud && ((y === 0 && !isIncumbent) || isRenewalYear(y))) {
+    if (cloud && ((y === 0 && (!isIncumbent || termDueNow)) || isRenewalYear(y))) {
       lumps.push({ year: y, amount: licenseTermCost * lic, life: sol.tierYears });
     }
 

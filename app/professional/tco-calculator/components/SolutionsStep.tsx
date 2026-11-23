@@ -2,7 +2,7 @@
 
 import { Badge, Box, Card, Group, Select, SegmentedControl, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
 import {
-  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Layers, Percent, Router, Search, Server, ShieldCheck, Tag, Truck, UserCog,
+  ArrowRightLeft, CalendarRange, Camera, DollarSign, FileText, HardDrive, Headset, Hourglass, Percent, Search, Server, ShieldCheck, Tag, Truck, UserCog,
 } from "lucide-react";
 import type { CloudMigrationStrategy, RaidLevel, ScenarioInputs, SolutionInputs } from "../lib/model";
 import { TEXT_MUTED } from "../../_tco-shared/lib/colors";
@@ -18,6 +18,7 @@ import { RAID_HELP } from "../lib/fieldHelp";
 import InfoLabel from "../../_tco-shared/components/InfoLabel";
 import SourceDot from "../../_tco-shared/components/SourceDot";
 import SolutionField from "./SolutionField";
+import ConnectorFields from "./ConnectorFields";
 import { ConfidenceBadge as SharedConfidenceBadge, OTHER_PROVIDER as OTHER, providerSelectData as selectData } from "../../_tco-shared/components/FormParts";
 
 
@@ -120,7 +121,7 @@ function OnPremNaming({ sol, onChange }: { sol: SolutionInputs; onChange: (v: So
   );
 }
 
-function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: (v: SolutionInputs) => void }) {
+function CloudLicenseFields({ sol, scenario, onChange }: { sol: SolutionInputs; scenario: ScenarioInputs; onChange: (v: SolutionInputs) => void }) {
   const set = <K extends keyof SolutionInputs>(key: K, v: SolutionInputs[K]) => onChange({ ...sol, [key]: v });
   const perYear = sol.tierPrice / Math.max(1, sol.tierYears);
   const entries = vendorEntriesFor(sol);
@@ -160,12 +161,7 @@ function CloudLicenseFields({ sol, onChange }: { sol: SolutionInputs; onChange: 
         />
       </Box>
       <SolutionField sol={sol} field="supportAddonPerCamYr" onChange={onChange} icon={Headset} />
-      {sol.migrationStrategy === "connector" && (
-        <Group grow align="flex-start">
-          <SolutionField sol={sol} field="applianceCost" onChange={onChange} icon={Router} />
-          <SolutionField sol={sol} field="applianceCapacity" onChange={onChange} icon={Layers} />
-        </Group>
-      )}
+      {sol.migrationStrategy === "connector" && <ConnectorFields sol={sol} scenario={scenario} onChange={onChange} />}
     </>
   );
 }
@@ -195,8 +191,9 @@ function SolutionCard({
 
         <Group grow align="flex-start">
           <SolutionField sol={sol} field="discountPct" onChange={onChange} icon={Percent} />
-          <SolutionField sol={sol} field="fleetHalfLifeYears" onChange={onChange} icon={Hourglass} />
+          <SolutionField sol={sol} field="licenseDiscountPct" onChange={onChange} icon={Percent} />
         </Group>
+        <SolutionField sol={sol} field="fleetHalfLifeYears" onChange={onChange} icon={Hourglass} />
 
         {sol.model === "cloud" ? (
           <>
@@ -204,7 +201,7 @@ function SolutionCard({
               <SolutionField sol={sol} field="cameraCost" onChange={onChange} icon={Camera} />
               <SolutionField sol={sol} field="warrantyYears" onChange={onChange} icon={ShieldCheck} />
             </Group>
-            <CloudLicenseFields sol={sol} onChange={onChange} />
+            <CloudLicenseFields sol={sol} scenario={scenario} onChange={onChange} />
           </>
         ) : (
           <>

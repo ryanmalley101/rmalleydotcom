@@ -124,13 +124,15 @@ every total but are reported separately, as in the video calculator.
 - **Cloud licensing**: `tierPrice` per door per `tierYears` term, a lump sum
   at purchase and each renewal, plus `siteFeePerYr` for vendors that also
   charge per site. The incumbent's first renewal is at
-  `yearsUntilLicenseRenewal`. Terms get the residual credit.
+  `yearsUntilLicenseRenewal`; at 0 it's due now and bought at year 0.
+  Terms get the residual credit.
 - **On-prem licensing**: `baseLicense + doorLicense × doors` once at year 0
   (not for the incumbent), then `carePct` of that every year, incumbent
   included.
 - **On-prem servers**: `serverCount` (default 1) at `serverCost +
   serverSoftwareCost`, bought at year 0 and on `refreshCycleYears` (the
-  incumbent's first at `yearsUntilNextRefresh`), with residual credit.
+  incumbent's first at `yearsUntilNextRefresh`; at 0 it's due now and
+  bought at year 0), with residual credit.
   `serverAdminHrsPerYr` per server goes to Admin labor. Cloud has none of
   these.
 - **Credentials**: physical cards for `cardholders × (1 − mobileSharePct)`
