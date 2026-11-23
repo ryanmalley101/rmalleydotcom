@@ -581,8 +581,18 @@ before trusting an unedited comparison:
   solution, which fields, which inputs tab) rather than sentences, so the
   results page can group them by solution, mark the flagged fields in the
   cost editor, and jump to each one.
-- Share links round-trip the whole scenario through a `?s=`-encoded JSON
-  query param (`lib/shareState.ts`); the address bar stays in sync via a
+- Share links round-trip the whole scenario through the `?s=` query param
+  (`lib/shareState.ts`, format in `_tco-shared/lib/shareState.ts`). A link
+  stores only what differs from the values the wizard would start from,
+  rebuilt on open from each solution's id/name/model/vendor pickers
+  (`solutionBaseline`, which a test holds equal to `lib/seeds.ts`), then
+  deflates it: ~200 characters for a lightly edited comparison instead of
+  ~2.5K. Untouched fields therefore take *today's* defaults when a link is
+  opened, so each link carries a fingerprint of the defaults it relied on;
+  if a vendor price or other default it didn't override has changed since,
+  the page shows the "recalculated" notice rather than silently showing
+  different totals. Older lz-string and plain-JSON links still open. The
+  address bar stays in sync via a
   debounced `router.replace`, wrapped in `Suspense` per Next's
   `useSearchParams()` requirement. The snapshot export
   (`lib/exportSnapshot.ts`, `html2canvas`) captures the verdict, the

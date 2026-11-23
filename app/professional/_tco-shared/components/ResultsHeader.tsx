@@ -99,8 +99,8 @@ export default function ResultsHeader({
       {staleModel && (
         <Alert color="blue" variant="light" withCloseButton onClose={onDismissStaleModel} p="sm">
           <Text size="sm">
-            This comparison was created with an earlier version of the cost model. Its totals have been recalculated
-            with the current one, so they may differ from what was originally shared.
+            This comparison was created with an earlier version of the cost model or its default values. Its totals
+            have been recalculated with the current ones, so they may differ from what was originally shared.
           </Text>
         </Alert>
       )}
